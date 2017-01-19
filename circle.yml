@@ -1,0 +1,5 @@
+deployment:
+  dev:
+    branch: master
+    heroku:
+      appname: hoa-ui-dev

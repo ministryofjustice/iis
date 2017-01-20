@@ -1,4 +1,4 @@
-var moment = require('moment')
+var moment = require('moment');
 
 console.log(moment().format('ddd, hA'));
 

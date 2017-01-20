@@ -17,9 +17,16 @@
   },
   "homepage": "https://github.com/NOMS-DIGITAL-STUDIO-IIS/hoa-ui#readme",
   "devDependencies": {
+    "browserify": "^13.3.0",
+    "chai": "^3.5.0",
     "gulp": "^3.9.1",
     "gulp-browserify": "^0.5.1",
-    "gulp-uglify": "^2.0.0"
+    "gulp-jshint": "^2.0.4",
+    "gulp-mocha-phantomjs": "^0.12.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.0",
+    "jshint": "^2.9.4",
+    "mocha": "^3.2.0"
   },
   "dependencies": {
     "body-parser": "^1.16.0",

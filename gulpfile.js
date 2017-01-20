@@ -16,7 +16,7 @@ var mochaPhantomjs = require('gulp-mocha-phantomjs');
 // todo
 
 // Build tasks
-gulp.task('default', ['build']);
+gulp.task('default', ['build', 'test', 'watch']);
 
 gulp.task('build', ['build-client']);
 

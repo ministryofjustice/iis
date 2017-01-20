@@ -16,14 +16,14 @@ var jshint = require('gulp-jshint');
 var mochaPhantomjs = require('gulp-mocha-phantomjs');
 
 // CSS
-// todo
+var sass = require('gulp-sass');
 
 // Build tasks
 gulp.task('default', ['build', 'test', 'watch']);
 
 gulp.task('build', ['build-client']);
 
-gulp.task('build-client', ['lint-client', 'browserify-client']);
+gulp.task('build-client', ['lint-client', 'browserify-client', 'sass']);
 gulp.task('build-test', ['lint-test', 'browserify-test']);
 
 gulp.task('lint-client', function () {
@@ -66,10 +66,14 @@ gulp.task('browserify-test', function () {
 });
 
 
-// Run gulp watch, then changes to client or client test js will trigger a rebuild and the test runner
+// Run gulp watch, then changes to js or css will trigger a rebuild (and the test runner if js has changed)
 gulp.task('watch', function () {
+    //js
     gulp.watch('client/**/*.js', ['build-client']);
     gulp.watch('test/client/**/*.js', ['test']);
+
+    //sass
+    gulp.watch("client/sass/*.scss", ["sass"]);
 });
 
 // Build the test JS then run the tests
@@ -77,3 +81,10 @@ gulp.task('test', ['build-test'], function () {
     return gulp.src('test/client/index.html')
         .pipe(mochaPhantomjs());
 });
+
+// CSS pre-processing
+gulp.task('sass', function() {
+    gulp.src('client/sass/*.scss')
+        .pipe(sass())
+        .pipe(gulp.dest('public/css'));
+})

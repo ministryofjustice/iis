@@ -24,6 +24,7 @@
     "gulp-jshint": "^2.0.4",
     "gulp-mocha-phantomjs": "^0.12.0",
     "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0",
     "gulp-uglify": "^2.0.0",
     "jshint": "^2.9.4",
     "mocha": "^3.2.0",

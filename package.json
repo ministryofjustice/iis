@@ -1,43 +1,41 @@
 {
-  "name": "hoa-ui",
-  "version": "1.0.0",
-  "description": "Historical Offenders Application",
-  "main": "server.js",
-  "scripts": {
-    "test": "gulp test",
-    "start": "npm install; gulp build; node ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/NOMS-DIGITAL-STUDIO-IIS/hoa-ui.git"
-  },
-  "author": "NOMS Digital Studio",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/NOMS-DIGITAL-STUDIO-IIS/hoa-ui/issues"
-  },
-  "homepage": "https://github.com/NOMS-DIGITAL-STUDIO-IIS/hoa-ui#readme",
-  "devDependencies": {
-    "browserify": "^13.3.0",
-    "chai": "^3.5.0",
-    "gulp": "^3.9.1",
-    "gulp-jshint": "^2.0.4",
-    "gulp-mocha-phantomjs": "^0.12.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-sass": "^3.1.0",
-    "gulp-uglify": "^2.0.0",
-    "jshint": "^2.9.4",
-    "mocha": "^3.2.0",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0",
-    "vinyl-transform": "^1.0.0"
-  },
-  "dependencies": {
-    "body-parser": "^1.16.0",
-    "express": "^4.14.0",
-    "jade": "^1.11.0",
-    "moment": "^2.17.1",
-    "morgan": "^1.7.0",
-    "path": "^0.12.7"
-  }
+    "name": "hoa-ui",
+    "version": "1.0.0",
+    "description": "Historical Offenders Application",
+    "main": "server.js",
+    "scripts": {
+        "test": "gulp test",
+        "start": "npm install; gulp build; node ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NOMS-DIGITAL-STUDIO-IIS/hoa-ui.git"
+    },
+    "author": "NOMS Digital Studio",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/NOMS-DIGITAL-STUDIO-IIS/hoa-ui/issues"
+    },
+    "homepage": "https://github.com/NOMS-DIGITAL-STUDIO-IIS/hoa-ui#readme",
+    "dependencies": {
+        "body-parser": "^1.16.0",
+        "express": "^4.14.0",
+        "jade": "^1.11.0",
+        "moment": "^2.17.1",
+        "morgan": "^1.7.0",
+        "path": "^0.12.7",
+        "browserify": "^13.3.0",
+        "chai": "^3.5.0",
+        "gulp": "^3.9.1",
+        "gulp-jshint": "^2.0.4",
+        "gulp-mocha-phantomjs": "^0.12.0",
+        "gulp-rename": "^1.2.2",
+        "gulp-sass": "^3.1.0",
+        "gulp-uglify": "^2.0.0",
+        "jshint": "^2.9.4",
+        "mocha": "^3.2.0",
+        "vinyl-buffer": "^1.0.0",
+        "vinyl-source-stream": "^1.1.0",
+        "vinyl-transform": "^1.0.0"
+    }
 }

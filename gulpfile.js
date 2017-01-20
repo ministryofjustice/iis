@@ -86,5 +86,6 @@ gulp.task('test', ['build-test'], function () {
 gulp.task('sass', function() {
     gulp.src('client/sass/*.scss')
         .pipe(sass())
+        .pipe(rename('hoa-style.css'))
         .pipe(gulp.dest('public/css'));
 })

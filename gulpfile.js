@@ -13,9 +13,12 @@ var jshint = require('gulp-jshint');
 var mochaPhantomjs = require('gulp-mocha-phantomjs');
 
 // CSS
-// todod
+// todo
 
-gulp.task('default', ['build-client']);
+// Build tasks
+gulp.task('default', ['build']);
+
+gulp.task('build', ['build-client']);
 
 gulp.task('build-client', ['lint-client', 'browserify-client']);
 gulp.task('build-test', ['lint-test', 'browserify-test']);
@@ -36,7 +39,7 @@ gulp.task('browserify-client', function () {
     return gulp.src(['./client/**/*.js'])
     .pipe(browserify())
     .pipe(uglify())
-    .pipe(rename('index.js'))
+    .pipe(rename('hoa-min.js'))
     .pipe(gulp.dest('build'))
     .pipe(gulp.dest('./public/js'));
 });
@@ -49,11 +52,14 @@ gulp.task('browserify-test', function () {
         .pipe(gulp.dest('build'));
 });
 
+
+// Run gulp watch, then changes to client or client test js will trigger a rebuild and the test runner
 gulp.task('watch', function() {
     gulp.watch('client/**/*.js', ['build-client']);
     gulp.watch('test/client/**/*.js', ['test']);
 });
 
+// Build the test JS then run the tests
 gulp.task('test', ['build-test'], function() {
     return gulp.src('test/client/index.html')
         .pipe(mochaPhantomjs());

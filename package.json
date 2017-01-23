@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/NOMS-DIGITAL-STUDIO-IIS/hoa-ui#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.0",
     "body-parser": "^1.16.0",
     "browserify": "^13.3.0",
     "chai": "^3.5.0",

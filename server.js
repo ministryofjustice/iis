@@ -45,28 +45,13 @@ app.listen(app.get('port'), function() {
 module.exports = app;
 
 
+// TAKE OUT THE CONFIG DETAILS INTO VARIABLES
+var config = require('config');
+var Connection = require('tedious').Connection;
 
-var pg = require('pg');
+var dbsetting = config.get('sqlserver');
 
-// instantiate a new client
-// the client will read connection information from
-// the same environment variables used by postgres cli tools
-var client = new pg.Client(process.env.DATABASE_URL);
+var config = {userName: dbsetting.userName, password: dbsetting.password, server: dbsetting.server, database: dbsetting.database, encrypt: true};
+var connection = new Connection(config);
 
-// connect to our database
-client.connect(function (err) {
-  if (err) throw err;
-
-  // execute a query on our database
-  client.query('SELECT $1::text as name', ['brianc'], function (err, result) {
-    if (err) throw err;
-
-    // just print the result to the console
-    console.log(result.rows[0]); // outputs: { name: 'brianc' }
-
-    // disconnect the client
-    client.end(function (err) {
-      if (err) throw err;
-    });
-  });
-});
+console.log(connection);

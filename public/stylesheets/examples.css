@@ -1,0 +1,23 @@
+.area {
+  font-family: 'nta', Sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  clear: both;
+  background: #912b88;
+  color: white;
+  border: dashed #fff 1px;
+  padding: 1em;
+  box-sizing: border-box;
+}
+
+/* area styles specific to certain ones */
+main.area {
+  min-height: 16em;
+}
+
+.header-proposition {
+  clear: none;
+  min-height: 6em;
+}
+
+/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiIiwic291cmNlcyI6WyJleGFtcGxlcy5jc3MiXSwic291cmNlc0NvbnRlbnQiOlsiLmFyZWEge1xuICBmb250LWZhbWlseTogJ250YScsIFNhbnMtc2VyaWY7XG4gIGZvbnQtc2l6ZTogMTZweDtcbiAgZm9udC13ZWlnaHQ6IDcwMDtcbiAgY2xlYXI6IGJvdGg7XG4gIGJhY2tncm91bmQ6ICM5MTJiODg7XG4gIGNvbG9yOiB3aGl0ZTtcbiAgYm9yZGVyOiBkYXNoZWQgI2ZmZiAxcHg7XG4gIHBhZGRpbmc6IDFlbTtcbiAgYm94LXNpemluZzogYm9yZGVyLWJveDtcbn1cblxuLyogYXJlYSBzdHlsZXMgc3BlY2lmaWMgdG8gY2VydGFpbiBvbmVzICovXG5tYWluLmFyZWEge1xuICBtaW4taGVpZ2h0OiAxNmVtO1xufVxuXG4uaGVhZGVyLXByb3Bvc2l0aW9uIHtcbiAgY2xlYXI6IG5vbmU7XG4gIG1pbi1oZWlnaHQ6IDZlbTtcbn1cbiJdLCJmaWxlIjoiZXhhbXBsZXMuY3NzIn0= */

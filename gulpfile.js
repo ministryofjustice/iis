@@ -49,7 +49,7 @@ gulp.task('browserify-client', function () {
         .pipe(buffer())
         .pipe(uglify())
         .pipe(gulp.dest('build'))
-        .pipe(gulp.dest('./public/js'));
+        .pipe(gulp.dest('./public/javascripts'));
 });
 
 gulp.task('browserify-test', function () {
@@ -87,5 +87,5 @@ gulp.task('sass', function() {
     gulp.src('client/sass/*.scss')
         .pipe(sass())
         .pipe(rename('hoa-style.css'))
-        .pipe(gulp.dest('public/css'));
+        .pipe(gulp.dest('public/stylesheets'));
 })

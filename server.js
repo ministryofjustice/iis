@@ -43,15 +43,3 @@ app.listen(app.get('port'), function() {
 });
 
 module.exports = app;
-
-
-// TAKE OUT THE CONFIG DETAILS INTO VARIABLES
-var config = require('config');
-var Connection = require('tedious').Connection;
-
-var dbsetting = config.get('sqlserver');
-
-var config = {userName: dbsetting.userName, password: dbsetting.password, server: dbsetting.server, database: dbsetting.database, encrypt: true};
-var connection = new Connection(config);
-
-console.log(connection);

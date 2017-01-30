@@ -37,6 +37,7 @@
     "morgan": "^1.7.0",
     "path": "^0.12.7",
     "pg": "^6.1.2",
+    "prompt": "^1.0.0",
     "tedious": "^1.14.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",

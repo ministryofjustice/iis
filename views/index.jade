@@ -3,18 +3,19 @@ extends layout
 block content
     div.grid-row
         div.column-full
-            h1.heading-xlarge Sign in
-            form(methods="post")
+            h1.heading-xlarge= title
+            form(method="post")
                 div.form-group
-                    label(for="staff_id")
+                    label(for="login_id")
                         span.form-label User ID
-                    input(type="text",  id="staff_id", class="form-control")
+                    input(type="text",  id="login_id", class="form-control", name="login_id")
                     
                 div.form-group
-                    label(for="password")
+                    label(for="pwd")
                         span.form-label Password
-                    input(type="password", id="password", class="form-control")
-                    
+                    input(type="password", id="pwd", class="form-control", name="pwd")
+                
+                p= msg
+                
                 div.form-group
                     button.button Sign in
-                    

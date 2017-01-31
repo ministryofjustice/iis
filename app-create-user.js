@@ -15,29 +15,40 @@ prompt.get(['username', 'email'], function (err, result) {
         console.log('  hash: ' + hash);
         
         
-        var connection = dbconn();
+        var oDBConfig = dbconfig();
+            
+        var connection = require('tedious').Connection;
+            connection = new connection({
+            userName: oDBConfig.userName,
+            password: oDBConfig.password,
+            server: oDBConfig.server,
+            options: {
+                encrypt: true,
+                database: oDBConfig.database
+            },
+        });
 
         connection.on('connect', function(err) {
 
             if(err) { console.log(err); return; }
 
             var Request = require('tedious').Request;
+            var TYPES = require('tedious').TYPES; 
             
-
-            request = new Request("select * from DBO.TESTAK1;", function(err, rowCount) {
-              if (err) {
-                console.log(err);
-              } else {
-                console.log(rowCount + ' rows');
-              }
+            
+            request = new Request("INSERT INTO DBO.users(login_id,pwd,email) VALUES(@login_id, @pwd, @email);", function(err) {
+                console.log('***************');
+                if(err) {
+                    console.log('ERROR #'+ err.number +' - User could not be created');
+                } else {
+                    console.log('User added!');
+                }
+                console.log('***************');
             });
-
-            request.on('row', function(columns) {
-              columns.forEach(function(column) {
-                console.log(column.value);
-              });
-            });
-
+            
+            request.addParameter('login_id', TYPES.VarChar, result.username);  
+            request.addParameter('pwd', TYPES.VarChar, hash);  
+            request.addParameter('email', TYPES.VarChar, result.email);  
 
             connection.execSql(request);
             
@@ -49,19 +60,7 @@ prompt.get(['username', 'email'], function (err, result) {
 });
 
 
-var dbconn = function(){
+var dbconfig = function(){
     var config = require('config');
-    var dbsetting = config.get('sqlserver');
-    
-    var Connection = require('tedious').Connection;
-    
-
-    var config = {
-                    userName: dbsetting.userName, 
-                    password: dbsetting.password, 
-                    server: dbsetting.server, 
-                    options: { encrypt: true }
-                };
-
-    return new Connection(config);
+    return config.get('sqlserver');
 }

@@ -24,6 +24,7 @@
     "chai": "^3.5.0",
     "config": "^1.24.0",
     "express": "^4.14.0",
+    "express-session": "^1.15.0",
     "gulp": "^3.9.1",
     "gulp-jshint": "^2.0.4",
     "gulp-mocha-phantomjs": "^0.12.0",

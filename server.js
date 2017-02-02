@@ -1,25 +1,24 @@
+var cookieSession = require('cookie-session')
 var express = require('express');
-var session = require('express-session');
 var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 
-var index = require('./routes/index');
 var api = require('./routes/api');
+var login = require('./routes/login');
+var search = require('./routes/search');
 
 var app = express();
 
-var sess = {
-  secret: Math.round(Math.random() * 100000).toString(),
-  cookie: {}
-}
+app.use(cookieSession({
+  name: 'session',
+  keys: ['iiskey_1','iiskey_1'],
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours 
+}));
 
-if (app.get('env') === 'production') {
-  app.set('trust proxy', 1) // trust first proxy
-  sess.cookie.secure = true // serve secure cookies
-}
 
-app.use(session(sess))
+var config = require("./config");
+
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -30,8 +29,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
+//app.get("/login");
+
+app.use('/login/', login);
+app.use('/search/', search);
 app.use('/api/', api);
+
+
+// redirect to login page
+app.use(function(req, res) {
+    if (!req.session.logged_in && req.path != "/login") {
+        res.redirect("/login")
+    }
+})
 
 
 // catch 404 and forward to error handler

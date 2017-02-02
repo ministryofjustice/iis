@@ -1,6 +1,6 @@
 var prompt = require('prompt');
 var bcrypt = require('bcryptjs');
-
+var db = require("./db");
 
 
 prompt.start();
@@ -15,18 +15,7 @@ prompt.get(['username', 'email'], function (err, result) {
         console.log('  hash: ' + hash);
         
         
-        var oDBConfig = dbconfig();
-            
-        var connection = require('tedious').Connection;
-            connection = new connection({
-            userName: oDBConfig.userName,
-            password: oDBConfig.password,
-            server: oDBConfig.server,
-            options: {
-                encrypt: true,
-                database: oDBConfig.database
-            },
-        });
+        connection = db.connect();
 
         connection.on('connect', function(err) {
 

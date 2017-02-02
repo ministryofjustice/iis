@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "gulp test",
-    "start": "npm install; gulp build; node ."
+    "start": "gulp build; node ."
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
     "browserify": "^13.3.0",
     "chai": "^3.5.0",
     "config": "^1.24.0",
+    "cookie-session": "^2.0.0-alpha.2",
     "express": "^4.14.0",
     "express-session": "^1.15.0",
     "gulp": "^3.9.1",

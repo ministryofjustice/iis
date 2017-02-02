@@ -1,8 +1,12 @@
-var config = require("./config");
+var fakeDB;
 
 module.exports = {
     connect: function(){
+        if (fakeDB) {
+            return fakeDB;
+        }
         
+        var config = require("./config");        
         var connection = require('tedious').Connection;
         
         connection = new connection({
@@ -16,6 +20,9 @@ module.exports = {
         });
         
         return connection;
+    },
+    setFake: function(fake) {
+        fakeDB = fake;
     },
     
     disconnect: {}

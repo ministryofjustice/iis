@@ -4,8 +4,8 @@
   "description": "Historical Offenders Application",
   "main": "server.js",
   "scripts": {
-    "test": "gulp test",
-    "start": "npm install; gulp build; node ."
+    "test": "mocha",
+    "start": "gulp build; node ."
   },
   "repository": {
     "type": "git",

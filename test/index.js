@@ -1,11 +1,11 @@
+var request = require('supertest');
 var expect = require('chai').expect;
-
 var bcrypt = require("bcryptjs");
-
 var db = require('../db');
-//var request = require('request');
-
 var users = require("../data/users");
+
+var app = require("../server.js");
+
 
 
 var EventEmitter = require("events").EventEmitter;
@@ -21,6 +21,16 @@ function makeFakeDB(onRequest) {
 }
 
 describe('IIS App Routines', function() {
+    describe('GET /login when not already logged in', function(){     
+        it('should return status code 302', function(done){
+            request(app).get('/').expect(302,done); 
+        });
+        
+        it('should return status code 200', function(done){
+            request(app).get('/login').expect(200,done); 
+        });
+    });
+    
     
     
     describe('validating username and password', function(){

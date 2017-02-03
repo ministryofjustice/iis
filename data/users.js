@@ -21,6 +21,7 @@ module.exports = {
 
             request.on('row', function(columns) {
                 var hash = columns[0].value;
+                
                 bcrypt.compare(pwd, hash, function(err, outcome) {
                     callback(null, outcome);
                 });

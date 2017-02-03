@@ -3,19 +3,25 @@ extends layout
 block content
     div.grid-row
         div.column-full
+        
+            if msg
+                div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
+                    h1(class="heading-medium error-summary-heading", id="error-message")= msg
+                    ul.error-summary-list
+                        li
+                            a(href="#login_id") Enter user id and password again
+                
             h1.heading-xlarge Sign in
             form(method="post")
                 div.form-group
                     label(for="login_id")
-                        span.form-label User ID
+                        span.form-label User id
                     input(type="text",  id="login_id", class="form-control", name="login_id")
                     
                 div.form-group
                     label(for="pwd")
                         span.form-label Password
                     input(type="password", id="pwd", class="form-control", name="pwd")
-                
-                p= msg
                 
                 div.form-group
                     button.button Sign in

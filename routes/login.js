@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
     req.session.logged_in = 0;
     var msg = '';
     if(req.query.r && req.query.r == 'fail' )
-        msg = 'Invalid credentials.  Try again';
+        msg = 'Unable to sign in, try again';
 
     res.render('login', { msg: msg });
 });

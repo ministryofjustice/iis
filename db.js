@@ -1,9 +1,9 @@
-var fakeDB;
+var fakeDBFactory;
 
 module.exports = {
     connect: function(){
-        if (fakeDB) {
-            return fakeDB;
+        if (fakeDBFactory) {
+            return fakeDBFactory();
         }
         
         var config = require("./config");        
@@ -21,8 +21,8 @@ module.exports = {
         
         return connection;
     },
-    setFake: function(fake) {
-        fakeDB = fake;
+    setFakeFactory: function(fakeFactory) {
+        fakeDBFactory = fakeFactory;
     },
     
     disconnect: {}

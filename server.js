@@ -36,7 +36,8 @@ app.use('/api/', api);
 
 // redirect to login page
 app.use(function(req, res) {
-    if (!req.session.logged_in && req.path != "/login") {
+//    req.session.logged_in
+    if (!isLoggedIn(req) && req.path != "/login") {
         res.redirect("/login")
     }
 })
@@ -55,6 +56,8 @@ app.use(function(err, req, res, next) {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
+    console.warn(err);
+    
     // render the error page
     res.status(err.status || 500);
     res.render('error');
@@ -65,3 +68,8 @@ app.listen(app.get('port'), function() {
 });
 
 module.exports = app;
+
+
+function isLoggedIn(req){
+    return req.session.logged_in;
+}

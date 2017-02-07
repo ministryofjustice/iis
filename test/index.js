@@ -6,42 +6,73 @@ var users = require("../data/users");
 
 var app = require("../server.js");
 
-
+var passwordHashed = bcrypt.hashSync("thisisapassword");
 
 var EventEmitter = require("events").EventEmitter;
-function makeFakeDB(onRequest) {
-    var fake = new EventEmitter();
-    process.nextTick(function() {
-        fake.emit("connect");
+function prepareFakeDB(onRequest) {
+    db.setFakeFactory(function fakeDBFactory() {
+        var fake = new EventEmitter();
+        process.nextTick(function() {
+            fake.emit("connect");
+        });
+        fake.execSql = function(req) {
+            onRequest(req);
+        };
+        return fake;
     });
-    fake.execSql = function(req) {
-        onRequest(req);
-    };
-    return fake;
+}
+
+function logInAs(username) {
+    prepareFakeDB(function(req) {
+        req.callback(null, 1);
+        req.emit("row", [{value: passwordHashed}]);
+    });
+    
+    var agent = request.agent(app);
+    return agent.post("/login")
+        .send({login_id: username, pwd: "thisisapassword"})
+        .expect(302)
+        .then(function() {
+            return agent;
+        });
 }
 
 describe('IIS App Routines', function() {
-    describe('GET /login when not already logged in', function(){     
-        it('should return status code 302', function(done){
-            request(app).get('/').expect(302,done); 
+    
+    describe('Test redirections when session set and not set', function(){     
+        it('should return status code 302, when session NOT set', function(){
+            request(app).get('/search')
+                .expect(302)
+                .expect("Location", "/login");
         });
         
+        //it('should create session when POSTing to /login')
+        
+        it('should return status code 200, when session IS set', function(){
+            return logInAs("someone")
+                .then(function(authedReq) {
+                    return authedReq.get('/search')
+                        .expect(200);
+                });
+        });
+        
+
         it('should return status code 200', function(done){
             request(app).get('/login').expect(200,done); 
         });
+        
+        // test root redirections (should always go to login?)
     });
     
     
     
     describe('validating username and password', function(){
-        var passwordHashed = bcrypt.hashSync("thisisapassword");
         it("should return ok if username and password match", function(done) {
-            var fakeDB = makeFakeDB(function(req) {
+            prepareFakeDB(function(req) {
                 req.callback(null, 1);
                 req.emit("row", [{value: passwordHashed}]);
             });
             
-            db.setFake(fakeDB);
             users.checkUsernameAndPassword("abc", "thisisapassword", function(err, result) {
                 expect(err).to.be.null;
                 expect(result).to.be.true;
@@ -49,11 +80,10 @@ describe('IIS App Routines', function() {
             });
         });
         it("should return false if username not found", function(done) {
-            var fakeDB = makeFakeDB(function(req) {
+            prepareFakeDB(function(req) {
                 req.callback(null, 0);
             });
             
-            db.setFake(fakeDB);
             users.checkUsernameAndPassword("abc", "thisisapassword", function(err, result) {
                 expect(err).to.be.null;
                 expect(result).to.be.false;
@@ -61,12 +91,11 @@ describe('IIS App Routines', function() {
             });
         });
         it("should return false if password is wrong", function(done) {
-            var fakeDB = makeFakeDB(function(req) {
+            prepareFakeDB(function(req) {
                 req.callback(null, 1);
                 req.emit("row", [{value: "nottherighthash"}]);
             });
             
-            db.setFake(fakeDB);
             users.checkUsernameAndPassword("abc", "thisisapassword", function(err, result) {
                 expect(err).to.be.null;
                 expect(result).to.be.false;
@@ -74,11 +103,10 @@ describe('IIS App Routines', function() {
             });
         });
         it("should error if DB query errors", function(done) {
-            var fakeDB = makeFakeDB(function(req) {
+            prepareFakeDB(function(req) {
                 req.callback(new Error("I don't like your face"));
             });
             
-            db.setFake(fakeDB);
             users.checkUsernameAndPassword("abc", "thisisapassword", function(err, result) {
                 expect(err).to.be.an("error");
                 done();

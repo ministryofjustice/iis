@@ -7,6 +7,7 @@ block content
             if msg
                 div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
                     h1(class="heading-medium error-summary-heading", id="error-message")= msg
+                    p Both fields are mandatory. The password is case-sensitive
                     ul.error-summary-list
                         li
                             a(href="#login_id") Enter user id and password again

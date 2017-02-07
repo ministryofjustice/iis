@@ -3,5 +3,30 @@ extends layout
 block content
     div.grid-row
         div.column-full
-            h1.heading-xlarge You're logged in
+            h1.heading-xlarge What information do you have on the inmate?
+            p Select all that apply
+      
+            form(method="post")
+                div.form-group
+                    fieldset
+                        legend.visually-hidden What information do you have on the inmate?
+                        
+                        label(class="block-label selection-button-checkbox",for="pnc")
+                            input(id="pnc", name="opt[]", type="checkbox", value="pnc")
+                            span Prison or PNC number
+                            
+                            
+                        label(class="block-label selection-button-checkbox",for="establishment")
+                            input(id="establishment", name="opt[]", type="checkbox", value="establishment")
+                            span Establishment
+                            
+                        
+
+                            
+                div.form-group
+                    button.button Continue
+          
+
+        
+            
             a(href="/login") Logout

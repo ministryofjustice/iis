@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var api = require('./routes/api');
 var login = require('./routes/login');
 var search = require('./routes/search');
+var results = require('./routes/results');
 
 var app = express();
 
@@ -25,26 +26,46 @@ app.set('port', process.env.PORT || 3000);
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/public',express.static(path.join(__dirname, 'public')));
+
+app.use('/public', express.static(path.join(__dirname, '/govuk_modules/govuk_template/assets')))
+app.use('/public', express.static(path.join(__dirname, '/govuk_modules/govuk_frontend_toolkit')))
+app.use('/public/images/icons', express.static(path.join(__dirname, '/govuk_modules/govuk_frontend_toolkit/images')))
+
+// Elements refers to icon folder instead of images folder
+//app.use(favicon(path.join(__dirname, 'govuk_modules', 'govuk_template', 'assets', 'images', 'favicon.ico')))
 
 //app.get("/login");
 
 app.use('/login/', login);
 app.use('/search/', search);
+app.use('/results/', results);
 app.use('/api/', api);
 
 
+app.use('/logout', function(req, res) {
+    req.session.logged_in = undefined;
+    res.redirect("/login")
+});
+
+
 // redirect to login page
-app.use(function(req, res) {
+app.use(function(req, res, next) {
 //    req.session.logged_in
     if (!isLoggedIn(req) && req.path != "/login") {
         res.redirect("/login")
+    } 
+    
+    if (isLoggedIn(req) && req.path == "/") {
+        res.redirect("/search")
     }
+    
+    next();
 })
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function(req, res, next) {    
     var err = new Error('Not Found');
     err.status = 404;
     next(err);

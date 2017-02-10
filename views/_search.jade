@@ -1,0 +1,41 @@
+extends layout
+
+block content
+    div.grid-row
+        div.column-two-thirds
+            h1.heading-xlarge Search
+      
+            form(method="post")
+                div.form-group
+                    label(for="search_name")
+                        span.form-label Inmate's name
+                    input(type="text",  id="search_name", class="form-control", name="search_name")
+                    
+                    
+                div.form-group
+                    fieldset
+                        legend
+                            span.form-label Date of birth
+                            span.form-hint(id="dob-hint") For example , 31 3 1980
+                        
+                        div.form-date
+                            div.form-group.form-group-day
+                                label.form-label(for="dob-day") Day
+                                input.form-control(id="dob-day", name="dob-day", type="number", pattern="[0-9]*", min="0", max="31", aria-describedby="dob-hint")
+                                
+                            div.form-group.form-group-month
+                                label.form-label(for="dob-month") Month
+                                input.form-control(id="dob-month", name="dob-month", type="number", pattern="[0-9]*", min="0", max="12")
+                                
+                            div.form-group.form-group-year
+                                label.form-label(for="dob-year") Year
+                                input.form-control(id="dob-year", name="dob-year", type="number", pattern="[0-9]*", min="0", max="2016")
+                        
+                            
+                div.form-group
+                    button.button Continue
+          
+
+
+            
+            a(href="/login") Logout

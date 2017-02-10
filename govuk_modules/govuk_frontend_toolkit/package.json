@@ -2,24 +2,24 @@
   "_args": [
     [
       {
-        "raw": "govuk_frontend_toolkit@^5.0.1",
+        "raw": "govuk_frontend_toolkit",
         "scope": null,
         "escapedName": "govuk_frontend_toolkit",
         "name": "govuk_frontend_toolkit",
-        "rawSpec": "^5.0.1",
-        "spec": ">=5.0.1 <6.0.0",
-        "type": "range"
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
       },
-      "/Applications/MAMP/htdocs/NOMS/iis-prototype"
+      "/Users/Z/Documents/hoa-ui"
     ]
   ],
-  "_from": "govuk_frontend_toolkit@>=5.0.1 <6.0.0",
-  "_id": "govuk_frontend_toolkit@5.0.2",
+  "_from": "govuk_frontend_toolkit@latest",
+  "_id": "govuk_frontend_toolkit@5.0.3",
   "_inCache": true,
   "_location": "/govuk_frontend_toolkit",
   "_npmOperationalInternal": {
     "host": "packages-18-east.internal.npmjs.com",
-    "tmp": "tmp/govuk_frontend_toolkit-5.0.2.tgz_1480433660697_0.3732329965569079"
+    "tmp": "tmp/govuk_frontend_toolkit-5.0.3.tgz_1484643749856_0.5781340412795544"
   },
   "_npmUser": {
     "name": "alphagov",
@@ -28,23 +28,23 @@
   "_npmVersion": "1.4.28",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "govuk_frontend_toolkit@^5.0.1",
+    "raw": "govuk_frontend_toolkit",
     "scope": null,
     "escapedName": "govuk_frontend_toolkit",
     "name": "govuk_frontend_toolkit",
-    "rawSpec": "^5.0.1",
-    "spec": ">=5.0.1 <6.0.0",
-    "type": "range"
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
   },
   "_requiredBy": [
-    "/",
-    "/govuk-elements-sass"
+    "#USER",
+    "/"
   ],
-  "_resolved": "https://registry.npmjs.org/govuk_frontend_toolkit/-/govuk_frontend_toolkit-5.0.2.tgz",
-  "_shasum": "72cc68e166f41b6cb0f6eee2bf9a4e82439f7857",
+  "_resolved": "https://registry.npmjs.org/govuk_frontend_toolkit/-/govuk_frontend_toolkit-5.0.3.tgz",
+  "_shasum": "326fe3a6b40d72f5a59d1e775905d71689120115",
   "_shrinkwrap": null,
-  "_spec": "govuk_frontend_toolkit@^5.0.1",
-  "_where": "/Applications/MAMP/htdocs/NOMS/iis-prototype",
+  "_spec": "govuk_frontend_toolkit",
+  "_where": "/Users/Z/Documents/hoa-ui",
   "author": {
     "name": "Government Digital Service developers",
     "email": "govuk-dev@digital.cabinet-office.gov.uk"
@@ -57,10 +57,10 @@
   "devDependencies": {},
   "directories": {},
   "dist": {
-    "shasum": "72cc68e166f41b6cb0f6eee2bf9a4e82439f7857",
-    "tarball": "https://registry.npmjs.org/govuk_frontend_toolkit/-/govuk_frontend_toolkit-5.0.2.tgz"
+    "shasum": "326fe3a6b40d72f5a59d1e775905d71689120115",
+    "tarball": "https://registry.npmjs.org/govuk_frontend_toolkit/-/govuk_frontend_toolkit-5.0.3.tgz"
   },
-  "gitHead": "4bc7b28eea1cce6a7850b09aeebd1c999a421867",
+  "gitHead": "83f61c7f335746ac5749850238edde8d86daff91",
   "homepage": "https://github.com/alphagov/govuk_frontend_toolkit_npm",
   "license": "MIT",
   "maintainers": [
@@ -77,5 +77,5 @@
     "url": "git://github.com/alphagov/govuk_frontend_toolkit_npm.git"
   },
   "scripts": {},
-  "version": "5.0.2"
+  "version": "5.0.3"
 }

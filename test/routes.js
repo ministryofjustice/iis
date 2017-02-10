@@ -55,6 +55,15 @@ describe('Test redirections when session set and not set', function(){
     });
 
 
+    it('should redirect to the search page when root is visited while the sessions are set', function(){
+       return logInAs("someone")
+            .then(function(authedReq) {
+                return authedReq.get('/')
+                    .expect(302)
+                    .expect("Location", "/search");
+            });
+    });
+    
     it('should return status code 200', function(done){
         request(app).get('/login').expect(200,done); 
     });

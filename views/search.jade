@@ -2,31 +2,34 @@ extends layout
 
 block content
     div.grid-row
-        div.column-full
+        div.column-two-thirds
             h1.heading-xlarge What information do you have on the inmate?
+            
+    div.grid-row
+        div.column-full
             p Select all that apply
       
-            form(method="post")
+            form(method="post", name="formSearch")
                 div.form-group
                     fieldset
                         legend.visually-hidden What information do you have on the inmate?
                         
                         label(class="block-label selection-button-checkbox",for="pnc")
-                            input(id="pnc", name="opt[]", type="checkbox", value="pnc")
-                            span Prison or PNC number
+                            input#pnc(name="opt", type="checkbox", value="pnc") 
+                            | Prison or PNC number
                             
                             
-                        label(class="block-label selection-button-checkbox",for="establishment")
-                            input(id="establishment", name="opt[]", type="checkbox", value="establishment")
-                            span Establishment
+                        label(class="block-label selection-button-checkbox",for="names")
+                            input#names(name="opt", type="checkbox", value="names")
+                            | Names  / alias
                             
+                            
+                        label(class="block-label selection-button-checkbox",for="dob")
+                            input#dob(name="opt", type="checkbox", value="dob")
+                            | Date of birth or age
+
                         
 
                             
                 div.form-group
                     button.button Continue
-          
-
-        
-            
-            a(href="/login") Logout

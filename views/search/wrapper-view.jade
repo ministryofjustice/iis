@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+    div.grid-row
+        div.column-two-thirds
+            h1.heading-xlarge= sub_view_title
+
+            form(method="post")
+            
+                case sub_view
+                    when "dob"
+                        include dob.jade
+                        
+                    when "names"
+                        include names.jade
+                    
+                    default
+                        include pnc.jade
+
+                div.form-group
+                    button.button Continue

@@ -3,11 +3,7 @@
 USE master
 GO
 
--- Use Master to create IISUSER
-CREATE LOGIN iisuser   
-    WITH PASSWORD = 'iis%User£3214';  
-GO  
-
--- Run schemaSetup.sql
--- Run the Data Migration.
--- 
+-- Use Master to create IISUSER - Add in password
+CREATE LOGIN iisuser
+    WITH PASSWORD = '????';
+GO

@@ -22,15 +22,14 @@ router.get('/', function (req, res) {
         req.session.search_route = undefined;
     }
     
-    res.render(view, {sub_view: req.query.p, sub_view_title: sub_view_title, nav: true});
+    res.render(view, {title: 'Search', sub_view: req.query.p, sub_view_title: sub_view_title, nav: true});
 });
 
 
 router.post('/', function (req, res) {    
 
     var next_page;
-    
-    
+
     if(req.query.p){
         
         if(req.session.search_route){
@@ -39,10 +38,10 @@ router.post('/', function (req, res) {
                 next_page = req.session.search_route[++currpage];
                 res.redirect('/search/?p='+next_page);
             } else {
-                res.redirect('/results');
+                res.redirect('/search/results');
             }
         } else {
-            res.redirect('/results');
+            res.redirect('/search/results');
         }
         
     } else {
@@ -58,13 +57,23 @@ router.post('/', function (req, res) {
             next_page = req.body.opt;
             res.redirect('/search/?p='+next_page)
         } else {
-            res.render('search', {nav: true, msg: 'Select at least one parameter'});
+            res.render('search', {title: 'Search', nav: true, msg: 'Select at least one parameter'});
         }
         
     }
 
 
     
+});
+
+
+router.get('/results', function (req,res){ 
+    if(!req.session.logged_in){
+        res.redirect('/login')
+        return;
+    }
+    
+    res.render('results', {title: 'XX Results', nav: true});
 });
 
 

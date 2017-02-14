@@ -4,10 +4,10 @@ var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 
+var index = require('./routes/index');
 var api = require('./routes/api');
 var login = require('./routes/login');
 var search = require('./routes/search');
-var results = require('./routes/results');
 
 var app = express();
 
@@ -37,16 +37,10 @@ app.use('/public/images/icons', express.static(path.join(__dirname, '/govuk_modu
 
 //app.get("/login");
 
+app.use('/', index);
 app.use('/login/', login);
 app.use('/search/', search);
-app.use('/results/', results);
 app.use('/api/', api);
-
-
-app.use('/logout', function(req, res) {
-    req.session.logged_in = undefined;
-    res.redirect("/login")
-});
 
 
 // redirect to login page
@@ -55,10 +49,6 @@ app.use(function(req, res, next) {
     if (!isLoggedIn(req) && req.path != "/login") {
         res.redirect("/login")
     } 
-    
-    if (isLoggedIn(req) && req.path == "/") {
-        res.redirect("/search")
-    }
     
     next();
 })

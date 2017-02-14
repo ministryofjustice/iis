@@ -25,7 +25,7 @@ prompt.get(['username', 'email'], function (err, result) {
             var TYPES = require('tedious').TYPES; 
             
             
-            request = new Request("INSERT INTO DBO.users(login_id,pwd,email) VALUES(@login_id, @pwd, @email);", function(err) {
+            request = new Request("INSERT INTO NON_IIS.users(login_id,pwd,email) VALUES(@login_id, @pwd, @email);", function(err) {
                 console.log('***************');
                 if(err) {
                     console.log('ERROR #'+ err.number +' - User could not be created');

@@ -67,7 +67,29 @@ describe('Test redirections when session set and not set', function(){
     it('should return status code 200', function(done){
         request(app).get('/login').expect(200,done); 
     });
-
+    
+    /*
+    it('should return status code 200 if an option hasnt been selected', function(){
+        return logInAs("someone")
+            .then(function(authedReq) {
+                return authedReq.get('/search')
+                    .expect(200)
+                    .then(function(){
+                        return authedReq.post('/search')
+                            .expect(200)
+                    });
+            });
+    });
+    */
+    
+    it('should be string if only one option is selected')
+    it('should be an array if more than one option is selected')
+    it('should go through search param pages before landing on the results page')
+    it('should return 302 and redirect to search if invalid query string is passed')
+    it('redirect to the login page when user logs out')
+    
+    
+    
 });
 
 

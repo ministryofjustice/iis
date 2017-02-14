@@ -3,19 +3,12 @@ extends ../layout
 block content
     div.grid-row
         div.column-two-thirds
-            h1.heading-xlarge= sub_view_title
+            h1.heading-xlarge= title
 
             form(method="post")
-            
-                case sub_view
-                    when "dob"
-                        include dob.jade
-                        
-                    when "names"
-                        include names.jade
-                    
-                    default
-                        include pnc.jade
-
+                input(type="hidden", name="this_page", value="#{view}")
+                
+                block search-page
+                
                 div.form-group
                     button.button Continue

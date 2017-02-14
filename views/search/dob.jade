@@ -1,26 +1,33 @@
-div.form-group
-    fieldset
-        legend
-            span.form-label-bold.visually-hidden
-                Enter inmate's date of birth
-            span.form-hint#dob-hint For example, 31 3 1980
-        div.form-date
-            div.form-group.form-group-day
-                label.form-label(for="dob-day") Day
-                input.form-control#dob-day(name="dob-day", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint")
-                
-            div.form-group.form-group-month
-                label.form-label(for="dob-month") Month
-                input.form-control#dob-month(name="dob-month", type="number", pattern="[0-9]*", min="0" max="12")
-                
-            div.form-group.form-group-year
-                label.form-label(for="dob-year") Year
-                input.form-control#dob-year(name="dob-year", type="number", pattern="[0-9]*", min="0" max="2016")
-                
-                
-div.form-group
-    label(for="age-range")
-        span.form-label-bold Alternatively, enter their age or age range
-        span.form-hint For example, 32-34
-        
-    input.form-control.form-control-1-4#age-range(type="text")
+extends wrapper-view
+
+block search-page
+    div.form-group
+        fieldset
+            legend
+                span.form-label-bold.visually-hidden
+                    Enter inmate's date of birth
+                span.form-hint#dob-hint For example, 31 3 1980
+            div.form-date
+                div.form-group.form-group-day
+                    label.form-label(for="dob-day") Day
+                    input.form-control#dob-day(name="dob-day", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint")
+
+                div.form-group.form-group-month
+                    label.form-label(for="dob-month") Month
+                    input.form-control#dob-month(name="dob-month", type="number", pattern="[0-9]*", min="0" max="12")
+
+                div.form-group.form-group-year
+                    label.form-label(for="dob-year") Year
+                    input.form-control#dob-year(name="dob-year", type="number", pattern="[0-9]*", min="0" max="2016")
+
+
+    div.form-group
+        label(for="age-range")
+            span.form-label-bold Alternatively, enter their age or age range
+            span.form-hint For example, 32-34
+
+        input.form-control.form-control-1-4#age-range(type="text")
+
+                    
+                    
+

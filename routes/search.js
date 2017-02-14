@@ -1,80 +1,73 @@
 var express = require('express');
 var router = express.Router();
 
-router.get('/', function (req, res) {
-    if(!req.session.logged_in){
-        res.redirect('/login')
-        return;
-    }
 
-    var view = 'search',
-        sub_view_title,
-        sub_views = { pnc: "Enter the inmate's PNC number", dob: "When was the inmate born?", names: "Enter at least one of the following" };
-    
-    if(req.query.p){
-        view = 'search/wrapper-view';
-        sub_view_title = sub_views[req.query.p];
-        
-        
-        if(!sub_view_title)
-            res.redirect('/search')
-    } else {
-        req.session.search_route = undefined;
-    }
-    
-    res.render(view, {title: 'Search', sub_view: req.query.p, sub_view_title: sub_view_title, nav: true});
+
+router.get('/', function(req, res){    
+    res.render('search', {title: 'Search', nav: true});
 });
 
 
-router.post('/', function (req, res) {    
+router.get('/:v', function (req, res) {
+    const views = {pnc: "Enter the inmate's PNC number", 
+                   dob: "When was the inmate born?", 
+                   names: "Enter at least one of the following",
+                   results: "XX Results"};
+    
+    
+    
+    if(!views[req.params.v]){
+        res.redirect('/search');
+        return;
+    }
 
-    var next_page;
+    res.render('search/'+req.params.v, {title: views[req.params.v], nav: true, view: req.params.v});
+});
 
-    if(req.query.p){
+
+
+router.post('/', function (req, res) { 
+    
+    if(!req.body.opt){
+        res.render('search', {title: 'Search', nav: true, msg: 'Select at least one option'});
+        return;
+    }
+    
+    req.session.opt = req.body.opt;
+
+    if(Array.isArray(req.body.opt))
+        res.redirect('/search/'+req.body.opt[0]);
+    else
+        res.redirect('/search/'+req.body.opt); 
+});
+
+router.post('/:v', function (req, res) {
+    const flow = { pnc: "names",
+                   names: "dob",
+                   dob: "results" };
+    
+    var next_page = "results";
+
+    if(Array.isArray(req.session.opt)){
+        var curr_page = req.body.this_page,
+            found = 0;
         
-        if(req.session.search_route){
-            var currpage = req.session.search_route.indexOf(req.query.p);
-            if(currpage+1 < req.session.search_route.length){
-                next_page = req.session.search_route[++currpage];
-                res.redirect('/search/?p='+next_page);
-            } else {
-                res.redirect('/search/results');
-            }
-        } else {
-            res.redirect('/search/results');
-        }
-        
-    } else {
-        
-        if(req.body.opt && Array.isArray(req.body.opt)){
-            if(!req.session.search_route){
-                req.session.search_route = req.body.opt;
-                next_page = req.session.search_route[0];
-            }
+        var i = 0;
+        do {
+            next_page = flow[curr_page];
             
-            res.redirect('/search/?p='+next_page)
-        } else if(req.body.opt){
-            next_page = req.body.opt;
-            res.redirect('/search/?p='+next_page)
-        } else {
-            res.render('search', {title: 'Search', nav: true, msg: 'Select at least one parameter'});
-        }
-        
-    }
-
-
+            if (req.session.opt.indexOf(next_page) !== -1) found++
+            else curr_page = next_page;
+            
+            if (curr_page == "results") found++;
+        } 
+        while(found < 1);
+    } 
     
+    
+    res.redirect('/search/'+next_page);    
 });
 
-
-router.get('/results', function (req,res){ 
-    if(!req.session.logged_in){
-        res.redirect('/login')
-        return;
-    }
-    
-    res.render('results', {title: 'XX Results', nav: true});
-});
 
 
 module.exports = router;

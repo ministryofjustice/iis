@@ -1,22 +1,25 @@
-div.form-group
-    label(for="name")
-        span.form-label-bold First name
-        span.form-hint You may enter partial name
+extends wrapper-view
 
-    input.form-control#fname(type="text", name="fname")
+block search-page
+    div.form-group
+        label(for="name")
+            span.form-label-bold First name
+            span.form-hint You may enter partial name
 
-
-div.form-group
-    label(for="lname")
-        span.form-label-bold Last name
-        span.form-hint You may enter partial name
-
-    input.form-control#lname(type="text", name="lname")
+        input.form-control#fname(type="text", name="fname")
 
 
-div.form-group
-    label(for="alias")
-        span.form-label-bold Alias
-        span.form-hint Enter one alias per line
+    div.form-group
+        label(for="lname")
+            span.form-label-bold Last name
+            span.form-hint You may enter partial name
 
-    textarea.form-control#alias(name="alias")
+        input.form-control#lname(type="text", name="lname")
+
+
+    div.form-group
+        label(for="alias")
+            span.form-label-bold Alias
+            span.form-hint Enter one alias per line
+
+        textarea.form-control#alias(name="alias")

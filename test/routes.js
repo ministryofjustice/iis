@@ -68,26 +68,73 @@ describe('Test redirections when session set and not set', function(){
         request(app).get('/login').expect(200,done); 
     });
     
-    /*
+
     it('should return status code 200 if an option hasnt been selected', function(){
         return logInAs("someone")
             .then(function(authedReq) {
-                return authedReq.get('/search')
+                return authedReq.post('/search')
                     .expect(200)
-                    .then(function(){
-                        return authedReq.post('/search')
-                            .expect(200)
-                    });
+                    // add error message
             });
     });
-    */
+
     
-    it('should be string if only one option is selected')
-    it('should be an array if more than one option is selected')
-    it('should go through search param pages before landing on the results page')
-    it('should return 302 and redirect to search if invalid query string is passed')
-    it('redirect to the login page when user logs out')
+    it('should set hidden input with the selected parameter', function(){
+        return logInAs("someone")
+            .then(function(authedReq) {
+                return authedReq.post('/search')
+                    .send({opt:"names"})
+                    .expect(302)
+                    .expect("Location", "/search/names")
+            });
+    });
     
+    it('should redirect to search page when invalid param is manaully entered', function(){
+        return logInAs("someone")
+            .then(function(authedReq) {
+                return authedReq.get('/search/whatever')
+                    .expect(302)
+                    .expect("Location", "/search")
+            });
+    });
+    
+    
+    it('should redirect to login page when user logs out', function(){
+        return logInAs("someone")
+            .then(function(authedReq) {
+                return authedReq.get('/logout')
+                    .expect(302)
+                    .expect("Location", "/login")
+            });
+    });
+    
+    it('testing my tests if they test fine', function(){
+        return logInAs("someone")
+            .then(function(authedReq) {
+                return authedReq.get('/search/pnc')
+                    .expect(200)
+            });
+    });
+    
+
+    it('should take the user through the search input pages before getting to results page', function(){
+        /*
+        return logInAs("someone")
+            .then(function(authedReq) {
+                authedReq.post('/search')
+                    .send({opt:["pnc","names","dob"]})
+                    .expect(302)
+                    .expect("Location", "/search/pnc")
+                    .then(function() {
+                        return authedReq.post('/search/pnc')
+                            .expect(302)
+                            .expect("Location", "/search/ddd")
+
+                    });
+            });
+        */
+    });
+
     
     
 });

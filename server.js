@@ -35,23 +35,25 @@ app.use('/public/images/icons', express.static(path.join(__dirname, '/govuk_modu
 // Elements refers to icon folder instead of images folder
 //app.use(favicon(path.join(__dirname, 'govuk_modules', 'govuk_template', 'assets', 'images', 'favicon.ico')))
 
-//app.get("/login");
-
 app.use('/', index);
 app.use('/login/', login);
-app.use('/search/', search);
-app.use('/api/', api);
-
 
 // redirect to login page
 app.use(function(req, res, next) {
 //    req.session.logged_in
     if (!isLoggedIn(req) && req.path != "/login") {
         res.redirect("/login")
+        return;
     } 
     
     next();
 })
+
+app.use('/search/', search);
+app.use('/api/', api);
+
+
+
 
 
 // catch 404 and forward to error handler

@@ -1,23 +1,19 @@
 var express = require('express');
 var router = express.Router();
-
 var users = require("../data/users");
+var content = require("../data/content");
 
 
 router.get('/', function(req, res, next) {
     req.session.logged_in = 0;
-    var msg = '';
-    if(req.query.r && req.query.r == 'fail' )
-        msg = 'Unable to sign in, try again';
-
-    res.render('login', { msg: msg });
+    res.render('login');
 });
 
 
 router.post('/', function (req, res, next) {    
     var login_id = req.body.login_id,
         pwd = req.body.pwd,
-        msg = 'Unable to sign in, try again';
+        msg = content.err_msg.LOGIN_ERROR;
         
     if(!login_id || !pwd) {
         res.status(400);

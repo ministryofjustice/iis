@@ -1,27 +1,37 @@
 extends layout
 
 block content
+
+    if err
+        div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
+            h1(class="heading-medium error-summary-heading", id="error-message")= err.title
+            if err.desc
+                p= err.desc
+            ul.error-summary-list
+                li
+                    a(href="#identifier") Select at least one option to continue
+
     div.grid-row
         div.column-two-thirds
             h1.heading-xlarge What information do you have on the inmate?
             
     div.grid-row
         div.column-full
-            p Select all that apply
+            p.bold-small Select all that apply
       
             form(method="post", name="formSearch")
                 div.form-group
                     fieldset
                         legend.visually-hidden What information do you have on the inmate?
                         
-                        label(class="block-label selection-button-checkbox",for="pnc")
-                            input#pnc(name="opt", type="checkbox", value="pnc") 
-                            | Prison or PNC number
+                        label(class="block-label selection-button-checkbox",for="identifier")
+                            input#identifier(name="opt", type="checkbox", value="identifier") 
+                            | Unique identifier
                             
                             
                         label(class="block-label selection-button-checkbox",for="names")
                             input#names(name="opt", type="checkbox", value="names")
-                            | Names  / alias
+                            | Name(s)
                             
                             
                         label(class="block-label selection-button-checkbox",for="dob")

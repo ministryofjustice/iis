@@ -111,7 +111,7 @@ describe('Test redirections when session set and not set', function(){
     it('testing my tests if they test fine', function(){
         return logInAs("someone")
             .then(function(authedReq) {
-                return authedReq.get('/search/pnc')
+                return authedReq.get('/search/identifier')
                     .expect(200)
             });
     });

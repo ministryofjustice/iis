@@ -13,8 +13,8 @@ var app = express();
 
 app.use(cookieSession({
   name: 'session',
-  keys: ['iiskey_1','iiskey_1'],
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours 
+  keys: [Math.round(Math.random() * 100000).toString()],
+  maxAge: 10 * 60 * 1000 // 10 minute 
 }));
 
 
@@ -40,11 +40,12 @@ app.use('/login/', login);
 
 // redirect to login page
 app.use(function(req, res, next) {
-//    req.session.logged_in
     if (!isLoggedIn(req) && req.path != "/login") {
         res.redirect("/login")
         return;
-    } 
+    }
+    
+    console.log('x')
     
     next();
 })

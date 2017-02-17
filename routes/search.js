@@ -1,6 +1,11 @@
 var express = require('express');
 var router = express.Router();
+var content = require('../data/content.js');
 
+const views = {identifier: "Enter at least one unique identifier", 
+                   dob: "Enter inmate's date of birth or age/range", 
+                   names: "Enter at least one name",
+                   results: "XX Results"};
 
 
 router.get('/', function(req, res){    
@@ -9,13 +14,6 @@ router.get('/', function(req, res){
 
 
 router.get('/:v', function (req, res) {
-    const views = {pnc: "Enter the inmate's PNC number", 
-                   dob: "When was the inmate born?", 
-                   names: "Enter at least one of the following",
-                   results: "XX Results"};
-    
-    
-    
     if(!views[req.params.v]){
         res.redirect('/search');
         return;
@@ -29,7 +27,11 @@ router.get('/:v', function (req, res) {
 router.post('/', function (req, res) { 
     
     if(!req.body.opt){
-        res.render('search', {title: 'Search', nav: true, msg: 'Select at least one option'});
+        
+        var _err = { title: content.err_msg.CANNOT_SUBMIT,
+                     desc: content.err_msg.NO_OPTION_SELECTED  };
+        
+        res.render('search', {title: 'Search', nav: true, err: _err});
         return;
     }
     
@@ -41,16 +43,171 @@ router.post('/', function (req, res) {
         res.redirect('/search/'+req.body.opt); 
 });
 
+
+
 router.post('/:v', function (req, res) {
-    const flow = { pnc: "names",
+    const flow = { identifier: "names",
                    names: "dob",
                    dob: "results" };
     
-    var next_page = "results";
+     var next_page = "results",
+         curr_page = req.body.this_page,
+         form_val = {};
+
+    
+    switch (curr_page){
+            
+        case 'identifier':
+            form_val.prison_number = req.body.prison_number;
+            
+            if( !validate(form_val.prison_number, 'prison_number') ){
+                var _err = { title: content.err_msg.CANNOT_SUBMIT,
+                             desc : content.err_msg.INVALID_ID,
+                             items: [{prison_number: 'Re-enter the prison number'}]};
+                                
+                res.render('search/'+curr_page, 
+                           {title: views[curr_page], 
+                            nav: true, view: curr_page, 
+                            err: _err,
+                            form_val: form_val});
+                return;
+            }
+            break;
+            
+            
+            
+        case 'names':
+                form_val.forename = req.body.forename.trim(),
+                form_val.forename2 = req.body.forename2.trim(),
+                form_val.surname = req.body.surname.trim();
+            
+                var _err = {};
+
+                if(form_val.forename == '' && form_val.forename2 == '' && form_val.surname == ''){
+                    _err = { title: content.err_msg.CANNOT_SUBMIT,
+                             desc : content.err_msg.ATLEAST_ONE_REQUIRED,
+                             items: [{forename: 'Enter forename'},
+                                     {forename2: 'Enter middle name'},
+                                     {surname: 'Enter surname'}]};
+
+                    res.render('search/'+curr_page, 
+                               {title: views[curr_page], 
+                                nav: true, 
+                                view: curr_page, 
+                                err: _err});
+                    return;
+
+                } 
+
+            
+                /* VALIDATE INPUT STRING */
+                
+                var _e = 0;
+            
+                _err.items = [];
+
+                if(!validate(form_val.forename, 'string')){
+                    _err.items[_e] = {forename: 'Correct the forename'};
+                    _e++;
+                }
+
+                if(!validate(form_val.forename2, 'string')){
+                    _err.items[_e] = {forename2: 'Correct the middle name'};
+                    _e++;
+                }
+
+                if(!validate(form_val.surname, 'string')){
+                    _err.items[_e] = {surname: 'Correct the surname'};
+                    _e++;
+                }
+
+                if(_e > 0){
+
+                    _err.title = content.err_msg.CANNOT_SUBMIT;
+                    _err.desc  = content.err_msg.LETTERS_ONLY; 
+                    
+                    res.render('search/'+curr_page, 
+                               {title: views[curr_page], 
+                                nav: true, 
+                                view: curr_page, 
+                                err: _err,
+                                form_val: form_val});
+
+                    return;
+                }
+
+            break;
+            
+            
+            
+            
+        case 'dob':
+            
+            var _e = 0,
+                _err = {};
+            
+            _err.items = [];
+            
+            if(req.body.opt == 'dob'){
+                
+                form_val.opt = 'dob';
+                form_val.dob_day = req.body.dob_day.trim(),
+                form_val.dob_month = req.body.dob_month.trim(), 
+                form_val.dob_year = req.body.dob_year.trim(),
+                date_str = form_val.dob_day + '/' + form_val.dob_month + '/' + form_val.dob_year;
+
+                if(!validate(date_str, 'date')){
+                    _err.items = [{dob_day: 'Enter date of birth'}],
+                    _err.desc = content.err_msg.INVALID_DOB;
+                    _e++;
+                } else {
+                    var date = new Date();
+                    date.setDate(form_val.dob_day);
+                    date.setMonth(form_val.dob_month-1);
+                    date.setFullYear(form_val.dob_year);
+                    
+                    if(date > Date.now()){
+                        _err.items = [{dob_day: 'Date of birth cannot be in the future'}],
+                        _err.desc = content.err_msg.INVALID_DOB;
+                        _e++;
+                    }
+                }
+            } else {
+                var age_range = req.body.age_range.replace(/ /g,'');
+                
+                form_val.opt = 'age';
+                form_val.age_range = age_range;
+                
+                if(!validate(age_range, 'age-or-range') ){
+                    _err.items = [{age_range: 'Re-enter age or range'}],
+                    _err.desc = content.err_msg.INVALID_DOB;
+                    _e++;
+                }
+            }
+            
+            if(_e > 0){
+                
+                _err.title = content.err_msg.CANNOT_SUBMIT;
+                
+                res.render('search/'+curr_page, 
+                           {title: views[curr_page], 
+                            nav: true, 
+                            view: curr_page, 
+                            err: _err,
+                            form_val: form_val});
+                return;
+            }
+            
+            break;
+            
+            
+        default:
+            break;
+    }
+    
 
     if(Array.isArray(req.session.opt)){
-        var curr_page = req.body.this_page,
-            found = 0;
+        var found = 0;
         
         var i = 0;
         do {
@@ -69,5 +226,43 @@ router.post('/:v', function (req, res) {
 });
 
 
+function validate(val, type){
+    switch (type) {
+        case 'prison_number':
+                return /^[A-Z][A-Z]([0-9]{6})$/.test(val.toUpperCase());
+                break;
+            
+        case 'string':
+            
+            if(val == '')
+                return true;
+            
+            return /^[A-Za-z]+$/.test(val);
+            break;
+
+        case 'age-or-range':
+            if (!/^[1-9][0-9]$|^[1-9][0-9]-[1-9][0-9]$/.test(val))
+                return false;
+            
+            if (val.indexOf('-') === -1) return true;
+            else {
+                val = val.split('-');
+                if(val[0]>val[1])
+                    return false;
+                
+                return true;
+            }
+                
+            break;
+            
+            
+        case 'date':
+            return /^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/.test(val)
+            break;
+            
+        default:
+            break;
+    }
+}
 
 module.exports = router;

@@ -1,32 +1,55 @@
 extends wrapper-view
 
 block search-page
+
+      
     div.form-group
-        fieldset
-            legend
-                span.form-label-bold.visually-hidden
-                    Enter inmate's date of birth
-                span.form-hint#dob-hint For example, 31 3 1980
-            div.form-date
-                div.form-group.form-group-day
-                    label.form-label(for="dob-day") Day
-                    input.form-control#dob-day(name="dob-day", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint")
+        if !form_val || (form_val && form_val.opt == 'dob')
+            label.block-label.selection-button-radio.bold-small.selected(data-target="dob_container", for="opt_dob")
 
-                div.form-group.form-group-month
-                    label.form-label(for="dob-month") Month
-                    input.form-control#dob-month(name="dob-month", type="number", pattern="[0-9]*", min="0" max="12")
+                input#opt_dob(type="radio", name="opt", value="dob", checked="checked")
+                | Date of birth
+        else
+            label.block-label.selection-button-radio.bold-small(data-target="dob_container", for="opt_dob")
 
-                div.form-group.form-group-year
-                    label.form-label(for="dob-year") Year
-                    input.form-control#dob-year(name="dob-year", type="number", pattern="[0-9]*", min="0" max="2016")
+                input#opt_dob(type="radio", name="opt", value="dob" )
+                | Date of birth
+            
+        
+        div.panel.panel-border-narrow#dob_container
+            fieldset
+                legend
+                    span.form-hint#dob-hint For example, 31 3 1980
+                div.form-date
+                    div.form-group.form-group-day
+                        label.form-label(for="dob_day") Day
+                        input.form-control#dob_day(name="dob_day", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint", value=(form_val ? form_val.dob_day : ''))
+
+                    div.form-group.form-group-month
+                        label.form-label(for="dob_month") Month
+                        input.form-control#dob_month(name="dob_month", type="number", pattern="[0-9]*", min="0", max="12", value=(form_val ? form_val.dob_month : ''))
+
+                    div.form-group.form-group-year
+                        label.form-label(for="dob_year") Year
+                        input.form-control#dob_year(name="dob_year", type="number", pattern="[0-9]*", min="1900", max="#{new Date().getFullYear()}", value=(form_val ? form_val.dob_year : ''))
 
 
     div.form-group
-        label(for="age-range")
-            span.form-label-bold Alternatively, enter their age or age range
-            span.form-hint For example, 32-34
+        if (form_val && form_val.opt == 'age')
+            label.block-label.selection-button-radio.bold-small.selected(data-target="age_range_container", for="opt_age_range")
+                input#opt_age_range(type="radio", name="opt", value="age", checked="checked")
+                | Age or range
+        else
+            label.block-label.selection-button-radio.bold-small(data-target="age_range_container", for="opt_age_range")
+                input#opt_age_range(type="radio", name="opt", value="age")
+                | Age or range
+        
+        div.panel.panel-border-narrow.js-hidden#age_range_container
+                label(for="age_range")
+                    span.form-label-bold.visually-hidden Age or range
+                    span.form-hint For example, 32-34
 
-        input.form-control.form-control-1-4#age-range(type="text")
+                input.form-control.form-control-1-4#age_range(name="age_range", type="text", min="10" max="99", value=(form_val ? form_val.age_range : ''))
 
                     
                     

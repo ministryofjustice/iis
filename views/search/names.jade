@@ -2,24 +2,23 @@ extends wrapper-view
 
 block search-page
     div.form-group
-        label(for="name")
-            span.form-label-bold First name
-            span.form-hint You may enter partial name
+        label(for="forename")
+            span.form-label-bold Forename
 
-        input.form-control#fname(type="text", name="fname")
+        input.form-control#forename(type="text", name="forename", maxlength="13", value=(form_val ? form_val.forename : ''))
+        
+        
+    div.form-group
+        label(for="forename2")
+            span.form-label-bold Middle name
+            span.form-hint Previously known as forename 2
+
+        input.form-control#forename2(type="text", name="forename2", maxlength="13", value=(form_val ? form_val.forename2 : ''))
 
 
     div.form-group
-        label(for="lname")
-            span.form-label-bold Last name
-            span.form-hint You may enter partial name
+        label(for="surname")
+            span.form-label-bold Surname
 
-        input.form-control#lname(type="text", name="lname")
+        input.form-control#surname(type="text", name="surname", maxlength="26", value=(form_val ? form_val.surname : ''))
 
-
-    div.form-group
-        label(for="alias")
-            span.form-label-bold Alias
-            span.form-hint Enter one alias per line
-
-        textarea.form-control#alias(name="alias")

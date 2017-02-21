@@ -1,32 +1,9 @@
 var request = require('supertest');
 var expect = require('chai').expect;
-var sinon = require("sinon");
-var bcrypt = require("bcryptjs");
-var db = require('../db');
-var users = require("../data/users");
 
+var common = require('./common');
 var app = require("../server.js");
 
-var s;
-beforeEach(() => {
-    s = sinon.sandbox.create();
-});
-afterEach(() => {
-    s.restore(); 
-});
-
-function logInAs(username) {
-    s.stub(users, "checkUsernameAndPassword").yields(null, true);
-    
-    var browser = request.agent(app);
-    return browser.post("/login")
-        .send({login_id: username, pwd: "thisisapassword"})
-        .expect(302)
-        .then(function() {
-            return browser;
-        });
-}
-    
 describe('Test redirections when session set and not set', function(){     
     it('should return status code 302, when session NOT set', function(){
         request(app).get('/search')
@@ -34,8 +11,9 @@ describe('Test redirections when session set and not set', function(){
             .expect("Location", "/login");
     });
 
+
     it('should create session when POSTing to /login with valid credentials', function() {
-        var check = s.stub(users, "checkUsernameAndPassword").yields(null, true);
+        var check = common.userStub();
 
         return request(app).post("/login")
             .send({login_id: "glen", pwd: "password"})
@@ -46,8 +24,9 @@ describe('Test redirections when session set and not set', function(){
             });
     });
 
+
     it('should return status code 200, when session IS set', function(){
-        return logInAs("someone")
+        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.get('/search')
                     .expect(200);
@@ -56,7 +35,7 @@ describe('Test redirections when session set and not set', function(){
 
 
     it('should redirect to the search page when root is visited while the sessions are set', function(){
-       return logInAs("someone")
+       return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.get('/')
                     .expect(302)
@@ -70,17 +49,30 @@ describe('Test redirections when session set and not set', function(){
     
 
     it('should return status code 200 if an option hasnt been selected', function(){
-        return logInAs("someone")
+        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search')
                     .expect(200)
-                    // add error message
+                    .expect(function(res){
+                        expect(res.text).to.contain('error-summary')
+                    });
             });
     });
+    
+    
+   it('should retune 302 if at least one option has been selected', function(){
+      return common.logInAs("someone")
+        .then(function(authedReq) {
+            return authedReq.post('/search')
+                .send({opt: 'names'})
+                .expect(302)
+                .expect("Location", '/search/names')
+        }); 
+   });
 
     
     it('should set hidden input with the selected parameter', function(){
-        return logInAs("someone")
+        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search')
                     .send({opt:"names"})
@@ -90,7 +82,7 @@ describe('Test redirections when session set and not set', function(){
     });
     
     it('should redirect to search page when invalid param is manaully entered', function(){
-        return logInAs("someone")
+        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.get('/search/whatever')
                     .expect(302)
@@ -100,7 +92,7 @@ describe('Test redirections when session set and not set', function(){
     
     
     it('should redirect to login page when user logs out', function(){
-        return logInAs("someone")
+        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.get('/logout')
                     .expect(302)
@@ -109,7 +101,7 @@ describe('Test redirections when session set and not set', function(){
     });
     
     it('testing my tests if they test fine', function(){
-        return logInAs("someone")
+        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.get('/search/identifier')
                     .expect(200)

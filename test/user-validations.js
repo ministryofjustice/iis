@@ -4,8 +4,6 @@ var bcrypt = require("bcryptjs");
 var db = require('../db');
 var users = require("../data/users");
 
-var app = require("../server.js");
-
 var passwordHashed = bcrypt.hashSync("thisisapassword");
 
 var EventEmitter = require("events").EventEmitter;

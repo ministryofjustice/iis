@@ -72,6 +72,7 @@ router.post('/:v', function (req, res) {
                             form_val: form_val});
                 return;
             }
+                    
             break;
             
             
@@ -224,6 +225,11 @@ router.post('/:v', function (req, res) {
     
     res.redirect('/search/'+next_page);    
 });
+
+
+function search(){
+    
+}
 
 
 function validate(val, type){

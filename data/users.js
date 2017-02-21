@@ -9,6 +9,7 @@ module.exports = {
             var Request = require('tedious').Request;
             var TYPES = require('tedious').TYPES; 
             var bcrypt = require('bcryptjs');
+            
             request = new Request("SELECT pwd from NON_IIS.users WHERE login_id=@login_id;", function(err, rowCount) {
                 if (err) return callback(err);
                 if(rowCount === 0) return callback(null, false)

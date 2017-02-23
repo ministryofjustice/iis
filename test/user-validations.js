@@ -25,7 +25,7 @@ describe('validating username and password', function(){
     it("should return ok if username and password match", function(done) {
         prepareFakeDB(function(req) {
             req.callback(null, 1);
-            req.emit("row", [{value: passwordHashed}]);
+            req.emit("row", {pwd:{value: passwordHashed}});
         });
 
         users.checkUsernameAndPassword("abc", "thisisapassword", function(err, result) {
@@ -48,7 +48,7 @@ describe('validating username and password', function(){
     it("should return false if password is wrong", function(done) {
         prepareFakeDB(function(req) {
             req.callback(null, 1);
-            req.emit("row", [{value: "nottherighthash"}]);
+            req.emit("row", {pwd:{value: "nottherighthash"}});
         });
 
         users.checkUsernameAndPassword("abc", "thisisapassword", function(err, result) {

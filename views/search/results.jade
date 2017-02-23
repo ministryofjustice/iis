@@ -3,13 +3,23 @@ extends ../layout
 block content
     div.grid-row
         div.column-two-thirds
-            h1.heading-xlarge Your search returned XX results
+            h1.heading-xlarge Your search returned #{(data == 0) ? 0 : data.length} results
             
-            div.form-group
-                div.inmate-details
-                    p.bold-medium
-                        a(href="#") John McDonagh
-                        &middot; 10/1/1997
+            mixin inmate(name)
+                div.form-group
+                    div.inmate-details
+                        p.bold-medium
+                            a(href="#") #{name} 
+                            block
+            
+            if data != 0
+                each item in data
+                   +inmate(item.INMATE_FORENAME_1.value + ' ' 
+                            + (item.INMATE_FORENAME_2.value ? item.INMATE_FORENAME_2.value + ' ' : '') 
+                            + item.INMATE_SURNAME.value)
+                        span &middot; #{item.DOB.value}
+                        span.form-hint *Alias*
                         
-                        span.form-hint Johny Ive, Jay Em, John Cena
                         
+            div.bold-small 
+                a(href="/search") New search

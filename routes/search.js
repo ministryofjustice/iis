@@ -1,31 +1,46 @@
 var express = require('express');
 var router = express.Router();
 var content = require('../data/content.js');
+var search = require('../data/search.js');
 
 const views = {identifier: "Enter at least one unique identifier", 
                    dob: "Enter inmate's date of birth or age/range", 
-                   names: "Enter at least one name",
-                   results: "XX Results"};
+                   names: "Enter at least one name"};
 
 
 router.get('/', function(req, res){    
+    req.session.user_input = {};
     res.render('search', {title: 'Search', nav: true});
+});
+
+router.get('/results', function (req, res) {
+    search.inmate(req.session.user_input, function(err, data){
+        
+        
+        //TO DO:  show message
+        if(err){
+            res.redirect('/search');
+            return;
+        }
+        
+        res.render('search/results', {title: (data != 0 ? data.length : '0') + ' Results', nav: true, view: req.params.v, data: data });
+    });
 });
 
 
 router.get('/:v', function (req, res) {
+        
     if(!views[req.params.v]){
         res.redirect('/search');
         return;
     }
 
-    res.render('search/'+req.params.v, {title: views[req.params.v], nav: true, view: req.params.v});
+    res.render('search/'+req.params.v, {title: views[req.params.v], nav: true, view: req.params.v });
 });
 
 
 
 router.post('/', function (req, res) { 
-    
     if(!req.body.opt){
         
         var _err = { title: content.err_msg.CANNOT_SUBMIT,
@@ -57,8 +72,11 @@ router.post('/:v', function (req, res) {
     
     switch (curr_page){
             
+
+            
         case 'identifier':
             form_val.prison_number = req.body.prison_number;
+            delete req.session.user_input['prison_number'];
             
             if( !validate(form_val.prison_number, 'prison_number') ){
                 var _err = { title: content.err_msg.CANNOT_SUBMIT,
@@ -72,12 +90,19 @@ router.post('/:v', function (req, res) {
                             form_val: form_val});
                 return;
             }
+            
+            req.session.user_input.prison_number = form_val.prison_number;
                     
             break;
             
             
             
         case 'names':
+            
+                delete req.session.user_input['forename'];
+                delete req.session.user_input['forename2'];
+                delete req.session.user_input['surname'];
+                
                 form_val.forename = req.body.forename.trim(),
                 form_val.forename2 = req.body.forename2.trim(),
                 form_val.surname = req.body.surname.trim();
@@ -137,6 +162,15 @@ router.post('/:v', function (req, res) {
                     return;
                 }
 
+                if(form_val.forename != '')
+                    req.session.user_input.forename = form_val.forename;
+            
+                if(form_val.forename2 != '')
+                    req.session.user_input.forename2 = form_val.forename2;
+            
+                if(form_val.surname != '')
+                    req.session.user_input.surname = form_val.surname;
+
             break;
             
             
@@ -148,6 +182,8 @@ router.post('/:v', function (req, res) {
                 _err = {};
             
             _err.items = [];
+            
+            delete req.session.user_input['age_or_dob'];
             
             if(req.body.opt == 'dob'){
                 
@@ -183,6 +219,21 @@ router.post('/:v', function (req, res) {
                     _err.items = [{age_range: 'Re-enter age or range'}],
                     _err.desc = content.err_msg.INVALID_DOB;
                     _e++;
+                } else {
+                    if (age_range.indexOf('-') === -1){
+                        
+                        var year_of_birth = parseInt(new Date().getFullYear()) - age_range;
+                        age_range = [year_of_birth+'0101',year_of_birth+'1231'];
+                        
+                    } else {
+                        
+                        var age_range = age_range.split('-'),
+                            year_of_birth_from  = parseInt(new Date().getFullYear()) - age_range[1],
+                            year_of_birth_to    = parseInt(new Date().getFullYear()) - age_range[0];
+                        
+                        age_range = [year_of_birth_from+'0101',year_of_birth_to+'1231'];
+                        
+                    }
                 }
             }
             
@@ -199,13 +250,15 @@ router.post('/:v', function (req, res) {
                 return;
             }
             
+            if(age_range) req.session.user_input.age_or_dob = age_range
+            else req.session.user_input.age_or_dob = form_val.dob_year+pad(form_val.dob_month)+pad(form_val.dob_day);
+            
             break;
             
             
         default:
             break;
     }
-    
 
     if(Array.isArray(req.session.opt)){
         var found = 0;
@@ -222,7 +275,6 @@ router.post('/:v', function (req, res) {
         while(found < 1);
     } 
     
-    
     res.redirect('/search/'+next_page);    
 });
 
@@ -231,6 +283,10 @@ function search(){
     
 }
 
+function pad(n) {
+    
+    return (n < 10) ? ("0" + parseInt(n)) : n;
+}
 
 function validate(val, type){
     switch (type) {

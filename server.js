@@ -13,8 +13,8 @@ var app = express();
 
 app.use(cookieSession({
   name: 'session',
-  keys: [Math.round(Math.random() * 100000).toString()],
-  maxAge: 10 * 60 * 1000 // 10 minute 
+  keys: [Math.round(Math.random() * 100000).toString()], //
+  maxAge: 60 * 60 * 1000 // 60 minute 
 }));
 
 
@@ -45,7 +45,8 @@ app.use(function(req, res, next) {
         return;
     }
     
-    console.log('x')
+    if(!req.session.user_input)
+        req.session.user_input = {};
     
     next();
 })

@@ -4,7 +4,7 @@ block search-page
 
       
     div.form-group
-        if !form_val || (form_val && form_val.opt == 'dob')
+        if !body || (body && body.opt == 'dob')
             label.block-label.selection-button-radio.bold-small.selected(data-target="dob_container", for="opt_dob")
 
                 input#opt_dob(type="radio", name="opt", value="dob", checked="checked")
@@ -23,33 +23,33 @@ block search-page
                 div.form-date
                     div.form-group.form-group-day
                         label.form-label(for="dob_day") Day
-                        input.form-control#dob_day(name="dob_day", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint", value=(form_val ? form_val.dob_day : ''))
+                        input.form-control#dob_day(name="dob_day", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint", value=(body ? body.dob_day : ''))
 
                     div.form-group.form-group-month
                         label.form-label(for="dob_month") Month
-                        input.form-control#dob_month(name="dob_month", type="number", pattern="[0-9]*", min="0", max="12", value=(form_val ? form_val.dob_month : ''))
+                        input.form-control#dob_month(name="dob_month", type="number", pattern="[0-9]*", min="0", max="12", value=(body ? body.dob_month : ''))
 
                     div.form-group.form-group-year
                         label.form-label(for="dob_year") Year
-                        input.form-control#dob_year(name="dob_year", type="number", pattern="[0-9]*", min="1900", max="#{new Date().getFullYear()}", value=(form_val ? form_val.dob_year : ''))
+                        input.form-control#dob_year(name="dob_year", type="number", pattern="[0-9]*", min="1900", max="#{new Date().getFullYear()}", value=(body ? body.dob_year : ''))
 
 
     div.form-group
-        if (form_val && form_val.opt == 'age')
-            label.block-label.selection-button-radio.bold-small.selected(data-target="age_range_container", for="opt_age_range")
-                input#opt_age_range(type="radio", name="opt", value="age", checked="checked")
+        if (body && body.opt == 'age')
+            label.block-label.selection-button-radio.bold-small.selected(data-target="age_container", for="opt_age")
+                input#opt_age(type="radio", name="opt", value="age", checked="checked")
                 | Age or range
         else
-            label.block-label.selection-button-radio.bold-small(data-target="age_range_container", for="opt_age_range")
-                input#opt_age_range(type="radio", name="opt", value="age")
+            label.block-label.selection-button-radio.bold-small(data-target="age_container", for="opt_age")
+                input#opt_age(type="radio", name="opt", value="age")
                 | Age or range
         
-        div.panel.panel-border-narrow.js-hidden#age_range_container
-                label(for="age_range")
+        div.panel.panel-border-narrow.js-hidden#age_container
+                label(for="age")
                     span.form-label-bold.visually-hidden Age or range
                     span.form-hint For example, 32-34
 
-                input.form-control.form-control-1-4#age_range(name="age_range", type="text", min="10" max="99", value=(form_val ? form_val.age_range : ''))
+                input.form-control.form-control-1-4#age(name="age", type="text", min="10" max="99", value=(body ? body.age : ''))
 
                     
                     

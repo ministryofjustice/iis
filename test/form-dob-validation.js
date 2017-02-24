@@ -5,7 +5,7 @@ var common = require('./common');
 var app = require("../server.js");
 
 
-describe('Date/Age/Age-rage validation tests', function(){
+describe('Date/Age/Age-range validation tests', function(){
    it('should display error if an invalid date is passed', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
@@ -44,7 +44,7 @@ describe('Date/Age/Age-rage validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .send({this_page: 'dob', opt: 'age', age_range: '-13'})
+                    .send({this_page: 'dob', opt: 'age', age: '-13'})
                     .expect(200)
             });
     });
@@ -54,7 +54,7 @@ describe('Date/Age/Age-rage validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .send({this_page: 'dob', opt: 'age', age_range: '33-30'})
+                    .send({this_page: 'dob', opt: 'age', age: '33-30'})
                     .expect(200)
             });
     });
@@ -63,7 +63,7 @@ describe('Date/Age/Age-rage validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .send({this_page: 'dob', opt: 'age', age_range: '30-33'})
+                    .send({this_page: 'dob', opt: 'age', age: '30-33'})
                     .expect(302)
             });
     });

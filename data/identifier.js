@@ -1,16 +1,15 @@
 var content = require('./content.js');
 
 module.exports = {
-    validate: function(val, callback){
+    validate: function(input, callback){
         
         var err = {title: content.err_msg.CANNOT_SUBMIT,
                     items: [{prison_number: 'Re-enter the prison number'}], 
                     desc: content.err_msg.INVALID_ID};
         
-        console.log(val)
-        
-        if(!isPrisonNumber(val)) return callback(err);
-        
+ 
+        if(!isPrisonNumber(input.prison_number)) return callback(err);
+
         return callback(null);
     }
 }

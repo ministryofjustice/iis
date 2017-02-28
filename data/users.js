@@ -9,7 +9,7 @@ module.exports = {
                 
         db.getTuple('SELECT pwd from NON_IIS.users WHERE login_id=@login_id;', params, function(err, cols){
             
-            //db.disconnect();
+            db.disconnect();
             
             if(err) return callback(err);
             if(cols === 0) return callback(null, false);

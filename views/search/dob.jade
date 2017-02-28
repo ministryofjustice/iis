@@ -2,20 +2,19 @@ extends wrapper-view
 
 block search-page
 
+
+    mixin radioInput(caption, _class, _target, _for, _val, _checked)
+        label.block-label.selection-button-radio.bold-small(class=_class, data-target=_target, for=_for )
+            input(type="radio", name="dobOrAge", id=_for, value=_val checked=_checked)
+            | #{caption}
       
     div.form-group
-        if !body || (body && body.opt == 'dob')
-            label.block-label.selection-button-radio.bold-small.selected(data-target="dob_container", for="opt_dob")
-
-                input#opt_dob(type="radio", name="opt", value="dob", checked="checked")
-                | Date of birth
+    
+        if !body.dobOrAge || body.dobOrAge == 'dob'
+            +radioInput('Date of birth','selected', 'dob_container','opt_dob', 'dob', true)
         else
-            label.block-label.selection-button-radio.bold-small(data-target="dob_container", for="opt_dob")
+            +radioInput('Date of birth', null, 'dob_container','opt_dob', 'dob', false)
 
-                input#opt_dob(type="radio", name="opt", value="dob" )
-                | Date of birth
-            
-        
         div.panel.panel-border-narrow#dob_container
             fieldset
                 legend
@@ -23,34 +22,30 @@ block search-page
                 div.form-date
                     div.form-group.form-group-day
                         label.form-label(for="dob_day") Day
-                        input.form-control#dob_day(name="dob_day", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint", value=(body ? body.dob_day : ''))
+                        input.form-control#dob_day(name="dob_day", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint", value=(body.dob_day ? body.dob_day : ''))
 
                     div.form-group.form-group-month
                         label.form-label(for="dob_month") Month
-                        input.form-control#dob_month(name="dob_month", type="number", pattern="[0-9]*", min="0", max="12", value=(body ? body.dob_month : ''))
+                        input.form-control#dob_month(name="dob_month", type="number", pattern="[0-9]*", min="0", max="12", value=(body.dob_month ? body.dob_month : ''))
 
                     div.form-group.form-group-year
                         label.form-label(for="dob_year") Year
-                        input.form-control#dob_year(name="dob_year", type="number", pattern="[0-9]*", min="1900", max="#{new Date().getFullYear()}", value=(body ? body.dob_year : ''))
+                        input.form-control#dob_year(name="dob_year", type="number", pattern="[0-9]*", min="1900", max="#{new Date().getFullYear()}", value=(body.dob_year ? body.dob_year : ''))
 
 
     div.form-group
-        if (body && body.opt == 'age')
-            label.block-label.selection-button-radio.bold-small.selected(data-target="age_container", for="opt_age")
-                input#opt_age(type="radio", name="opt", value="age", checked="checked")
-                | Age or range
-        else
-            label.block-label.selection-button-radio.bold-small(data-target="age_container", for="opt_age")
-                input#opt_age(type="radio", name="opt", value="age")
-                | Age or range
-        
-        div.panel.panel-border-narrow.js-hidden#age_container
-                label(for="age")
-                    span.form-label-bold.visually-hidden Age or range
-                    span.form-hint For example, 32-34
+    
+         if body.dobOrAge == 'age'
+            +radioInput('Age','selected', 'age_container','opt_age', 'age', true)
+         else
+            +radioInput('Age', null, 'age_container','opt_age', 'age', false)
 
-                input.form-control.form-control-1-4#age(name="age", type="text", min="10" max="99", value=(body ? body.age : ''))
+         div.panel.panel-border-narrow.js-hidden#age_container
+            label(for="age")
+                span.form-label-bold.visually-hidden Age or range
+                span.form-hint For example, 32-34
+
+            input.form-control.form-control-1-4#age(name="age", type="text", min="10" max="99", value=(body.age ? body.age : ''))
 
                     
                     
-

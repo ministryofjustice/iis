@@ -10,7 +10,7 @@ describe('Prison number validation tests', function(){
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/identifier')
-                    .send({this_page: 'identifier', prison_number: ''})
+                    .send({prison_number: ''})
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
@@ -22,7 +22,7 @@ describe('Prison number validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/identifier')
-                    .send({this_page: 'identifier', prison_number: 'AA00AA00'})
+                    .send({prison_number: 'AA00AA00'})
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
@@ -34,7 +34,7 @@ describe('Prison number validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/identifier')
-                    .send({this_page: 'identifier', prison_number: '11AAAAA'})
+                    .send({prison_number: '11AAAAA'})
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
@@ -46,7 +46,7 @@ describe('Prison number validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/identifier')
-                    .send({this_page: 'identifier', prison_number: 'AA00000'})
+                    .send({prison_number: 'AA00000'})
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
@@ -57,9 +57,14 @@ describe('Prison number validation tests', function(){
    it('should return 302 if the prison number format is valid', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
-                return authedReq.post('/search/identifier')
-                    .send({this_page: 'identifier', prison_number: 'AA000000'})
-                    .expect(302)
+                authedReq.post('/search')
+                    .send({opt: 'results'})
+                    .expect(302, function(){
+                        return authedReq.post('/search/identifier')
+                            .send({prison_number: 'AA000000'})
+                            .expect(302)
+                            .expect("Location", "/results")
+                    });
             });
    });
 

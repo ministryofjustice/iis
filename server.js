@@ -45,8 +45,10 @@ app.use(function(req, res, next) {
         return;
     }
     
-    if(!req.session.user_input)
+    if(!req.session.user_input) 
         req.session.user_input = {};
+    
+    res.locals.nav = true;
     
     next();
 })

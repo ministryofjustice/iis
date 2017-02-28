@@ -11,7 +11,7 @@ describe('Name(s) validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/names')
-                    .send({this_page: 'names', forename: '', forename2: '', surname: ''})
+                    .send({forename: '', forename2: '', surname: ''})
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
@@ -25,7 +25,7 @@ describe('Name(s) validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/names')
-                    .send({this_page: 'names', forename: 'Zed', forename2: 'Forename2', surname: ''})
+                    .send({forename: 'Zed', forename2: 'Forename2', surname: ''})
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
@@ -36,9 +36,14 @@ describe('Name(s) validation tests', function(){
    it('should return 302 if the name(s) are valid', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
-                return authedReq.post('/search/names')
-                    .send({this_page: 'names', forename: 'Zed', forename2: '', surname: 'Ali'})
-                    .expect(302)
+                authedReq.post('/search')
+                    .send({opt: 'results'})
+                    .expect(302, function(){
+                        return authedReq.post('/search/names')
+                            .send({forename: 'Zed', forename2: '', surname: 'Ali'})
+                            .expect(302)
+                            .expect("Location", "/results")
+                });
             });
    });
     

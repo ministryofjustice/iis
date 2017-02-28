@@ -10,7 +10,7 @@ describe('Date/Age/Age-range validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .send({this_page: 'dob', opt: 'dob', dob_day: '29', dob_month: '02', dob_year: '2017'})
+                    .send({ opt: 'dob', dob_day: '29', dob_month: '02', dob_year: '2017'})
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
@@ -22,7 +22,7 @@ describe('Date/Age/Age-range validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .send({this_page: 'dob', opt: 'dob', dob_day: '20', dob_month: '12', dob_year: '2020'})
+                    .send({opt: 'dob', dob_day: '20', dob_month: '12', dob_year: '2020'})
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
@@ -34,7 +34,7 @@ describe('Date/Age/Age-range validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .send({this_page: 'dob', opt: 'dob', dob_day: '10', dob_month: '6', dob_year: '1960'})
+                    .send({opt: 'dob', dob_day: '10', dob_month: '6', dob_year: '1960'})
                     .expect(302)
             });
     });
@@ -44,7 +44,7 @@ describe('Date/Age/Age-range validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .send({this_page: 'dob', opt: 'age', age: '-13'})
+                    .send({age: '-13'})
                     .expect(200)
             });
     });
@@ -54,7 +54,7 @@ describe('Date/Age/Age-range validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .send({this_page: 'dob', opt: 'age', age: '33-30'})
+                    .send({opt: 'age', age: '33-30'})
                     .expect(200)
             });
     });
@@ -63,7 +63,7 @@ describe('Date/Age/Age-range validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .send({this_page: 'dob', opt: 'age', age: '30-33'})
+                    .send({opt: 'age', age: '30-33'})
                     .expect(302)
             });
     });

@@ -32,14 +32,16 @@ module.exports = {
     
     getTuple: function(sql, params, callback){
     
+        var connected = false;
         connection = this.connect();
         connection.on('connect', function(err) {
-            if(err) return callback(err);
+            if(err) return finish(err);
+            connected = true;
             
             var Request = require('tedious').Request;
             var request = new Request(sql, function(err, rowCount) {
-                if (err) return callback(err);
-                if(rowCount === 0) return callback(null, rowCount);
+                if (err) return finish(err);
+                if(rowCount === 0) return finish(null, rowCount);
             });
             
             request.addParameter(params.column, 
@@ -47,25 +49,36 @@ module.exports = {
                                  params.value);  
 
             request.on('row', function(columns) {
-                return callback(null, columns);
+                return finish(null, columns);
             });
             
             connection.execSql(request);
         });
+        
+        var that = this;
+        function finish(err, result) {
+            if (connected) {
+                that.disconnect();
+            }
+            return callback(err, result);
+        }
     },
     
     getCollection: function(sql, params, callback){
+        
+        var connected = false;
         connection = this.connect();
         connection.on('connect', function(err) {
-            if(err) return callback(err);
+            if(err) return finish(err);
+            connected = true;
             
             var Request = require('tedious').Request;
             var request = new Request(sql, function(err, rowCount, rows) {
                             
-                if (err) return callback(err);
-                if(rowCount === 0) return callback(null, rowCount);
+                if (err) return finish(err);
+                if(rowCount === 0) return finish(null, rowCount);
                 
-                return callback(null, rows)
+                return finish(null, rows)
             });
             
             
@@ -81,6 +94,14 @@ module.exports = {
 
             connection.execSql(request);
         });
+        
+        var that = this;
+        function finish(err, result) {
+            if (connected) {
+                that.disconnect();
+            }
+            return callback(err, result);
+        }
     },
     
     disconnect: function(){

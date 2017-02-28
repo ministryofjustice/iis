@@ -3,17 +3,14 @@ extends wrapper-view
 block search-page
 
 
-    mixin radioInput(caption, _class, _target, _for, _val, _checked)
-        label.block-label.selection-button-radio.bold-small(class=_class, data-target=_target, for=_for )
+    mixin radioInput(caption, _target, _for, _val, _checked)
+        label.block-label.selection-button-radio.bold-small(class=_checked ? "selected" : "", data-target=_target, for=_for )
             input(type="radio", name="dobOrAge", id=_for, value=_val checked=_checked)
             | #{caption}
       
     div.form-group
     
-        if !body.dobOrAge || body.dobOrAge == 'dob'
-            +radioInput('Date of birth','selected', 'dob_container','opt_dob', 'dob', true)
-        else
-            +radioInput('Date of birth', null, 'dob_container','opt_dob', 'dob', false)
+            +radioInput('Date of birth', 'dob_container','opt_dob', 'dob', !body.dobOrAge || body.dobOrAge == 'dob')
 
         div.panel.panel-border-narrow#dob_container
             fieldset
@@ -35,10 +32,8 @@ block search-page
 
     div.form-group
     
-         if body.dobOrAge == 'age'
-            +radioInput('Age','selected', 'age_container','opt_age', 'age', true)
-         else
-            +radioInput('Age', null, 'age_container','opt_age', 'age', false)
+         +radioInput('Age', 'age_container','opt_age', 'age', body.dobOrAge == 'age')
+
 
          div.panel.panel-border-narrow.js-hidden#age_container
             label(for="age")

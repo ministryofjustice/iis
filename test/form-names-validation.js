@@ -38,7 +38,8 @@ describe('Name(s) validation tests', function(){
             .then(function(authedReq) {
                 authedReq.post('/search')
                     .send({opt: 'results'})
-                    .expect(302, function(){
+                    .expect(302)
+                    .then(() => {
                         return authedReq.post('/search/names')
                             .send({forename: 'Zed', forename2: '', surname: 'Ali'})
                             .expect(302)

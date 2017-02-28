@@ -8,9 +8,7 @@ module.exports = {
         var params = {column: 'login_id', type: TYPES.VarChar, value: login_id };
                 
         db.getTuple('SELECT pwd from NON_IIS.users WHERE login_id=@login_id;', params, function(err, cols){
-            
-            db.disconnect();
-            
+
             if(err) return callback(err);
             if(cols === 0) return callback(null, false);
 

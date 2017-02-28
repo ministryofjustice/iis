@@ -1,9 +1,64 @@
 var db = require("../db");
 var common = require("./common");
+var TYPES = require('tedious').TYPES
+
+
+/*
+const dbObjects = {
+    prisonNumber:{
+        columnName: "PK_PRISON_NUMBER"
+    },
+    
+    dobOrAge: {
+        columnName: "INMATE_BIRTH_DATE",
+        getDatRange: function(v){
+            
+        }
+    },
+    
+    forename: {
+        columnName: "INMATE_FORENAME_1"
+    },
+    
+    forename2: {
+        columnName: "INMATE_FORENAME_2"
+    },
+    
+    surname: {
+        columnName: "INMATE_SURNAME"
+    },
+    
+}
+*/
+
+
+
+function getType(v){
+    //default type
+    return TYPES.VarChar;
+}
+
+
+function getValue(userInput, key){
+    return userInput[key];
+}
+
 
 module.exports = {
     inmate: function(user_input, callback){
+  
         
+/*
+var sqlWhere = "",
+    params = Array();
+
+Object.keys(user_input).forEach(function (key) {
+    var obj = dbObjects[key];
+    
+    sqlWhere += obj.columnName + " = @" + key + " AND ";
+    params.push({column: 'prison_number', type: dbObjects.getType('varchar'), value: getValue(user_input, key)});
+});
+*/        
         
         // build sql
         var sql_where = "",
@@ -14,9 +69,7 @@ module.exports = {
 
         Object.keys(user_input).forEach(function (key) {
             var val = user_input[key];
-            
-            console.log(key, user_input[key])
-                        
+                                
             if(val.length > 0 ){
                 switch(key){
                     case 'prison_number':
@@ -77,11 +130,7 @@ module.exports = {
         
         var sql = "SELECT INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, FORMAT(INMATE_BIRTH_DATE,'dd/MM/yyyy') AS DOB FROM IIS.LOSS_OF_LIBERTY WHERE " +  sql_where;
                              
-        /*LEFT JOIN IIS.KNOWN_AS ON LOSS_OF_LIBERTY.FK_PERSON_IDENTIFIER = KNOWN_AS.FK_PERSON_IDENTIFIER*/
-        console.log(sql)
         db.getCollection(sql, params, function(err, rows){
-            
-            db.disconnect();
 
             if(err) return callback(err);
             
@@ -92,3 +141,4 @@ module.exports = {
 }
 
 
+/*LEFT JOIN IIS.KNOWN_AS ON LOSS_OF_LIBERTY.FK_PERSON_IDENTIFIER = KNOWN_AS.FK_PERSON_IDENTIFIER*/

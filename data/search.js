@@ -3,35 +3,62 @@ var common = require("./common");
 var TYPES = require('tedious').TYPES
 
 
-/*
-const dbObjects = {
-    prisonNumber:{
-        columnName: "PK_PRISON_NUMBER"
-    },
-    
-    dobOrAge: {
-        columnName: "INMATE_BIRTH_DATE",
-        getDatRange: function(v){
-            
-        }
+
+const filters = {
+    prison_number: {
+        dbColumn: "PK_PRISON_NUMBER",
+        getSql: getSqlWithParams
     },
     
     forename: {
-        columnName: "INMATE_FORENAME_1"
+        dbColumn: "INMATE_FORENAME_1",
+        getSql: getSqlWithParams
     },
     
     forename2: {
-        columnName: "INMATE_FORENAME_2"
+        dbColumn: "INMATE_FORENAME_2",
+        getSql: getSqlWithParams
     },
-    
+
     surname: {
-        columnName: "INMATE_SURNAME"
+        dbColumn: "INMATE_SURNAME",
+        getSql: getSqlWithParams
     },
     
+    dob_day: {
+        dbColumn: "INMATE_BIRTH_DATE",
+        getSql: function(obj){
+            obj.val = obj.userInput['dob_year'] + 
+                common.pad(obj.userInput['dob_month']) + 
+                common.pad(obj.userInput['dob_day']);
+            
+            return getSqlWithParams.call(this, obj);
+        }
+    },
+
+    age: {
+        dbColumn: "INMATE_BIRTH_DATE",
+        getSql: function(obj){            
+            
+            var dateRange = getDateRange(obj.userInput['age']);
+            
+            var sql = "(INMATE_BIRTH_DATE >= @from_date AND INMATE_BIRTH_DATE <= @to_date)";
+            return {sql: sql, 
+                    params: [{column: 'from_date', type: getType('string'), value: dateRange[0]},
+                             {column: 'to_date',   type: getType('string'), value: dateRange[1]}]
+                   };
+        }
+        
+    }
 }
-*/
 
 
+function getSqlWithParams(obj){   
+    var sql = this.dbColumn  + " = @" + this.dbColumn;
+    
+    return {sql: sql, 
+            params: [{column: this.dbColumn, type: getType('string'), value: obj.val}]};
+}
 
 function getType(v){
     //default type
@@ -39,104 +66,41 @@ function getType(v){
 }
 
 
-function getValue(userInput, key){
-    return userInput[key];
+function getDateRange(v){
+    var thisYear = parseInt(new Date().getFullYear());
+    
+    if (v.indexOf('-') === -1) 
+        return [(thisYear - v) + '0101',(thisYear - v) + '1231'];
+    
+    v = v.split('-');
+    return [(thisYear - v[1]) + '0101',(thisYear - v[0]) + '1231'];
 }
-
+                                        
 
 module.exports = {
-    inmate: function(user_input, callback){
-  
-        
-/*
-var sqlWhere = "",
-    params = Array();
+    inmate: function(userInput, callback){
+        var sqlWhere = "",
+            params = Array();
 
-Object.keys(user_input).forEach(function (key) {
-    var obj = dbObjects[key];
-    
-    sqlWhere += obj.columnName + " = @" + key + " AND ";
-    params.push({column: 'prison_number', type: dbObjects.getType('varchar'), value: getValue(user_input, key)});
-});
-*/        
-        
-        // build sql
-        var sql_where = "",
-            TYPES = require('tedious').TYPES,
-            params = [];
-        
-        var params_count = 0;
+        Object.keys(userInput).forEach(function(key) {
+            var val = userInput[key];
 
-        Object.keys(user_input).forEach(function (key) {
-            var val = user_input[key];
-                                
-            if(val.length > 0 ){
-                switch(key){
-                    case 'prison_number':
-                        sql_where += "PK_PRISON_NUMBER = @prison_number AND ";
-                        params[params_count++] = {column: 'prison_number', type: TYPES.VarChar, value: val};
-                        break;
-                        
-                    case 'dobOrAge':
-                        
-                        if(val == 'age'){
+            if( val.length === 0) return;
 
-                            val = user_input['age'];
-                            if (val.indexOf('-') === -1){
-                                var birthYear = parseInt(new Date().getFullYear()) - val;
-                                arrDateRange = [birthYear+'0101',birthYear+'1231'];
-                            } else {
-                                var val = val.split('-'),
-                                    yearFrom = parseInt(new Date().getFullYear()) - val[1].trim(),
-                                    yearTo   = parseInt(new Date().getFullYear()) - val[0].trim();
-                                arrDateRange = [yearFrom+'0101',yearTo+'1231'];
-                            }
-                        
-                            sql_where += "(INMATE_BIRTH_DATE >= @from_date AND INMATE_BIRTH_DATE <= @to_date) AND ";
-                            params[params_count++] = {column: 'from_date', type: TYPES.VarChar, value: arrDateRange[0]};
-                            params[params_count++] = {column: 'to_date', type: TYPES.VarChar, value: arrDateRange[1]};
-                        } else {
-                            sql_where += "INMATE_BIRTH_DATE = @dob AND ";
-                            val = user_input['dob_year']+common.pad(user_input['dob_month'])+common.pad(user_input['dob_day']);
-                            params[params_count++] = {column: 'dob', type: TYPES.VarChar, value: val};
-                        }
-                        break;
+            if(!filters[key]) return;
 
+            var obj = filters[key].getSql({val: val, userInput: userInput});
 
-                    case 'forename':
-                        sql_where += "INMATE_FORENAME_1 = @forename AND ";
-                        params[params_count++] = {column: 'forename', type: TYPES.VarChar, value: val};
-                        break;
-
-                    case 'forename2':
-                        sql_where += "INMATE_FORENAME_2 = @forename2 AND ";
-                        params[params_count++] = {column: 'forename2', type: TYPES.VarChar, value: val};
-                        break;
-
-                    case 'surname':
-                        sql_where += "INMATE_SURNAME = @surname AND ";
-                        params[params_count++] = {column: 'surname', type: TYPES.VarChar, value: val};
-                        break;
-
-
-                    default:
-                        //return callback(new Error('Invalid user input key'))
-                        break;
-                }
-            }
+            params = params.concat(obj.params);
+            sqlWhere += (sqlWhere !== "") ? " AND " + obj.sql : obj.sql;
         });
+   
+        var sql = "SELECT INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, FORMAT(INMATE_BIRTH_DATE,'dd/MM/yyyy') AS DOB FROM IIS.LOSS_OF_LIBERTY WHERE " +  sqlWhere;
         
-        sql_where = sql_where.substr(0, (sql_where.length - String('AND ').length)); //remove the trailing 'AND '
-        
-        var sql = "SELECT INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, FORMAT(INMATE_BIRTH_DATE,'dd/MM/yyyy') AS DOB FROM IIS.LOSS_OF_LIBERTY WHERE " +  sql_where;
-                             
         db.getCollection(sql, params, function(err, rows){
-
             if(err) return callback(err);
-            
             return callback(null, rows);
         });
-
     }
 }
 

@@ -81,16 +81,12 @@ module.exports = {
                 return finish(null, rows)
             });
             
-            
-            
             if(params)
                 params.forEach(function(param){
                     request.addParameter(param.column, 
                                      param.type, 
                                      param.value);  
                 })
-
-                
 
             connection.execSql(request);
         });

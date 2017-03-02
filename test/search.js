@@ -17,17 +17,16 @@ function prepareFakeDB(onRequest) {
 }
 
 
-describe('search', function(){
-    it("should something", function(done) {
+describe('Search', function(){
+    it("should return recordset as an array", function(done) {
         prepareFakeDB(function(req) {
-            expect(req.sqlTextOrProcedure).to.contain("WHERE prison_number");
-            req.callback(null, 1);
-            req.emit("row", {name:{value: "bob"}});
+            expect(req.sqlTextOrProcedure).to.contain("WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER");
+            req.callback(null, 1, [{INMATE_SURNAME: {value: "David"}}]);
         });
 
-        search.inmate({prison_number: 7}, function(err, inmates) {
+        search.inmate({prison_number: 7}, function(err, data) {
             expect(err).to.be.null;
-            expect(inmates).to.be.an("array");
+            expect(data).to.be.an("array");
             done();
         });
     });

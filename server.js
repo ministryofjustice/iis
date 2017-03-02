@@ -5,9 +5,9 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var api = require('./routes/api');
 var login = require('./routes/login');
 var search = require('./routes/search');
+var subject = require('./routes/subject');
 
 var app = express();
 
@@ -54,7 +54,7 @@ app.use(function(req, res, next) {
 })
 
 app.use('/search/', search);
-app.use('/api/', api);
+app.use('/subject/', subject);
 
 
 

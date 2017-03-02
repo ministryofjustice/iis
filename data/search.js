@@ -1,5 +1,5 @@
 var db = require("../db");
-var common = require("./common");
+var utils = require("./utils");
 var TYPES = require('tedious').TYPES
 
 
@@ -29,8 +29,8 @@ const filters = {
         dbColumn: "INMATE_BIRTH_DATE",
         getSql: function(obj){
             obj.val = obj.userInput['dob_year'] + 
-                common.pad(obj.userInput['dob_month']) + 
-                common.pad(obj.userInput['dob_day']);
+                utils.pad(obj.userInput['dob_month']) + 
+                utils.pad(obj.userInput['dob_day']);
             
             return getSqlWithParams.call(this, obj);
         }
@@ -40,7 +40,7 @@ const filters = {
         dbColumn: "INMATE_BIRTH_DATE",
         getSql: function(obj){            
             
-            var dateRange = getDateRange(obj.userInput['age']);
+            var dateRange = utils.getDateRange(obj.userInput['age']);
             
             var sql = "(INMATE_BIRTH_DATE >= @from_date AND INMATE_BIRTH_DATE <= @to_date)";
             return {sql: sql, 
@@ -64,18 +64,7 @@ function getType(v){
     //default type
     return TYPES.VarChar;
 }
-
-
-function getDateRange(v){
-    var thisYear = parseInt(new Date().getFullYear());
-    
-    if (v.indexOf('-') === -1) 
-        return [(thisYear - v) + '0101',(thisYear - v) + '1231'];
-    
-    v = v.split('-');
-    return [(thisYear - v[1]) + '0101',(thisYear - v[0]) + '1231'];
-}
-                                        
+                                 
 
 module.exports = {
     inmate: function(userInput, callback){

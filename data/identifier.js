@@ -15,5 +15,5 @@ module.exports = {
 }
 
 function isPrisonNumber(v){
-    return /^[A-Z][A-Z]([0-9]{6})$/.test(v)
+    return /^[A-Za-z][A-Za-z]([0-9]{6})$/.test(v)
 }

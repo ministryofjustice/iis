@@ -1,5 +1,5 @@
 # hoa-ui
-Historical Offenders Application UI
+Historical Offenders Application UI.
 
 ## Database
 - Env variables defined in config.js

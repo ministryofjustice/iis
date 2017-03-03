@@ -6,8 +6,6 @@ deployment:
   dev:
     branch: master
     commands:
-        - git push git@heroku.com:hoa-ui-dev.git $CIRCLE_SHA1:master
-        - heroku ps:scale web=1 --app hoa-ui-dev
         # Push the Dev Branch to Azure
         - git push --force origin $CIRCLE_SHA1:azure
 

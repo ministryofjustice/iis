@@ -11,10 +11,11 @@ deployment:
         # Push the Dev Branch to Azure
         - git config user.email $EMAIL
         - git config user.name $USERNAME
-        - git checkout azure
-        - git pull
-        - git merge master
-        - git push origin azure
+        - git push --force origin HEAD:azure
+#        - git checkout azure
+#        - git pull
+#        - git merge master
+#        - git push origin azure
 
 
 

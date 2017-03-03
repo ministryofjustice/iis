@@ -28,6 +28,9 @@ const filters = {
     dob_day: {
         dbColumn: "INMATE_BIRTH_DATE",
         getSql: function(obj){
+            
+            if(obj.userInput['dobOrAge'] != 'dob') return null;
+            
             obj.val = obj.userInput['dob_year'] + 
                 utils.pad(obj.userInput['dob_month']) + 
                 utils.pad(obj.userInput['dob_day']);
@@ -38,7 +41,9 @@ const filters = {
 
     age: {
         dbColumn: "INMATE_BIRTH_DATE",
-        getSql: function(obj){            
+        getSql: function(obj){
+            
+            if(obj.userInput['dobOrAge'] != 'age') return null;
             
             var dateRange = utils.getDateRange(obj.userInput['age']);
             
@@ -79,9 +84,11 @@ module.exports = {
             if(!filters[key]) return;
 
             var obj = filters[key].getSql({val: val, userInput: userInput});
-
-            params = params.concat(obj.params);
-            sqlWhere += (sqlWhere !== "") ? " AND " + obj.sql : obj.sql;
+            
+            if(obj !== null){
+                params = params.concat(obj.params);
+                sqlWhere += (sqlWhere !== "") ? " AND " + obj.sql : obj.sql;
+            }
         });
    
         var sql = "SELECT INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, FORMAT(INMATE_BIRTH_DATE,'dd/MM/yyyy') AS DOB FROM IIS.LOSS_OF_LIBERTY WHERE " +  sqlWhere;

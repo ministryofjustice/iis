@@ -44,9 +44,12 @@ module.exports = {
                 if(rowCount === 0) return finish(null, rowCount);
             });
             
-            request.addParameter(params.column, 
-                                 params.type, 
-                                 params.value);  
+            if(params)
+                params.forEach(function(param){
+                    request.addParameter(param.column, 
+                                     param.type, 
+                                     param.value);  
+                })
 
             request.on('row', function(columns) {
                 return finish(null, columns);

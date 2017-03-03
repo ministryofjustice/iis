@@ -5,18 +5,18 @@ block content
         div.column-two-thirds
             h1.heading-xlarge Your search returned #{(data == 0) ? 0 : data.length} results
             
-            mixin inmate(name)
+            mixin inmate(name, href)
                 div.form-group
                     div.inmate-details
                         p.bold-medium
-                            a(href="/inmate/prison_number", target="_blank") #{name} 
+                            a(href="/subject/#{href}", target="_blank") #{name} 
                             block
             
             if data != 0
                 each item in data
                    +inmate(item.INMATE_FORENAME_1.value + ' ' 
                             + (item.INMATE_FORENAME_2.value ? item.INMATE_FORENAME_2.value + ' ' : '') 
-                            + item.INMATE_SURNAME.value)
+                            + item.INMATE_SURNAME.value, item.PK_PRISON_NUMBER.value)
                         span &middot; #{item.DOB.value}
                         span.form-hint *Alias*
                         

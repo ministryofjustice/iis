@@ -7,6 +7,7 @@ module.exports = {
        ATLEAST_ONE_REQUIRED:"All the fields cannot be empty",
        LETTERS_ONLY:"A name mustn't contain space, numbers or special characters",
        INVALID_DOB:"Invalid date of birth",
-       INVALID_AGE:"Invalid age"
+       INVALID_AGE:"Invalid age",
+       INVALID_ID:"Unable to yield results",
    }
 }

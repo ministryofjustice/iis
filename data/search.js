@@ -91,7 +91,7 @@ module.exports = {
             }
         });
    
-        var sql = "SELECT INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, FORMAT(INMATE_BIRTH_DATE,'dd/MM/yyyy') AS DOB FROM IIS.LOSS_OF_LIBERTY WHERE " +  sqlWhere;
+        var sql = "SELECT PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, FORMAT(INMATE_BIRTH_DATE,'dd/MM/yyyy') AS DOB FROM IIS.LOSS_OF_LIBERTY WHERE " +  sqlWhere;
         
         db.getCollection(sql, params, function(err, rows){
             if(err) return callback(err);

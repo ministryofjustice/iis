@@ -1,0 +1,15 @@
+extends layout
+
+block content
+
+    if err
+        div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
+            h1(class="heading-medium error-summary-heading", id="error-message")= err.title
+
+    if !err
+        div.grid-row
+            div.column-two-thirds
+                h1.heading-xlarge= (subject.INMATE_FORENAME_1.value + ' ' + (subject.INMATE_FORENAME_2.value ? subject.INMATE_FORENAME_2.value + ' ' : '') + subject.INMATE_SURNAME.value)
+                    span.heading-secondary PRISON NO. #{subject.PK_PRISON_NUMBER.value}
+
+                p.font-medium **Single White-British male from United Kingdom. Born in England on 09/08/1996 (20 years old)**

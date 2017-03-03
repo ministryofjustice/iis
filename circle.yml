@@ -9,9 +9,9 @@ deployment:
         - git push git@heroku.com:hoa-ui-dev.git $CIRCLE_SHA1:master
         - heroku ps:scale web=1 --app hoa-ui-dev
         # Push the Dev Branch to Azure
-        - git config user.email $EMAIL
-        - git config user.name $USERNAME
-        - git push --force origin HEAD:azure
+#        - git config user.email $EMAIL
+#        - git config user.name $USERNAME
+        - git push --force origin $CIRCLE_SHA1:azure
 #        - git checkout azure
 #        - git pull
 #        - git merge master

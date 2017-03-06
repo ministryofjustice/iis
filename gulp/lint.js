@@ -9,7 +9,7 @@ gulp.task('lint-client', function () {
 
 
 gulp.task('lint-server', function () {
-    return gulp.src(['./server.js', './app/**/*.js', './server/**/*.js'])
+    return gulp.src(['./server.js', './data/*.js', './routes/*.js', './server/*.js', './utils/*.js'])
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });

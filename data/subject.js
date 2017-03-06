@@ -1,10 +1,10 @@
-var db = require("../db");
+var db = require("../server/db");
 var utils = require("./utils");
 var TYPES = require('tedious').TYPES
 
 module.exports = {
     details: function (id, callback){
-        
+
         var sqlWhere = "PK_PRISON_NUMBER = @PK_PRISON_NUMBER",
             sql = '';
         
@@ -23,6 +23,6 @@ module.exports = {
         db.getTuple(sql, params, function(err, cols){            
             if(err || cols == 0) return callback(new Error('No results'));
             return callback(null, cols);
-        });        
+        });
     }
 }

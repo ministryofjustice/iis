@@ -1,6 +1,6 @@
 var prompt = require('prompt');
 var bcrypt = require('bcryptjs');
-var db = require("./db");
+var db = require("./../server/db");
 
 
 prompt.start();
@@ -22,9 +22,9 @@ prompt.get(['username', 'email'], function (err, result) {
             if(err) { console.log(err); return; }
 
             var Request = require('tedious').Request;
-            var TYPES = require('tedious').TYPES; 
-            
-            
+            var TYPES = require('tedious').TYPES;
+
+
             request = new Request("INSERT INTO NON_IIS.users(login_id,pwd,email) VALUES(@login_id, @pwd, @email);", function(err) {
                 
                 if(err) {
@@ -34,22 +34,22 @@ prompt.get(['username', 'email'], function (err, result) {
                 }
                 
             });
-            
-            request.addParameter('login_id', TYPES.VarChar, result.username);  
-            request.addParameter('pwd', TYPES.VarChar, hash);  
-            request.addParameter('email', TYPES.VarChar, result.email);  
+
+            request.addParameter('login_id', TYPES.VarChar, result.username);
+            request.addParameter('pwd', TYPES.VarChar, hash);
+            request.addParameter('email', TYPES.VarChar, result.email);
 
             connection.execSql(request);
-            
-            
-            
+
+
+
         });
-        
+
     });
 });
 
 
 var dbconfig = function(){
-    var config = require('config');
+    var config = require('./../server/config');
     return config.get('sqlserver');
 }

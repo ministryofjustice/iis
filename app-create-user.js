@@ -8,11 +8,11 @@ prompt.get(['username', 'email'], function (err, result) {
     var pwd = Math.random().toString(36).substr(2, 8);
     bcrypt.hash(pwd, 8, function(err, hash) {
         
-        
-        console.log('  username: ' + result.username);
-        console.log('  email: ' + result.email);
-        console.log('  password: ' + pwd);
-        console.log('  hash: ' + hash);
+        console.log('***************');
+        console.log('Password for \'' + result.username + '\' is ' + pwd);
+        //console.log('  email: ' + result.email);
+        //console.log('  hash: ' + hash);
+        console.log('***************');
         
         
         connection = db.connect();
@@ -26,13 +26,13 @@ prompt.get(['username', 'email'], function (err, result) {
             
             
             request = new Request("INSERT INTO NON_IIS.users(login_id,pwd,email) VALUES(@login_id, @pwd, @email);", function(err) {
-                console.log('***************');
+                
                 if(err) {
                     console.log('ERROR #'+ err.number +' - User could not be created');
                 } else {
-                    console.log('User added!');
+                    console.log('Done!');
                 }
-                console.log('***************');
+                
             });
             
             request.addParameter('login_id', TYPES.VarChar, result.username);  

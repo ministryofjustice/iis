@@ -12,5 +12,12 @@ block content
                 h1.heading-xlarge= (subject.INMATE_FORENAME_1.value + ' ' + (subject.INMATE_FORENAME_2.value ? subject.INMATE_FORENAME_2.value + ' ' : '') + subject.INMATE_SURNAME.value)
                     span.heading-secondary PRISON NO. #{subject.PK_PRISON_NUMBER.value}
 
-                p.font-medium #{subject.DOB.value} (#{subject.AGE.value} years)
-                //Single White-British male from United Kingdom. Born in England on 09/08/1996 (20 years old)
+                p.font-medium 
+                    | #{subject.MARITAL_STATUS.value} 
+                    | #{subject.ETHNICITY.value} 
+                    | #{subject.INAMTE_SEX.value} 
+                    | #{subject.NATIONALITY.value ? 'from ' + subject.NATIONALITY.value : ''}
+                    | #{(subject.MARITAL_STATUS.value) || (subject.MARITAL_STATUS.value) || (subject.MARITAL_STATUS.value) ? '. ' : '' }
+                    | #{(subject.BIRTH_COUNTRY.value) || (subject.DOB.value) ? 'Born' : ''}
+                    | #{subject.BIRTH_COUNTRY.value ? ' in ' + subject.BIRTH_COUNTRY.value : ''} 
+                    | #{subject.DOB.value ? ' on ' + subject.DOB.value + ' ('+subject.AGE.value+' years)' : ''}

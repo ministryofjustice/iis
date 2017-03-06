@@ -38,7 +38,6 @@ const filters = {
             return getSqlWithParams.call(this, obj);
         }
     },
-
     age: {
         dbColumn: "INMATE_BIRTH_DATE",
         getSql: function(obj){

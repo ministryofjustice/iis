@@ -1,7 +1,7 @@
 var request = require('supertest');
 var expect = require('chai').expect;
 var bcrypt = require("bcryptjs");
-var db = require('../db');
+var db = require('../server/db');
 var users = require("../data/users");
 
 var passwordHashed = bcrypt.hashSync("thisisapassword");

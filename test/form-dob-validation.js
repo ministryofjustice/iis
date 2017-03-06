@@ -1,16 +1,16 @@
 var request = require('supertest');
 var expect = require('chai').expect;
-
 var common = require('./common');
 var app = require("../server.js");
 
 
 describe('Date/Age/Age-range validation tests', function(){
+
    it('should display error if an invalid date is passed', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .send({ opt: 'dob', dob_day: '29', dob_month: '02', dob_year: '2017'})
+                    .send({ opt: 'dob', dobDay: '29', dobMonth: '02', dobYear: '2017'})
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
@@ -22,7 +22,7 @@ describe('Date/Age/Age-range validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .send({opt: 'dob', dob_day: '20', dob_month: '12', dob_year: '2020'})
+                    .send({opt: 'dob', dobDay: '20', dobMonth: '12', dobYear: '2020'})
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
@@ -34,7 +34,7 @@ describe('Date/Age/Age-range validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .send({opt: 'dob', dob_day: '10', dob_month: '6', dob_year: '1960'})
+                    .send({opt: 'dob', dobDay: '10', dobMonth: '6', dobYear: '1960'})
                     .expect(302)
             });
     });
@@ -48,7 +48,7 @@ describe('Date/Age/Age-range validation tests', function(){
                     .expect(200)
             });
     });
-    
+
 
     it('should display error if the age range is not valid', function(){
        return common.logInAs("someone")
@@ -58,7 +58,7 @@ describe('Date/Age/Age-range validation tests', function(){
                     .expect(200)
             });
     });
-    
+
    it('should return 302 if age range is valid', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
@@ -67,8 +67,8 @@ describe('Date/Age/Age-range validation tests', function(){
                     .expect(302)
             });
     });
-    
-   
+
+
 });
 
 

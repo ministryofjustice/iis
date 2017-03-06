@@ -11,6 +11,7 @@ router.get('/', function(req, res){
 });
 
 router.post('/', function (req, res) {
+
     if(!req.body.opt){
         
         var _err = { title: content.errMsg.CANNOT_SUBMIT,
@@ -49,18 +50,18 @@ const options = {
     identifier: {
         fields: ["prisonNumber"],
         validator: identifier.validate,
-        nextView: 'names',
+        nextView: 'names'
     },
     names: {
         fields: ["forename", "forename2", "surname"],
         validator: names.validate,
-        nextView: 'dob',
+        nextView: 'dob'
     },
     dob: {
         fields: ["dobOrAge", "dobDay", "dobMonth", "dobYear", "age"],
         validator: dob.validate,
         nextView: 'results'
-    },
+    }
 };
 
 
@@ -76,11 +77,12 @@ router.get('/:view', function (req, res) {
     res.render('search/' + view, {
         content: content.view[view],
         view: view,
-        body: {},
+        body: {}
     });
 });
 
 router.post('/:view', function(req, res) {
+
     const view = req.params.view;
     const viewInfo = options[view];
 
@@ -126,7 +128,6 @@ function proceedToTheNextView(req, res, currView){
 
     res.redirect('/search/' + nextView);
 }
-
 
 
 module.exports = router;

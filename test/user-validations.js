@@ -7,6 +7,7 @@ var users = require("../data/users");
 var passwordHashed = bcrypt.hashSync("thisisapassword");
 
 var EventEmitter = require("events").EventEmitter;
+
 function prepareFakeDB(onRequest) {
     db.setFakeFactory(function fakeDBFactory() {
         var fake = new EventEmitter();
@@ -20,8 +21,8 @@ function prepareFakeDB(onRequest) {
     });
 }
 
-
 describe('validating username and password', function(){
+
     it("should return ok if username and password match", function(done) {
         prepareFakeDB(function(req) {
             req.callback(null, 1);
@@ -34,6 +35,7 @@ describe('validating username and password', function(){
             done();
         });
     });
+
     it("should return false if username not found", function(done) {
         prepareFakeDB(function(req) {
             req.callback(null, 0);
@@ -45,6 +47,7 @@ describe('validating username and password', function(){
             done();
         });
     });
+
     it("should return false if password is wrong", function(done) {
         prepareFakeDB(function(req) {
             req.callback(null, 1);
@@ -57,6 +60,7 @@ describe('validating username and password', function(){
             done();
         });
     });
+
     it("should error if DB query errors", function(done) {
         prepareFakeDB(function(req) {
             req.callback(new Error("I don't like your face"));

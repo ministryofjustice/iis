@@ -4,131 +4,104 @@ var expect = require('chai').expect;
 var common = require('./common');
 var app = require("../server.js");
 
-describe('Test redirections when session set and not set', function(){     
-    it('should return status code 302, when session NOT set', function(){
+describe('Test redirections when session set and not set', function () {
+
+    it('should return status code 302, when session NOT set', function () {
         request(app).get('/search')
             .expect(302)
             .expect("Location", "/login");
     });
 
-
-    it('should create session when POSTing to /login with valid credentials', function() {
+    it('should create session when POSTing to /login with valid credentials', function () {
         var check = common.userStub();
 
         return request(app).post("/login")
-            .send({login_id: "glen", pwd: "password"})
-            .expect(302)
-            .then(() => {
-                expect(check.calledOnce).to.be.true;
-                expect(check.calledWith("glen", "password")).to.be.true;
-            });
+                .send({loginId: "glen", pwd: "password"})
+                .expect(302)
+                .then(() => {
+                    expect(check.calledOnce).to.be.true;
+                    expect(check.calledWith("glen", "password")).to.be.true;
+                });
     });
 
-
-    it('should return status code 200, when session IS set', function(){
+    it('should return status code 200, when session IS set', function () {
         return common.logInAs("someone")
-            .then(function(authedReq) {
+            .then(function (authedReq) {
                 return authedReq.get('/search')
                     .expect(200);
             });
     });
 
-
-    it('should redirect to the search page when root is visited while the sessions are set', function(){
-       return common.logInAs("someone")
-            .then(function(authedReq) {
+    it('should redirect to the search page when root is visited while the sessions are set', function () {
+        return common.logInAs("someone")
+            .then(function (authedReq) {
                 return authedReq.get('/')
                     .expect(302)
                     .expect("Location", "/search");
             });
     });
-    
-    it('should return status code 200', function(done){
-        request(app).get('/login').expect(200,done); 
-    });
-    
 
-    it('should return status code 200 if an option hasnt been selected', function(){
+    it('should return status code 200', function (done) {
+        request(app).get('/login').expect(200, done);
+    });
+
+    it('should return status code 200 if an option hasnt been selected', function () {
         return common.logInAs("someone")
-            .then(function(authedReq) {
+            .then(function (authedReq) {
                 return authedReq.post('/search')
                     .expect(200)
-                    .expect(function(res){
+                    .expect(function (res) {
                         expect(res.text).to.contain('error-summary')
                     });
             });
     });
-    
-    
-   it('should retune 302 if at least one option has been selected', function(){
-      return common.logInAs("someone")
-        .then(function(authedReq) {
-            return authedReq.post('/search')
-                .send({opt: 'names'})
-                .expect(302)
-                .expect("Location", '/search/names')
-        }); 
-   });
 
-    
-    it('should set hidden input with the selected parameter', function(){
+    it('should retune 302 if at least one option has been selected', function () {
         return common.logInAs("someone")
-            .then(function(authedReq) {
+            .then(function (authedReq) {
                 return authedReq.post('/search')
-                    .send({opt:"names"})
+                    .send({opt: 'names'})
+                    .expect(302)
+                    .expect("Location", '/search/names')
+            });
+    });
+
+    it('should set hidden input with the selected parameter', function () {
+        return common.logInAs("someone")
+            .then(function (authedReq) {
+                return authedReq.post('/search')
+                    .send({opt: "names"})
                     .expect(302)
                     .expect("Location", "/search/names")
             });
     });
-    
-    it('should redirect to search page when invalid param is manaully entered', function(){
+
+    it('should redirect to search page when invalid param is manaully entered', function () {
         return common.logInAs("someone")
-            .then(function(authedReq) {
+            .then(function (authedReq) {
                 return authedReq.get('/search/whatever')
                     .expect(302)
                     .expect("Location", "/search")
             });
     });
-    
-    
-    it('should redirect to login page when user logs out', function(){
+
+    it('should redirect to login page when user logs out', function () {
         return common.logInAs("someone")
-            .then(function(authedReq) {
+            .then(function (authedReq) {
                 return authedReq.get('/logout')
                     .expect(302)
                     .expect("Location", "/login")
             });
     });
-    
-    it('testing my tests if they test fine', function(){
+
+    it('testing my tests if they test fine', function () {
         return common.logInAs("someone")
-            .then(function(authedReq) {
+            .then(function (authedReq) {
                 return authedReq.get('/search/identifier')
                     .expect(200)
             });
     });
-    
 
-    it('should take the user through the search input pages before getting to results page', function(){
-        /*
-        return logInAs("someone")
-            .then(function(authedReq) {
-                authedReq.post('/search')
-                    .send({opt:["pnc","names","dob"]})
-                    .expect(302)
-                    .expect("Location", "/search/pnc")
-                    .then(function() {
-                        return authedReq.post('/search/pnc')
-                            .expect(302)
-                            .expect("Location", "/search/ddd")
-
-                    });
-            });
-        */
-    });
-
-    
-    
 });
 
 

@@ -7,9 +7,9 @@ block search-page
         label.block-label.selection-button-radio.bold-small(class=_checked ? "selected" : "", data-target=_target, for=_for )
             input(type="radio", name="dobOrAge", id=_for, value=_val checked=_checked)
             | #{caption}
-      
+
     div.form-group
-    
+
             +radioInput('Date of birth', 'dob_container','opt_dob', 'dob', !body.dobOrAge || body.dobOrAge == 'dob')
 
         div.panel.panel-border-narrow#dob_container
@@ -19,19 +19,19 @@ block search-page
                 div.form-date
                     div.form-group.form-group-day
                         label.form-label(for="dob_day") Day
-                        input.form-control#dob_day(name="dob_day", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint", value=(body.dob_day ? body.dob_day : ''))
+                        input.form-control#dob_day(name="dobDay", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint", value=(body.dobDay ? body.dobDay : ''))
 
                     div.form-group.form-group-month
                         label.form-label(for="dob_month") Month
-                        input.form-control#dob_month(name="dob_month", type="number", pattern="[0-9]*", min="0", max="12", value=(body.dob_month ? body.dob_month : ''))
+                        input.form-control#dob_month(name="dobMonth", type="number", pattern="[0-9]*", min="0", max="12", value=(body.dobMonth ? body.dobMonth : ''))
 
                     div.form-group.form-group-year
                         label.form-label(for="dob_year") Year
-                        input.form-control#dob_year(name="dob_year", type="number", pattern="[0-9]*", min="1900", max="#{new Date().getFullYear()}", value=(body.dob_year ? body.dob_year : ''))
+                        input.form-control#dob_year(name="dobYear", type="number", pattern="[0-9]*", min="1900", max="#{new Date().getFullYear()}", value=(body.dobYear ? body.dobYear : ''))
 
 
     div.form-group
-    
+
          +radioInput('Age', 'age_container','opt_age', 'age', body.dobOrAge == 'age')
 
 
@@ -42,5 +42,4 @@ block search-page
 
             input.form-control.form-control-1-4#age(name="age", type="text", min="10" max="99", value=(body.age ? body.age : ''))
 
-                    
-                    
+

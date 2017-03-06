@@ -1,7 +1,7 @@
 var bodyParser = require('body-parser');
 var cookieSession = require('cookie-session');
 var express = require('express');
-var logger = require('morgan');
+var logger = require('winston');
 var path = require('path');
 
 var index = require('./routes/index');

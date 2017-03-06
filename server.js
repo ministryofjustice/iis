@@ -29,9 +29,9 @@ var app = express();
 
 // Session configuration
 app.use(cookieSession({
-  name: 'session',
-  keys: [Math.round(Math.random() * 100000).toString()], //
-  maxAge: 60 * 60 * 1000 // 60 minute
+    name: 'session',
+    keys: [Math.round(Math.random() * 100000).toString()], //
+    maxAge: 60 * 60 * 1000 // 60 minute
 }));
 
 
@@ -46,11 +46,11 @@ app.set('port', process.env.PORT || 3000);
 
 // Request Processing Configuration
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 
 
 //  Static Resources Configuration
-app.use('/public',express.static(path.join(__dirname, 'public')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/public', express.static(path.join(__dirname, '/govuk_modules/govuk_template/assets')));
 app.use('/public', express.static(path.join(__dirname, '/govuk_modules/govuk_frontend_toolkit')));
 app.use('/public/images/icons', express.static(path.join(__dirname, '/govuk_modules/govuk_frontend_toolkit/images')));
@@ -70,14 +70,14 @@ app.use('/subject/', subject);
 
 
 // Redirect to login page
-app.use(function(req, res, next) {
-    if (!isLoggedIn(req) && req.path != "/login") {
-        res.redirect("/login");
+app.use(function (req, res, next) {
+    if (!isLoggedIn(req) && req.path !== '/login') {
+        res.redirect('/login');
         return;
     }
 
-    if(!req.session.user_input) {
-        req.session.user_input = {};
+    if (!req.session.userInput) {
+        req.session.userInput = {};
     }
 
     res.locals.nav = true;
@@ -96,12 +96,12 @@ app.use(function (req, res, next) {
 app.use(logErrors);
 app.use(clientErrors);
 
-function logErrors (err, req, res, next) {
+function logErrors(err, req, res, next) {
     logger.error('Unhandled error: ' + err.stack);
     next(err);
 }
 
-function clientErrors (error, req, res, next) {
+function clientErrors(error, req, res, next) {
     res.locals.message = error.message;
     res.locals.error = error;
 
@@ -110,12 +110,12 @@ function clientErrors (error, req, res, next) {
     res.render('error');
 }
 
-app.listen(app.get('port'), function() {
+app.listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
 
 module.exports = app;
 
-function isLoggedIn(req){
-    return req.session.logged_in;
+function isLoggedIn(req) {
+    return req.session.loggedIn;
 }

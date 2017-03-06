@@ -1,6 +1,6 @@
 var prompt = require('prompt');
 var bcrypt = require('bcryptjs');
-var db = require("./../server/db");
+var db = require('./../server/db');
 
 
 prompt.start();
@@ -17,9 +17,12 @@ prompt.get(['username', 'email'], function (err, result) {
         
         connection = db.connect();
 
-        connection.on('connect', function(err) {
+        connection.on('connect', function (err) {
 
-            if(err) { console.log(err); return; }
+            if (err) {
+                console.log(err);
+                return;
+            }
 
             var Request = require('tedious').Request;
             var TYPES = require('tedious').TYPES;
@@ -40,16 +43,13 @@ prompt.get(['username', 'email'], function (err, result) {
             request.addParameter('email', TYPES.VarChar, result.email);
 
             connection.execSql(request);
-
-
-
         });
 
     });
 });
 
 
-var dbconfig = function(){
-    var config = require('./../server/config');
+var dbconfig = function () {
+    var config = require('config');
     return config.get('sqlserver');
-}
+};

@@ -8,8 +8,8 @@ router.get('/', function(req, res) {
 
 router.get('/change-password', function (req, res) {
 
-    if(!req.session.logged_in){
-        res.redirect('/login')
+    if(!req.session.loggeIn){
+        res.redirect('/login');
         return;
     }
 
@@ -18,8 +18,8 @@ router.get('/change-password', function (req, res) {
 
 
 router.get('/logout', function(req, res) {
-    req.session.logged_in = undefined;
-    res.redirect("/login")
+    req.session.loggedIn = undefined;
+    res.redirect('/login');
 });
 
 

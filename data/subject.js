@@ -1,9 +1,8 @@
-var db = require("../server/db");
-var utils = require("./utils");
-var TYPES = require('tedious').TYPES
+var db = require('../server/db');
+var TYPES = require('tedious').TYPES;
 
 module.exports = {
-    details: function (id, callback){
+    details: function (id, callback) {
 
         var sqlWhere = "PK_PRISON_NUMBER = @PK_PRISON_NUMBER",
             sql = '';
@@ -25,4 +24,4 @@ module.exports = {
             return callback(null, cols);
         });
     }
-}
+};

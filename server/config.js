@@ -5,14 +5,14 @@ function get(name, fallback) {
     if (fallback) {
         return fallback;
     }
-    throw new Error("Missing env var " + name);
+    throw new Error('Missing env var ' + name);
 }
 
 module.exports = {
     db: {
-        username: get("DB_USER", "iis-admin@iis-sandbox"),
-        password: get("DB_PASS"),
-        server: get("DB_SERVER"),
-        database: get("DB_NAME", "iis-sandbox")
+        username: get('DB_USER', 'iis-admin@iis-sandbox'),
+        password: get('DB_PASS'),
+        server: get('DB_SERVER'),
+        database: get('DB_NAME', 'iis-sandbox')
     }
 };

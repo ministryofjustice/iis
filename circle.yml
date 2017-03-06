@@ -1,11 +1,14 @@
+general:
+  branches:
+    ignore:
+        - azure
 deployment:
   dev:
     branch: master
     commands:
-        - git push git@heroku.com:hoa-ui-dev.git $CIRCLE_SHA1:master
-        - heroku ps:scale web=1 --app hoa-ui-dev
-        # This looks incorrect, until we have another branch represents the current codebase, in this case its master.
-        - git merge origin/azure
+        # Push the Dev Branch to Azure
+        - git push --force origin $CIRCLE_SHA1:azure
+
 
 
 

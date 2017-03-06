@@ -61,14 +61,6 @@ app.use('/public/images/icons', express.static(path.join(__dirname, '/govuk_modu
 app.locals.asset_path = '/public/';
 /* jshint ignore:end */
 
-
-// Express Routing Configuration
-app.use('/', index);
-app.use('/login/', login);
-app.use('/search/', search);
-app.use('/subject/', subject);
-
-
 // Redirect to login page
 app.use(function (req, res, next) {
     if (!isLoggedIn(req) && req.path !== '/login') {
@@ -84,6 +76,13 @@ app.use(function (req, res, next) {
 
     next();
 });
+
+
+// Express Routing Configuration
+app.use('/', index);
+app.use('/login/', login);
+app.use('/search/', search);
+app.use('/subject/', subject);
 
 
 // Error Handler

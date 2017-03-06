@@ -6,7 +6,7 @@ var app = require("../server.js");
 
 
 describe('Name(s) validation tests', function(){
-   
+
    it('should display error if all the names are empty strings', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
@@ -18,9 +18,7 @@ describe('Name(s) validation tests', function(){
                     });
             });
    });
-    
 
-    
    it('should display error if the names have a number or special character', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
@@ -32,7 +30,7 @@ describe('Name(s) validation tests', function(){
                     });
             });
    });
-    
+
    it('should return 302 if the name(s) are valid', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
@@ -47,7 +45,6 @@ describe('Name(s) validation tests', function(){
                 });
             });
    });
-    
 });
 
 

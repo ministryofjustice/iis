@@ -5,13 +5,14 @@ var app = require("../server.js");
 var users = require("../data/users");
 
 var s;
+
 beforeEach(() => {
     s = sinon.sandbox.create();
 });
-afterEach(() => {
-    s.restore(); 
-});
 
+afterEach(() => {
+    s.restore();
+});
 
 module.exports = {
     logInAs: function (username) {
@@ -19,14 +20,14 @@ module.exports = {
 
         var browser = request.agent(app);
         return browser.post("/login")
-            .send({login_id: username, pwd: "thisisapassword"})
+            .send({loginId: username, pwd: "thisisapassword"})
             .expect(302)
             .then(function() {
                 return browser;
             });
     },
-    
+
     userStub: function() {
         return s.stub(users, "checkUsernameAndPassword").yields(null, true)
     }
-}
+};

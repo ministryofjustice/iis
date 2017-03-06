@@ -56,7 +56,6 @@ const filters = {
                     {column: 'to_date', type: getType('string'), value: dateRange[1]}]
             };
         }
-
     }
 };
 
@@ -78,8 +77,8 @@ function getType(v) {
 
 module.exports = {
     inmate: function (userInput, callback) {
-        var sqlWhere = '',
-            params = Array();
+        var sqlWhere = '';
+        var params = Array();
 
         Object.keys(userInput).forEach(function (key) {
             var val = userInput[key];

@@ -13,7 +13,7 @@ describe('Date/Age/Age-range validation tests', function(){
                     .send({ opt: 'dob', dobDay: '29', dobMonth: '02', dobYear: '2017'})
                     .expect(200)
                     .expect(function(res){
-                        expect(res.text).to.contain('error-summary')
+                        expect(res.text).to.contain('error-summary');
                     });
             });
    });

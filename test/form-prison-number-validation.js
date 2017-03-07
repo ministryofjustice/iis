@@ -1,13 +1,14 @@
 'use strict';
 
-var request = require('supertest');
-var expect = require('chai').expect;
+let request = require('supertest');
+let expect = require('chai').expect;
 
-var common = require('./common');
-var app = require("../server.js");
+let common = require('./common');
+let app = require("../server.js");
 
 
 describe('Prison number validation tests', function(){
+
    it('should display error to the user if prison number is empty', function(){
         return common.logInAs("someone")
             .then(function(authedReq) {

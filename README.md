@@ -24,6 +24,16 @@ Ministry of Justice Inmate Information System - Historical Offenders Application
   ```
 4. Visit [localhost:3000](http://localhost:3000/)
 
+## Developer Commands
+
+ - `gulp lint-all` -> style checks using eslint
+ - `gulp test` -> runs all unit tests
+ - `gulp clean` -> cleans previously generated files
+ - `gulp build` -> cleans and regenerates assets. This is also the default gulp task
+ 
+ Gulp tasks are defined in individual files under/gulp.
+ Coordinating tasks such as `dev`, `test` etc are defined in `/gulp/tasks.js`
+
 
 # User Accounts
 A user account can be created by supplying the required database 

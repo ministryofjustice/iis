@@ -1,12 +1,12 @@
 'use strict';
 
-var request = require('supertest');
-var expect = require('chai').expect;
-var sinon = require("sinon");
-var app = require("../server.js");
-var users = require("../data/users");
+let request = require('supertest');
+let expect = require('chai').expect;
+let sinon = require("sinon");
+let app = require("../server.js");
+let users = require("../data/users");
 
-var s;
+let s;
 
 beforeEach(() => {
     s = sinon.sandbox.create();
@@ -20,7 +20,7 @@ module.exports = {
     logInAs: function (username) {
         s.stub(users, "checkUsernameAndPassword").yields(null, true);
 
-        var browser = request.agent(app);
+        let browser = request.agent(app);
         return browser.post("/login")
             .send({loginId: username, pwd: "thisisapassword"})
             .expect(302)

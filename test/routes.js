@@ -1,10 +1,10 @@
 'use strict';
 
-var request = require('supertest');
-var expect = require('chai').expect;
+let request = require('supertest');
+let expect = require('chai').expect;
 
-var common = require('./common');
-var app = require("../server.js");
+let common = require('./common');
+let app = require("../server.js");
 
 describe('Test redirections when session set and not set', function () {
 
@@ -15,7 +15,7 @@ describe('Test redirections when session set and not set', function () {
     });
 
     it('should create session when POSTing to /login with valid credentials', function () {
-        var check = common.userStub();
+        let check = common.userStub();
 
         return request(app).post("/login")
                 .send({loginId: "glen", pwd: "password"})

@@ -1,10 +1,10 @@
 'use strict';
 
-var content = require('./content.js');
+let content = require('./content.js');
 
 function validateInputs(err, obj) {
     err.items = [];
-    var errCount = 0;
+    let errCount = 0;
 
     if (obj.forename.length !== 0 && !isString(obj.forename)) {
         err.items[errCount++] = {forename: 'Correct the forename'};
@@ -20,8 +20,8 @@ function validateInputs(err, obj) {
 
 module.exports = {
 
-    validate: function (obj, callback) {
-        var err = {
+    validate: function(obj, callback) {
+        let err = {
             title: content.errMsg.CANNOT_SUBMIT,
             items: [{forename: 'Enter forename'}, {forename2: 'Enter middle name'}, {surname: 'Enter surname'}],
             desc: content.errMsg.ATLEAST_ONE_REQUIRED
@@ -31,7 +31,7 @@ module.exports = {
             return callback(err);
         }
 
-        var errCount = validateInputs(err, obj);
+        let errCount = validateInputs(err, obj);
 
         if (errCount > 0) {
             return callback(err);

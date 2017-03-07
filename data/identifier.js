@@ -1,11 +1,11 @@
 'use strict';
 
-var content = require('./content.js');
+let content = require('./content.js');
 
 module.exports = {
-    validate: function (input, callback) {
+    validate: function(input, callback) {
 
-        var err = {
+        let err = {
             title: content.errMsg.CANNOT_SUBMIT,
             items: [{prisonNumber: 'Re-enter the prison number'}],
             desc: content.errMsg.INVALID_ID

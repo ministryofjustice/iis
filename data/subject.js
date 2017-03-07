@@ -1,11 +1,12 @@
 'use strict';
 
-var db = require('../server/db');
-var TYPES = require('tedious').TYPES;
+let db = require('../server/db');
+let TYPES = require('tedious').TYPES;
 
-var sqlWhere = 'PK_PRISON_NUMBER = @PK_PRISON_NUMBER';
+let sqlWhere = 'PK_PRISON_NUMBER = @PK_PRISON_NUMBER';
 
-var sql = '';
+/* eslint-disable */
+let sql = '';
 sql += 'SELECT PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2,';
 sql += 'FORMAT(INMATE_BIRTH_DATE,\'dd/MM/yyyy\') AS DOB, DATEDIFF(year, INMATE_BIRTH_DATE, GETDATE()) AS AGE,';
 sql += '(SELECT CODE_DESCRIPTION FROM IIS.IIS_CODE WHERE PK_CODE_TYPE = 14 AND PK_CODE_REF=LOSS_OF_LIBERTY.BIRTH_COUNTRY_CODE) AS BIRTH_COUNTRY,';
@@ -15,15 +16,15 @@ sql += '(SELECT CODE_DESCRIPTION FROM IIS.IIS_CODE WHERE PK_CODE_TYPE = 25 AND P
 sql += 'CASE INMATE_SEX WHEN \'M\' THEN \'Male\' WHEN \'F\' THEN \'FEMALE\' ELSE \'\' END AS INMATE_SEX';
 sql += ' FROM IIS.LOSS_OF_LIBERTY WHERE ';
 sql += sqlWhere + ';';
-
+/* eslint-enable */
 
 module.exports = {
 
-    details: function (id, callback) {
+    details: function(id, callback) {
 
-        var params = [{column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: id}];
+        let params = [{column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: id}];
 
-        db.getTuple(sql, params, function (err, cols) {
+        db.getTuple(sql, params, function(err, cols) {
             if (err || cols === 0) {
                 return callback(new Error('No results'));
             }

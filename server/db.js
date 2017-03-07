@@ -1,21 +1,21 @@
 'use strict';
 
-var fakeDBFactory;
-var connection;
+let fakeDBFactory;
+let connection;
 
 module.exports = {
 
-    setFakeFactory: function (fakeFactory) {
+    setFakeFactory: function(fakeFactory) {
         fakeDBFactory = fakeFactory;
     },
 
-    connect: function () {
+    connect: function() {
         if (fakeDBFactory) {
             return fakeDBFactory();
         }
 
-        var config = require('./config');
-        var Connection = require('tedious').Connection;
+        let config = require('./config');
+        let Connection = require('tedious').Connection;
 
         connection = new Connection({
             userName: config.db.username,
@@ -26,24 +26,24 @@ module.exports = {
                 database: config.db.database,
                 useColumnNames: true,
                 rowCollectionOnRequestCompletion: true
-            },
+            }
         });
 
         return connection;
     },
 
-    getTuple: function (sql, params, callback) {
+    getTuple: function(sql, params, callback) {
 
-        var connected = false;
+        let connected = false;
         connection = this.connect();
-        connection.on('connect', function (err) {
+        connection.on('connect', function(err) {
             if (err) {
                 return finish(err);
             }
             connected = true;
 
-            var Request = require('tedious').Request;
-            var request = new Request(sql, function (err, rowCount) {
+            let Request = require('tedious').Request;
+            let request = new Request(sql, function(err, rowCount) {
                 if (err) {
                     return finish(err);
                 }
@@ -53,21 +53,21 @@ module.exports = {
             });
 
             if (params) {
-                params.forEach(function (param) {
+                params.forEach(function(param) {
                     request.addParameter(param.column,
                         param.type,
                         param.value);
                 });
             }
 
-            request.on('row', function (columns) {
+            request.on('row', function(columns) {
                 return finish(null, columns);
             });
 
             connection.execSql(request);
         });
 
-        var that = this;
+        let that = this;
 
         function finish(err, result) {
             if (connected) {
@@ -77,18 +77,18 @@ module.exports = {
         }
     },
 
-    getCollection: function (sql, params, callback) {
+    getCollection: function(sql, params, callback) {
 
-        var connected = false;
+        let connected = false;
         connection = this.connect();
-        connection.on('connect', function (err) {
+        connection.on('connect', function(err) {
             if (err) {
                 return finish(err);
             }
             connected = true;
 
-            var Request = require('tedious').Request;
-            var request = new Request(sql, function (err, rowCount, rows) {
+            let Request = require('tedious').Request;
+            let request = new Request(sql, function(err, rowCount, rows) {
 
                 if (err) {
                     return finish(err);
@@ -101,7 +101,7 @@ module.exports = {
             });
 
             if (params) {
-                params.forEach(function (param) {
+                params.forEach(function(param) {
                     request.addParameter(param.column,
                         param.type,
                         param.value);
@@ -111,7 +111,7 @@ module.exports = {
             connection.execSql(request);
         });
 
-        var that = this;
+        let that = this;
 
         function finish(err, result) {
             if (connected) {
@@ -121,7 +121,7 @@ module.exports = {
         }
     },
 
-    disconnect: function () {
+    disconnect: function() {
         if (fakeDBFactory) {
             return;
         }

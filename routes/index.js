@@ -1,21 +1,23 @@
 'use strict';
 
-var express = require('express');
-var router = express.Router();
-var content = require('../data/content');
+let express = require('express');
+let content = require('../data/content');
+
+// eslint-disable-next-line
+let router = express.Router();
 
 router.get('/', function(req, res) {
     res.redirect('/search');
 });
 
-router.get('/change-password', function (req, res) {
+router.get('/change-password', function(req, res) {
 
-    if(!req.session.loggeIn){
+    if(!req.session.loggeIn) {
         res.redirect('/login');
         return;
     }
 
-    res.render('change-password',{nav: true, content: content.view.changepassword});
+    res.render('change-password', {nav: true, content: content.view.changepassword});
 });
 
 

@@ -1,11 +1,11 @@
 'use strict';
 
-var content = require('./content.js');
+let content = require('./content.js');
 
 module.exports = {
-    validate: function (val, callback) {
+    validate: function(val, callback) {
 
-        var err = {
+        let err = {
             title: content.errMsg.CANNOT_SUBMIT,
             items: [{ageRange: 'Re-enter age or range'}],
             desc: content.errMsg.INVALID_AGE
@@ -18,18 +18,18 @@ module.exports = {
         return callback(null);
     },
 
-    getDateRange: function (val, callback) {
-        var arrDateRange;
+    getDateRange: function(val, callback) {
+        let arrDateRange;
 
         val = val.replace(/ /g, '');
 
         if (val.indexOf('-') === -1) {
-            var birthYear = parseInt(new Date().getFullYear()) - val;
+            let birthYear = parseInt(new Date().getFullYear()) - val;
             arrDateRange = [birthYear + '0101', birthYear + '1231'];
         } else {
-            var arrVal = val.split('-'),
-                yearFrom = parseInt(new Date().getFullYear()) - arrVal[1],
-                yearTo = parseInt(new Date().getFullYear()) - arrVal[0];
+            let arrVal = val.split('-');
+            let yearFrom = parseInt(new Date().getFullYear()) - arrVal[1];
+            let yearTo = parseInt(new Date().getFullYear()) - arrVal[0];
             arrDateRange = [yearFrom + '0101', yearTo + '1231'];
         }
 

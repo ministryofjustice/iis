@@ -2,6 +2,14 @@ general:
   branches:
     ignore:
         - azure
+test:
+  override:
+    - gulp build unittestreport
+  post:
+    - mv test-results.xml $CIRCLE_TEST_REPORTS/test-results.xml
+    - mkdir $CIRCLE_ARTIFACTS/test-coverage-html
+    - mv build/reports/coverage/lcov-report/** $CIRCLE_ARTIFACTS/test-coverage-html
+
 deployment:
   dev:
     branch: master

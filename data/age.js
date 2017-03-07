@@ -1,3 +1,5 @@
+'use strict';
+
 var content = require('./content.js');
 
 module.exports = {

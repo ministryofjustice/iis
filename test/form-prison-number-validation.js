@@ -1,3 +1,5 @@
+'use strict';
+
 var request = require('supertest');
 var expect = require('chai').expect;
 
@@ -15,7 +17,7 @@ describe('Prison number validation tests', function(){
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
                 });
-            }); 
+            });
    });
 
     it('should display error to the user if the format is invalid: AA00AA00', function(){
@@ -29,7 +31,7 @@ describe('Prison number validation tests', function(){
                 });
             });
     });
-    
+
     it('should display error to the user if the format is invalid: 11AAAAA', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {

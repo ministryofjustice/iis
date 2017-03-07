@@ -1,3 +1,5 @@
+'use strict';
+
 var prompt = require('prompt');
 var bcrypt = require('bcryptjs');
 var db = require('./../server/db');
@@ -16,7 +18,7 @@ prompt.get(['username', 'email'], function (err, result) {
         //console.log('  hash: ' + hash);
         console.log('***************');
 
-        connection = db.connect();
+        var connection = db.connect();
 
         connection.on('connect', function (err) {
 
@@ -28,7 +30,7 @@ prompt.get(['username', 'email'], function (err, result) {
             var Request = require('tedious').Request;
             var TYPES = require('tedious').TYPES;
 
-            request = new Request('INSERT INTO NON_IIS.users(login_id,pwd,email) VALUES(@login_id, @pwd, @email);', function (err) {
+            var request = new Request('INSERT INTO NON_IIS.users(login_id,pwd,email) VALUES(@login_id, @pwd, @email);', function (err) {
 
                 if (err) {
                     console.log('ERROR #' + err.number + ' - User could not be created');
@@ -47,7 +49,3 @@ prompt.get(['username', 'email'], function (err, result) {
     });
 });
 
-var dbconfig = function () {
-    var config = require('config');
-    return config.get('sqlserver');
-};

@@ -1,3 +1,5 @@
+'use strict';
+
 var bodyParser = require('body-parser');
 var cookieSession = require('cookie-session');
 var express = require('express');
@@ -9,6 +11,7 @@ var login = require('./routes/login');
 var search = require('./routes/search');
 var subject = require('./routes/subject');
 
+var content = require('./data/content.js');
 
 // Logger configuration
 logger.remove(logger.transports.Console);
@@ -95,9 +98,9 @@ app.use(function (req, res, next) {
 app.use(logErrors);
 app.use(clientErrors);
 
-function logErrors(err, req, res, next) {
-    logger.error('Unhandled error: ' + err.stack);
-    next(err);
+function logErrors(error, req, res, next) {
+    logger.error('Unhandled error: ' + error.stack);
+    next(error);
 }
 
 function clientErrors(error, req, res, next) {
@@ -106,7 +109,7 @@ function clientErrors(error, req, res, next) {
 
     res.status(error.status || 500);
 
-    res.render('error');
+    res.render('error',  {nav: true, content: content.view.error});
 }
 
 app.listen(app.get('port'), function () {

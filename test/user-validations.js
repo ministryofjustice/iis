@@ -65,7 +65,7 @@ describe('validating username and password', function(){
 
     it("should error if DB query errors", function(done) {
         prepareFakeDB(function(req) {
-            req.callback(new Error("I don't like your face"));
+            req.callback(new Error("Database Error"));
         });
 
         users.checkUsernameAndPassword("abc", "thisisapassword", function(err, result) {

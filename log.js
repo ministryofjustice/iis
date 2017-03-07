@@ -1,3 +1,5 @@
+'use strict';
+
 let logger = require('winston');
 
 logger.remove(logger.transports.Console);

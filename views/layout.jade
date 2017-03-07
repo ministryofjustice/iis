@@ -5,24 +5,24 @@ head
     meta(name="viewport" content="width=device-width, initial-scale=1")
     meta(property="og:image" content="/public/images/opengraph-image.png?0.19.2")
     title= content.title
-    
-    
+
+
     <!--[if gt IE 8]><!--><link href="/public/stylesheets/govuk-template.css" media="screen" rel="stylesheet" type="text/css" /><!--<![endif]-->
     link(rel="stylesheet", media="print", href="/public/stylesheets/govuk-template-print.css?0.19.2")
-    
+
     <!--[if gte IE 9]><!--><link href="/public/stylesheets/fonts.css?0.19.2" media="all" rel="stylesheet" /><!--<![endif]-->
-    
+
     link(rel="shortcut icon", href="/public/images/favicon.ico?0.19.2", type="image/x-icon")
     link(rel="mask-icon", href="/public/images/gov.uk_logotype_crown.svg?0.19.2", color="#0b0c0c")
     link(rel="apple-touch-icon-precomposed", sizes="152x152", href="/public/images/apple-touch-icon-152x152.png?0.19.2")
     link(rel="apple-touch-icon-precomposed", sizes="120x120", href="/public/images/apple-touch-icon-120x120.png?0.19.2")
     link(rel="apple-touch-icon-precomposed", sizes="76x76", href="/public/images/apple-touch-icon-76x76.png?0.19.2")
     link(rel="apple-touch-icon-precomposed", sizes="76x76", href="/public/images/apple-touch-icon-60x60.png?0.19.2")
-    
+
     link(href="/public/stylesheets/application.css", media="screen", rel="stylesheet", type="text/css")
 
 body.js-enabled
-    
+
     div(id="skiplink-container")
         div
             a(href="#content", class="skiplink") Skip to main content
@@ -53,20 +53,20 @@ body.js-enabled
 
 
     <div id="global-header-bar"></div>
-    
-    
-    
-    
+
+
+
+
     main(id="content", role="main")
         div.phase-banner
             p
                 strong.phase-tag ALPHA
                 span This is a new service – your <a href="#">feedback</a> will help us to improve it.
 
-    
-    
+
+
         block content
-    
+
     footer(class="group js-footer", id="footer", role="contentinfo")
         div(class="footer-wrapper")
             div(class="footer-meta")
@@ -74,7 +74,7 @@ body.js-enabled
                     div(class="open-government-licence")
                         p(class="logo")
                             a(href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/", rel="license") Open Government Licence
-                        p All content is available under the 
+                        p All content is available under the
                             <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"  rel="license">Open Government Licence v3.0</a>, except where otherwise stated
 
 
@@ -91,4 +91,3 @@ body.js-enabled
     script(src="/public/javascripts/govuk/shim-links-with-button-role.js")
     script(src="/public/javascripts/govuk/show-hide-content.js")
     script(src="/public/javascripts/application.js")
-    script(src="/public/javascripts/hoa-min.js")

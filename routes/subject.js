@@ -4,6 +4,8 @@ let express = require('express');
 let content = require('../data/content.js');
 let subject = require('../data/subject.js');
 
+let logger = require('winston');
+
 // eslint-disable-next-line
 let router = express.Router();
 
@@ -16,13 +18,19 @@ router.get('/:id', function(req, res) {
     subject.details(req.params.id, function(err, data) {
 
         if (err) {
+            logger.error('Error getting subject details: ' + err);
             res.render('subject', {
                 title: content.errMsg.INVALID_ID,
-                err: {title: content.errMsg.INVALID_ID}
+                err: {
+                    title: content.errMsg.INVALID_ID
+                }
             });
         }
 
-        res.render('subject', {subject: data, content: content.view.subject});
+        res.render('subject', {
+            subject: data,
+            content: content.view.subject
+        });
     });
 });
 

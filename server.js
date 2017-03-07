@@ -1,9 +1,10 @@
 'use strict';
 
+let logger = require('./log.js');
+
 let bodyParser = require('body-parser');
 let cookieSession = require('cookie-session');
 let express = require('express');
-let logger = require('winston');
 let path = require('path');
 
 let index = require('./routes/index');
@@ -13,17 +14,7 @@ let subject = require('./routes/subject');
 
 let content = require('./data/content.js');
 
-// Logger configuration
-logger.remove(logger.transports.Console);
-logger.add(logger.transports.Console, {
-    prettyPrint: true,
-    colorize: true,
-    silent: false,
-    timestamp: true
-    // json: true
-});
-
-logger.level = 'info';
+let util = require('util');
 
 
 //  Express Configuration
@@ -90,6 +81,9 @@ app.use('/subject/', subject);
 
 // Error Handler
 app.use(function(req, res, next) {
+
+    console.log(util.inspect(req));
+
     let error = new Error('Not Found');
     error.status = 404;
     next(error);

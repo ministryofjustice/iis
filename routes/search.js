@@ -7,43 +7,57 @@ let dob = require('../data/dob.js');
 let identifier = require('../data/identifier.js');
 let names = require('../data/names.js');
 
+let logger = require('winston');
+
 // eslint-disable-next-line
 let router = express.Router();
 
 router.get('/', function(req, res) {
-    res.render('search', {content: content.view.search});
+    res.render('search', {
+        content: content.view.search
+    });
 });
 
 router.post('/', function(req, res) {
 
-    if(!req.body.opt) {
+    if (!req.body.opt) {
 
-        let _err = {title: content.errMsg.CANNOT_SUBMIT,
-                     desc: content.errMsg.NO_OPTION_SELECTED};
+        logger.info('Search: No search option supplied');
 
-        res.render('search', {err: _err, content: content.view.search});
-        return;
+        let _err = {
+            title: content.errMsg.CANNOT_SUBMIT,
+            desc: content.errMsg.NO_OPTION_SELECTED
+        };
+
+        res.render('search', {
+            err: _err,
+            content: content.view.search
+        });
     }
 
     req.session.opt = Array.isArray(req.body.opt) ? req.body.opt : [req.body.opt];
     req.session.userInput = {};
 
-    res.redirect('/search/'+req.session.opt[0]);
+    res.redirect('/search/' + req.session.opt[0]);
 });
 
 
 router.get('/results', function(req, res) {
+
     // TODO: what if session has no user input?
     search.inmate(req.session.userInput, function(err, data) {
 
         // TODO: show message
-        if(err) {
+        if (err) {
+            logger.error('Error during search: ' + err);
             res.redirect('/search');
             return;
         }
 
         res.render('search/results', {
-            content: {title: content.view.results.title.replace('_x_', (data !== 0 ? data.length : '0'))},
+            content: {
+                title: content.view.results.title.replace('_x_', (data !== 0 ? data.length : '0'))
+            },
             view: req.params.v,
             data: data
         });
@@ -72,8 +86,10 @@ const options = {
 router.get('/:view', function(req, res) {
 
     const view = req.params.view;
+    const viewInfo = options[view];
 
-    if(!options[view]) {
+    if (!viewInfo) {
+        logger.warn('No such search option: ' + view);
         res.redirect('/search');
         return;
     }
@@ -91,18 +107,21 @@ router.post('/:view', function(req, res) {
     const viewInfo = options[view];
 
     if (!viewInfo) {
+        logger.warn('No such search option: ' + view);
         res.redirect('/search');
         return;
     }
 
     const input = {};
+
     viewInfo.fields.forEach(function(field) {
         delete req.session.userInput[field];
         input[field] = String(req.body[field] || '').trim();
     });
 
     viewInfo.validator(input, function(err) {
-        if(err) {
+        if (err) {
+            logger.info('Input validation error: ' + err);
             renderViewWithErrorAndUserInput(req, res, view, err);
             return;
         }
@@ -114,7 +133,7 @@ router.post('/:view', function(req, res) {
 });
 
 function renderViewWithErrorAndUserInput(req, res, viewName, err) {
-    res.render('search/'+viewName, {
+    res.render('search/' + viewName, {
         content: content.view[viewName],
         view: viewName,
         err: err,

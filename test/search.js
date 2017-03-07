@@ -1,14 +1,14 @@
 'use strict';
 
-var expect = require('chai').expect;
-var db = require('../server/db');
-var search = require('../data/search');
+let expect = require('chai').expect;
+let db = require('../server/db');
+let search = require('../data/search');
 
-var EventEmitter = require("events").EventEmitter;
+let EventEmitter = require("events").EventEmitter;
 
 function prepareFakeDB(onRequest) {
     db.setFakeFactory(function fakeDBFactory() {
-        var fake = new EventEmitter();
+        let fake = new EventEmitter();
         process.nextTick(function() {
             fake.emit("connect");
         });

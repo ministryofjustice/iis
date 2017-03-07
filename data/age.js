@@ -1,8 +1,10 @@
 'use strict';
 
 let content = require('./content.js');
+let logger = require('winston');
 
 module.exports = {
+
     validate: function(val, callback) {
 
         let err = {
@@ -12,6 +14,7 @@ module.exports = {
         };
 
         if (!isAgeOrAgeRange(val.replace(/ /g, ''))) {
+            logger.debug('Not a valid age or age range');
             return callback(err);
         }
 
@@ -19,33 +22,36 @@ module.exports = {
     },
 
     getDateRange: function(val, callback) {
-        let arrDateRange;
+        let dateRange;
 
         val = val.replace(/ /g, '');
 
         if (val.indexOf('-') === -1) {
             let birthYear = parseInt(new Date().getFullYear()) - val;
-            arrDateRange = [birthYear + '0101', birthYear + '1231'];
+            dateRange = [birthYear + '0101', birthYear + '1231'];
         } else {
             let arrVal = val.split('-');
             let yearFrom = parseInt(new Date().getFullYear()) - arrVal[1];
             let yearTo = parseInt(new Date().getFullYear()) - arrVal[0];
-            arrDateRange = [yearFrom + '0101', yearTo + '1231'];
+            dateRange = [yearFrom + '0101', yearTo + '1231'];
         }
 
-        callback(arrDateRange);
+        logger.debug('Date range: ' + dateRange);
+
+        callback(dateRange);
     }
 };
 
 function isAgeOrAgeRange(v) {
+
     if (!/^[1-9][0-9]$|^[1-9][0-9]-[1-9][0-9]$/.test(v)) {
         return false;
     }
 
     if (v.indexOf('-') === -1) {
         return true;
-    } else {
-        v = v.split('-');
-        return (v[0] <= v[1]);
     }
+
+    v = v.split('-');
+    return (v[0] <= v[1]);
 }

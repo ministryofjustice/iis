@@ -81,9 +81,6 @@ app.use('/subject/', subject);
 
 // Error Handler
 app.use(function(req, res, next) {
-
-    console.log(util.inspect(req));
-
     let error = new Error('Not Found');
     error.status = 404;
     next(error);

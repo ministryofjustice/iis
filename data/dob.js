@@ -3,7 +3,9 @@
 let content = require('./content.js');
 
 module.exports = {
+
     validate: function(obj, callback) {
+
         if (obj.age.length > 0) {
             return callback(validateAge(obj.age));
         }
@@ -13,7 +15,6 @@ module.exports = {
             items: [{dobDay: 'Enter date of birth'}],
             desc: content.errMsg.INVALID_DOB
         };
-
 
         let day = obj.dobDay;
         let month = obj.dobMonth;
@@ -39,6 +40,7 @@ function isDate(v) {
 
 
 function validateAge(v) {
+
     let err = {
         title: content.errMsg.CANNOT_SUBMIT,
         items: [{agRange: 'Re-enter age or range'}],
@@ -54,14 +56,15 @@ function validateAge(v) {
 
 
 function isAgeOrAgeRange(v) {
+
     if (!/^[1-9][0-9]$|^[1-9][0-9]-[1-9][0-9]$/.test(v)) {
         return false;
     }
 
     if (v.indexOf('-') === -1) {
         return true;
-    } else {
-        v = v.split('-');
-        return (v[0] <= v[1]);
     }
+
+    v = v.split('-');
+    return (v[0] <= v[1]);
 }

@@ -3,7 +3,9 @@
 let content = require('./content.js');
 
 function validateInputs(err, obj) {
+
     err.items = [];
+
     let errCount = 0;
 
     if (obj.forename.length !== 0 && !isString(obj.forename)) {
@@ -15,12 +17,14 @@ function validateInputs(err, obj) {
     if (obj.surname.length !== 0 && !isString(obj.surname)) {
         err.items[errCount++] = {surname: 'Correct the surname'};
     }
+
     return errCount;
 }
 
 module.exports = {
 
     validate: function(obj, callback) {
+
         let err = {
             title: content.errMsg.CANNOT_SUBMIT,
             items: [{forename: 'Enter forename'}, {forename2: 'Enter middle name'}, {surname: 'Enter surname'}],

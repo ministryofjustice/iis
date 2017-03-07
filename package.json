@@ -3,9 +3,12 @@
     "version": "1.0.0",
     "description": "Historical Offenders Application",
     "main": "server.js",
+    "engines": {
+        "node": "6.9.4"
+    },
     "scripts": {
-        "test": "mocha",
-        "start": "gulp build; node ."
+        "start": "gulp && node .",
+        "test": "gulp build test"
     },
     "repository": {
         "type": "git",

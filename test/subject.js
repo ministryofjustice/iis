@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var db = require('../db');
+var db = require('../server/db');
 var subject = require("../data/subject");
 
 var EventEmitter = require("events").EventEmitter;

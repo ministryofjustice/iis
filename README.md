@@ -2,7 +2,7 @@
 Ministry of Justice Inmate Information System - Historical Offenders Application UI.
 
 [![CircleCI](https://circleci.com/gh/noms-digital-studio/iis.svg?style=svg)](https://circleci.com/gh/noms-digital-studio/iis)
-[![JavaScript Style Guide](https://img.shields.io/badge/code%20style-google-brightgreen.svg)]
+[![JavaScript Style Guide](https://img.shields.io/badge/code%20style-google-brightgreen.svg)](http://standardjs.com/)
 
 # Get Started
 

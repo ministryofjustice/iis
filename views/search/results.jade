@@ -3,7 +3,7 @@ extends ../layout
 block content
     div.grid-row
         div.column-two-thirds
-            h1.heading-xlarge Your search returned #{(data == 0) ? 0 : data.length} results
+            h1.heading-xlarge= content.title
             
             mixin inmate(name, href)
                 div.form-group

@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var content = require('../data/content')
 
 router.get('/', function(req, res) {
     res.redirect('/search');
@@ -12,7 +13,7 @@ router.get('/change-password', function (req, res) {
         return;
     }
 
-    res.render('change-password',{title: 'Change password', nav: true});
+    res.render('change-password',{nav: true, content: content.view.changepassword});
 });
 
 

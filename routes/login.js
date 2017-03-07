@@ -6,7 +6,7 @@ var content = require("../data/content");
 
 router.get('/', function(req, res, next) {
     req.session.logged_in = 0;
-    res.render('login');
+    res.render('login', {content: content.view.login});
 });
 
 
@@ -17,7 +17,7 @@ router.post('/', function (req, res, next) {
         
     if(!login_id || !pwd) {
         res.status(400);
-        res.render('login', { msg: msg });
+        res.render('login', { msg: msg, content: content.view.login });
     } else {
         users.checkUsernameAndPassword(login_id, pwd, function(err, ok) {
             if (err) return res.render("login", {msg: String(err)});
@@ -27,7 +27,7 @@ router.post('/', function (req, res, next) {
                 res.redirect('/search');
             } else {
                 res.status(400);
-                res.render('login', { msg: msg });
+                res.render('login', { msg: msg, content: content.view.login });
             }
 
         });        

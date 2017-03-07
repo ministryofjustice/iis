@@ -7,7 +7,7 @@ var identifier = require('../data/identifier.js');
 var names = require('../data/names.js');
 
 router.get('/', function(req, res){    
-    res.render('search', {title: 'Search'});
+    res.render('search', {content: content.view.search});
 });
 
 router.post('/', function (req, res) { 
@@ -16,7 +16,7 @@ router.post('/', function (req, res) {
         var _err = { title: content.err_msg.CANNOT_SUBMIT,
                      desc: content.err_msg.NO_OPTION_SELECTED  };
         
-        res.render('search', {title: 'Search', err: _err});
+        res.render('search', {err: _err, content: content.view.search});
         return;
     }
 
@@ -36,9 +36,9 @@ router.get('/results', function (req, res) {
             res.redirect('/search');
             return;
         }
-        
+
         res.render('search/results', {
-            title: (data != 0 ? data.length : '0') + ' Results',
+            content: {title: content.view.results.title.replace('_x_',(data != 0 ? data.length : '0'))},
             view: req.params.v,
             data: data
         });
@@ -47,19 +47,16 @@ router.get('/results', function (req, res) {
 
 const options = {
     identifier: {
-        title: "Enter at least one unique identifier",
         fields: ["prison_number"],
         validator: identifier.validate,
         nextView: "names",
     },
     names: {
-        title: "Enter at least one name",
         fields: ["forename", "forename2", "surname"],
         validator: names.validate,
         nextView: "dob",
     },
     dob: {
-        title: "Enter inmate's date of birth or age/range",
         fields: ["dobOrAge", "dob_day", "dob_month", "dob_year", "age"],
         validator: dob.validate,
         nextView: "results"
@@ -77,7 +74,7 @@ router.get('/:view', function (req, res) {
     }
 
     res.render('search/' + view, {
-        title: options[view].title,
+        content: content.view[view],
         view: view,
         body: {},
     });
@@ -112,7 +109,7 @@ router.post('/:view', function(req, res) {
 
 function renderViewWithErrorAndUserInput(req, res, viewName, err){
     res.render('search/'+viewName, {
-        title: options[viewName].title, 
+        content: content.view[viewName], 
         view: viewName, 
         err: err,
         body: req.body

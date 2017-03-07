@@ -13,16 +13,16 @@ block content
 
     div.grid-row
         div.column-two-thirds
-            h1.heading-xlarge What information do you have on the inmate?
+            h1.heading-xlarge= content.heading
             
     div.grid-row
         div.column-full
-            p.bold-small Select all that apply
+            p.bold-small= content.body
       
             form(method="post", name="formSearch")
                 div.form-group
                     fieldset
-                        legend.visually-hidden What information do you have on the inmate?
+                        legend.visually-hidden= content.heading
                         
                         label(class="block-label selection-button-checkbox",for="identifier")
                             input#identifier(name="opt", type="checkbox", value="identifier") 

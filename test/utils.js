@@ -1,6 +1,7 @@
+'use strict';
+
 let expect = require('chai').expect;
 let utils = require("../data/utils");
-
 
 describe('Utility methods', function () {
 

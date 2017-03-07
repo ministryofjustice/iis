@@ -1,7 +1,20 @@
 'use strict';
 
+let util = require('util');
+let logger = require('winston');
+
 let fakeDBFactory;
 let connection;
+
+
+function addParams(params, request) {
+    params.forEach(function(param) {
+        request.addParameter(
+            param.column,
+            param.type,
+            param.value);
+    });
+}
 
 module.exports = {
 
@@ -11,6 +24,7 @@ module.exports = {
 
     connect: function() {
         if (fakeDBFactory) {
+            logger.info('Using fake DB');
             return fakeDBFactory();
         }
 
@@ -36,10 +50,12 @@ module.exports = {
 
         let connected = false;
         connection = this.connect();
+
         connection.on('connect', function(err) {
             if (err) {
                 return finish(err);
             }
+
             connected = true;
 
             let Request = require('tedious').Request;
@@ -53,26 +69,29 @@ module.exports = {
             });
 
             if (params) {
-                params.forEach(function(param) {
-                    request.addParameter(param.column,
-                        param.type,
-                        param.value);
-                });
+                addParams(params, request);
             }
 
             request.on('row', function(columns) {
                 return finish(null, columns);
             });
 
+            logger.debug('Executing tuple request: ' + util.inspect(request));
             connection.execSql(request);
         });
 
         let that = this;
 
         function finish(err, result) {
+
+            if (err) {
+                logger.error('Error during tuple query: ' + err);
+            }
+
             if (connected) {
                 that.disconnect();
             }
+
             return callback(err, result);
         }
     },
@@ -81,10 +100,12 @@ module.exports = {
 
         let connected = false;
         connection = this.connect();
+
         connection.on('connect', function(err) {
             if (err) {
                 return finish(err);
             }
+
             connected = true;
 
             let Request = require('tedious').Request;
@@ -101,27 +122,31 @@ module.exports = {
             });
 
             if (params) {
-                params.forEach(function(param) {
-                    request.addParameter(param.column,
-                        param.type,
-                        param.value);
-                });
+                addParams(params, request);
             }
 
+            logger.debug('Executing collection request: ' + util.inspect(request));
             connection.execSql(request);
         });
 
         let that = this;
 
         function finish(err, result) {
+
+            if (err) {
+                logger.error('Error during collection query: ' + err);
+            }
+
             if (connected) {
                 that.disconnect();
             }
+
             return callback(err, result);
         }
     },
 
     disconnect: function() {
+
         if (fakeDBFactory) {
             return;
         }

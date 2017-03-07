@@ -22,7 +22,9 @@ module.exports = {
 
     details: function(id, callback) {
 
-        let params = [{column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: id}];
+        let params = [
+            {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: id}
+        ];
 
         db.getTuple(sql, params, function(err, cols) {
             if (err || cols === 0) {

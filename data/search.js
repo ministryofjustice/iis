@@ -2,8 +2,8 @@
 
 let db = require('../server/db');
 let utils = require('./utils');
-let TYPES = require('tedious').TYPES;
 
+let TYPES = require('tedious').TYPES;
 
 const filters = {
     prisonNumber: {
@@ -54,8 +54,10 @@ const filters = {
             let sql = '(INMATE_BIRTH_DATE >= @from_date AND INMATE_BIRTH_DATE <= @to_date)';
             return {
                 sql: sql,
-                params: [{column: 'from_date', type: getType('string'), value: dateRange[0]},
-                    {column: 'to_date', type: getType('string'), value: dateRange[1]}]
+                params: [
+                    {column: 'from_date', type: getType('string'), value: dateRange[0]},
+                    {column: 'to_date', type: getType('string'), value: dateRange[1]}
+                ]
             };
         }
     }
@@ -67,7 +69,9 @@ function getSqlWithParams(obj) {
 
     return {
         sql: sql,
-        params: [{column: this.dbColumn, type: getType('string'), value: obj.val}]
+        params: [
+            {column: this.dbColumn, type: getType('string'), value: obj.val}
+        ]
     };
 }
 
@@ -78,6 +82,7 @@ function getType(v) {
 
 
 module.exports = {
+
     inmate: function(userInput, callback) {
         let sqlWhere = '';
         let params = [];

@@ -3,6 +3,7 @@
 let content = require('./content.js');
 
 module.exports = {
+
     validate: function(input, callback) {
 
         let err = {
@@ -10,7 +11,6 @@ module.exports = {
             items: [{prisonNumber: 'Re-enter the prison number'}],
             desc: content.errMsg.INVALID_ID
         };
-
 
         if (!isPrisonNumber(input.prisonNumber)) {
             return callback(err);

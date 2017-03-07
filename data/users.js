@@ -2,12 +2,15 @@
 
 let db = require('../server/db');
 let bcrypt = require('bcryptjs');
+let TYPES = require('tedious').TYPES;
 
 module.exports = {
+
     checkUsernameAndPassword: function(loginId, pwd, callback) {
 
-        let TYPES = require('tedious').TYPES;
-        let params = [{column: 'loginId', type: TYPES.VarChar, value: loginId}];
+        let params = [
+            {column: 'loginId', type: TYPES.VarChar, value: loginId}
+        ];
 
         db.getTuple('SELECT pwd from NON_IIS.users WHERE login_id=@loginId;', params, function(err, cols) {
 
@@ -19,6 +22,7 @@ module.exports = {
             }
 
             let hash = cols.pwd.value;
+
             bcrypt.compare(pwd, hash, function(err, outcome) {
                 return callback(null, outcome);
             });

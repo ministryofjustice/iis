@@ -108,20 +108,17 @@ module.exports = {
 
 
         // eslint-disable-next-line
-        let sql = 'SELECT PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, FORMAT(INMATE_BIRTH_DATE,\'dd/MM/yyyy\') AS DOB FROM IIS.LOSS_OF_LIBERTY WHERE ' + sqlWhere;
+        let sql = "SELECT PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, FORMAT(INMATE_BIRTH_DATE,'dd/MM/yyyy') AS DOB, ";
+        // eslint-disable-next-line
+        sql += "SUBSTRING((SELECT ',' + k.PERSON_FORENAME_1 + ' ' + PERSON_FORENAME_2 + ' ' + k.PERSON_SURNAME FROM IIS.KNOWN_AS k WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER FOR XML PATH('')),2,200000) AS ALIAS";
+        // eslint-disable-next-line
+        sql += " FROM IIS.LOSS_OF_LIBERTY l WHERE " + sqlWhere;
 
         db.getCollection(sql, params, function(err, rows) {
             if (err) {
                 return callback(err);
             }
 
-   
-        var sql = "SELECT PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, FORMAT(INMATE_BIRTH_DATE,'dd/MM/yyyy') AS DOB, "
-        sql += "SUBSTRING((SELECT ',' + k.PERSON_FORENAME_1 + ' ' + PERSON_FORENAME_2 + ' ' + k.PERSON_SURNAME FROM IIS.KNOWN_AS k WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER FOR XML PATH('')),2,200000) AS ALIAS"
-        sql += " FROM IIS.LOSS_OF_LIBERTY l WHERE " +  sqlWhere;
-        
-        db.getCollection(sql, params, function(err, rows){
-            if(err) return callback(err);
             return callback(null, rows);
         });
     }

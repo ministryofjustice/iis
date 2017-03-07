@@ -21,7 +21,7 @@ router.get('/:id', function(req, res) {
                 err: {title: content.err_msg.INVALID_ID}
             });
         
-        res.render('subject', {title: 'Details of ' + data.INMATE_FORENAME_1.value, subject: data});
+        res.render('subject', {subject: data, content: content.view.subject});
     });
 
     

@@ -30,6 +30,8 @@ module.exports = {
         dob: {title: "Enter inmate's date of birth or age/range"},
         
         results: {title: "Your search returned _x_ results"},
+        
+        subject: {title: "Subject details"},
     } 
 
 }

@@ -18,7 +18,7 @@ block content
                             + (item.INMATE_FORENAME_2.value ? item.INMATE_FORENAME_2.value + ' ' : '') 
                             + item.INMATE_SURNAME.value, item.PK_PRISON_NUMBER.value)
                         span &middot; #{item.DOB.value}
-                        span.form-hint *Alias*
+                        span.form-hint  #{item.ALIAS.value ? item.ALIAS.value.trim().substr(0, item.ALIAS.value.trim().length-1) : '' }
                         
                         
             div.bold-small 

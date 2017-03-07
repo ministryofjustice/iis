@@ -1,6 +1,15 @@
 extends layout
 
 block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+
+    div.grid-row
+        div.column-one-half
+            h1.heading-xlarge Error
+            h1.heading-large There was an error
+
+    h3 Message
+    p.code= error.status =message
+
+
+    h3 Developer mode detail
+    p.code= error.stack

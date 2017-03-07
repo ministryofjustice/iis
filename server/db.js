@@ -1,8 +1,10 @@
+'use strict';
+
 var fakeDBFactory;
 var connection;
 
-
 module.exports = {
+
     setFakeFactory: function (fakeFactory) {
         fakeDBFactory = fakeFactory;
     },
@@ -13,9 +15,9 @@ module.exports = {
         }
 
         var config = require('./config');
-        var connection = require('tedious').Connection;
+        var Connection = require('tedious').Connection;
 
-        connection = new connection({
+        connection = new Connection({
             userName: config.db.username,
             password: config.db.password,
             server: config.db.server,

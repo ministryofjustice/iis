@@ -1,3 +1,5 @@
+'use strict';
+
 function get(name, fallback) {
     if (process.env[name]) {
         return process.env[name];

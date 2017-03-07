@@ -1,3 +1,5 @@
+'use strict';
+
 var db = require('../server/db');
 var utils = require('./utils');
 var TYPES = require('tedious').TYPES;

@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
 
     errMsg: {
@@ -12,6 +14,8 @@ module.exports = {
     },
 
     view: {
+        error: {title: 'Error'},
+
         login: {title: 'Enter user id and password'},
 
         search: {

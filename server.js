@@ -1,17 +1,17 @@
 'use strict';
 
-var bodyParser = require('body-parser');
-var cookieSession = require('cookie-session');
-var express = require('express');
-var logger = require('winston');
-var path = require('path');
+let bodyParser = require('body-parser');
+let cookieSession = require('cookie-session');
+let express = require('express');
+let logger = require('winston');
+let path = require('path');
 
-var index = require('./routes/index');
-var login = require('./routes/login');
-var search = require('./routes/search');
-var subject = require('./routes/subject');
+let index = require('./routes/index');
+let login = require('./routes/login');
+let search = require('./routes/search');
+let subject = require('./routes/subject');
 
-var content = require('./data/content.js');
+let content = require('./data/content.js');
 
 // Logger configuration
 logger.remove(logger.transports.Console);
@@ -20,14 +20,14 @@ logger.add(logger.transports.Console, {
     colorize: true,
     silent: false,
     timestamp: true
-    //json: true
+    // json: true
 });
 
 logger.level = 'info';
 
 
 //  Express Configuration
-var app = express();
+let app = express();
 
 
 // Session configuration
@@ -65,7 +65,7 @@ app.locals.asset_path = '/public/';
 /* jshint ignore:end */
 
 // Redirect to login page
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
     if (!isLoggedIn(req) && req.path !== '/login') {
         res.redirect('/login');
         return;
@@ -89,8 +89,8 @@ app.use('/subject/', subject);
 
 
 // Error Handler
-app.use(function (req, res, next) {
-    var error = new Error('Not Found');
+app.use(function(req, res, next) {
+    let error = new Error('Not Found');
     error.status = 404;
     next(error);
 });
@@ -109,10 +109,10 @@ function clientErrors(error, req, res, next) {
 
     res.status(error.status || 500);
 
-    res.render('error',  {nav: true, content: content.view.error});
+    res.render('error', {nav: true, content: content.view.error});
 }
 
-app.listen(app.get('port'), function () {
+app.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
 });
 

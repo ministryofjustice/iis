@@ -1,18 +1,19 @@
 'use strict';
 
-var express = require('express');
-var router = express.Router();
-var content = require('../data/content.js');
-var subject = require('../data/subject.js');
+let express = require('express');
+let content = require('../data/content.js');
+let subject = require('../data/subject.js');
 
+// eslint-disable-next-line
+let router = express.Router();
 
-router.get('/', function (req, res) {
+router.get('/', function(req, res) {
     res.redirect('/search');
 });
 
-router.get('/:id', function (req, res) {
+router.get('/:id', function(req, res) {
 
-    subject.details(req.params.id, function (err, data) {
+    subject.details(req.params.id, function(err, data) {
 
         if (err) {
             res.render('subject', {

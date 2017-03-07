@@ -1,8 +1,8 @@
 'use strict';
 
-var db = require('../server/db');
-var utils = require('./utils');
-var TYPES = require('tedious').TYPES;
+let db = require('../server/db');
+let utils = require('./utils');
+let TYPES = require('tedious').TYPES;
 
 
 const filters = {
@@ -28,7 +28,7 @@ const filters = {
 
     dobDay: {
         dbColumn: 'INMATE_BIRTH_DATE',
-        getSql: function (obj) {
+        getSql: function(obj) {
 
             if (obj.userInput.dobOrAge !== 'dob') {
                 return null;
@@ -43,15 +43,15 @@ const filters = {
     },
     age: {
         dbColumn: 'INMATE_BIRTH_DATE',
-        getSql: function (obj) {
+        getSql: function(obj) {
 
             if (obj.userInput.dobOrAge !== 'age') {
                 return null;
             }
 
-            var dateRange = utils.getDateRange(obj.userInput.age);
+            let dateRange = utils.getDateRange(obj.userInput.age);
 
-            var sql = '(INMATE_BIRTH_DATE >= @from_date AND INMATE_BIRTH_DATE <= @to_date)';
+            let sql = '(INMATE_BIRTH_DATE >= @from_date AND INMATE_BIRTH_DATE <= @to_date)';
             return {
                 sql: sql,
                 params: [{column: 'from_date', type: getType('string'), value: dateRange[0]},
@@ -63,7 +63,7 @@ const filters = {
 
 
 function getSqlWithParams(obj) {
-    var sql = this.dbColumn + ' = @' + this.dbColumn;
+    let sql = this.dbColumn + ' = @' + this.dbColumn;
 
     return {
         sql: sql,
@@ -72,18 +72,18 @@ function getSqlWithParams(obj) {
 }
 
 function getType(v) {
-    //default type
+    // default type
     return TYPES.VarChar;
 }
 
 
 module.exports = {
-    inmate: function (userInput, callback) {
-        var sqlWhere = '';
-        var params = Array();
+    inmate: function(userInput, callback) {
+        let sqlWhere = '';
+        let params = [];
 
-        Object.keys(userInput).forEach(function (key) {
-            var val = userInput[key];
+        Object.keys(userInput).forEach(function(key) {
+            let val = userInput[key];
 
             if (val.length === 0) {
                 return;
@@ -93,13 +93,23 @@ module.exports = {
                 return;
             }
 
-            var obj = filters[key].getSql({val: val, userInput: userInput});
+            let obj = filters[key].getSql({val: val, userInput: userInput});
 
             if (obj !== null) {
                 params = params.concat(obj.params);
                 sqlWhere += (sqlWhere !== '') ? ' AND ' + obj.sql : obj.sql;
             }
         });
+
+
+        // eslint-disable-next-line
+        let sql = 'SELECT PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, FORMAT(INMATE_BIRTH_DATE,\'dd/MM/yyyy\') AS DOB FROM IIS.LOSS_OF_LIBERTY WHERE ' + sqlWhere;
+
+        db.getCollection(sql, params, function(err, rows) {
+            if (err) {
+                return callback(err);
+            }
+
    
         var sql = "SELECT PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, FORMAT(INMATE_BIRTH_DATE,'dd/MM/yyyy') AS DOB, "
         sql += "SUBSTRING((SELECT ',' + k.PERSON_FORENAME_1 + ' ' + PERSON_FORENAME_2 + ' ' + k.PERSON_SURNAME FROM IIS.KNOWN_AS k WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER FOR XML PATH('')),2,200000) AS ALIAS"
@@ -113,4 +123,4 @@ module.exports = {
 };
 
 
-/*LEFT JOIN IIS.KNOWN_AS ON LOSS_OF_LIBERTY.FK_PERSON_IDENTIFIER = KNOWN_AS.FK_PERSON_IDENTIFIER*/
+/* LEFT JOIN IIS.KNOWN_AS ON LOSS_OF_LIBERTY.FK_PERSON_IDENTIFIER = KNOWN_AS.FK_PERSON_IDENTIFIER */

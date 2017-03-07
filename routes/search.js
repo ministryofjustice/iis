@@ -1,23 +1,25 @@
 'use strict';
 
-var express = require('express');
-var router = express.Router();
-var content = require('../data/content.js');
-var search = require('../data/search.js');
-var dob = require('../data/dob.js');
-var identifier = require('../data/identifier.js');
-var names = require('../data/names.js');
+let express = require('express');
+let content = require('../data/content.js');
+let search = require('../data/search.js');
+let dob = require('../data/dob.js');
+let identifier = require('../data/identifier.js');
+let names = require('../data/names.js');
 
-router.get('/', function(req, res){
+// eslint-disable-next-line
+let router = express.Router();
+
+router.get('/', function(req, res) {
     res.render('search', {content: content.view.search});
 });
 
-router.post('/', function (req, res) {
+router.post('/', function(req, res) {
 
-    if(!req.body.opt){
+    if(!req.body.opt) {
 
-        var _err = { title: content.errMsg.CANNOT_SUBMIT,
-                     desc: content.errMsg.NO_OPTION_SELECTED  };
+        let _err = {title: content.errMsg.CANNOT_SUBMIT,
+                     desc: content.errMsg.NO_OPTION_SELECTED};
 
         res.render('search', {err: _err, content: content.view.search});
         return;
@@ -30,18 +32,18 @@ router.post('/', function (req, res) {
 });
 
 
-router.get('/results', function (req, res) {
-    //TODO: what if session has no user input?
-    search.inmate(req.session.userInput, function(err, data){
+router.get('/results', function(req, res) {
+    // TODO: what if session has no user input?
+    search.inmate(req.session.userInput, function(err, data) {
 
-        //TODO: show message
-        if(err){
+        // TODO: show message
+        if(err) {
             res.redirect('/search');
             return;
         }
 
         res.render('search/results', {
-            content: {title: content.view.results.title.replace('_x_',(data !== 0 ? data.length : '0'))},
+            content: {title: content.view.results.title.replace('_x_', (data !== 0 ? data.length : '0'))},
             view: req.params.v,
             data: data
         });
@@ -67,11 +69,11 @@ const options = {
 };
 
 
-router.get('/:view', function (req, res) {
+router.get('/:view', function(req, res) {
 
     const view = req.params.view;
 
-    if(!options[view]){
+    if(!options[view]) {
         res.redirect('/search');
         return;
     }
@@ -111,7 +113,7 @@ router.post('/:view', function(req, res) {
     });
 });
 
-function renderViewWithErrorAndUserInput(req, res, viewName, err){
+function renderViewWithErrorAndUserInput(req, res, viewName, err) {
     res.render('search/'+viewName, {
         content: content.view[viewName],
         view: viewName,
@@ -120,8 +122,8 @@ function renderViewWithErrorAndUserInput(req, res, viewName, err){
     });
 }
 
-function proceedToTheNextView(req, res, currView){
-    var nextView = options[currView].nextView;
+function proceedToTheNextView(req, res, currView) {
+    let nextView = options[currView].nextView;
 
     if (nextView !== 'results' && req.session.opt.indexOf(nextView) === -1) {
         proceedToTheNextView(req, res, nextView);

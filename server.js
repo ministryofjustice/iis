@@ -14,8 +14,6 @@ let subject = require('./routes/subject');
 
 let content = require('./data/content.js');
 
-let util = require('util');
-
 
 //  Express Configuration
 let app = express();

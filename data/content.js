@@ -12,17 +12,14 @@ module.exports = {
     },
     
     view:{
-        login: {title: "Sign in",
-                 heading: "Enter username and password"},
+        login: {title: "Enter user id and password"},
         
         
-        search: {title: "Search",
-                 heading: "What information do you have on the inmate?",
+        search: {title: "What information do you have on the inmate?",
                  body: "Select all that apply"},
         
         changepassword: {
-            title: "Change password",
-            heading: "Contact administrator",
+            title: "Contact administrator",
             body: "Send an email to whatever@digital.justice.gov.uk from the email address registered with IIS"
                         },
         

@@ -11,8 +11,12 @@ block content
                     ul.error-summary-list
                         li
                             a(href="#login_id") Enter user id and password again
-                
-            h1.heading-xlarge Sign in
+    div.grid-row
+        div.column-one-half
+            h1.heading-xlarge= content.title
+            
+    div.grid-row
+        div.column-full
             form(method="post")
                 div.form-group
                     label(for="login_id")

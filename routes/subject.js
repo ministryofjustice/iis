@@ -17,7 +17,8 @@ router.get('/:id', function (req, res) {
                 title: content.errMsg.INVALID_ID,
                 err: {title: content.errMsg.INVALID_ID}
             });
-        
+        }
+
         res.render('subject', {subject: data, content: content.view.subject});
     });
 });

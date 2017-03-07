@@ -6,17 +6,17 @@ var dob = require('../data/dob.js');
 var identifier = require('../data/identifier.js');
 var names = require('../data/names.js');
 
-router.get('/', function(req, res){    
+router.get('/', function(req, res){
     res.render('search', {content: content.view.search});
 });
 
 router.post('/', function (req, res) {
 
     if(!req.body.opt){
-        
+
         var _err = { title: content.errMsg.CANNOT_SUBMIT,
                      desc: content.errMsg.NO_OPTION_SELECTED  };
-        
+
         res.render('search', {err: _err, content: content.view.search});
         return;
     }
@@ -48,17 +48,17 @@ router.get('/results', function (req, res) {
 
 const options = {
     identifier: {
-        fields: ["prisonNumber"],
+        fields: ['prisonNumber'],
         validator: identifier.validate,
         nextView: 'names'
     },
     names: {
-        fields: ["forename", "forename2", "surname"],
+        fields: ['forename', 'forename2', 'surname'],
         validator: names.validate,
         nextView: 'dob'
     },
     dob: {
-        fields: ["dobOrAge", "dobDay", "dobMonth", "dobYear", "age"],
+        fields: ['dobOrAge', 'dobDay', 'dobMonth', 'dobYear', 'age'],
         validator: dob.validate,
         nextView: 'results'
     }
@@ -111,8 +111,8 @@ router.post('/:view', function(req, res) {
 
 function renderViewWithErrorAndUserInput(req, res, viewName, err){
     res.render('search/'+viewName, {
-        content: content.view[viewName], 
-        view: viewName, 
+        content: content.view[viewName],
+        view: viewName,
         err: err,
         body: req.body
     });

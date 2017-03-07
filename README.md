@@ -26,7 +26,7 @@ Ministry of Justice Inmate Information System - Historical Offenders Application
 
 ## Developer Commands
 
- - `gulp lint-all` -> style checks using eslint
+ - `gulp lint` -> style checks using eslint
  - `gulp test` -> runs all unit tests
  - `gulp clean` -> cleans previously generated files
  - `gulp build` -> cleans and regenerates assets. This is also the default gulp task

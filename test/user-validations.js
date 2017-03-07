@@ -1,18 +1,18 @@
 'use strict';
 
-var request = require('supertest');
-var expect = require('chai').expect;
-var bcrypt = require("bcryptjs");
-var db = require('../server/db');
-var users = require("../data/users");
+let request = require('supertest');
+let expect = require('chai').expect;
+let bcrypt = require("bcryptjs");
+let db = require('../server/db');
+let users = require("../data/users");
 
-var passwordHashed = bcrypt.hashSync("thisisapassword");
+let passwordHashed = bcrypt.hashSync("thisisapassword");
 
-var EventEmitter = require("events").EventEmitter;
+let EventEmitter = require("events").EventEmitter;
 
 function prepareFakeDB(onRequest) {
     db.setFakeFactory(function fakeDBFactory() {
-        var fake = new EventEmitter();
+        let fake = new EventEmitter();
         process.nextTick(function() {
             fake.emit("connect");
         });

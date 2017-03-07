@@ -1,10 +1,10 @@
 'use strict';
 
-var request = require('supertest');
-var expect = require('chai').expect;
+let request = require('supertest');
+let expect = require('chai').expect;
 
-var common = require('./common');
-var app = require("../server.js");
+let common = require('./common');
+let app = require("../server.js");
 
 
 describe('Name(s) validation tests', function(){

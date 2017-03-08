@@ -117,14 +117,13 @@ if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
   cd - > /dev/null
 fi
 
-# 4. Gulp build
-IF EXIST "Gulpfile.js" (
- pushd "%DEPLOYMENT_TARGET%"
- call .\node_modules\.bin\gulp build
- IF !ERRORLEVEL! NEQ 0 goto error
- popd
-
- )
+# 4. Run Gulp Build
+if [ -e "$DEPLOYMENT_TARGET/gulpfile.js" ]; then
+  cd "$DEPLOYMENT_TARGET"
+  eval ./node_modules/.bin/gulp build
+  exitWithMessageOnError "gulp failed"
+  cd - > /dev/null
+fi
 
 ##################################################################################################################################
 echo "Finished successfully."

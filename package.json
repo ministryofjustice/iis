@@ -4,10 +4,11 @@
     "description": "Historical Offenders Application",
     "main": "server.js",
     "engines": {
+        "npm": "3.10.10",
         "node": "6.9.4"
     },
     "scripts": {
-        "start": "./node_modules/gulp/bin/gulp.js && node .",
+        "start": "./node_modules/.bin/gulp && node .",
         "test": "gulp build test"
     },
     "repository": {

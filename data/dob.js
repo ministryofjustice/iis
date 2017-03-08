@@ -48,11 +48,11 @@ function validateAge(v) {
     };
 
     if (!isAgeOrAgeRange(v.replace(/ /g, ''))) {
-        
-        if (v.indexOf('-') >= 0){
+
+        if (v.indexOf('-') >= 0) {
             err.desc = content.errMsg.INVALID_AGE_RANGE;
         }
-        
+
         return err;
     }
 
@@ -71,10 +71,10 @@ function isAgeOrAgeRange(v) {
     }
 
     v = v.split('-');
-    
-    if (v[0] >= v[1]){
+
+    if (v[0] >= v[1]) {
         return false;
     }
-    
+
     return ((v[1] - v[0]) < 6);
 }

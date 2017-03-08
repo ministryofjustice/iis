@@ -33,7 +33,6 @@ router.post('/', function(req, res) {
             err: _err,
             content: content.view.search
         });
-        
         return;
     }
 

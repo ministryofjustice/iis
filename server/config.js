@@ -13,8 +13,8 @@ function get(name, fallback) {
 module.exports = {
     db: {
         username: get('DB_USER', 'iis-admin@iis-sandbox'),
-        password: get('DB_PASS'),
-        server: get('DB_SERVER'),
+        password: get('DB_PASS', 'pass'),
+        server: get('DB_SERVER', 'server'),
         database: get('DB_NAME', 'iis-sandbox')
     }
 };

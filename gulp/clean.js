@@ -1,7 +1,7 @@
 'use strict';
 
-var gulp = require('gulp');
-var clean = require('gulp-clean');
+let gulp = require('gulp');
+let clean = require('gulp-clean');
 
 gulp.task('clean', function () {
     return gulp.src([
@@ -11,7 +11,8 @@ gulp.task('clean', function () {
         '*.log',
         'build/*',
         'uploads/*',
-        'test-results.xml'
+        'test-results.xml',
+        'hoa-ui.log'
     ], {read: false})
         .pipe(clean())
 });

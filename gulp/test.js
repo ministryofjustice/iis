@@ -1,9 +1,9 @@
 'use strict';
 
-var gulp = require('gulp');
-var mocha = require('gulp-spawn-mocha');
-var mochaPhantomjs = require('gulp-mocha-phantomjs');
-var fs = require('fs');
+let gulp = require('gulp');
+let mocha = require('gulp-spawn-mocha');
+let mochaPhantomjs = require('gulp-mocha-phantomjs');
+let fs = require('fs');
 
 gulp.task('test', function () {
     return gulp.src(['test/**/*.js'])

@@ -1,9 +1,9 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var gulp = require('gulp');
-var nodemon = require('gulp-nodemon');
+let fs = require('fs');
+let path = require('path');
+let gulp = require('gulp');
+let nodemon = require('gulp-nodemon');
 
 gulp.task('server', function () {
   nodemon({

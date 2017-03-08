@@ -1,7 +1,7 @@
 'use strict';
 
-var gulp = require('gulp');
-var runSequence = require('run-sequence');
+let gulp = require('gulp');
+let runSequence = require('run-sequence');
 
 gulp.task('default', function (done) {
     runSequence(
@@ -43,5 +43,13 @@ gulp.task('lint', function (done) {
         'lint-server', done)
 });
 
+gulp.task('silent-test', function (done) {
+    runSequence(
+        'logs-off',
+        'test', done)
+});
 
+gulp.task('logs-off', function () {
+    process.env.NODE_ENV = 'test';
+});
 

@@ -1,8 +1,8 @@
 'use strict';
 
-var gulp = require('gulp');
-var sass = require('gulp-sass');
-var sourcemaps = require('gulp-sourcemaps');
+let gulp = require('gulp');
+let sass = require('gulp-sass');
+let sourcemaps = require('gulp-sourcemaps');
 
 
 gulp.task('sass', function () {

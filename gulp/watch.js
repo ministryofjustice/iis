@@ -1,6 +1,6 @@
 'use strict';
 
-var gulp = require('gulp');
+let gulp = require('gulp');
 
 gulp.task('watch-sass', function () {
     return gulp.watch('./assets/sass/**', {cwd: './'}, ['sass'])

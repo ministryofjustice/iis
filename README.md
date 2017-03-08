@@ -31,11 +31,17 @@ Ministry of Justice Inmate Information System - Historical Offenders Application
 
  - `gulp lint` -> style checks using eslint
  - `gulp test` -> runs all unit tests
+ - `gulp silent-test` -> runs all unit tests with logging turned off
  - `gulp clean` -> cleans previously generated files
  - `gulp build` -> cleans and regenerates assets. This is also the default gulp task
  
  Gulp tasks are defined in individual files under/gulp.
  Coordinating tasks such as `dev`, `test` etc are defined in `/gulp/tasks.js`
+ 
+ NB You can disable logging output during test execution either by running the `silent-test` task instead of `test`,
+ or by setting the NODE_ENV environment variable to `test`, eg
+ 
+ ` TEST_ENV=test gulp test`
 
 
 # User Accounts

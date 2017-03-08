@@ -2,15 +2,19 @@
 
 let logger = require('winston');
 
-logger.remove(logger.transports.Console);
-logger.add(logger.transports.Console, {
-    prettyPrint: true,
-    colorize: true,
-    silent: false,
-    timestamp: true
-    // json: true
-});
+if (process.env.NODE_ENV === 'test') {
+    logger.remove(logger.transports.Console);
+    logger.add(logger.transports.File, {filename: 'hoa-ui.log' });
 
-logger.level = 'info';
+} else {
+    logger.remove(logger.transports.Console);
+    logger.add(logger.transports.Console, {
+        prettyPrint: true,
+        colorize: true,
+        silent: false,
+        timestamp: true
+        // json: true
+    });
+}
 
 module.exports=logger;

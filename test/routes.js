@@ -56,7 +56,7 @@ describe('Test redirections when session set and not set', function () {
                         expect(res.text).to.contain('error-summary')
                     });
             });
-    });
+    }); 
 
     it('should retune 302 if at least one option has been selected', function () {
         return common.logInAs("someone")

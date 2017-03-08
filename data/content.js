@@ -9,8 +9,9 @@ module.exports = {
         INVALID_ID: 'The identifier you\'ve entered doesn\'t look right',
         ATLEAST_ONE_REQUIRED: 'All the fields cannot be empty',
         LETTERS_ONLY: 'A name mustn\'t contain space, numbers or special characters',
-        INVALID_DOB: 'Invalid date of birth, idiot',
-        INVALID_AGE: 'Invalid age'
+        INVALID_DOB: 'Invalid date of birth',
+        INVALID_AGE: 'Age must be a whole number',
+        INVALID_AGE_RANGE: 'Invalid age range or age range too big'
     },
 
     view: {

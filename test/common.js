@@ -22,7 +22,7 @@ module.exports = {
 
         let browser = request.agent(app);
         return browser.post("/login")
-            .send({loginId: username, pwd: "thisisapassword"})
+            .send({loginId: username, pwd: "thisisapassword", disclaimer: "disclaimer"})
             .expect(302)
             .then(function() {
                 return browser;

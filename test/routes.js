@@ -18,7 +18,28 @@ describe('Test redirections when session set and not set', function () {
         let check = common.userStub();
 
         return request(app).post("/login")
+                .send({loginId: "glen", pwd: "password", disclaimer:"disclaimer"})
+                .expect(302)
+                .then(() => {
+                    expect(check.calledOnce).to.be.true;
+                    expect(check.calledWith("glen", "password")).to.be.true;
+                });
+    });
+    
+    it('should display error when disclaimer is not checked', function () {
+        return request(app).post("/login")
                 .send({loginId: "glen", pwd: "password"})
+                .expect(400)
+                .expect(function(res){
+                    expect(res.text).to.contain('error-summary')
+                });
+    });
+    
+    it('should NOT display error when disclaimer is checked', function () {
+        let check = common.userStub();
+        
+        return request(app).post("/login")
+                .send({loginId: "glen", pwd: "password", disclaimer: "disclaimer"})
                 .expect(302)
                 .then(() => {
                     expect(check.calledOnce).to.be.true;

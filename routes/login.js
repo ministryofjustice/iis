@@ -18,17 +18,32 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
     let loginId = req.body.loginId;
     let pwd = req.body.pwd;
-    let msg = content.errMsg.LOGIN_ERROR;
+    let err = {
+        title: content.errMsg.LOGIN_ERROR,
+        items: [{loginId: 'Enter user id and password again'}],
+        desc: content.errMsg.LOGIN_ERROR_DESC
+    };
 
     if (!loginId || !pwd || !req.body.disclaimer) {
         logger.info('Missing login inputs');
         res.status(400);
-        res.render('login', {msg: msg, content: content.view.login});
+        //
+        if(!req.body.disclaimer) {
+            err.items.push({disclaimer: 'You must confirm that you understand the disclaimer'});
+            err.desc += '. ' + content.errMsg.LOGIN_ERROR_DISCLAIMER;
+        }
+        
+        res.render('login', {err: err, content: content.view.login});
     } else {
-        users.checkUsernameAndPassword(loginId, pwd, function(err, ok) {
-            if (err) {
-                logger.error('Error checking credentials: ' + err);
-                return res.render('login', {msg: String(err), content: content.view.login});
+        users.checkUsernameAndPassword(loginId, pwd, function(oErr, ok) {
+            if (oErr) {
+                logger.error('Error checking credentials: ' + oErr);
+                err = {
+                        title: content.errMsg.DB_ERROR,
+                        desc: content.errMsg.TRY_AGAIN
+                      };
+                
+                return res.render('login', {err: err, content: content.view.login});
             }
 
             if (ok === true) {

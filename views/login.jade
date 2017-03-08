@@ -4,13 +4,18 @@ block content
     div.grid-row
         div.column-full
 
-            if msg
+            if err
                 div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
-                    h1(class="heading-medium error-summary-heading", id="error-message")= msg
-                    p All fields are required. Password is case-sensitive
-                    ul.error-summary-list
-                        li
-                            a(href="#loginId") Enter user id and password again
+                    h1(class="heading-medium error-summary-heading", id="error-message")= err.title
+                    p= err.desc ? err.desc : ''
+                    
+                    if err.items && err.items.length > 0
+                        ul.error-summary-list
+                            each item in err.items
+                                li
+                                    each val, index in item
+                                        a(href="##{index}") #{val}
+                                
     div.grid-row
         div.column-one-half
             h1.heading-xlarge= content.title

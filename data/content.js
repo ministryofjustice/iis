@@ -4,7 +4,9 @@ module.exports = {
 
     errMsg: {
         LOGIN_ERROR: 'Unable to sign in, try again',
-        LOGIN_ERROR_DESC: 'All fields are required. Password is case-sensitive. You must confirm that you understand the disclaimer',
+        LOGIN_ERROR_DESC: 'All fields are required. Password is case-sensitive',
+        LOGIN_ERROR_DISCLAIMER: 'You must confirm that you understand the disclaimer',
+        DB_ERROR: 'Unable to talk to the database',
         CANNOT_SUBMIT: 'There was a problem submitting the form',
         NO_OPTION_SELECTED: 'Invalid selection - hello',
         INVALID_ID: 'The identifier you\'ve entered doesn\'t look right',
@@ -12,7 +14,8 @@ module.exports = {
         LETTERS_ONLY: 'A name mustn\'t contain space, numbers or special characters',
         INVALID_DOB: 'Invalid date of birth',
         INVALID_AGE: 'Age must be a whole number',
-        INVALID_AGE_RANGE: 'Invalid age range or age range too big'
+        INVALID_AGE_RANGE: 'Invalid age range or age range too big',
+        TRY_AGAIN: 'Try again'
     },
 
     view: {

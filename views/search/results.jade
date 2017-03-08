@@ -14,9 +14,11 @@ block content
             
             if data != 0
                 each item in data
-                   +inmate(item.INMATE_FORENAME_1.value + ' ' 
-                            + (item.INMATE_FORENAME_2.value ? item.INMATE_FORENAME_2.value + ' ' : '') 
-                            + item.INMATE_SURNAME.value, item.PK_PRISON_NUMBER.value)
+                   - var forename2 = item.INMATE_FORENAME_2.value
+                   - var forename = item.INMATE_FORENAME_1.value
+                   +inmate(forename[0].toUpperCase() + forename.substr(1, forename.length-1) + ' ' 
+                            + (forename2 ? forename2[0].toUpperCase() + forename2.substr(1, forename2.length-1) + ' ' : '') 
+                            + item.INMATE_SURNAME.value.toUpperCase(), item.PK_PRISON_NUMBER.value)
                         span &middot; #{item.DOB.value}
                         span.form-hint  #{item.ALIAS.value ? item.ALIAS.value.trim().substr(0, item.ALIAS.value.trim().length-1) : '' }
                         

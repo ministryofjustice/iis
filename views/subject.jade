@@ -9,7 +9,9 @@ block content
     if !err
         div.grid-row
             div.column-two-thirds
-                h1.heading-xlarge= (subject.INMATE_FORENAME_1.value + ' ' + (subject.INMATE_FORENAME_2.value ? subject.INMATE_FORENAME_2.value + ' ' : '') + subject.INMATE_SURNAME.value)
+                - var forename2 = subject.INMATE_FORENAME_2.value
+                - var forename = subject.INMATE_FORENAME_1.value   
+                h1.heading-xlarge= (forename[0].toUpperCase() + forename.substr(1, forename.length-1) + ' ' + (forename2 ? forename2[0].toUpperCase() + forename2.substr(1, forename2.length-1) + ' ' : '')  + subject.INMATE_SURNAME.value.toUpperCase())
                     span.heading-secondary PRISON NO. #{subject.PK_PRISON_NUMBER.value}
 
                 p.font-medium

@@ -28,7 +28,7 @@ router.post('/', function(req, res, next) {
         users.checkUsernameAndPassword(loginId, pwd, function(err, ok) {
             if (err) {
                 logger.error('Error checking credentials: ' + err);
-                return res.render('login', {msg: String(err)});
+                return res.render('login', {msg: String(err), content: content.view.login});
             }
 
             if (ok === true) {

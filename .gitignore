@@ -12,3 +12,4 @@ npm-debug.log
 build/*
 uploads/*
 test-results.xml
+hoa-ui.log

@@ -9,7 +9,7 @@
     },
     "scripts": {
         "postinstall": "gulp",
-        "start": "node .",
+        "start": "gulp && node .",
         "test": "gulp build test"
     },
     "repository": {

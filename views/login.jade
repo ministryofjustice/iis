@@ -14,19 +14,32 @@ block content
     div.grid-row
         div.column-one-half
             h1.heading-xlarge= content.title
-            
-    div.grid-row
-        div.column-full
-            form(method="post")
-                div.form-group
-                    label(for="loginId")
-                        span.form-label User id
-                    input(type="text",  id="loginId", class="form-control", name="loginId")
+    
+    form(method="post")
+        div.grid-row
+            div.column-full
+                    div.form-group
+                        label(for="loginId")
+                            span.form-label User id
+                        input(type="text",  id="loginId", class="form-control", name="loginId")
 
+                    div.form-group
+                        label(for="pwd")
+                            span.form-label Password
+                        input(type="password", id="pwd", class="form-control", name="pwd")
+                    
+    
+        div.grid-row
+            div.column-two-thirds
                 div.form-group
-                    label(for="pwd")
-                        span.form-label Password
-                    input(type="password", id="pwd", class="form-control", name="pwd")
+                    p Access and use by you of this application to access NOMS data constitutes acceptance of any relevant information security policies defined by your employer. Your employer may monitor and record use of this application. Inappropriate use of this application or the data within may lead to disciplinary action and or legal proceedings.
+                    
+                    p Please ask your line manager to explain if you do not understand this message.
+
+                    label.block-label.selection-button-checkbox(for="disclaimer")
+                        input#disclaimer(type="checkbox", name="disclaimer", value="disclaimer")
+                        span I confirm that I understand
+                    
 
                 div.form-group
                     button.button Sign in

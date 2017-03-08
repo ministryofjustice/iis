@@ -4,6 +4,7 @@ module.exports = {
 
     errMsg: {
         LOGIN_ERROR: 'Unable to sign in, try again',
+        LOGIN_ERROR_DESC: 'All fields are required. Password is case-sensitive. You must confirm that you understand the disclaimer',
         CANNOT_SUBMIT: 'There was a problem submitting the form',
         NO_OPTION_SELECTED: 'Invalid selection - hello',
         INVALID_ID: 'The identifier you\'ve entered doesn\'t look right',

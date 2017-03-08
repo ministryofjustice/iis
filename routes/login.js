@@ -20,7 +20,7 @@ router.post('/', function(req, res, next) {
     let pwd = req.body.pwd;
     let msg = content.errMsg.LOGIN_ERROR;
 
-    if (!loginId || !pwd) {
+    if (!loginId || !pwd || !req.body.disclaimer) {
         logger.info('Missing login inputs');
         res.status(400);
         res.render('login', {msg: msg, content: content.view.login});

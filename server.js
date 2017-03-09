@@ -53,26 +53,10 @@ app.use('/public/images/icons', express.static(path.join(__dirname, '/govuk_modu
 app.locals.asset_path = '/public/';
 /* jshint ignore:end */
 
-// Redirect to login page
-app.use(function(req, res, next) {
-    if (!isLoggedIn(req) && req.path !== '/login') {
-        res.redirect('/login');
-        return;
-    }
-
-    if (!req.session.userInput) {
-        req.session.userInput = {};
-    }
-
-    res.locals.nav = true;
-
-    next();
-});
-
-
 // Express Routing Configuration
 app.use('/', index);
 app.use('/login/', login);
+app.use(redirectUserToLoginIfNeeded);
 app.use('/search/', search);
 app.use('/subject/', subject);
 
@@ -107,6 +91,23 @@ app.listen(app.get('port'), function() {
 
 module.exports = app;
 
+
+function redirectUserToLoginIfNeeded(req, res, next) {
+    if (!isLoggedIn(req) && req.path !== '/login') {
+        res.redirect('/login');
+        return;
+    }
+
+    if (!req.session.userInput) {
+        req.session.userInput = {};
+    }
+
+    res.locals.nav = true;
+
+    next();
+}
+
 function isLoggedIn(req) {
     return req.session.loggedIn;
 }
+

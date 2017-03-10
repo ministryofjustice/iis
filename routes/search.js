@@ -54,6 +54,10 @@ router.get('/results', function(req, res) {
             res.redirect('/search');
             return;
         }
+        
+//        search.totalRowsForUserInput(req.session.userInput, function(err, data) {
+//          console.log(err, data);
+//        }); START HERE...
 
         res.render('search/results', {
             content: {

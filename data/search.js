@@ -84,45 +84,77 @@ function getType(v) {
 module.exports = {
 
     inmate: function(userInput, callback) {
-        let sqlWhere = '';
-        let params = [];
-
-        Object.keys(userInput).forEach(function(key) {
-            let val = userInput[key];
-
-            if (val.length === 0) {
-                return;
-            }
-
-            if (!filters[key]) {
-                return;
-            }
-
-            let obj = filters[key].getSql({val: val, userInput: userInput});
-
-            if (obj !== null) {
-                params = params.concat(obj.params);
-                sqlWhere += (sqlWhere !== '') ? ' AND ' + obj.sql : obj.sql;
-            }
-        });
-
-
+        
+        let obj = getParamsForUserInput(userInput);
+        let resultsPerPage = 5;
+        let start = (resultsPerPage * 1) - resultsPerPage;
         // eslint-disable-next-line
-        let sql = "SELECT PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, FORMAT(INMATE_BIRTH_DATE,'dd/MM/yyyy') AS DOB, ";
-        // eslint-disable-next-line
-        sql += "SUBSTRING((SELECT ',' + k.PERSON_FORENAME_1 + ' ' + PERSON_FORENAME_2 + ' ' + k.PERSON_SURNAME FROM IIS.KNOWN_AS k WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER FOR XML PATH('')),2,200000) AS ALIAS";
-        // eslint-disable-next-line
-        sql += " FROM IIS.LOSS_OF_LIBERTY l WHERE " + sqlWhere;
-
-        db.getCollection(sql, params, function(err, rows) {
+        let fields = "PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, FORMAT(INMATE_BIRTH_DATE,'dd/MM/yyyy') AS DOB, SUBSTRING((SELECT ',' + k.PERSON_FORENAME_1 + ' ' + PERSON_FORENAME_2 + ' ' + k.PERSON_SURNAME FROM IIS.KNOWN_AS k WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER FOR XML PATH('')),2,200000) AS ALIAS";
+        let from = 'IIS.LOSS_OF_LIBERTY l';
+        let orderBy = 'INMATE_SURNAME';
+        let oLimit = {start: start, resultsPerPage: resultsPerPage};     
+        
+        let sql = prepareSqlStatement(fields, from, obj.where, orderBy, oLimit);
+        
+        db.getCollection(sql, obj.params, function(err, rows) {
             if (err) {
                 return callback(err);
             }
 
             return callback(null, rows);
         });
+    },
+    
+    totalRowsForUserInput: function(userInput, callback) {
+        let obj = getParamsForUserInput(userInput);
+        let sql = prepareSqlStatement('COUNT(*) AS totalRows', 'IIS.LOSS_OF_LIBERTY', obj.where);
+
+        db.getTuple(sql, obj.params, cb);
+        
+        function cb(err, cols) {
+            if(err) {
+                return callback(err);
+            }
+            
+            return callback(null, cols.totalRows.value);
+        }
     }
 };
 
+function getParamsForUserInput(userInput) {
+    let where = '';
+    let params = [];
 
-/* LEFT JOIN IIS.KNOWN_AS ON LOSS_OF_LIBERTY.FK_PERSON_IDENTIFIER = KNOWN_AS.FK_PERSON_IDENTIFIER */
+    Object.keys(userInput).forEach(function(key) {
+        let val = userInput[key];
+
+        if (val.length === 0) {
+            return;
+        }
+
+        if (!filters[key]) {
+            return;
+        }
+
+        let obj = filters[key].getSql({val: val, userInput: userInput});
+
+        if (obj !== null) {
+            params = params.concat(obj.params);
+            where += (where !== '') ? ' AND ' + obj.sql : obj.sql;
+        }
+    });
+    
+    return {params: params, where: where};
+
+}
+
+function prepareSqlStatement(fields, from, where, orderBy, limit ) {
+    let sql = 'SELECT'; 
+    sql += ' ' + fields;
+    sql += ' FROM ' + from;
+    sql += where ? ' WHERE ' + where : '';
+    sql += orderBy ? ' ORDER BY ' + orderBy : '';
+    sql += limit ? ' OFFSET ' + limit.start + ' ROWS FETCH NEXT ' + limit.resultsPerPage + ' ROWS ONLY' : '';
+    
+    return sql;
+}

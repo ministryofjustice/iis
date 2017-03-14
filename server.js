@@ -14,10 +14,8 @@ let subject = require('./routes/subject');
 
 let content = require('./data/content.js');
 
-
 //  Express Configuration
 let app = express();
-
 
 // Session configuration
 app.use(cookieSession({

@@ -6,6 +6,7 @@ let search = require('../data/search.js');
 let dob = require('../data/dob.js');
 let identifier = require('../data/identifier.js');
 let names = require('../data/names.js');
+let utils = require('../data/utils.js');
 
 let logger = require('winston');
 
@@ -44,29 +45,56 @@ router.post('/', function(req, res) {
 
 
 router.get('/results', function(req, res) {
-
+    
+    let userInput = req.session.userInput;
+    userInput.currPage = (req.query.page) ? req.query.page : 1;
+    
     // TODO: what if session has no user input?
-    search.inmate(req.session.userInput, function(err, data) {
+    if(req.session.rowcount) {
+        return getListOfInmates(req.session.rowcount);
+    } 
 
+    search.totalRowsForUserInput(userInput, function(err, rowcount) {
         // TODO: show message
         if (err) {
             logger.error('Error during search: ' + err);
             res.redirect('/search');
             return;
         }
-        
-//        search.totalRowsForUserInput(req.session.userInput, function(err, data) {
-//          console.log(err, data);
-//        }); START HERE...
 
+        if(rowcount == 0) {
+            renderResultsPage(rowcount);
+            return;
+        }
+
+        req.session.rowcount = rowcount;
+        getListOfInmates(rowcount);
+
+    });
+
+    function getListOfInmates(rowcount) {
+        search.inmate(userInput, function(err, data) {
+            // TODO: show message
+            if (err) {
+                logger.error('Error during search: ' + err);
+                res.redirect('/search');
+                return;
+            } 
+
+            renderResultsPage(rowcount, data);
+        });
+    }
+    
+    function renderResultsPage(rowcount, data) {
         res.render('search/results', {
             content: {
-                title: content.view.results.title.replace('_x_', (data !== 0 ? data.length : '0'))
+                title: content.view.results.title.replace('_x_', rowcount)
             },
             view: req.params.v,
+            pagination: (rowcount > utils.resultsPerPage ) ? utils.pagination(rowcount, userInput.currPage) : null,
             data: data
         });
-    });
+    }
 });
 
 const options = {
@@ -89,6 +117,8 @@ const options = {
 
 
 router.get('/:view', function(req, res) {
+    
+    req.session.rowcount = null;
 
     const view = req.params.view;
     const viewInfo = options[view];

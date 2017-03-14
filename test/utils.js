@@ -27,5 +27,39 @@ describe('Utility methods', function () {
             .to.be.an("array")
             .to.contain((thisYear - 40) + "0101")
             .to.contain((thisYear - 36) + "1231");
-    })
+    });
+    
+    let pagePosition = 1,
+        resultsPerPage = 5,
+        rows = 9;
+    
+    it('should return a total of 2 pages for the above settings', function () {
+       expect(utils.pagination(rows, pagePosition).totalPages)
+           .to.equal(2)
+    });
+    
+    it('should return same position as being passed', function () {
+       expect(utils.pagination(rows, pagePosition).currPage)
+           .to.equal(1)
+    });
+    
+    it('should return showPrev=false when page position is at 1', function () {
+       expect(utils.pagination(rows, pagePosition).showPrev)
+           .to.equal(false)
+    });
+    
+    it('should return showPrev=true when page position is at 2', function () {
+       expect(utils.pagination(rows, pagePosition+1).showPrev)
+           .to.equal(true); 
+    });
+    
+    it('should return showNext=true when page position is at 1', function () {
+       expect(utils.pagination(rows, pagePosition).showNext)
+           .to.equal(true); 
+    });
+    
+    it('should return showNext=false when page position is at 2', function () {
+       expect(utils.pagination(rows, pagePosition+1).showNext)
+           .to.equal(false); 
+    });
 });

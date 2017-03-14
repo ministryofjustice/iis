@@ -15,6 +15,18 @@ module.exports = {
 
         v = v.split('-');
         return [(thisYear - v[1]) + '0101', (thisYear - v[0]) + '1231'];
+    },
+    
+    resultsPerPage: 5,
+    
+    pagination: function(rowcount, currPage) {
+        currPage = (currPage) ? currPage : 1;
+        
+        let totalPages = Math.ceil(rowcount / this.resultsPerPage);
+        let showPrev = (currPage - 1) == 0 ? false : true;
+        let showNext = currPage == totalPages ? false : true;
+        
+        return {totalPages: totalPages, currPage: currPage, showPrev: showPrev, showNext: showNext};
     }
 
 };

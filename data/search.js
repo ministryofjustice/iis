@@ -82,12 +82,10 @@ function getType(v) {
 
 
 module.exports = {
-
     inmate: function(userInput, callback) {
-        
         let obj = getParamsForUserInput(userInput);
-        let resultsPerPage = 5;
-        let start = (resultsPerPage * 1) - resultsPerPage;
+        let resultsPerPage = utils.resultsPerPage;
+        let start = (resultsPerPage * userInput.currPage) - resultsPerPage;
         // eslint-disable-next-line
         let fields = "PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, FORMAT(INMATE_BIRTH_DATE,'dd/MM/yyyy') AS DOB, SUBSTRING((SELECT ',' + k.PERSON_FORENAME_1 + ' ' + PERSON_FORENAME_2 + ' ' + k.PERSON_SURNAME FROM IIS.KNOWN_AS k WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER FOR XML PATH('')),2,200000) AS ALIAS";
         let from = 'IIS.LOSS_OF_LIBERTY l';
@@ -106,6 +104,10 @@ module.exports = {
     },
     
     totalRowsForUserInput: function(userInput, callback) {
+        if(!parseInt(userInput.currPage)) {
+            return callback(new Error('INVALID_PAGE_NUMBER'));
+        }
+        
         let obj = getParamsForUserInput(userInput);
         let sql = prepareSqlStatement('COUNT(*) AS totalRows', 'IIS.LOSS_OF_LIBERTY', obj.where);
 
@@ -114,6 +116,10 @@ module.exports = {
         function cb(err, cols) {
             if(err) {
                 return callback(err);
+            }
+            
+            if(userInput.currPage > Math.ceil(cols.totalRows.value / utils.resultsPerPage)) {
+                return callback(new Error('INVALID_PAGE_NUMBER'));
             }
             
             return callback(null, cols.totalRows.value);
@@ -145,7 +151,6 @@ function getParamsForUserInput(userInput) {
     });
     
     return {params: params, where: where};
-
 }
 
 function prepareSqlStatement(fields, from, where, orderBy, limit ) {

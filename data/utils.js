@@ -26,7 +26,10 @@ module.exports = {
         let showPrev = (currPage - 1) == 0 ? false : true;
         let showNext = currPage == totalPages ? false : true;
         
-        return {totalPages: totalPages, currPage: currPage, showPrev: showPrev, showNext: showNext};
+        return {totalPages: totalPages, 
+                currPage: currPage, 
+                showPrev: showPrev, 
+                showNext: showNext};
     }
 
 };

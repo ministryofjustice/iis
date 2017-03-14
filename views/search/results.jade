@@ -12,7 +12,7 @@ block content
                             a(href="/subject/#{href}") #{name} 
                             block
             
-            if data != 0
+            if data && data != 0
                 each item in data
                    - var forename2 = item.INMATE_FORENAME_2.value
                    - var forename = item.INMATE_FORENAME_1.value

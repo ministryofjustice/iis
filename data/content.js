@@ -39,7 +39,8 @@ module.exports = {
 
         dob: {title: 'Enter inmate\'s date of birth or age/range'},
 
-        results: {title: 'Your search returned _x_ results'},
+        results: {title: 'Your search returned _x_ results', 
+                  title_no_results: 'Your search did not return any results'},
 
         subject: {title: 'Subject details'}
     }

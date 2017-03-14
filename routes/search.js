@@ -46,12 +46,23 @@ router.post('/', function(req, res) {
 
 router.get('/results', function(req, res) {
     
-    let userInput = req.session.userInput;
-    userInput.currPage = (req.query.page) ? req.query.page : 1;
+    if(req.headers.referer == undefined) {
+        res.redirect('/search');
+        return;
+    }
     
-    // TODO: what if session has no user input?
+    let userInput = req.session.userInput;    
+    let page = getCurrentPage(req);
+    
     if(req.session.rowcount) {
-        return getListOfInmates(req.session.rowcount);
+        let rowcount = req.session.rowcount;
+        
+        if(isValidPage(page, rowcount)) {
+            return getListOfInmates(rowcount);
+        }
+        
+        res.redirect('/search');
+        return;
     } 
 
     search.totalRowsForUserInput(userInput, function(err, rowcount) {
@@ -63,7 +74,7 @@ router.get('/results', function(req, res) {
         }
 
         if(rowcount == 0) {
-            renderResultsPage(rowcount);
+            renderResultsPage(req, res, rowcount);
             return;
         }
 
@@ -73,6 +84,7 @@ router.get('/results', function(req, res) {
     });
 
     function getListOfInmates(rowcount) {
+        userInput.page = page;
         search.inmate(userInput, function(err, data) {
             // TODO: show message
             if (err) {
@@ -81,21 +93,46 @@ router.get('/results', function(req, res) {
                 return;
             } 
 
-            renderResultsPage(rowcount, data);
-        });
-    }
-    
-    function renderResultsPage(rowcount, data) {
-        res.render('search/results', {
-            content: {
-                title: content.view.results.title.replace('_x_', rowcount)
-            },
-            view: req.params.v,
-            pagination: (rowcount > utils.resultsPerPage ) ? utils.pagination(rowcount, userInput.currPage) : null,
-            data: data
+            renderResultsPage(req, res, rowcount, data);
         });
     }
 });
+
+function getCurrentPage(req) {
+    return (req.query.page) ? req.query.page : 1;
+}
+
+function isValidPage(page, rowcount) {
+    if(parseInt(page) == NaN) {
+        return false;
+    }
+    
+    if(rowcount > 0 && page > Math.ceil(rowcount / utils.resultsPerPage)) {
+        return false;
+    }
+    
+    return true;
+}
+
+function renderResultsPage(req, res, rowcount, data) {    
+    res.render('search/results', {
+        content: {
+            title: getPageTitle(rowcount)
+        },
+        view: req.params.v,
+        pagination: (rowcount > utils.resultsPerPage ) ? utils.pagination(rowcount, getCurrentPage(req)) : null,
+        data: data
+    });
+}
+
+function getPageTitle(rowcount) {
+    if(rowcount == 0) {
+        return content.view.results.title_no_results;
+    }
+
+    return content.view.results.title.replace('_x_', rowcount);
+}
+
 
 const options = {
     identifier: {

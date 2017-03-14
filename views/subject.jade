@@ -23,3 +23,11 @@ block content
                     | #{(subject.BIRTH_COUNTRY.value) || (subject.DOB.value) ? 'Born' : ''}
                     | #{subject.BIRTH_COUNTRY.value ? ' in ' + subject.BIRTH_COUNTRY.value : ''}
                     | #{subject.DOB.value ? ' on ' + subject.DOB.value + ' ('+subject.AGE.value+' years)' : ''}
+                    
+                    
+                div.form-group
+                    div#print-disclaimer
+                        p.bold-small Disclaimer
+                        p.font-xsmall In euismod nulla nec diam ullamcorper, in posuere magna rhoncus. Aliquam erat volutpat. Suspendisse at dolor mattis, euismod ligula non, placerat eros. Etiam sollicitudin rutrum tincidunt.
+                    
+                    button.button(onclick="window.print()") Print

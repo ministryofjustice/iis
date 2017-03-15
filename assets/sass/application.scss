@@ -36,3 +36,5 @@ div.search-terms a { padding: 0 0 15px 23px;  }
 abbr { border-bottom: 1px dashed #6F777B }
 span.inactive { color: #BFC1C3 }
 div#print-disclaimer { display: none; }
+.back-link-container { display: none; }
+.js-enabled .back-link-container { display: inline-block; }

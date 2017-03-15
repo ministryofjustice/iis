@@ -14,13 +14,13 @@ module.exports = {
     getDateRange: function(age) {
         if (age.indexOf('-') === -1) {
             let startDate = moment().subtract(age, 'years').subtract(1, 'years').add(1, 'days').format('YYYYMMDD');
-            let endDate   = moment().subtract(age, 'years').format('YYYYMMDD');
+            let endDate = moment().subtract(age, 'years').format('YYYYMMDD');
             return [startDate, endDate];
         }
 
         let arrAge = age.split('-');
         let startDate = moment().subtract(arrAge[1], 'years').subtract(1, 'years').add(1, 'days').format('YYYYMMDD');
-        let endDate   = moment().subtract(arrAge[0], 'years').format('YYYYMMDD');
+        let endDate = moment().subtract(arrAge[0], 'years').format('YYYYMMDD');
         return [startDate, endDate];
     },
     

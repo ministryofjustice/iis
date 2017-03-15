@@ -21,7 +21,7 @@ head
 
     link(href="/public/stylesheets/application.css", media="screen", rel="stylesheet", type="text/css")
 
-body.js-enabled
+body
 
     div(id="skiplink-container")
         div
@@ -89,3 +89,6 @@ body.js-enabled
     script(src="/public/javascripts/govuk/shim-links-with-button-role.js")
     script(src="/public/javascripts/govuk/show-hide-content.js")
     script(src="/public/javascripts/application.js")
+    
+    script.
+        document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');

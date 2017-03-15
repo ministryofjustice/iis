@@ -17,7 +17,7 @@ describe('Utility methods', function () {
         let thisYear = parseInt(new Date().getFullYear());
         expect(utils.getDateRange('36'))
             .to.be.an("array")
-            .to.contain((thisYear - 36) + "0101")
+            .to.contain((thisYear - 37) + "0101")
             .to.contain((thisYear - 36) + "1231");
     });
 
@@ -25,7 +25,7 @@ describe('Utility methods', function () {
         let thisYear = parseInt(new Date().getFullYear());
         expect(utils.getDateRange('36-40'))
             .to.be.an("array")
-            .to.contain((thisYear - 40) + "0101")
+            .to.contain((thisYear - 41) + "0101")
             .to.contain((thisYear - 36) + "1231");
     });
     

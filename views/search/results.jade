@@ -1,6 +1,8 @@
 extends ../layout
 
 block content
+    include ../includes/back-button.jade
+
     div.grid-row
         div.column-two-thirds
             h1.heading-xlarge= content.title
@@ -40,5 +42,5 @@ block content
                         a(href="/search/results?page=#{parseInt(page)+1}") Next 
                         
 
-            div.bold-small.form-group
-                a.button(href="/search") New search
+            div.form-group
+                a(href="/search") New search

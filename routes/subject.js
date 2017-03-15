@@ -3,6 +3,7 @@
 let express = require('express');
 let content = require('../data/content.js');
 let subject = require('../data/subject.js');
+let utils = require('../data/utils.js');
 
 let logger = require('winston');
 
@@ -25,6 +26,12 @@ router.get('/:id', function(req, res) {
                     title: content.errMsg.INVALID_ID
                 }
             });
+        }
+        
+        let dob = data.DOB.value;
+        
+        if(dob) {
+            data.AGE = utils.getAgeFromDOB(dob.split('/').reverse().join('-'));
         }
 
         res.render('subject', {

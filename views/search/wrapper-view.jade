@@ -1,7 +1,7 @@
 extends ../layout
 
 block content
-
+    include ../includes/back-button.jade
     if err
         div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
             h1(class="heading-medium error-summary-heading", id="error-message") #{err.title}

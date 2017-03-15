@@ -40,7 +40,6 @@ function isDate(v) {
 
 
 function validateAge(v) {
-
     let err = {
         title: content.errMsg.CANNOT_SUBMIT,
         items: [{agRange: 'Re-enter age or range'}],
@@ -61,7 +60,6 @@ function validateAge(v) {
 
 
 function isAgeOrAgeRange(v) {
-
     if (!/^[1-9][0-9]$|^[1-9][0-9]-[1-9][0-9]$/.test(v)) {
         return false;
     }

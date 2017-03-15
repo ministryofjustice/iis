@@ -126,11 +126,20 @@ function renderResultsPage(req, res, rowcount, data) {
 }
 
 function getPageTitle(rowcount) {
+    
+    let oResultsPageContent = content.view.results;
+    
     if(rowcount == 0) {
-        return content.view.results.title_no_results;
+        return oResultsPageContent.title_no_results;
     }
-
-    return content.view.results.title.replace('_x_', rowcount);
+    
+    let title = oResultsPageContent.title;
+    
+    if(rowcount > 1) {
+        title += 's';
+    }
+    
+    return title.replace('_x_', rowcount);
 }
 
 

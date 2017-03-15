@@ -1,4 +1,5 @@
 'use strict';
+let moment = require('moment');
 
 module.exports = {
 
@@ -7,26 +8,20 @@ module.exports = {
     },
     
     getAgeFromDOB: function(strDate) {
-        let today = new Date();
-        let dob = new Date(strDate);
-        let age = today.getFullYear() - dob.getFullYear();
-        let m = today.getMonth() - dob.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
-            age--;
-        }
-        return age;
+        return moment().diff(strDate, 'years', false);
     },
 
     getDateRange: function(age) {
-        let thisYear = parseInt(new Date().getFullYear());
-        let lastYear = thisYear - 1;
-
         if (age.indexOf('-') === -1) {
-            return [(lastYear - age) + '0101', (thisYear - age) + '1231'];
+            let startDate = moment().subtract(age, 'years').subtract(1, 'years').add(1, 'days').format('YYYYMMDD');
+            let endDate   = moment().subtract(age, 'years').format('YYYYMMDD');
+            return [startDate, endDate];
         }
 
         let arrAge = age.split('-');
-        return [(lastYear - arrAge[1]) + '0101', (thisYear - arrAge[0]) + '1231'];
+        let startDate = moment().subtract(arrAge[1], 'years').subtract(1, 'years').add(1, 'days').format('YYYYMMDD');
+        let endDate   = moment().subtract(arrAge[0], 'years').format('YYYYMMDD');
+        return [startDate, endDate];
     },
     
     resultsPerPage: 5,
@@ -43,5 +38,4 @@ module.exports = {
                 showPrev: showPrev, 
                 showNext: showNext};
     }
-
 };

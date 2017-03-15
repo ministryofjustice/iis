@@ -80,7 +80,6 @@ function getType(v) {
     return TYPES.VarChar;
 }
 
-
 module.exports = {
     inmate: function(userInput, callback) {
         let obj = getParamsForUserInput(userInput);

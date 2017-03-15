@@ -108,4 +108,3 @@ function redirectUserToLoginIfNeeded(req, res, next) {
 function isLoggedIn(req) {
     return req.session.loggedIn;
 }
-

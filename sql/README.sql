@@ -1,6 +1,6 @@
 README for running the Database Scripts:
 
-1. Run setupIISUser.sql. Please ENSURE you ADD in a PASSWORD for the USER - (NEEDS TO BE RUN ON IIS DATABASE NOT ON MASTER).
+1. Run setupIISUser.sql. Please ENSURE you ADD in a PASSWORD for the USER - (NEEDS TO BE RUN ON MASTER).
 2. Run schemaSetup.sql - (Run in IIS DATABASE).
 3. Run the noniisTable.sql script - (Run in IIS DATABASE).
 4. Run the Data Migration - This will be either a Database Backup or a Migration from SQL Server Instance.

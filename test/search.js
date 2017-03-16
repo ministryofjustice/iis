@@ -3,6 +3,8 @@
 let expect = require('chai').expect;
 let db = require('../server/db');
 let search = require('../data/search');
+let common = require('./common');
+let app = require("../server.js");
 
 let EventEmitter = require("events").EventEmitter;
 
@@ -20,7 +22,6 @@ function prepareFakeDB(onRequest) {
 }
 
 describe('Search', function(){
-
     it("should return recordset as an array", function(done) {
         prepareFakeDB(function(req) {
             expect(req.sqlTextOrProcedure).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER');

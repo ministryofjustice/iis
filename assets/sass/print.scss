@@ -1,0 +1,12 @@
+@import '_typography';
+$path: "/public/images/";
+body { width: 70%; }
+.header-proposition,
+.phase-banner,
+#logo span,
+#skiplink-container,
+#global-cookie-message,
+#global-header-bar,
+#footer,
+button { display:none; }
+#print-disclaimer { display: block; }

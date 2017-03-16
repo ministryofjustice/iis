@@ -5,22 +5,22 @@ block content
         div.column-full
 
             if err
-                div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
+                div(id="errors" class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
                     h1(class="heading-medium error-summary-heading", id="error-message")= err.title
                     p= err.desc ? err.desc : ''
-                    
+
                     if err.items && err.items.length > 0
                         ul.error-summary-list
                             each item in err.items
                                 li
                                     each val, index in item
                                         a(href="##{index}") #{val}
-                                
+
     div.grid-row
         div.column-one-half
             h1.heading-xlarge= content.title
-    
-    form(method="post")
+
+    form(method="post")#loginForm
         div.grid-row
             div.column-full
                     div.form-group
@@ -32,17 +32,17 @@ block content
                         label(for="pwd")
                             span.form-label Password
                         input(type="password", id="pwd", class="form-control", name="pwd")
-                    
-    
+
+
         div.grid-row
             div.column-two-thirds
                 div.form-group
-                    p Access and use by you of this application to access NOMS data constitutes acceptance of any relevant information security policies defined by your employer. Your employer may monitor and record use of this application. Inappropriate use of this application or the data within may lead to disciplinary action and or legal proceedings.
-                    
+                    p#disclaimerText Access and use by you of this application to access NOMS data constitutes acceptance of any relevant information security policies defined by your employer. Your employer may monitor and record use of this application. Inappropriate use of this application or the data within may lead to disciplinary action and or legal proceedings.
+
                     label.block-label.selection-button-checkbox(for="disclaimer")
                         input#disclaimer(type="checkbox", name="disclaimer", value="disclaimer")
-                        span I confirm that I understand
-                    
+                        span#disclaimerConfirmation I confirm that I understand
+
 
                 div.form-group
-                    button.button Sign in
+                    button.button#signin Sign in

@@ -1,7 +1,7 @@
 extends layout
 
 block content
-
+    include includes/back-button.jade
     if err
         div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
             h1(class="heading-medium error-summary-heading", id="error-message")= err.title
@@ -10,9 +10,9 @@ block content
         div.grid-row
             div.column-two-thirds
                 - var forename2 = subject.INMATE_FORENAME_2.value
-                - var forename = subject.INMATE_FORENAME_1.value   
-                h1.heading-xlarge= (forename[0].toUpperCase() + forename.substr(1, forename.length-1) + ' ' + (forename2 ? forename2[0].toUpperCase() + forename2.substr(1, forename2.length-1) + ' ' : '')  + subject.INMATE_SURNAME.value.toUpperCase())
-                    span.heading-secondary PRISON NO. #{subject.PK_PRISON_NUMBER.value}
+                - var forename = subject.INMATE_FORENAME_1.value
+                h1.heading-xlarge#subjectName= (forename[0].toUpperCase() + forename.substr(1, forename.length - 1) + ' ' + (forename2 ? forename2[0].toUpperCase() + forename2.substr(1, forename2.length - 1) + ' ' : '') + subject.INMATE_SURNAME.value.toUpperCase())
+                span.heading-secondary#subjectId PRISON NO. #{subject.PK_PRISON_NUMBER.value}
 
                 p.font-medium
                     | #{subject.MARITAL_STATUS.value}
@@ -22,4 +22,11 @@ block content
                     | #{(subject.MARITAL_STATUS.value) || (subject.MARITAL_STATUS.value) || (subject.MARITAL_STATUS.value) ? '. ' : '' }
                     | #{(subject.BIRTH_COUNTRY.value) || (subject.DOB.value) ? 'Born' : ''}
                     | #{subject.BIRTH_COUNTRY.value ? ' in ' + subject.BIRTH_COUNTRY.value : ''}
-                    | #{subject.DOB.value ? ' on ' + subject.DOB.value + ' ('+subject.AGE.value+' years)' : ''}
+                    | #{subject.DOB.value ? ' on ' + subject.DOB.value + ' ('+subject.AGE+' years)' : ''}
+                    
+                div.form-group
+                    div#print-disclaimer
+                        p.bold-small Disclaimer
+                        p.font-xsmall In euismod nulla nec diam ullamcorper, in posuere magna rhoncus. Aliquam erat volutpat. Suspendisse at dolor mattis, euismod ligula non, placerat eros. Etiam sollicitudin rutrum tincidunt.
+                    
+                    button.button(onclick="window.print();") Print

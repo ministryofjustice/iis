@@ -5,42 +5,42 @@ block content
 
     div.grid-row
         div.column-two-thirds
-            h1.heading-xlarge= content.title
-            
+            h1.heading-xlarge#contentTitle= content.title
+
             mixin inmate(name, href)
                 div.form-group
                     div.inmate-details
                         p.bold-medium
-                            a(href="/subject/#{href}") #{name} 
+                            a(href="/subject/#{href}") #{name}
                             block
             
             if data && data != 0
                 each item in data
                    - var forename2 = item.INMATE_FORENAME_2.value
                    - var forename = item.INMATE_FORENAME_1.value
-                   +inmate(forename[0].toUpperCase() + forename.substr(1, forename.length-1) + ' ' 
-                            + (forename2 ? forename2[0].toUpperCase() + forename2.substr(1, forename2.length-1) + ' ' : '') 
+                   +inmate(forename[0].toUpperCase() + forename.substr(1, forename.length-1) + ' '
+                            + (forename2 ? forename2[0].toUpperCase() + forename2.substr(1, forename2.length-1) + ' ' : '')
                             + item.INMATE_SURNAME.value.toUpperCase(), item.PK_PRISON_NUMBER.value)
                         span &middot; #{item.DOB.value}
                         span.form-hint  #{item.ALIAS.value ? item.ALIAS.value.trim().substr(0, item.ALIAS.value.trim().length-1) : '' }
-                        
+
             if pagination
                 div.form-group.c-align
                     - var page = pagination.currPage;
                     if !pagination.showPrev
-                        span.inactive Previous 
+                        span.inactive Previous
                     else
                         a(href="/search/results?page=#{parseInt(page)-1}") Previous
-                    |  &nbsp;  
-                        
-                    span.bold-small #{page} of #{pagination.totalPages} 
-                    | &nbsp;  
-                    
+                    |  &nbsp;
+
+                    span.bold-small#pageIndicator #{page} of #{pagination.totalPages}
+                    | &nbsp;
+
                     if !pagination.showNext
                         span.inactive Next
                     else
-                        a(href="/search/results?page=#{parseInt(page)+1}") Next 
-                        
+                        a(href="/search/results?page=#{parseInt(page)+1}") Next
+
 
             div.form-group
                 a(href="/search") New search

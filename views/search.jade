@@ -3,7 +3,7 @@ extends layout
 block content
 
     if err
-        div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
+        div(id="errors" class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
             h1(class="heading-medium error-summary-heading", id="error-message")= err.title
             if err.desc
                 p= err.desc
@@ -14,32 +14,32 @@ block content
     div.grid-row
         div.column-two-thirds
             h1.heading-xlarge= content.title
-            
+
     div.grid-row
         div.column-full
             p.bold-small= content.body
-      
+
             form(method="post", name="formSearch")
                 div.form-group
                     fieldset
                         legend.visually-hidden= content.heading
-                        
+
                         label(class="block-label selection-button-checkbox",for="identifier")
-                            input#identifier(name="opt", type="checkbox", value="identifier") 
+                            input#identifier(name="opt", type="checkbox", value="identifier")
                             | Unique identifier
-                            
-                            
+
+
                         label(class="block-label selection-button-checkbox",for="names")
                             input#names(name="opt", type="checkbox", value="names")
                             | Name(s)
-                            
-                            
+
+
                         label(class="block-label selection-button-checkbox",for="dob")
                             input#dob(name="opt", type="checkbox", value="dob")
                             | Date of birth or age
 
-                        
 
-                            
+
+
                 div.form-group
-                    button.button Continue
+                    button.button#continue Continue

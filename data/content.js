@@ -8,7 +8,7 @@ module.exports = {
         LOGIN_ERROR_DISCLAIMER: 'You must confirm that you understand the disclaimer',
         DB_ERROR: 'Unable to talk to the database',
         CANNOT_SUBMIT: 'There was a problem submitting the form',
-        NO_OPTION_SELECTED: 'Invalid selection - hello',
+        NO_OPTION_SELECTED: 'Invalid selection',
         INVALID_ID: 'The identifier you\'ve entered doesn\'t look right',
         ATLEAST_ONE_REQUIRED: 'All the fields cannot be empty',
         LETTERS_ONLY: 'A name mustn\'t contain space, numbers or special characters',

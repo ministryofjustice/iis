@@ -10,7 +10,7 @@ block search-page
 
     div.form-group
 
-            +radioInput('Date of birth', 'dob_container','opt_dob', 'dob', !body.dobOrAge || body.dobOrAge == 'dob')
+            +radioInput('Date of birth', 'dob_container','optDob', 'dob', !body.dobOrAge || body.dobOrAge == 'dob')
 
         div.panel.panel-border-narrow#dob_container
             fieldset
@@ -18,21 +18,21 @@ block search-page
                     span.form-hint#dob-hint For example, 31 3 1980
                 div.form-date
                     div.form-group.form-group-day
-                        label.form-label(for="dob_day") Day
-                        input.form-control#dob_day(name="dobDay", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint", value=(body.dobDay ? body.dobDay : ''))
+                        label.form-label(for="dobDay") Day
+                        input.form-control#dobDay(name="dobDay", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint", value=(body.dobDay ? body.dobDay : ''))
 
                     div.form-group.form-group-month
-                        label.form-label(for="dob_month") Month
-                        input.form-control#dob_month(name="dobMonth", type="number", pattern="[0-9]*", min="0", max="12", value=(body.dobMonth ? body.dobMonth : ''))
+                        label.form-label(for="dobMonth") Month
+                        input.form-control#dobMonth(name="dobMonth", type="number", pattern="[0-9]*", min="0", max="12", value=(body.dobMonth ? body.dobMonth : ''))
 
                     div.form-group.form-group-year
-                        label.form-label(for="dob_year") Year
-                        input.form-control#dob_year(name="dobYear", type="number", pattern="[0-9]*", min="1900", max="#{new Date().getFullYear()}", value=(body.dobYear ? body.dobYear : ''))
+                        label.form-label(for="dobYear") Year
+                        input.form-control#dobYear(name="dobYear", type="number", pattern="[0-9]*", min="1900", max="#{new Date().getFullYear()}", value=(body.dobYear ? body.dobYear : ''))
 
 
     div.form-group
 
-         +radioInput('Age', 'age_container','opt_age', 'age', body.dobOrAge == 'age')
+         +radioInput('Age', 'age_container','optAge', 'age', body.dobOrAge == 'age')
 
 
          div.panel.panel-border-narrow.js-hidden#age_container

@@ -13,14 +13,24 @@ module.exports = {
 
     getDateRange: function(age) {
         if (age.indexOf('-') === -1) {
-            let startDate = moment().subtract(age, 'years').subtract(1, 'years').add(1, 'days').format('YYYYMMDD');
-            let endDate = moment().subtract(age, 'years').format('YYYYMMDD');
+            let startDate = this.getCurrentTime()
+                            .subtract(age, 'years')
+                            .subtract(1, 'years')
+                            .add(1, 'days')
+                            .format('YYYYMMDD');
+            
+            let endDate = this.getCurrentTime().subtract(age, 'years').format('YYYYMMDD');
             return [startDate, endDate];
         }
 
         let arrAge = age.split('-');
-        let startDate = moment().subtract(arrAge[1], 'years').subtract(1, 'years').add(1, 'days').format('YYYYMMDD');
-        let endDate = moment().subtract(arrAge[0], 'years').format('YYYYMMDD');
+        let startDate = this.getCurrentTime()
+                        .subtract(arrAge[1], 'years')
+                        .subtract(1, 'years')
+                        .add(1, 'days')
+                        .format('YYYYMMDD');
+        
+        let endDate = this.getCurrentTime().subtract(arrAge[0], 'years').format('YYYYMMDD');
         return [startDate, endDate];
     },
     
@@ -37,5 +47,9 @@ module.exports = {
                 currPage: currPage, 
                 showPrev: showPrev, 
                 showNext: showNext};
-    }
+    },
+    
+    getCurrentTime: function() {
+        return moment();
+    }    
 };

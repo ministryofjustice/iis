@@ -35,6 +35,7 @@ span.label { background-color: #28A197; color: #FFFFFF; padding: 0 5px;  }
 div.search-terms a { padding: 0 0 15px 23px;  }
 abbr { border-bottom: 1px dashed #6F777B }
 span.inactive { color: #BFC1C3 }
-div#print-disclaimer { display: none; }
+div#print-disclaimer,
+div#print-header { display: none; }
 .back-link-container { display: none; }
 .js-enabled .back-link-container { display: inline-block; }

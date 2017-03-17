@@ -47,6 +47,9 @@ module.exports = {
     },
 
     getTuple: function(sql, params, callback) {
+        
+//        console.log('SQL: ' + sql);
+//        console.log(params);
 
         let connected = false;
         connection = this.connect();
@@ -97,6 +100,9 @@ module.exports = {
     },
 
     getCollection: function(sql, params, callback) {
+        
+//        console.log('SQL: ' + sql);
+//        console.log(params);
 
         let connected = false;
         connection = this.connect();

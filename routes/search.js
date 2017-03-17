@@ -202,6 +202,7 @@ router.post('/:view', function(req, res) {
 
     viewInfo.validator(input, function(err) {
         if (err) {
+            // TODO: Record details in the db
             logger.info('Input validation error: ' + err);
             renderViewWithErrorAndUserInput(req, res, view, err);
             return;

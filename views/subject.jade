@@ -5,6 +5,13 @@ block content
     if err
         div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
             h1(class="heading-medium error-summary-heading", id="error-message")= err.title
+            
+    div#print-header(aria-hidden="true")
+        span GOV.UK - Inmate information system
+
+    div#print-disclaimer(aria-hidden="true")
+        p.title Disclaimer
+        p In euismod nulla nec diam ullamcorper, in posuere magna rhoncus. Aliquam erat volutpat. Suspendisse at dolor mattis, euismod ligula non, placerat eros. Etiam sollicitudin rutrum tincidunt.
 
     if !err
         div.grid-row
@@ -24,9 +31,5 @@ block content
                     | #{subject.BIRTH_COUNTRY.value ? ' in ' + subject.BIRTH_COUNTRY.value : ''}
                     | #{subject.DOB.value ? ' on ' + subject.DOB.value + ' ('+subject.AGE+' years)' : ''}
                     
-                div.form-group
-                    div#print-disclaimer
-                        p.bold-small Disclaimer
-                        p.font-xsmall In euismod nulla nec diam ullamcorper, in posuere magna rhoncus. Aliquam erat volutpat. Suspendisse at dolor mattis, euismod ligula non, placerat eros. Etiam sollicitudin rutrum tincidunt.
-                    
+                div.form-group 
                     button.button(onclick="window.print();") Print

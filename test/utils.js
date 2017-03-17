@@ -2,8 +2,41 @@
 
 let expect = require('chai').expect;
 let utils = require("../data/utils");
+let moment = require('moment');
 
 describe('Utility methods', function () {
+    
+    let originalGetCurrentTime = null;
+    
+    before(function(){
+        originalGetCurrentTime = utils.getCurrentTime;
+        utils.getCurrentTime = function() {
+            let now = moment();
+            now.set('year', 2017);
+            now.set('month', 'March');
+            now.set('date', 15);
+            return now;
+        }
+    });
+    
+    after(function(){
+        utils.getCurrentTime = originalGetCurrentTime;
+    });
+    
+    it('should return an array when an age has been passed', function () {
+        expect(utils.getDateRange('36'))
+            .to.be.an('array')
+            .to.contain('19800316')
+            .to.contain('19810315');
+    });
+
+    it('should return an array when an age range has been passed', function () {
+        let thisYear = parseInt(new Date().getFullYear());
+        expect(utils.getDateRange('36-40'))
+            .to.be.an('array')
+            .to.contain('19760316')
+            .to.contain('19810315');
+    });
 
     it('should add leading zero if a single digit is passed', function () {
         expect(utils.pad(9)).to.equal('09')
@@ -13,25 +46,7 @@ describe('Utility methods', function () {
         expect(utils.pad(19)).to.equal(19)
     });
 
-    /*
-    TODO: how to force a system time
-    it('should return an array when an age has been passed', function () {
-        let thisYear = parseInt(new Date().getFullYear());
-        expect(utils.getDateRange('36'))
-            .to.be.an("array")
-            .to.contain(((thisYear-1) - 36))
-            .to.contain((thisYear - 36));
-    });
 
-    it('should return an array when an age range has been passed', function () {
-        let thisYear = parseInt(new Date().getFullYear());
-        expect(utils.getDateRange('36-40'))
-            .to.be.an("array")
-            .to.contain((thisYear - 41) + "0101")
-            .to.contain((thisYear - 36) + "1231");
-    });
-    */
-    
     let pagePosition = 1,
         resultsPerPage = 5,
         rows = 9;

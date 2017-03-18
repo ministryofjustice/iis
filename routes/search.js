@@ -1,6 +1,8 @@
 'use strict';
 
 let express = require('express');
+let util = require('util');
+
 let content = require('../data/content.js');
 let search = require('../data/search.js');
 let dob = require('../data/dob.js');
@@ -8,13 +10,18 @@ let identifier = require('../data/identifier.js');
 let names = require('../data/names.js');
 let utils = require('../data/utils.js');
 
+
+
 let logger = require('winston');
 
 // eslint-disable-next-line
 let router = express.Router();
 
 router.get('/', function(req, res) {
-    res.render('search', {
+    logger.info('Authenticated: ' + req.isAuthenticated());
+    logger.info('Profile: ' + util.inspect(res.locals.profile));
+
+    return res.render('search', {
         content: content.view.search
     });
 });
@@ -32,7 +39,8 @@ router.post('/', function(req, res) {
 
         res.render('search', {
             err: _err,
-            content: content.view.search
+            content: content.view.search,
+            logoutLink: req.session.logoutLink
         });
         return;
     }
@@ -45,25 +53,25 @@ router.post('/', function(req, res) {
 
 
 router.get('/results', function(req, res) {
-    
-    if(req.headers.referer == undefined) {
+
+    if (req.headers.referer == undefined) {
         res.redirect('/search');
         return;
     }
-    
-    let userInput = req.session.userInput;    
+
+    let userInput = req.session.userInput;
     let page = getCurrentPage(req);
-    
-    if(req.session.rowcount) {
+
+    if (req.session.rowcount) {
         let rowcount = req.session.rowcount;
-        
-        if(isValidPage(page, rowcount)) {
+
+        if (isValidPage(page, rowcount)) {
             return getListOfInmates(rowcount);
         }
-        
+
         res.redirect('/search');
         return;
-    } 
+    }
 
     search.totalRowsForUserInput(userInput, function(err, rowcount) {
         // TODO: show message
@@ -73,7 +81,7 @@ router.get('/results', function(req, res) {
             return;
         }
 
-        if(rowcount == 0) {
+        if (rowcount == 0) {
             renderResultsPage(req, res, rowcount);
             return;
         }
@@ -91,7 +99,7 @@ router.get('/results', function(req, res) {
                 logger.error('Error during search: ' + err);
                 res.redirect('/search');
                 return;
-            } 
+            }
 
             renderResultsPage(req, res, rowcount, data);
         });
@@ -103,18 +111,18 @@ function getCurrentPage(req) {
 }
 
 function isValidPage(page, rowcount) {
-    if(parseInt(page) == NaN) {
+    if (parseInt(page) == NaN) {
         return false;
     }
-    
-    if(rowcount > 0 && page > Math.ceil(rowcount / utils.resultsPerPage)) {
+
+    if (rowcount > 0 && page > Math.ceil(rowcount / utils.resultsPerPage)) {
         return false;
     }
-    
+
     return true;
 }
 
-function renderResultsPage(req, res, rowcount, data) {    
+function renderResultsPage(req, res, rowcount, data) {
     res.render('search/results', {
         content: {
             title: getPageTitle(rowcount)
@@ -126,19 +134,19 @@ function renderResultsPage(req, res, rowcount, data) {
 }
 
 function getPageTitle(rowcount) {
-    
+
     let oResultsPageContent = content.view.results;
-    
-    if(rowcount == 0) {
+
+    if (rowcount == 0) {
         return oResultsPageContent.title_no_results;
     }
-    
+
     let title = oResultsPageContent.title;
-    
-    if(rowcount > 1) {
+
+    if (rowcount > 1) {
         title += 's';
     }
-    
+
     return title.replace('_x_', rowcount);
 }
 
@@ -163,7 +171,7 @@ const options = {
 
 
 router.get('/:view', function(req, res) {
-    
+
     req.session.rowcount = null;
 
     const view = req.params.view;

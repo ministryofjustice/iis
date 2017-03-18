@@ -12,7 +12,7 @@ gulp.task('dev', function (done) {
     runSequence(
         'build',
         'lint',
-        'test',
+        //'test',
         'watch',
         'server', done)
 });

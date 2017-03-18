@@ -7,18 +7,14 @@ let session = require('express-session');
 let express = require('express');
 let path = require('path');
 
-let util = require('util');
-
 let passport = require('passport');
 let OAuth2Strategy = require('passport-oauth2').Strategy;
 let request = require('request');
 
 let https = require('https');
-let http = require('http');
 let fs = require('fs');
 
 let index = require('./routes/index');
-let login = require('./routes/login');
 let search = require('./routes/search');
 let subject = require('./routes/subject');
 
@@ -54,7 +50,7 @@ if (config.secure === 'true') {
             'profileLink': '/profile',
             'logoutLink': '/logout'
         };
-        next()
+        next();
     });
 }
 
@@ -90,9 +86,8 @@ app.locals.asset_path = '/public/';
 app.use('/', index);
 
 app.use(function authRequired(req, res, next) {
-    logger.info('check auth req');
     if (!req.user) {
-        logger.info('redirecting - auth req');
+        logger.info('Authorisation required - redirecting to login');
         return res.redirect('/login');
     }
     res.locals.nav = true;

@@ -1,11 +1,7 @@
 'use strict';
 
 let passport = require('passport');
-
 let express = require('express');
-let content = require('../data/content');
-let config = require('../server/config');
-
 let logger = require('winston');
 
 let util = require('util');

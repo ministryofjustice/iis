@@ -1,8 +1,8 @@
 'use strict';
 
+let logger = require('winston');
 let express = require('express');
 let util = require('util');
-
 let content = require('../data/content.js');
 let search = require('../data/search.js');
 let dob = require('../data/dob.js');
@@ -10,24 +10,16 @@ let identifier = require('../data/identifier.js');
 let names = require('../data/names.js');
 let utils = require('../data/utils.js');
 
-
-
-let logger = require('winston');
-
 // eslint-disable-next-line
 let router = express.Router();
 
 router.get('/', function(req, res) {
-    logger.info('Authenticated: ' + req.isAuthenticated());
-    logger.info('Profile: ' + util.inspect(res.locals.profile));
-
     return res.render('search', {
         content: content.view.search
     });
 });
 
 router.post('/', function(req, res) {
-
     if (!req.body.opt) {
 
         logger.info('Search: No search option supplied');
@@ -39,8 +31,7 @@ router.post('/', function(req, res) {
 
         res.render('search', {
             err: _err,
-            content: content.view.search,
-            logoutLink: req.session.logoutLink
+            content: content.view.search
         });
         return;
     }

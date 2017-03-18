@@ -44,11 +44,29 @@ Ministry of Justice Inmate Information System - Historical Offenders Application
  ` TEST_ENV=test gulp test`
 
 
-# User Accounts
-A user account can be created by supplying the required database 
-connection environment variables and executing node utils/app-create-user.js, eg
+# SSO
 
-`DB_SERVER=something  DB_PASS=secretThing node utils/app-create-user.js`
+Unless AUTHENTICATION_ENABLED is false, the service requires users to authenticate via MOJ SSO. Supply the
+required environment variables. With authentication off, eg i dev, a default test user profile is used and access is
+open. For development, you may wish to run IIS_MOCK_SSO which can be found in GitHub.
 
 
+# Environment variables
+
+The following environment variables are required
+
+* DB_USER - username for DB access
+* DB_PASS - password for DB access
+* DB_SERVER - DB server host
+* DB_NAME - DB name
+* AUTHENTICATION_ENABLED - set to true to enable SSO authentication, otherwise default test user profile used 
+* HTTPS - set to true to run in HTTPS mode, otherwise HTTP
+* SESSION_SECRET - ?
+* CLIENT_ID - SSO Client ID
+* CLIENT_SECRET - SSO Client secret
+* REDIRECT_URI - Redirect URI for SSO callback - specify service host location with path of /authentication
+* TOKEN_HOST - SSO server host
+* AUTHORIZE_PATH - SSO authorization endpoint, usually /oauth/authorize
+* TOKEN_PATH - SSO token endpoint, usually /oauth/token
+* USER_DETAILS_PATH - SSO user details endpoint, usually /api/user_details
 

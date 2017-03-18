@@ -4,7 +4,7 @@ let logger = require('winston');
 
 if (process.env.NODE_ENV === 'test') {
     logger.remove(logger.transports.Console);
-    logger.add(logger.transports.File, {filename: 'hoa-ui.log' });
+    logger.add(logger.transports.File, {filename: 'iis-ui.log' });
 
 } else {
     logger.remove(logger.transports.Console);

@@ -3,7 +3,6 @@
 let logger = require('./log.js');
 
 let bodyParser = require('body-parser');
-// let cookieSession = require('cookie-session');
 let session = require('express-session');
 let express = require('express');
 let path = require('path');
@@ -14,9 +13,9 @@ let passport = require('passport');
 let OAuth2Strategy = require('passport-oauth2').Strategy;
 let request = require('request');
 
-// let https = require('https');
-// let http = require('http');
-// let fs = require('fs');
+let https = require('https');
+let http = require('http');
+let fs = require('fs');
 
 let index = require('./routes/index');
 let login = require('./routes/login');
@@ -27,70 +26,37 @@ let content = require('./data/content.js');
 
 let config = require('./server/config');
 
-// let httpsOptions = {
-//     key: fs.readFileSync('key.pem'),
-//     cert: fs.readFileSync('cert.pem')
-// };
 
 //  Express Configuration
 let app = express();
 
-const sessionConfig = {
-    secret: 'iis-secret'
+
+// SSO configuration
+
+let ssoConfig = config.sso;
+
+let sessionConfig = {
+    secret: ssoConfig.SESSION_SECRET
 };
 
 app.use(session(sessionConfig));
 
-//SSO config
-app.use(passport.initialize());
-app.use(passport.session());
-
-passport.use(new OAuth2Strategy({
-        authorizationURL: 'http://localhost:3001/oauth/authorize',
-        // authorizationURL: 'https://www.signon.dsd.io/oauth/authorize',
-        tokenURL: 'http://localhost:3001/oauth/token',
-        // tokenURL: 'https://www.signon.dsd.io/oauth/token',
-        clientID: '639803e6b176f8a727fedece7337eb64a066282d13b247854e76becaa0daa16e',
-        clientSecret: '16eb41659e1b9f7ab2cc9fb256ca99772cdb62ee6176c9e789b301b37fb886d4',
-        callbackURL: 'http://localhost:3000/authentication'
-    },
-    function(accessToken, refreshToken, profile, cb) {
-        logger.info('passport invoked');
-
-        let options = {
-            uri: 'http://localhost:3001/api/user_details',
-            qs: {access_token: accessToken},
-            json: true
+if (config.secure === 'true') {
+    logger.info('Authentication enabled');
+    enableSSO();
+} else {
+    logger.info('Authentication disabled - using default test user profile');
+    app.use(function(req, res, next) {
+        req.user = {
+            'email': 'test@test.com',
+            'first_name': 'Test',
+            'last_name': 'Tester',
+            'profileLink': '/profile',
+            'logoutLink': '/logout'
         };
-        request(options, function(error, response, userDetails) {
-            if (!error && response.statusCode === 200) {
-
-                let sessionUser = {
-                    email: userDetails.email,
-                    firstName: userDetails.first_name,
-                    lastName: userDetails.last_name,
-                    profileLink: userDetails.links.profile,
-                    logoutLink: userDetails.links.logout
-                };
-
-                logger.info('Returning user');
-
-                return cb(null, sessionUser);
-            }
-        });
-    })
-);
-
-
-passport.serializeUser(function(user, done) {
-    done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-    done(null, user);
-});
-
-
+        next()
+    });
+}
 
 
 // View Engine Configuration
@@ -123,7 +89,7 @@ app.locals.asset_path = '/public/';
 // Express Routing Configuration
 app.use('/', index);
 
-app.use(function authRequired (req, res, next) {
+app.use(function authRequired(req, res, next) {
     logger.info('check auth req');
     if (!req.user) {
         logger.info('redirecting - auth req');
@@ -133,7 +99,7 @@ app.use(function authRequired (req, res, next) {
     next();
 });
 
-app.use(function addTemplateVariables (req, res, next) {
+app.use(function addTemplateVariables(req, res, next) {
     res.locals.profile = req.user;
     next();
 });
@@ -166,11 +132,79 @@ function clientErrors(error, req, res, next) {
     res.render('error', {nav: true, content: content.view.error});
 }
 
-app.listen(app.get('port'), function() {
-    console.log('Express server listening on port ' + app.get('port'));
-});
 
-// https.createServer(httpsOptions, app).listen(3000);
-// console.log('Express server listening on port ' + app.get('port'));
+//  Start server in HTTP or HTTPS mode
+
+if (config.https === 'true') {
+    let httpsOptions = {
+        key: fs.readFileSync('key.pem'),
+        cert: fs.readFileSync('cert.pem')
+    };
+
+    https.createServer(httpsOptions, app).listen(3000);
+    console.log('IIS server listening with HTTPS on port ' + app.get('port'));
+} else {
+    app.listen(app.get('port'), function() {
+        console.log('IIS server listening on port ' + app.get('port'));
+    });
+}
+
+
+//  SSO utility methods
+
+function enableSSO() {
+
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+    passport.use(new OAuth2Strategy({
+            authorizationURL: ssoConfig.TOKEN_HOST + ssoConfig.AUTHORIZE_PATH,
+            tokenURL: ssoConfig.TOKEN_HOST + ssoConfig.TOKEN_PATH,
+            clientID: ssoConfig.CLIENT_ID,
+            clientSecret: ssoConfig.CLIENT_SECRET,
+            callbackURL: ssoConfig.REDIRECT_URI
+        },
+        function(accessToken, refreshToken, profile, cb) {
+            logger.info('Passport authentication invoked');
+
+            let options = {
+                uri: ssoConfig.TOKEN_HOST + ssoConfig.USER_DETAILS_PATH,
+                qs: {access_token: accessToken},
+                json: true
+            };
+            request(options, function(error, response, userDetails) {
+                if (!error && response.statusCode === 200) {
+                    logger.info('User authentication success');
+                    return cb(null, userFor(userDetails));
+                } else {
+                    logger.error('Authentication failure:' + error);
+                    return cb(error);
+                }
+            });
+        })
+    );
+
+    function userFor(userDetails) {
+        return {
+            email: userDetails.email,
+            firstName: userDetails.first_name,
+            lastName: userDetails.last_name,
+            profileLink: userDetails.links.profile,
+            logoutLink: userDetails.links.logout
+        };
+    }
+
+
+    passport.serializeUser(function(user, done) {
+        // Not used but required for Passport
+        done(null, user);
+    });
+
+    passport.deserializeUser(function(user, done) {
+        // Not used but required for Passport
+        done(null, user);
+    });
+
+}
 
 module.exports = app;

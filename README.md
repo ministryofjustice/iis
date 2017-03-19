@@ -25,6 +25,12 @@ Ministry of Justice Inmate Information System - Historical Offenders Application
   ```   
   $ gulp dev
   ```
+  
+  Or, for development without SSO authentication, set AUTHENTICATION_ENABLED to false
+  ```
+  $ AUTHENTICATION_ENABLED=false gulp dev
+  ```
+  
 4. Visit [localhost:3000](http://localhost:3000/)
 
 ## Developer Commands
@@ -47,8 +53,12 @@ Ministry of Justice Inmate Information System - Historical Offenders Application
 # SSO
 
 Unless AUTHENTICATION_ENABLED is false, the service requires users to authenticate via MOJ SSO. Supply the
-required environment variables. With authentication off, eg i dev, a default test user profile is used and access is
-open. For development, you may wish to run IIS_MOCK_SSO which can be found in GitHub.
+required environment variables to direct to the appropriate SSO server.
+
+With authentication off, eg in dev, a default test user profile is used and access is
+open.
+
+For development, you may wish to run IIS_MOCK_SSO which can be found in GitHub.
 
 
 # Environment variables

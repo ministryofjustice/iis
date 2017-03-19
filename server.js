@@ -43,16 +43,7 @@ if (config.secure === 'true') {
     enableSSO();
 } else {
     logger.info('Authentication disabled - using default test user profile');
-    app.use(function(req, res, next) {
-        req.user = {
-            'email': 'test@test.com',
-            'first_name': 'Test',
-            'last_name': 'Tester',
-            'profileLink': '/profile',
-            'logoutLink': '/logout'
-        };
-        next();
-    });
+    app.use(dummyUserProfile);
 }
 
 
@@ -86,8 +77,10 @@ app.locals.asset_path = '/public/';
 // Express Routing Configuration
 app.use('/', index);
 app.use('/disclaimer/', disclaimer);
-app.use(authRequired);
-app.use(addTemplateVariables);
+if (config.secure === 'true') {
+    app.use(authRequired);
+    app.use(addTemplateVariables);
+}
 app.use('/search/', search);
 app.use('/subject/', subject);
 
@@ -150,6 +143,18 @@ function authRequired(req, res, next) {
 }
 
 function addTemplateVariables(req, res, next) {
+    res.locals.profile = req.user;
+    next();
+}
+
+function dummyUserProfile(req, res, next) {
+    req.user = {
+        'email': 'test@test.com',
+        'first_name': 'Test',
+        'last_name': 'Tester',
+        'profileLink': '/profile',
+        'logoutLink': '/logout'
+    };
     res.locals.profile = req.user;
     next();
 }

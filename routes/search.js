@@ -14,12 +14,18 @@ let utils = require('../data/utils.js');
 let router = express.Router();
 
 router.get('/', function(req, res) {
+
+    logger.info('GET /search');
+
     return res.render('search', {
         content: content.view.search
     });
 });
 
 router.post('/', function(req, res) {
+
+    logger.info('POST /search');
+
     if (!req.body.opt) {
 
         logger.info('Search: No search option supplied');
@@ -44,6 +50,8 @@ router.post('/', function(req, res) {
 
 
 router.get('/results', function(req, res) {
+
+    logger.info('GET /search/results');
 
     if (req.headers.referer == undefined) {
         res.redirect('/search');
@@ -163,6 +171,8 @@ const options = {
 
 router.get('/:view', function(req, res) {
 
+    logger.info('GET /search/' + req.params.view);
+
     req.session.rowcount = null;
 
     const view = req.params.view;
@@ -183,6 +193,8 @@ router.get('/:view', function(req, res) {
 
 router.post('/:view', function(req, res) {
 
+    logger.info('POST /search/' + req.params.view);
+
     const view = req.params.view;
     const viewInfo = options[view];
 
@@ -194,10 +206,16 @@ router.post('/:view', function(req, res) {
 
     const input = {};
 
+    // ZED - Why was this working before? How was it ever set during tests?
+    if (req.session.userInput === undefined) {
+        req.session.userInput = {};
+    }
+
     viewInfo.fields.forEach(function(field) {
         delete req.session.userInput[field];
         input[field] = String(req.body[field] || '').trim();
     });
+
 
     viewInfo.validator(input, function(err) {
         if (err) {
@@ -206,6 +224,7 @@ router.post('/:view', function(req, res) {
             renderViewWithErrorAndUserInput(req, res, view, err);
             return;
         }
+
 
         Object.assign(req.session.userInput, input);
 

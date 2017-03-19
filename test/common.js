@@ -17,16 +17,18 @@ afterEach(() => {
 });
 
 module.exports = {
-    logInAs: function (username) {
+    logInAs: function(username) {
         // s.stub(users, "checkUsernameAndPassword").yields(null, true);
 
         let browser = request.agent(app);
-        return browser.post("/login")
-            .send({loginId: username, pwd: "thisisapassword", disclaimer: "disclaimer"})
+
+        return browser.post("/disclaimer")
+            .send({disclaimer: "disclaimer"})
             .expect(302)
             .then(function() {
                 return browser;
             });
+
     },
 
     // userStub: function() {

@@ -10,7 +10,7 @@ let util = require('util');
 let router = express.Router();
 
 router.get('/', function(req, res) {
-    logger.info('Authenticated: ' + req.isAuthenticated());
+    logger.info('GET / - Authenticated: ' + req.isAuthenticated());
     return res.redirect('/search');
 });
 
@@ -22,7 +22,7 @@ router.get('/authentication', passport.authenticate('oauth2', {failureRedirect: 
         logger.info('user: ' + util.inspect(req.user));
         logger.info('Authenticated: ' + req.isAuthenticated());
 
-        return res.redirect('/search');
+        return res.redirect('/disclaimer');
     }
 );
 

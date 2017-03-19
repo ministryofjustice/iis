@@ -15,6 +15,7 @@ let https = require('https');
 let fs = require('fs');
 
 let index = require('./routes/index');
+let disclaimer = require('./routes/disclaimer');
 let search = require('./routes/search');
 let subject = require('./routes/subject');
 
@@ -84,21 +85,9 @@ app.locals.asset_path = '/public/';
 
 // Express Routing Configuration
 app.use('/', index);
-
-app.use(function authRequired(req, res, next) {
-    if (!req.user) {
-        logger.info('Authorisation required - redirecting to login');
-        return res.redirect('/login');
-    }
-    res.locals.nav = true;
-    next();
-});
-
-app.use(function addTemplateVariables(req, res, next) {
-    res.locals.profile = req.user;
-    next();
-});
-
+app.use('/disclaimer/', disclaimer);
+app.use(authRequired);
+app.use(addTemplateVariables);
 app.use('/search/', search);
 app.use('/subject/', subject);
 
@@ -146,6 +135,24 @@ if (config.https === 'true') {
 
 
 //  SSO utility methods
+
+function authRequired(req, res, next) {
+    if (!req.user) {
+        logger.info('Authorisation required - redirecting to login');
+        return res.redirect('/login');
+    }
+    if(!req.user.disclaimer){
+        logger.info('Disclaimer required - redirecting to disclaimer');
+        return res.redirect('/disclaimer');
+    }
+    res.locals.nav = true;
+    next();
+}
+
+function addTemplateVariables(req, res, next) {
+    res.locals.profile = req.user;
+    next();
+}
 
 function enableSSO() {
 

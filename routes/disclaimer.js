@@ -9,7 +9,11 @@ let logger = require('winston');
 let router = express.Router();
 
 router.get('/', function(req, res, next) {
-    res.render('disclaimer', {content: content.view.disclaimer});
+    if(req.user){
+        res.render('disclaimer', {content: content.view.disclaimer});
+    } else {
+        res.redirect('/login');
+    }
 });
 
 

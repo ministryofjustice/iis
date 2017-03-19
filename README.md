@@ -52,13 +52,14 @@ Ministry of Justice Inmate Information System - Historical Offenders Application
 
 # SSO
 
-Unless AUTHENTICATION_ENABLED is false, the service requires users to authenticate via MOJ SSO. Supply the
-required environment variables to direct to the appropriate SSO server.
+There are several options for authentication:
 
-With authentication off, eg in dev, a default test user profile is used and access is
-open.
+* Set AUTHENTICATION_ENABLED=false - a default test user profile is used and access is open
 
-For development, you may wish to run IIS_MOCK_SSO which can be found in GitHub.
+* Run the IIS Mock SSO (available in GitHub) - user is automatically logged in via mock SSO
+
+* Set the environment variables listed below to direct SSO requests to an instance of MoJ SSO
+
 
 
 # Environment variables
@@ -71,7 +72,7 @@ The following environment variables are required
 * DB_NAME - DB name
 * AUTHENTICATION_ENABLED - set to true to enable SSO authentication, otherwise default test user profile used 
 * HTTPS - set to true to run in HTTPS mode, otherwise HTTP
-* SESSION_SECRET - ?
+* SESSION_SECRET - ? todo
 * CLIENT_ID - SSO Client ID
 * CLIENT_SECRET - SSO Client secret
 * REDIRECT_URI - Redirect URI for SSO callback - specify service host location with path of /authentication

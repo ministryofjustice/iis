@@ -15,7 +15,7 @@ let router = express.Router();
 
 router.get('/', function(req, res) {
 
-    logger.info('GET /search');
+    logger.debug('GET /search');
 
     return res.render('search', {
         content: content.view.search
@@ -24,7 +24,7 @@ router.get('/', function(req, res) {
 
 router.post('/', function(req, res) {
 
-    logger.info('POST /search');
+    logger.debug('POST /search');
 
     if (!req.body.opt) {
 
@@ -171,7 +171,7 @@ const options = {
 
 router.get('/:view', function(req, res) {
 
-    logger.info('GET /search/' + req.params.view);
+    logger.debug('GET /search/' + req.params.view);
 
     req.session.rowcount = null;
 
@@ -193,7 +193,7 @@ router.get('/:view', function(req, res) {
 
 router.post('/:view', function(req, res) {
 
-    logger.info('POST /search/' + req.params.view);
+    logger.debug('POST /search/' + req.params.view);
 
     const view = req.params.view;
     const viewInfo = options[view];

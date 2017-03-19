@@ -26,23 +26,26 @@ router.get('/authentication', passport.authenticate('oauth2', {failureRedirect: 
     }
 );
 
-router.get('/unauthorised', function(req, res, next) {
-    console.info('unauthorised');
-});
-
-
 router.get('/change-password', function(req, res) {
-    logger.info('Change password user: ' + req.user.email);
-    logger.info('Change password link: ' + req.user.profileLink);
-    res.redirect(req.user.profileLink);
+    if (req.user) {
+        logger.info('Change password user: ' + req.user.email);
+        logger.info('Change password link: ' + req.user.profileLink);
+        res.redirect(req.user.profileLink);
+    } else {
+        res.redirect('/login');
+    }
 });
 
 
 router.get('/logout', function(req, res) {
-    console.log('logging out');
-    let logoutLink = req.user.logoutLink;
-    req.logout();
-    res.redirect(logoutLink);
+    if (req.user) {
+        console.log('logging out');
+        let logoutLink = req.user.logoutLink;
+        req.logout();
+        res.redirect(logoutLink);
+    } else {
+        res.redirect('/login');
+    }
 });
 
 module.exports = router;

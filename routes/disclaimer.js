@@ -19,6 +19,10 @@ router.get('/', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
 
+    if(!req.user) {
+        return res.redirect('/login');
+    }
+
     if (!req.body.disclaimer) {
         logger.info('Disclaimer not accepted');
         res.status(400);

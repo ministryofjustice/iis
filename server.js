@@ -33,17 +33,19 @@ let app = express();
 let ssoConfig = config.sso;
 
 let sessionConfig = {
-    secret: ssoConfig.SESSION_SECRET
+    secret: ssoConfig.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true
 };
 
 app.use(session(sessionConfig));
 
-if (config.secure === 'true') {
-    logger.info('Authentication enabled');
-    enableSSO();
-} else {
+if (process.env.NODE_ENV === 'test') {
     logger.info('Authentication disabled - using default test user profile');
     app.use(dummyUserProfile);
+} else {
+    logger.info('Authentication enabled');
+    enableSSO();
 }
 
 
@@ -134,7 +136,7 @@ function authRequired(req, res, next) {
         logger.info('Authorisation required - redirecting to login');
         return res.redirect('/login');
     }
-    if(!req.user.disclaimer){
+    if(!req.user.disclaimer) {
         logger.info('Disclaimer required - redirecting to disclaimer');
         return res.redirect('/disclaimer');
     }
@@ -193,6 +195,7 @@ function enableSSO() {
 
     function userFor(userDetails) {
         return {
+            id: userDetails.id,
             email: userDetails.email,
             firstName: userDetails.first_name,
             lastName: userDetails.last_name,

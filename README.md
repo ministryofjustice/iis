@@ -37,29 +37,20 @@ Ministry of Justice Inmate Information System - Historical Offenders Application
 
  - `gulp lint` -> style checks using eslint
  - `gulp test` -> runs all unit tests
- - `gulp silent-test` -> runs all unit tests with logging turned off
  - `gulp clean` -> cleans previously generated files
  - `gulp build` -> cleans and regenerates assets. This is also the default gulp task
  
  Gulp tasks are defined in individual files under/gulp.
  Coordinating tasks such as `dev`, `test` etc are defined in `/gulp/tasks.js`
  
- NB You can disable logging output during test execution either by running the `silent-test` task instead of `test`,
- or by setting the NODE_ENV environment variable to `test`, eg
- 
- ` TEST_ENV=test gulp test`
-
 
 # SSO
 
-There are several options for authentication:
-
-* Set AUTHENTICATION_ENABLED=false - a default test user profile is used and access is open
+There are two options for authentication:
 
 * Run the IIS Mock SSO (available in GitHub) - user is automatically logged in via mock SSO
 
 * Set the environment variables listed below to direct SSO requests to an instance of MoJ SSO
-
 
 
 # Environment variables
@@ -70,7 +61,6 @@ The following environment variables are required
 * DB_PASS - password for DB access
 * DB_SERVER - DB server host
 * DB_NAME - DB name
-* AUTHENTICATION_ENABLED - set to true to enable SSO authentication, otherwise default test user profile used 
 * HTTPS - set to true to run in HTTPS mode, otherwise HTTP
 * SESSION_SECRET - ? todo
 * CLIENT_ID - SSO Client ID

@@ -4,8 +4,16 @@ let gulp = require('gulp');
 let mocha = require('gulp-spawn-mocha');
 let mochaPhantomjs = require('gulp-mocha-phantomjs');
 let fs = require('fs');
+let runSequence = require('run-sequence');
 
-gulp.task('test', function () {
+gulp.task('test', function (done) {
+    runSequence(
+        'set-test-env',
+        'runtest',
+        'set-dev-env', done)
+});
+
+gulp.task('runtest', function () {
     return gulp.src(['test/**/*.js'])
         .pipe(mocha({
             timeout: 3000,
@@ -27,3 +35,10 @@ gulp.task('unittestreport', function () {
         }));
 });
 
+gulp.task('set-test-env', function() {
+    return process.env.NODE_ENV = 'test';
+});
+
+gulp.task('set-dev-env', function() {
+    return process.env.NODE_ENV = 'dev';
+});

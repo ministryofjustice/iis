@@ -9,7 +9,9 @@ let logger = require('winston');
 let router = express.Router();
 
 router.get('/', function(req, res, next) {
-    if(req.user){
+    if (req.user && req.user.disclaimer === 'true') {
+        res.redirect('/search');
+    } else if (req.user) {
         res.render('disclaimer', {content: content.view.disclaimer});
     } else {
         res.redirect('/login');
@@ -19,7 +21,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
 
-    if(!req.user) {
+    if (!req.user) {
         return res.redirect('/login');
     }
 

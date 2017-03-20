@@ -2,7 +2,6 @@
 
 let logger = require('winston');
 let express = require('express');
-let util = require('util');
 let content = require('../data/content.js');
 let search = require('../data/search.js');
 let dob = require('../data/dob.js');

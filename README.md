@@ -26,17 +26,13 @@ Ministry of Justice Inmate Information System - Historical Offenders Application
   $ gulp dev
   ```
   
-  Or, for development without SSO authentication, set AUTHENTICATION_ENABLED to false
-  ```
-  $ AUTHENTICATION_ENABLED=false gulp dev
-  ```
-  
 4. Visit [localhost:3000](http://localhost:3000/)
 
 ## Developer Commands
 
  - `gulp lint` -> style checks using eslint
  - `gulp test` -> runs all unit tests
+ (Note that tests run with authentication disabled and sending logs to file in iis-ui.log)
  - `gulp clean` -> cleans previously generated files
  - `gulp build` -> cleans and regenerates assets. This is also the default gulp task
  

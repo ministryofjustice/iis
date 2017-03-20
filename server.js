@@ -3,7 +3,7 @@
 let logger = require('./log.js');
 
 let bodyParser = require('body-parser');
-let session = require('express-session');
+let cookieSession = require('cookie-session');
 let express = require('express');
 let path = require('path');
 
@@ -29,18 +29,16 @@ let app = express();
 
 
 // SSO configuration
-
+let testMode = process.env.NODE_ENV === 'test' ? 'true' : 'false';
 let ssoConfig = config.sso;
 
-let sessionConfig = {
-    secret: ssoConfig.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true
-};
+app.use(cookieSession({
+    name: 'session',
+    keys: [Math.round(Math.random() * 100000).toString()], //
+    maxAge: 60 * 60 * 1000 // 60 minute
+}));
 
-app.use(session(sessionConfig));
-
-if (process.env.NODE_ENV === 'test') {
+if (testMode === 'true') {
     logger.info('Authentication disabled - using default test user profile');
     app.use(dummyUserProfile);
 } else {
@@ -79,7 +77,7 @@ app.locals.asset_path = '/public/';
 // Express Routing Configuration
 app.use('/', index);
 app.use('/disclaimer/', disclaimer);
-if (config.secure === 'true') {
+if (testMode !== 'true') {
     app.use(authRequired);
     app.use(addTemplateVariables);
 }

@@ -2,7 +2,6 @@
 
 let gulp = require('gulp');
 let mocha = require('gulp-spawn-mocha');
-let mochaPhantomjs = require('gulp-mocha-phantomjs');
 let fs = require('fs');
 let runSequence = require('run-sequence');
 

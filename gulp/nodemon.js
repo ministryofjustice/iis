@@ -11,7 +11,8 @@ gulp.task('server', function () {
     ext: 'js, json',
     ignore: ['public/*',
       'assets/*',
-      'nodeModules*']
+      'govuk_modules*',
+      'node_modules*']
   }).on('quit', function () {
     // remove .port.tmp if it exists
     try {

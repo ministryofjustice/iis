@@ -94,9 +94,15 @@ module.exports = {
             if (connected) {
                 that.disconnect();
             }
+            
+            that.test(callback);
 
             return callback(err, result);
         }
+    },
+    
+    test: function(cb) {
+        console.log(cb)
     },
 
     getCollection: function(sql, params, callback) {
@@ -149,6 +155,55 @@ module.exports = {
 
             return callback(err, result);
         }
+    },
+    
+    saveRowToDb: function(obj) {
+        /*
+        let connected = false;
+        connection = this.connect();
+
+        connection.on('connect', function(err) {
+            if (err) {
+                logger.error('Error while inserting a record: ' + err);
+                return finish(err);
+            }
+
+            connected = true;
+
+            let Request = require('tedious').Request;
+            let request = new Request(sql, function(err, rowCount) {
+                if (err) {
+                    return finish(err);
+                }
+            });
+
+            if (params) {
+                addParams(params, request);
+            }
+
+            request.on('row', function(columns) {
+                return finish(null, columns);
+            });
+
+            logger.debug('Executing tuple request: ' + util.inspect(request));
+            connection.execSql(request);
+        });
+
+        let that = this;
+
+        function finish(err, result) {
+
+            if (err) {
+                logger.error('Error during tuple query: ' + err);
+            }
+
+            if (connected) {
+                that.disconnect();
+            }
+
+            return callback(err, result);
+        }
+        */
     },
 
     disconnect: function() {

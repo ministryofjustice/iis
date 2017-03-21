@@ -1,25 +1,46 @@
 'use strict';
 
+let passport = require('passport');
 let express = require('express');
-let content = require('../data/content');
-
-let logger=require('winston');
+let logger = require('winston');
 
 // eslint-disable-next-line
 let router = express.Router();
 
 router.get('/', function(req, res) {
-    res.redirect('/search');
+    logger.info('GET / - Authenticated: ' + req.isAuthenticated());
+    return res.redirect('/search');
 });
+
+router.get('/login', passport.authenticate('oauth2'));
+
+router.get('/authentication', passport.authenticate('oauth2', {failureRedirect: '/unauthorised'}),
+    function(req, res) {
+        logger.info('Authentication callback', {user: req.user, authenticated: req.isAuthenticated()});
+        return res.redirect('/disclaimer');
+    }
+);
 
 router.get('/change-password', function(req, res) {
-    res.render('change-password', {nav: true, content: content.view.changepassword});
+    if (req.user) {
+        logger.info('Change password user: ' + req.user.email);
+        logger.info('Change password link: ' + req.user.profileLink);
+        res.redirect(req.user.profileLink);
+    } else {
+        res.redirect('/login');
+    }
 });
 
+
 router.get('/logout', function(req, res) {
-    logger.info('Logging out: ' + req.session.loggedIn);
-    req.session.loggedIn = undefined;
-    res.redirect('/login');
+    if (req.user) {
+        console.log('logging out');
+        let logoutLink = req.user.logoutLink;
+        req.logout();
+        res.redirect(logoutLink);
+    } else {
+        res.redirect('/login');
+    }
 });
 
 module.exports = router;

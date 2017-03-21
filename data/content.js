@@ -21,7 +21,7 @@ module.exports = {
     view: {
         error: {title: 'Error'},
 
-        login: {title: 'Enter user id and password'},
+        disclaimer: {title: 'Usage'},
 
         search: {
             title: 'What information do you have on the inmate?',
@@ -39,7 +39,7 @@ module.exports = {
 
         dob: {title: 'Enter inmate\'s date of birth or age/range'},
 
-        results: {title: 'Your search returned _x_ result', 
+        results: {title: 'Your search returned _x_ result',
                   title_no_results: 'Your search did not return any results'},
 
         subject: {title: 'Subject details'}

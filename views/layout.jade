@@ -46,7 +46,7 @@ body
                             if nav
                                 ul#proposition-links
                                     li
-                                        a(href="/change-password") Change Password
+                                        a(href=profile.profileLink) Change Password
                                     li
                                         a(href="/logout") Logout
 
@@ -89,6 +89,6 @@ body
     script(src="/public/javascripts/govuk/shim-links-with-button-role.js")
     script(src="/public/javascripts/govuk/show-hide-content.js")
     script(src="/public/javascripts/application.js")
-    
+
     script.
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');

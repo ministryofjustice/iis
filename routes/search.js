@@ -1,5 +1,6 @@
 'use strict';
 
+let logger = require('winston');
 let express = require('express');
 let content = require('../data/content.js');
 let search = require('../data/search.js');
@@ -8,22 +9,25 @@ let identifier = require('../data/identifier.js');
 let names = require('../data/names.js');
 let utils = require('../data/utils.js');
 
-let logger = require('winston');
-
 // eslint-disable-next-line
 let router = express.Router();
 
 router.get('/', function(req, res) {
-    res.render('search', {
+
+    logger.debug('GET /search');
+
+    return res.render('search', {
         content: content.view.search
     });
 });
 
 router.post('/', function(req, res) {
 
+    logger.debug('POST /search');
+
     if (!req.body.opt) {
 
-        logger.info('Search: No search option supplied');
+        logger.info('Search: No search option supplied', {userId: req.user.id});
 
         let _err = {
             title: content.errMsg.CANNOT_SUBMIT,
@@ -45,25 +49,27 @@ router.post('/', function(req, res) {
 
 
 router.get('/results', function(req, res) {
-    
-    if(req.headers.referer == undefined) {
+
+    logger.info('GET /search/results');
+
+    if (req.headers.referer == undefined) {
         res.redirect('/search');
         return;
     }
-    
-    let userInput = req.session.userInput;    
+
+    let userInput = req.session.userInput;
     let page = getCurrentPage(req);
-    
-    if(req.session.rowcount) {
+
+    if (req.session.rowcount) {
         let rowcount = req.session.rowcount;
-        
-        if(isValidPage(page, rowcount)) {
+
+        if (isValidPage(page, rowcount)) {
             return getListOfInmates(rowcount);
         }
-        
+
         res.redirect('/search');
         return;
-    } 
+    }
 
     search.totalRowsForUserInput(userInput, function(err, rowcount) {
         // TODO: show message
@@ -73,7 +79,7 @@ router.get('/results', function(req, res) {
             return;
         }
 
-        if(rowcount == 0) {
+        if (rowcount == 0) {
             renderResultsPage(req, res, rowcount);
             return;
         }
@@ -91,7 +97,7 @@ router.get('/results', function(req, res) {
                 logger.error('Error during search: ' + err);
                 res.redirect('/search');
                 return;
-            } 
+            }
 
             renderResultsPage(req, res, rowcount, data);
         });
@@ -103,18 +109,18 @@ function getCurrentPage(req) {
 }
 
 function isValidPage(page, rowcount) {
-    if(parseInt(page) == NaN) {
+    if (parseInt(page) == NaN) {
         return false;
     }
-    
-    if(rowcount > 0 && page > Math.ceil(rowcount / utils.resultsPerPage)) {
+
+    if (rowcount > 0 && page > Math.ceil(rowcount / utils.resultsPerPage)) {
         return false;
     }
-    
+
     return true;
 }
 
-function renderResultsPage(req, res, rowcount, data) {    
+function renderResultsPage(req, res, rowcount, data) {
     res.render('search/results', {
         content: {
             title: getPageTitle(rowcount)
@@ -126,19 +132,19 @@ function renderResultsPage(req, res, rowcount, data) {
 }
 
 function getPageTitle(rowcount) {
-    
+
     let oResultsPageContent = content.view.results;
-    
-    if(rowcount == 0) {
+
+    if (rowcount == 0) {
         return oResultsPageContent.title_no_results;
     }
-    
+
     let title = oResultsPageContent.title;
-    
-    if(rowcount > 1) {
+
+    if (rowcount > 1) {
         title += 's';
     }
-    
+
     return title.replace('_x_', rowcount);
 }
 
@@ -163,7 +169,9 @@ const options = {
 
 
 router.get('/:view', function(req, res) {
-    
+
+    logger.debug('GET /search/' + req.params.view);
+
     req.session.rowcount = null;
 
     const view = req.params.view;
@@ -184,6 +192,8 @@ router.get('/:view', function(req, res) {
 
 router.post('/:view', function(req, res) {
 
+    logger.debug('POST /search/' + req.params.view);
+
     const view = req.params.view;
     const viewInfo = options[view];
 
@@ -195,10 +205,16 @@ router.post('/:view', function(req, res) {
 
     const input = {};
 
+    // ZED - Why was this working before? How was it ever set during tests?
+    if (req.session.userInput === undefined) {
+        req.session.userInput = {};
+    }
+
     viewInfo.fields.forEach(function(field) {
         delete req.session.userInput[field];
         input[field] = String(req.body[field] || '').trim();
     });
+
 
     viewInfo.validator(input, function(err) {
         if (err) {
@@ -207,6 +223,7 @@ router.post('/:view', function(req, res) {
             renderViewWithErrorAndUserInput(req, res, view, err);
             return;
         }
+
 
         Object.assign(req.session.userInput, input);
 

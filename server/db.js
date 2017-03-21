@@ -12,7 +12,7 @@ function addParams(params, request) {
         request.addParameter(
             param.column,
             param.type,
-            param.value);
+            param.value.toUpperCase());
     });
 }
 

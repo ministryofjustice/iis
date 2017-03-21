@@ -34,7 +34,8 @@ router.get('/:id', function(req, res) {
         let dob = data.DOB.value;
 
         if(dob) {
-            data.AGE = utils.getAgeFromDOB(dob.split('/').reverse().join('-'));
+            dob = [dob.substr(6,2), dob.substr(4,2), dob.substr(0,4)];
+            data.AGE = utils.getAgeFromDOB(arrDOB.join('-'));
         }
 
         res.render('subject', {

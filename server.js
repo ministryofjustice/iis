@@ -1,6 +1,9 @@
 'use strict';
 
 let logger = require('./log.js');
+let expressWinston = require('express-winston');
+let addRequestId = require('express-request-id')();
+let uuidV1 = require('uuid/v1');
 
 let bodyParser = require('body-parser');
 let cookieSession = require('cookie-session');
@@ -28,13 +31,32 @@ let config = require('./server/config');
 let app = express();
 
 
+// Automatically log every request with user details, a unique session id, and a unique request id
+app.use(addRequestId);
+function requestLogger() {
+    return expressWinston.logger({
+        winstonInstance: logger,
+        meta: true,
+        dynamicMeta: function(req, res) {
+            return {
+                userId: req.user ? req.user.id : null,
+                userEmail: req.user ? req.user.email : null,
+                requestId: req.id,
+                sessionTag: req.user ? req.user.sessionTag : null
+            };
+        },
+        colorize: true,
+        requestWhitelist: ['url', 'method', 'originalUrl', 'query', 'body']
+    });
+}
+
 // SSO configuration
 let testMode = process.env.NODE_ENV === 'test' ? 'true' : 'false';
 let ssoConfig = config.sso;
 
 app.use(cookieSession({
     name: 'session',
-    keys: [Math.round(Math.random() * 100000).toString()], //
+    keys: [Math.round(Math.random() * 100000).toString()],
     maxAge: 60 * 60 * 1000 // 60 minute
 }));
 
@@ -81,6 +103,7 @@ if (testMode !== 'true') {
     app.use(authRequired);
     app.use(addTemplateVariables);
 }
+app.use(requestLogger());
 app.use('/search/', search);
 app.use('/subject/', subject);
 
@@ -111,7 +134,6 @@ function clientErrors(error, req, res, next) {
 
 
 //  Start server in HTTP or HTTPS mode
-
 if (config.https === 'true') {
     let httpsOptions = {
         key: fs.readFileSync('key.pem'),
@@ -128,7 +150,6 @@ if (config.https === 'true') {
 
 
 //  SSO utility methods
-
 function authRequired(req, res, next) {
     if (!req.user) {
         logger.info('Authorisation required - redirecting to login');
@@ -198,7 +219,8 @@ function enableSSO() {
             firstName: userDetails.first_name,
             lastName: userDetails.last_name,
             profileLink: userDetails.links.profile,
-            logoutLink: userDetails.links.logout
+            logoutLink: userDetails.links.logout,
+            sessionTag: uuidV1()
         };
     }
 

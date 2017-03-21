@@ -27,7 +27,7 @@ router.post('/', function(req, res) {
 
     if (!req.body.opt) {
 
-        logger.info('Search: No search option supplied');
+        logger.info('Search: No search option supplied', {userId: req.user.id});
 
         let _err = {
             title: content.errMsg.CANNOT_SUBMIT,

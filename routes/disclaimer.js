@@ -38,8 +38,8 @@ router.post('/', function(req, res, next) {
         res.render('disclaimer', {err: err, content: content.view.disclaimer});
 
     } else {
-        logger.info('Disclaimer accepted - redirecting to search');
         req.user.disclaimer = 'true';
+        logger.info('Disclaimer accepted - redirecting to search', {userId: req.user.id});
         res.redirect('/search');
 
     }

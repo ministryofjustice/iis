@@ -4,8 +4,6 @@ let passport = require('passport');
 let express = require('express');
 let logger = require('winston');
 
-let util = require('util');
-
 // eslint-disable-next-line
 let router = express.Router();
 
@@ -18,10 +16,7 @@ router.get('/login', passport.authenticate('oauth2'));
 
 router.get('/authentication', passport.authenticate('oauth2', {failureRedirect: '/unauthorised'}),
     function(req, res) {
-        logger.info('authentication callback');
-        logger.info('user: ' + util.inspect(req.user));
-        logger.info('Authenticated: ' + req.isAuthenticated());
-
+        logger.info('Authentication callback', {user: req.user, authenticated: req.isAuthenticated()});
         return res.redirect('/disclaimer');
     }
 );

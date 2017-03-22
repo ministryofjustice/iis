@@ -6,12 +6,34 @@ $path: "/public/images/";
 // Take a look in /govuk-modules/_govuk-elements.scss to see which files are imported.
 @import 'govuk-elements';
 
+$divider: 2px solid $border-colour;
+
+.c-align { text-align: center; }
+span.inactive { color: $grey-2; }
+
+.inmate-details { 
+    border-bottom: $divider; 
+    margin-bottom: 30px; 
+}
+
+section { 
+    border-top: $divider; 
+    padding-top: 30px; 
+}
+
+div#print-disclaimer,
+div#print-header,
+.back-link-container{ display: none; }
+.js-enabled .back-link-container { display: inline-block; }
+
+
+
 
 // Add extra styles here, or re-organise the Sass files in whichever way makes most sense to you
-
-.u-case { text-transform: uppercase}
+/*
+.u-case { text-transform: uppercase; }
 .r-align { text-align: right; }
-.c-align { text-align: center; }
+
 .block { display: block;}
 .v-padding { padding-top:15px; padding-bottom: 15px; }
 .top-padding { padding-top: 15px; }
@@ -19,7 +41,7 @@ $path: "/public/images/";
 section { border-top: 2px solid #BFC1C3; margin-top: 25px; padding-top: 30px; }
 section .grid-row { padding: 5px 0; }
 .btn-show-more { padding: 25px 0 25px 0; }
-.well { padding: 20px; background-color: #F8F8F8 }
+.well { padding: 20px; background-color: #F8F8F8; }
 .refs-box { margin-top: 20px; }
 .refs-box li { padding-bottom: 10px; }
 .refs-box li:last-child { padding-bottom: 0; }
@@ -28,14 +50,10 @@ span.label { background-color: #28A197; color: #FFFFFF; padding: 0 5px;  }
 
 
 #inmate-nav li.active { background-color: #005EA5; padding: 10px 0 7px 14px; color: #FFFFFF; }
-.no-wrap { white-space: nowrap}
-.inmate-details { border-bottom: 2px solid #BFC1C3; margin-bottom: 20px; }
+.no-wrap { white-space: nowrap; }
+
 .search-terms-container h3 { margin-bottom: 10px; }
-.hint { color: #6f777b }
+.hint { color: #6f777b; }
 div.search-terms a { padding: 0 0 15px 23px;  }
-abbr { border-bottom: 1px dashed #6F777B }
-span.inactive { color: #BFC1C3 }
-div#print-disclaimer,
-div#print-header { display: none; }
-.back-link-container { display: none; }
-.js-enabled .back-link-container { display: inline-block; }
+abbr { border-bottom: 1px dashed #6F777B; }
+*/

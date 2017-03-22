@@ -9,10 +9,16 @@ let connection;
 
 function addParams(params, request) {
     params.forEach(function(param) {
+        let paramValue = param.value;
+        
+        if(isNaN(paramValue)) {
+            paramValue = paramValue.toUpperCase();
+        }
+        
         request.addParameter(
             param.column,
             param.type,
-            param.value.toUpperCase());
+            paramValue);
     });
 }
 
@@ -95,14 +101,12 @@ module.exports = {
                 that.disconnect();
             }
             
-            that.test(callback);
-
             return callback(err, result);
         }
     },
     
     test: function(cb) {
-        console.log(cb)
+        console.log(cb);
     },
 
     getCollection: function(sql, params, callback) {

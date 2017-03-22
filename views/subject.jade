@@ -19,7 +19,7 @@ block content
                 - var forename2 = subject.INMATE_FORENAME_2.value
                 - var forename = subject.INMATE_FORENAME_1.value
                 h1.heading-xlarge#subjectName= (forename[0].toUpperCase() + forename.substr(1, forename.length - 1) + ' ' + (forename2 ? forename2[0].toUpperCase() + forename2.substr(1, forename2.length - 1) + ' ' : '') + subject.INMATE_SURNAME.value.toUpperCase())
-                span.heading-secondary#subjectId PRISON NO. #{subject.PK_PRISON_NUMBER.value}
+                    span.heading-secondary#subjectId PRISON NO. #{subject.PK_PRISON_NUMBER.value}
 
                 p.font-medium
                     | #{subject.MARITAL_STATUS.value}
@@ -33,3 +33,11 @@ block content
                     
                 div.form-group 
                     button.button(onclick="window.print();") Print
+                    
+        section
+            div.grid-row
+                div.column-one-third
+                    span menu
+
+                div.column-two-thirds
+                    span details

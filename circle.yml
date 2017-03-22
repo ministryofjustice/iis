@@ -7,7 +7,7 @@ dependencies:
     - npm run postinstall
 test:
   override:
-    - gulp build unittestreport
+    - gulp build set-test-env unittestreport
   post:
     - mv test-results.xml $CIRCLE_TEST_REPORTS/test-results.xml
     - mkdir $CIRCLE_ARTIFACTS/test-coverage-html

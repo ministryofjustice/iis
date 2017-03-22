@@ -72,11 +72,9 @@ router.get('/results', function(req, res) {
     }
 
     search.totalRowsForUserInput(userInput, function(err, rowcount) {
-        // TODO: show message
         if (err) {
             logger.error('Error during search: ' + err);
-            res.redirect('/search');
-            return;
+            return showDbConnectionError(res);
         }
 
         if (rowcount == 0) {
@@ -92,15 +90,26 @@ router.get('/results', function(req, res) {
     function getListOfInmates(rowcount) {
         userInput.page = page;
         search.inmate(userInput, function(err, data) {
-            // TODO: show message
             if (err) {
                 logger.error('Error during search: ' + err);
-                res.redirect('/search');
-                return;
+                return showDbConnectionError(res);
             }
 
             renderResultsPage(req, res, rowcount, data);
         });
+    }
+
+    function showDbConnectionError(res){
+        let _err = {
+            title: content.errMsg.DB_ERROR,
+            desc: content.errMsg.DB_ERROR_DESC
+        };
+
+        res.render('search', {
+            err: _err,
+            content: content.view.search
+        });
+        return;
     }
 });
 

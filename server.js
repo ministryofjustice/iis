@@ -96,6 +96,11 @@ app.locals.asset_path = '/public/';
 /* jshint ignore:end */
 
 
+// Azure App Insights
+let appInsights = require("applicationinsights");
+appInsights.setup(config.instrumentationKey).start();
+
+
 // Express Routing Configuration
 app.use('/', index);
 app.use('/disclaimer/', disclaimer);

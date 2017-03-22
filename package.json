@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/noms-digital-studio/iis#readme",
   "dependencies": {
+    "applicationinsights": "^0.19.0",
     "bcryptjs": "^2.4.0",
     "body-parser": "^1.16.0",
     "config": "^1.24.0",

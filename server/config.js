@@ -19,6 +19,7 @@ module.exports = {
     },
 
     https: get('HTTPS', 'false'),
+    instrumentationKey: get('APPINSIGHTS_INSTRUMENTATIONKEY', ' '),
 
     sso: {
         SESSION_SECRET: 'iis-internal',

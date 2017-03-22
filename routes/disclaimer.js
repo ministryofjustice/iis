@@ -2,6 +2,7 @@
 
 let express = require('express');
 let content = require('../data/content');
+let audit = require('../data/audit');
 
 let logger = require('winston');
 
@@ -12,6 +13,7 @@ router.get('/', function(req, res, next) {
     if (req.user && req.user.disclaimer === 'true') {
         res.redirect('/search');
     } else if (req.user) {
+        audit.record('LOG_IN', req.user.email);
         res.render('disclaimer', {content: content.view.disclaimer});
     } else {
         res.redirect('/login');
@@ -40,6 +42,7 @@ router.post('/', function(req, res, next) {
     } else {
         req.user.disclaimer = 'true';
         logger.info('Disclaimer accepted - redirecting to search', {userId: req.user.id});
+        audit.record('DISCLAIMER_ACCEPTED', req.user.email);
         res.redirect('/search');
 
     }

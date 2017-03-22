@@ -3,29 +3,29 @@
 let request = require('supertest');
 let expect = require('chai').expect;
 let sinon = require("sinon");
-let app = require("../server.js");
 
-let s;
+let app = require("../server/app.js");
+
+let sandbox;
 
 beforeEach(() => {
-    s = sinon.sandbox.create();
+    exports.sinon = sandbox = sinon.sandbox.create();
+    sandbox.assert = sinon.assert;
 });
 
 afterEach(() => {
-    s.restore();
+    sandbox.restore();
 });
 
-module.exports = {
-    logInAs: function(username) {
+exports.logInAs = function() {
 
-        let browser = request.agent(app);
+    let browser = request.agent(app);
 
-        return browser.post("/disclaimer")
-            .send({disclaimer: "disclaimer"})
-            .expect(302)
-            .then(function() {
-                return browser;
-            });
+    return browser.post("/disclaimer")
+        .send({disclaimer: "disclaimer"})
+        .expect(302)
+        .then(function() {
+            return browser;
+        });
 
-    }
 };

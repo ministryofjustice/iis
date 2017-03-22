@@ -1,5 +1,6 @@
 'use strict';
 
+let util = require('util');
 let logger = require('winston');
 let express = require('express');
 let content = require('../data/content.js');
@@ -8,6 +9,7 @@ let dob = require('../data/dob.js');
 let identifier = require('../data/identifier.js');
 let names = require('../data/names.js');
 let utils = require('../data/utils.js');
+let audit = require('../data/audit');
 
 // eslint-disable-next-line
 let router = express.Router();
@@ -71,6 +73,8 @@ router.get('/results', function(req, res) {
         return;
     }
 
+    audit.record('SEARCH', req.user.email, userInput);
+
     search.totalRowsForUserInput(userInput, function(err, rowcount) {
         if (err) {
             logger.error('Error during search: ' + err);
@@ -105,6 +109,7 @@ router.get('/results', function(req, res) {
             desc: content.errMsg.DB_ERROR_DESC
         };
 
+        res.status(500);
         res.render('search', {
             err: _err,
             content: content.view.search

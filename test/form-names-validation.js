@@ -36,14 +36,14 @@ describe('Name(s) validation tests', function(){
    it('should return 302 if the name(s) are valid', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
-                authedReq.post('/search')
+                return authedReq.post('/search')
                     .send({opt: 'results'})
                     .expect(302)
                     .then(() => {
                         return authedReq.post('/search/names')
                             .send({forename: 'Zed', forename2: '', surname: 'Ali'})
                             .expect(302)
-                            .expect("Location", "/results")
+                            .expect("Location", "/search/results")
                 });
             });
    });

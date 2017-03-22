@@ -171,8 +171,8 @@ function addTemplateVariables(req, res, next) {
 function dummyUserProfile(req, res, next) {
     req.user = {
         'email': 'test@test.com',
-        'first_name': 'Test',
-        'last_name': 'Tester',
+        'firstName': 'Test',
+        'lastName': 'Tester',
         'profileLink': '/profile',
         'logoutLink': '/logout'
     };

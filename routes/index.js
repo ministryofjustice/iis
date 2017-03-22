@@ -35,9 +35,9 @@ router.get('/change-password', function(req, res) {
 router.get('/logout', function(req, res) {
     if (req.user) {
         console.log('logging out');
-        let logoutLink = req.user.logoutLink;
+        let profileLink = req.user.profileLink;
         req.logout();
-        res.redirect(logoutLink);
+        res.redirect(profileLink);
     } else {
         res.redirect('/login');
     }

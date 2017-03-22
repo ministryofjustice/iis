@@ -43,12 +43,12 @@ body
                     a(href="#proposition-links", class="js-header-toggle menu") Menu
                     nav(id="proposition-menu")
                         a(href="/", id="proposition-name") Inmate information system
-                            if nav
-                                ul#proposition-links
-                                    li
-                                        a(href=profile.profileLink) Change Password
-                                    li
-                                        a(href="/logout") Logout
+                        if nav
+                            ul#proposition-links
+                                li
+                                    | Signed in as #{profile.firstName} #{profile.lastName}
+                                li
+                                    a(href="/logout") Exit IIS
 
 
 

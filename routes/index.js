@@ -3,6 +3,7 @@
 let passport = require('passport');
 let express = require('express');
 let logger = require('winston');
+let content = require('../data/content.js');
 
 // eslint-disable-next-line
 let router = express.Router();
@@ -21,17 +22,6 @@ router.get('/authentication', passport.authenticate('oauth2', {failureRedirect: 
     }
 );
 
-router.get('/change-password', function(req, res) {
-    if (req.user) {
-        logger.info('Change password user: ' + req.user.email);
-        logger.info('Change password link: ' + req.user.profileLink);
-        res.redirect(req.user.profileLink);
-    } else {
-        res.redirect('/login');
-    }
-});
-
-
 router.get('/logout', function(req, res) {
     if (req.user) {
         console.log('logging out');
@@ -41,6 +31,12 @@ router.get('/logout', function(req, res) {
     } else {
         res.redirect('/login');
     }
+});
+
+router.get('/feedback', function(req, res, next) {
+    return res.render('feedback', {
+        content: content.view.feedback
+    });
 });
 
 module.exports = router;

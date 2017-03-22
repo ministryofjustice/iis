@@ -46,7 +46,8 @@ body
                         if nav
                             ul#proposition-links
                                 li
-                                    | Signed in as #{profile.firstName} #{profile.lastName}
+                                    if locals.profile
+                                        | Signed in as #{profile.firstName} #{profile.lastName}
                                 li
                                     a(href="/logout") Exit IIS
 
@@ -61,7 +62,7 @@ body
         div.phase-banner
             p
                 strong.phase-tag ALPHA
-                span This is a new service – your <a href="#">feedback</a> will help us to improve it.
+                span This is a new service – your <a href="/feedback">feedback</a> will help us to improve it.
 
         block content
 

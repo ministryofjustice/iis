@@ -24,6 +24,8 @@ module.exports = {
 
         disclaimer: {title: 'Usage'},
 
+        feedback: {title: 'Feedback'},
+
         search: {
             title: 'What information do you have on the inmate?',
             body: 'Select all that apply'

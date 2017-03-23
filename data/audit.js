@@ -10,5 +10,5 @@ exports.record = function record(key, user, data){
         throw new Error(`Unknown audit key: ${key}`);
     }
 
-    logger.info('AUDIT', {key, user, data})
+    logger.audit('AUDIT', {key, user, data})
 };

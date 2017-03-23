@@ -1,14 +1,57 @@
 'use strict';
 
-let logger = require('winston');
+let winston = require('winston');
+
+let logLevels = {
+    levels: {
+        audit: 0,
+        error: 1,
+        warn: 2,
+        info: 3,
+        debug: 4,
+    },
+    colors: {
+        audit: 'grey',
+        error: 'red',
+        warn: 'blue',
+        info: 'green',
+        debug: 'yellow'
+    }
+};
+
+winston.setLevels(logLevels.levels);
+winston.addColors(logLevels.colors);
+
 
 if (process.env.NODE_ENV === 'test') {
-    logger.remove(logger.transports.Console);
-    logger.add(logger.transports.File, {filename: 'iis-ui.log' });
+    winston.remove(winston.transports.Console);
+    winston.add(winston.transports.File, {
+        name: 'log',
+        level: 'debug',
+        filename: 'iis-ui.log',
+        json: false
+    });
+    winston.add(winston.transports.File, {
+        name: 'audit',
+        level: 'audit',
+        filename: 'iis-ui-audit.log',
+        json: false
+    });
 
 } else {
-    logger.remove(logger.transports.Console);
-    logger.add(logger.transports.Console, {
+    winston.remove(winston.transports.Console);
+    winston.add(winston.transports.Console, {
+        name: 'log',
+        level: 'info',
+        prettyPrint: true,
+        colorize: true,
+        silent: false,
+        timestamp: true
+        // json: true
+    });
+    winston.add(winston.transports.Console, {
+        name: 'audit',
+        level: 'audit',
         prettyPrint: true,
         colorize: true,
         silent: false,
@@ -17,4 +60,4 @@ if (process.env.NODE_ENV === 'test') {
     });
 }
 
-module.exports=logger;
+module.exports = winston;

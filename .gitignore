@@ -13,3 +13,4 @@ build/*
 uploads/*
 test-results.xml
 iis-ui.log
+iis-ui-audit.log

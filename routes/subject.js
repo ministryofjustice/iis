@@ -4,6 +4,7 @@ let express = require('express');
 let content = require('../data/content.js');
 let subject = require('../data/subject.js');
 let utils = require('../data/utils.js');
+let audit = require('../data/audit');
 
 let logger = require('winston');
 
@@ -16,6 +17,8 @@ router.get('/', function(req, res) {
 
 router.get('/:id', function(req, res) {
 
+    audit.record('VIEW', req.user.email, {prisonNumber: req.params.id});
+
     subject.details(req.params.id, function(err, data) {
 
         if (err) {
@@ -27,9 +30,9 @@ router.get('/:id', function(req, res) {
                 }
             });
         }
-        
+
         let dob = data.DOB.value;
-        
+
         if(dob) {
             data.AGE = utils.getAgeFromDOB(dob.split('/').reverse().join('-'));
         }

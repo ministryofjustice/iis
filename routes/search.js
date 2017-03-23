@@ -1,6 +1,5 @@
 'use strict';
 
-let util = require('util');
 let logger = require('winston');
 let express = require('express');
 let content = require('../data/content.js');
@@ -103,7 +102,7 @@ router.get('/results', function(req, res) {
         });
     }
 
-    function showDbConnectionError(res){
+    function showDbConnectionError(res) {
         let _err = {
             title: content.errMsg.DB_ERROR,
             desc: content.errMsg.DB_ERROR_DESC

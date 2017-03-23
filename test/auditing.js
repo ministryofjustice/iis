@@ -7,6 +7,24 @@ let common = require('./common');
 const audit = require('../data/audit');
 let app = require("../server/app");
 
+let db = require('../server/db');
+let subject = require("../data/subject");
+
+let EventEmitter = require("events").EventEmitter;
+
+function prepareFakeDB(onRequest) {
+    db.setFakeFactory(function fakeDBFactory() {
+        let fake = new EventEmitter();
+        process.nextTick(function() {
+            fake.emit("connect");
+        });
+        fake.execSql = function(req) {
+            onRequest(req);
+        };
+        return fake;
+    });
+}
+
 describe('Auditing', function() {
 
     it('should record login event', function() {
@@ -55,6 +73,30 @@ describe('Auditing', function() {
             .then(function() {
                 common.sinon.assert.calledOnce(audit.record);
                 common.sinon.assert.calledWithExactly(audit.record, "SEARCH", "test@test.com", {prisonNumber: 'AA123456'});
+            });
+    });
+
+    it('should record view event with prison id', function() {
+
+        prepareFakeDB(function(req) {
+            let result = {DOB:{value: '01/01/1999'}};
+            req.callback(null, result);
+            req.emit("row", result);
+        });
+
+        let browser;
+        return common.logInAs()
+            .then(function(_browser) {
+                browser = _browser;
+            })
+            .then(function() {
+                common.sinon.stub(audit, "record");
+                return browser.get('/subject/AA123456')
+                    .set('Referer', 'somewhere')
+            })
+            .then(function() {
+                common.sinon.assert.calledOnce(audit.record);
+                common.sinon.assert.calledWithExactly(audit.record, "VIEW", "test@test.com", {prisonNumber: 'AA123456'});
             });
     });
 

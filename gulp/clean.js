@@ -12,7 +12,6 @@ gulp.task('clean', function () {
         'build/*',
         'uploads/*',
         'test-results.xml',
-        'hoa-ui.log'
     ], {read: false})
         .pipe(clean())
 });

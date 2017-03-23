@@ -1,7 +1,7 @@
 'use strict';
 // Azure App Insights
 if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-    require("applicationinsights").setup().start();
+    require('applicationinsights').setup().start();
 }
 
 const app = require('./server/app');

@@ -86,7 +86,7 @@ module.exports = {
         let resultsPerPage = utils.resultsPerPage;
         let start = (resultsPerPage * userInput.page) - resultsPerPage;
         // eslint-disable-next-line
-        let fields = "PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, INMATE_BIRTH_DATE AS DOB, SUBSTRING((SELECT ',' + k.PERSON_FORENAME_1 + ' ' + PERSON_FORENAME_2 + ' ' + k.PERSON_SURNAME FROM IIS.KNOWN_AS k WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER FOR XML PATH('')),2,200000) AS ALIAS";
+        let fields = "PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, (CONCAT(SUBSTRING(INMATE_BIRTH_DATE, 1, 4), '/', SUBSTRING(INMATE_BIRTH_DATE, 5, 2), '/', SUBSTRING(INMATE_BIRTH_DATE, 7, 2))) AS DOB, SUBSTRING((SELECT ',' + k.PERSON_FORENAME_1 + ' ' + PERSON_FORENAME_2 + ' ' + k.PERSON_SURNAME FROM IIS.KNOWN_AS k WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER FOR XML PATH('')),2,200000) AS ALIAS";
         let from = 'IIS.LOSS_OF_LIBERTY l';
         let orderBy = 'INMATE_SURNAME';
         let oLimit = {start: start, resultsPerPage: resultsPerPage};     

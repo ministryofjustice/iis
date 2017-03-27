@@ -1,6 +1,7 @@
 'use strict';
 
 let express = require('express');
+let moment = require('moment');
 let content = require('../data/content.js');
 let subject = require('../data/subject.js');
 let utils = require('../data/utils.js');
@@ -15,35 +16,77 @@ router.get('/', function(req, res) {
     res.redirect('/search');
 });
 
-router.get('/:id', function(req, res) {
+router.get('/:id/:page', function(req, res) {
 
     audit.record('VIEW', req.user.email, {prisonNumber: req.params.id});
+    let prisonNumber = req.params.id;
 
-    subject.details(req.params.id, function(err, data) {
-
+    subject.details(prisonNumber, function(err, data) {
         if (err) {
-            logger.error('Error getting subject details: ' + err);
-            res.render('subject', {
-                title: content.errMsg.INVALID_ID,
-                err: {
-                    title: content.errMsg.INVALID_ID
-                }
-            });
+            renderErrorPage(res, err);
+            return;
         }
 
-        let dob = data.DOB.value;
-
-        if(dob) {
-            dob = [dob.substr(6, 2), dob.substr(4, 2), dob.substr(0, 4)].join('/');
-            data.AGE = utils.getAgeFromDOB(dob);
-            data.DOB.value = dob;
+        if (data.dob) {
+            const dob = moment(data.dob);
+            data.age = utils.getAgeFromDOB(dob);
+            data.dob = dob.format("DD/MM/YYYY");
         }
-
-        res.render('subject', {
-            subject: data,
-            content: content.view.subject
-        });
+        
+        let page = req.params.page;
+        let summary = data;
+        let ids = {
+          prisonNumber: prisonNumber,
+          personIdentifier: data.personIdentifier
+        };
+        
+        subject[page](ids, function(err, details) {
+            if (err) {
+                renderErrorPage(res, err);
+                return;
+            }
+            let data = {subject: summary, details: details};
+            renderPage(res, {page: page, data: data });
+        });        
     });
 });
 
+
+router.get('/:id', function(req, res){
+   res.redirect('/subject/' + req.params.id + '/summary'); 
+});
+
 module.exports = router;
+
+function renderPage(res, obj) {
+    res.render('subject/'+obj.page, {
+        data: obj.data,
+        content: content.view.subject,
+        nav: getNavigation(obj.page)
+    });
+}
+
+function renderErrorPage(res, err) {
+    logger.error('Error getting subject details: ' + err);
+    res.render('subject/error', {
+        content: content.view.subject,
+        title: content.errMsg.INVALID_ID,
+        err: {
+            title: content.errMsg.INVALID_ID
+        }
+    });
+}
+
+function getNavigation(page) {
+    let nav = {
+      summary: { title: 'Summary' },  
+      movements: { title: 'Movements' },  
+      offences: { title: 'Offences' },  
+      aliases: { title: 'Aliases' },  
+      addresses: { title: 'Addresses' }
+    };
+    
+    nav[page].active = true;
+    
+    return nav;
+}

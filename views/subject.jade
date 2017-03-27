@@ -16,20 +16,21 @@ block content
     if !err
         div.grid-row
             div.column-two-thirds
-                - var forename2 = subject.INMATE_FORENAME_2.value
-                - var forename = subject.INMATE_FORENAME_1.value
-                h1.heading-xlarge#subjectName= (forename[0] + forename.substr(1, forename.length - 1).toLowerCase() + ' ' + (forename2 ? forename2[0] + forename2.substr(1, forename2.length - 1).toLowerCase() + ' ' : '') + subject.INMATE_SURNAME.value)
-                    span.heading-secondary#subjectId PRISON NO. #{subject.PK_PRISON_NUMBER.value}
-
+                h1.heading-xlarge.capitalise-text
+                    | #{data.subject.forename.toLowerCase()}
+                    | #{data.subject.forename2 ? data.subject.forename2.toLowerCase() : ''}
+                    | #{data.subject.surname}
+                    span.heading-secondary#subjectId PRISON NO. #{data.subject.prisonNumber}
+                    
                 p.font-medium
-                    | #{subject.MARITAL_STATUS.value}
-                    | #{subject.ETHNICITY.value}
-                    | #{subject.INMATE_SEX.value}
-                    | #{subject.NATIONALITY.value ? 'from ' + subject.NATIONALITY.value : ''}
-                    | #{(subject.MARITAL_STATUS.value) || (subject.MARITAL_STATUS.value) || (subject.MARITAL_STATUS.value) ? '. ' : '' }
-                    | #{(subject.BIRTH_COUNTRY.value) || (subject.DOB.value) ? 'Born' : ''}
-                    | #{subject.BIRTH_COUNTRY.value ? ' in ' + subject.BIRTH_COUNTRY.value : ''}
-                    | #{subject.DOB.value ? ' on ' + subject.DOB.value + ' ('+subject.AGE+' years)' : ''}
+                    | #{data.subject.maritalStatus}
+                    | #{data.subject.ethnicity}
+                    | #{data.subject.sex}
+                    | #{data.subject.nationality ? 'from ' + data.subject.nationality : ''}
+                    | #{(data.subject.maritalStatus) ? '. ' : '' }
+                    | #{(data.subject.countryOfBirth) || (data.subject.dob) ? 'Born' : ''}
+                    | #{data.subject.countryOfBirth ? ' in ' + data.subject.countryOfBirth : ''}
+                    | #{data.subject.dob ? ' on ' + data.subject.dob + ' ('+data.subject.age+' years)' : ''}
                     
                 div.form-group 
                     button.button(onclick="window.print();") Print
@@ -37,7 +38,7 @@ block content
         section
             div.grid-row
                 div.column-one-third
-                    span Navigation
+                    include subject/nav.jade
 
-                div.column-two-thirds
-                    span Details
+                block subject-details
+                    

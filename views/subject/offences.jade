@@ -1,0 +1,7 @@
+extends ../subject
+
+block subject-details
+    div.column-two-thirds
+        div.grid-row
+            each val,index in data.details
+                li= val.offenceCode + ' - ' + val.dateCommitted

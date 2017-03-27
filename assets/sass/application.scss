@@ -15,6 +15,7 @@ span.inactive { color: $grey-2; }
 .inmate-details { 
     border-bottom: $divider; 
     margin-bottom: 30px; 
+    padding-bottom: 30px; 
 }
 
 section { 
@@ -26,6 +27,7 @@ div#print-disclaimer,
 div#print-header,
 .back-link-container{ display: none; }
 .js-enabled .back-link-container { display: inline-block; }
+.capitalise-text { text-transform: capitalize; }
 
 
 

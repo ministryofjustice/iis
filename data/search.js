@@ -2,6 +2,7 @@
 
 let db = require('../server/db');
 let utils = require('./utils');
+let moment = require('moment');
 
 let TYPES = require('tedious').TYPES;
 
@@ -86,7 +87,9 @@ module.exports = {
         let resultsPerPage = utils.resultsPerPage;
         let start = (resultsPerPage * userInput.page) - resultsPerPage;
         // eslint-disable-next-line
-        let fields = "PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, (CONCAT(SUBSTRING(INMATE_BIRTH_DATE, 1, 4), '/', SUBSTRING(INMATE_BIRTH_DATE, 5, 2), '/', SUBSTRING(INMATE_BIRTH_DATE, 7, 2))) AS DOB, SUBSTRING((SELECT ',' + k.PERSON_FORENAME_1 + ' ' + PERSON_FORENAME_2 + ' ' + k.PERSON_SURNAME FROM IIS.KNOWN_AS k WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER FOR XML PATH('')),2,200000) AS ALIAS";
+        let fields = "PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2, INMATE_BIRTH_DATE AS DOB"
+            fields += ", SUBSTRING((SELECT ', ' + k.PERSON_FORENAME_1 + ' ' + PERSON_FORENAME_2 + ' ' + k.PERSON_SURNAME FROM IIS.KNOWN_AS k WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER FOR XML PATH('')),2,200000) AS ALIAS";
+            fields += ", (SELECT TOP 1 CONCAT('{\"court\":\"',(SELECT TMPU_COURT_NAME FROM IIS.TMPU_COURT WHERE PK_TMPU_COURT_CODE = c.IIS_COURT_CODE), '\", \"date\":\"', HEARING_DATE, '\"}') FROM IIS.COURT_HEARING c WHERE c.COURT_TYPE_CODE='SC' AND c.FK_CASE IN (SELECT PKTS_INMATE_CASE FROM IIS.INMATE_CASE WHERE CASE_STATUS_CODE LIKE 'SENT%' AND FK_PRISON_NUMBER=l.PK_PRISON_NUMBER) ORDER BY HEARING_DATE DESC) SENTENCING_COURT"
         let from = 'IIS.LOSS_OF_LIBERTY l';
         let orderBy = 'INMATE_SURNAME';
         let oLimit = {start: start, resultsPerPage: resultsPerPage};     
@@ -98,7 +101,7 @@ module.exports = {
                 return callback(err);
             }
 
-            return callback(null, rows);
+            return callback(null, rows.map(formatRow));
         });
     },
     
@@ -153,4 +156,27 @@ function prepareSqlStatement(fields, from, where, orderBy, limit ) {
     sql += limit ? ' OFFSET ' + limit.start + ' ROWS FETCH NEXT ' + limit.resultsPerPage + ' ROWS ONLY' : '';
     
     return sql;
+}
+
+function formatRow(dbRow) {
+    
+    let sentencingCourt = null;
+    let sentencingDate = null;
+    
+    if(dbRow.SENTENCING_COURT.value) {
+        let sentencing = JSON.parse(dbRow.SENTENCING_COURT.value);
+        sentencingCourt = sentencing.court;
+        sentencingDate = moment(sentencing.date, 'YYYYMMDD').format('MMM YYYY');
+    }
+    
+    return {
+        prisonNumber: dbRow.PK_PRISON_NUMBER.value,
+        surname: dbRow.INMATE_SURNAME.value,
+        forename: dbRow.INMATE_FORENAME_1.value,
+        forename2: dbRow.INMATE_FORENAME_2.value,
+        dob: moment(dbRow.DOB.value, 'YYYYMMDD').format('DD/MM/YYYY'),
+        alias: dbRow.ALIAS.value,
+        sentencingCourt: sentencingCourt,
+        sentencingDate: sentencingDate
+    }
 }

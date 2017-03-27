@@ -1,0 +1,7 @@
+ul.list#inmate-nav
+     each val,index in nav
+        li 
+            if(val.active) 
+                span.bold-small #{val.title}
+            else
+                a(href="/subject/#{data.subject.prisonNumber}/#{index}")= val.title

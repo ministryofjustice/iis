@@ -7,8 +7,8 @@ module.exports = {
         return (n < 10) ? ('0' + parseInt(n)) : n;
     },
     
-    getAgeFromDOB: function(strDate) {
-        return moment().diff(strDate, 'years', false);
+    getAgeFromDOB: function(dob) {
+        return moment().diff(dob, 'years', false);
     },
 
     getDateRange: function(age) {

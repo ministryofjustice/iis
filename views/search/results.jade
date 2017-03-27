@@ -10,19 +10,17 @@ block content
             mixin inmate(name, href)
                 div
                     div.inmate-details
-                        p.bold-medium
-                            a(href="/subject/#{href}") #{name}
-                            block
+                        a.bold-medium(href="/subject/#{href}/summary").capitalise-text #{name}
+                        block
             
             if data && data != 0
                 each item in data
-                   - var forename2 = item.INMATE_FORENAME_2.value
-                   - var forename = item.INMATE_FORENAME_1.value
-                   +inmate(forename[0].toUpperCase() + forename.substr(1, forename.length-1).toLowerCase() + ' '
-                            + (forename2 ? forename2[0] + forename2.substr(1, forename2.length-1) + ' ' : '').toLowerCase()
-                            + item.INMATE_SURNAME.value, item.PK_PRISON_NUMBER.value)
-                        span &middot; #{item.DOB.value.split('/').reverse().join('/')}
-                        span.form-hint  #{item.ALIAS.value ? item.ALIAS.value.trim().substr(0, item.ALIAS.value.trim().length-1) : '' }
+                   +inmate(item.forename.toLowerCase()
+                            + (item.forename2 ? item.forename2.toLowerCase() : '')
+                            + item.surname, item.prisonNumber)
+                        span.bold-medium &middot; #{item.dob}
+                        span.form-hint.capitalise-text  #{item.alias ? item.alias.trim().toLowerCase().substr(0, item.alias.trim().length-1) : '' }
+                        span.capitalise-text #{(item.sentencingCourt) ? 'Sentenced by ' + item.sentencingCourt.toLowerCase() + ', ' + item.sentencingDate : ''}
 
             if pagination
                 div.form-group.c-align

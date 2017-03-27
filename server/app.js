@@ -27,6 +27,14 @@ let config = require('../server/config');
 //  Express Configuration
 let app = express();
 
+// HACK: Azure doesn't support X-Forwarded-Proto so we add it manually
+// http://stackoverflow.com/a/18455265/173062
+app.use(function(req, res, next) {
+    if(req.headers['x-arr-ssl'] && !req.headers['x-forwarded-proto']) {
+        req.headers['x-forwarded-proto'] = 'https';
+    }
+    return next();
+});
 
 // Automatically log every request with user details, a unique session id, and a unique request id
 app.use(addRequestId);

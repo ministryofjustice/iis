@@ -79,9 +79,8 @@ describe('Auditing', function() {
     it('should record view event with prison id', function() {
 
         prepareFakeDB(function(req) {
-            let result = {DOB:{value: '01/01/1999'}};
-            req.callback(null, result);
-            req.emit("row", result);
+            let result = {DOB: {value: '01/01/1999'}};
+            req.callback(null, 1, [result]);
         });
 
         let browser;

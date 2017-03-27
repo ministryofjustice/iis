@@ -25,8 +25,7 @@ describe('Subject/inmate details', function(){
         prepareFakeDB(function(req) {
             expect(req.sqlTextOrProcedure).to.contain("WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER");
             let result = [{PK_PRISON_NUMBER:{value: 'AA112233'}}];
-            req.callback(null, result);
-            req.emit("row", result);
+            req.callback(null, 1, [result]);
         });
 
         subject.details('AA112233', function(err, data) {

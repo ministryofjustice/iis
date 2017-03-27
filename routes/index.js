@@ -29,7 +29,7 @@ router.get('/authentication', oauth,
 
 router.get('/logout', function(req, res) {
     if (req.user) {
-        console.log('logging out');
+        logger.info('logging out');
         let profileLink = req.user.profileLink;
         req.logout();
         res.redirect(profileLink);

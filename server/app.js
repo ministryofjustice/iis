@@ -169,7 +169,8 @@ function enableSSO() {
             authorizationURL: ssoConfig.TOKEN_HOST + ssoConfig.AUTHORIZE_PATH,
             tokenURL: ssoConfig.TOKEN_HOST + ssoConfig.TOKEN_PATH,
             clientID: ssoConfig.CLIENT_ID,
-            clientSecret: ssoConfig.CLIENT_SECRET
+            clientSecret: ssoConfig.CLIENT_SECRET,
+            proxy: true // trust upstream proxy
         },
         function(accessToken, refreshToken, profile, cb) {
             logger.info('Passport authentication invoked');

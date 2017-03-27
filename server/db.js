@@ -10,11 +10,11 @@ let connection;
 function addParams(params, request) {
     params.forEach(function(param) {
         let paramValue = param.value;
-        
+
         if(isNaN(paramValue)) {
             paramValue = paramValue.toUpperCase();
         }
-        
+
         request.addParameter(
             param.column,
             param.type,
@@ -53,7 +53,7 @@ module.exports = {
     },
 
     getTuple: function(sql, params, callback) {
-        
+
 //        console.log('SQL: ' + sql);
 //        console.log(params);
 
@@ -68,22 +68,19 @@ module.exports = {
             connected = true;
 
             let Request = require('tedious').Request;
-            let request = new Request(sql, function(err, rowCount) {
+            let request = new Request(sql, function(err, rowCount, rows) {
                 if (err) {
                     return finish(err);
                 }
                 if (rowCount === 0) {
                     return finish(null, rowCount);
                 }
+                return finish(null, rows[0]);
             });
 
             if (params) {
                 addParams(params, request);
             }
-
-            request.on('row', function(columns) {
-                return finish(null, columns);
-            });
 
             logger.debug('Executing tuple request: ' + util.inspect(request));
             connection.execSql(request);
@@ -100,17 +97,17 @@ module.exports = {
             if (connected) {
                 that.disconnect();
             }
-            
+
             return callback(err, result);
         }
     },
-    
+
     test: function(cb) {
         console.log(cb);
     },
 
     getCollection: function(sql, params, callback) {
-        
+
 //        console.log('SQL: ' + sql);
 //        console.log(params);
 
@@ -160,7 +157,7 @@ module.exports = {
             return callback(err, result);
         }
     },
-    
+
     saveRowToDb: function(obj) {
         /*
         let connected = false;

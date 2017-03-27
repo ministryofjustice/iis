@@ -53,7 +53,7 @@ let ssoConfig = config.sso;
 
 app.use(cookieSession({
     name: 'session',
-    keys: [Math.round(Math.random() * 100000).toString()],
+    keys: [config.sessionSecret],
     maxAge: 60 * 60 * 1000 // 60 minute
 }));
 

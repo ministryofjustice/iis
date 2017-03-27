@@ -1,10 +1,12 @@
 'use strict';
 
-function get(name, fallback) {
+const production = process.env.NODE_ENV === 'production';
+
+function get(name, fallback, options = {}) {
     if (process.env[name]) {
         return process.env[name];
     }
-    if (fallback) {
+    if (fallback && (!production || !options.requireInProduction)) {
         return fallback;
     }
     throw new Error('Missing env var ' + name);
@@ -19,9 +21,10 @@ module.exports = {
     },
 
     https: get('HTTPS', 'false'),
+    
+    sessionSecret: get('SESSION_SECRET', 'iis-insecure-default-session', {requireInProduction: true}),
 
     sso: {
-        SESSION_SECRET: 'iis-internal',
         CLIENT_ID: get('CLIENT_ID', '123'),
         CLIENT_SECRET: get('CLIENT_SECRET', '123'),
         REDIRECT_URI: get('REDIRECT_URI', 'http://localhost:3000/authentication/'),

@@ -13,9 +13,14 @@ router.get('/', function(req, res) {
     return res.redirect('/search');
 });
 
-router.get('/login', passport.authenticate('oauth2'));
+const oauth = passport.authenticate('oauth2', {
+    callbackURL: '/authentication',
+    failureRedirect: '/unauthorised'
+});
 
-router.get('/authentication', passport.authenticate('oauth2', {failureRedirect: '/unauthorised'}),
+router.get('/login', oauth);
+
+router.get('/authentication', oauth,
     function(req, res) {
         logger.info('Authentication callback', {user: req.user, authenticated: req.isAuthenticated()});
         return res.redirect('/disclaimer');

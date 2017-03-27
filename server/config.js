@@ -24,7 +24,6 @@ module.exports = {
         SESSION_SECRET: 'iis-internal',
         CLIENT_ID: get('CLIENT_ID', '123'),
         CLIENT_SECRET: get('CLIENT_SECRET', '123'),
-        REDIRECT_URI: get('REDIRECT_URI', 'http://localhost:3000/authentication/'),
         TOKEN_HOST: get('TOKEN_HOST', 'http://localhost:3001'),
         AUTHORIZE_PATH: get('AUTHORIZE_PATH', '/oauth/authorize'),
         TOKEN_PATH: get('TOKEN_PATH', '/oauth/token'),

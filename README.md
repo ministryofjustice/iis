@@ -61,7 +61,6 @@ The following environment variables are required
 * SESSION_SECRET - ? todo
 * CLIENT_ID - SSO Client ID
 * CLIENT_SECRET - SSO Client secret
-* REDIRECT_URI - Redirect URI for SSO callback - specify service host location with path of /authentication
 * TOKEN_HOST - SSO server host
 * AUTHORIZE_PATH - SSO authorization endpoint, usually /oauth/authorize
 * TOKEN_PATH - SSO token endpoint, usually /oauth/token

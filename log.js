@@ -2,61 +2,55 @@
 
 let winston = require('winston');
 
-let logLevels = {
-    levels: {
-        audit: 0,
-        error: 1,
-        warn: 2,
-        info: 3,
-        debug: 4,
-    },
-    colors: {
-        audit: 'grey',
-        error: 'red',
-        warn: 'blue',
-        info: 'green',
-        debug: 'yellow'
-    }
-};
+winston.setLevels({
+    audit: 0,
+    error: 1,
+    warn: 2,
+    info: 3,
+    debug: 4
+});
+winston.addColors({
+    audit: 'cyan',
+    error: 'red',
+    warn: 'yellow',
+    info: 'green',
+    debug: 'grey'
+});
 
-winston.setLevels(logLevels.levels);
-winston.addColors(logLevels.colors);
-
-
+winston.clear();
 if (process.env.NODE_ENV === 'test') {
-    winston.remove(winston.transports.Console);
     winston.add(winston.transports.File, {
         name: 'log',
         level: 'debug',
-        filename: 'iis-ui.log',
-        json: false
+        filename: 'tests.log',
+        json: false,
+        colorize: true,
+        prettyPrint: true
     });
-    winston.add(winston.transports.File, {
-        name: 'audit',
-        level: 'audit',
-        filename: 'iis-ui-audit.log',
-        json: false
-    });
-
-} else {
-    winston.remove(winston.transports.Console);
+} else if (process.env.NODE_ENV === 'production') {
+    // TODO: connect to azure storage directly?
     winston.add(winston.transports.Console, {
         name: 'log',
         level: 'info',
-        prettyPrint: true,
-        colorize: true,
+        prettyPrint: false,
+        colorize: false,
         silent: false,
-        timestamp: true
-        // json: true
+        timestamp: true,
+        json: true,
+        stringify: true,
+        handleExceptions: true
     });
+} else {
     winston.add(winston.transports.Console, {
-        name: 'audit',
-        level: 'audit',
-        prettyPrint: true,
+        name: 'log',
+        level: 'info',
+        // prettyPrint: true,
         colorize: true,
         silent: false,
-        timestamp: true
-        // json: true
+        timestamp: true,
+        handleExceptions: true,
+        json: false,
+        humanReadableUnhandledException: true
     });
 }
 

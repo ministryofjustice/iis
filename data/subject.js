@@ -2,7 +2,7 @@
 
 let db = require('../server/db');
 let TYPES = require('tedious').TYPES;
-let moment = require('moment');
+//let moment = require('moment');
 
 module.exports = {
 
@@ -133,7 +133,7 @@ function formatRow(dbRow) {
         ethnicity: dbRow.ETHNICITY.value,
         nationality: dbRow.NATIONALITY.value,
         sex: dbRow.INMATE_SEX.value
-    }
+    };
 }
 
 function formatMovementRows(dbRow) {
@@ -143,7 +143,7 @@ function formatMovementRows(dbRow) {
         code: dbRow.MOVEMENT_CODE.value,
         type: dbRow.TYPE_OF_MOVE.value
         
-    }
+    };
 }
 
 function formatAliasRows(dbRow) {
@@ -152,7 +152,7 @@ function formatAliasRows(dbRow) {
         forename: dbRow.PERSON_FORENAME_1.value,
         forename2: dbRow.PERSON_FORENAME_2.value,
         dob: dbRow.PERSON_BIRTH_DATE.value
-    }
+    };
 }
 
 function formatAddressRows(dbRow) {
@@ -160,12 +160,12 @@ function formatAddressRows(dbRow) {
         addressNumber: dbRow.ADDRESS_NUM.value,
         addressLine1: dbRow.INMATE_ADDRESS_1.value,
         addressLine2: dbRow.INMATE_ADDRESS_2.value
-    }
+    };
 }
 
 function formatOffenceRows(dbRow) {
     return {
         offenceCode: dbRow.IIS_OFFENCE_CODE.value,
         dateCommitted: dbRow.DATE_COMMITTED.value
-    }
+    };
 }

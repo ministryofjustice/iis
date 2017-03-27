@@ -17,9 +17,10 @@ router.get('/', function(req, res) {
 });
 
 router.get('/:id/:page', function(req, res) {
-
-    audit.record('VIEW', req.user.email, {prisonNumber: req.params.id});
+    let page = req.params.page;
     let prisonNumber = req.params.id;
+    
+    audit.record('VIEW', req.user.email, {page: page, prisonNumber: prisonNumber});
 
     subject.details(prisonNumber, function(err, data) {
         if (err) {
@@ -30,10 +31,10 @@ router.get('/:id/:page', function(req, res) {
         if (data.dob) {
             const dob = moment(data.dob);
             data.age = utils.getAgeFromDOB(dob);
-            data.dob = dob.format("DD/MM/YYYY");
+            data.dob = dob.format('DD/MM/YYYY');
         }
         
-        let page = req.params.page;
+        
         let summary = data;
         let ids = {
           prisonNumber: prisonNumber,
@@ -46,13 +47,13 @@ router.get('/:id/:page', function(req, res) {
                 return;
             }
             let data = {subject: summary, details: details};
-            renderPage(res, {page: page, data: data });
+            renderPage(res, {page: page, data: data});
         });        
     });
 });
 
 
-router.get('/:id', function(req, res){
+router.get('/:id', function(req, res) {
    res.redirect('/subject/' + req.params.id + '/summary'); 
 });
 
@@ -79,11 +80,11 @@ function renderErrorPage(res, err) {
 
 function getNavigation(page) {
     let nav = {
-      summary: { title: 'Summary' },  
-      movements: { title: 'Movements' },  
-      offences: { title: 'Offences' },  
-      aliases: { title: 'Aliases' },  
-      addresses: { title: 'Addresses' }
+      summary: {title: 'Summary'},  
+      movements: {title: 'Movements'},  
+      offences: {title: 'Offences'},  
+      aliases: {title: 'Aliases'},  
+      addresses: {title: 'Addresses'}
     };
     
     nav[page].active = true;

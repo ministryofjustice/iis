@@ -78,10 +78,8 @@ describe('Auditing', function() {
 
     it('should record view event with prison id', function() {
 
-        prepareFakeDB(function(req) {
-            let result = {DOB: {value: '01/01/1999'}};
-            req.callback(null, 1, [result]);
-        });
+        const fakeSubject = {prisonNumber: 'AA123456'};
+        common.sinon.stub(subject, "details").yields(null, fakeSubject);
 
         let browser;
         return common.logInAs()
@@ -90,12 +88,15 @@ describe('Auditing', function() {
             })
             .then(function() {
                 common.sinon.stub(audit, "record");
-                return browser.get('/subject/AA123456')
+                return browser.get('/subject/AA123456/summary')
                     .set('Referer', 'somewhere')
             })
             .then(function() {
                 common.sinon.assert.calledOnce(audit.record);
-                common.sinon.assert.calledWithExactly(audit.record, "VIEW", "test@test.com", {prisonNumber: 'AA123456'});
+                common.sinon.assert.calledWithExactly(
+                    audit.record, "VIEW", "test@test.com",
+                    {page: 'summary', prisonNumber: 'AA123456'}
+                );
             });
     });
 

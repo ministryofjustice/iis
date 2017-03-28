@@ -11,8 +11,7 @@
     "postinstall": "gulp",
     "start": "gulp && node .",
     "test": "gulp build test",
-    "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect"
+    "snyk-protect": "snyk protect"
   },
   "repository": {
     "type": "git",

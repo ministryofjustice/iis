@@ -38,9 +38,8 @@ app.use(function(req, res, next) {
     return next();
 });
 
-// Secure code best practice
-app.disable('x-powered-by');
-app.use(helmet());
+// Secure code best practice - see https://expressjs.com/en/advanced/best-practice-security.html, https://www.npmjs.com/package/helmet
+app.use(helmet.noCache());
 
 // Automatically log every request with user details, a unique session id, and a unique request id
 app.use(addRequestId);
@@ -74,7 +73,6 @@ app.use(cookieSession({
     signed: true,
     overwrite: true,
     sameSite: true
-    // domain: 'hpa.service.hmpps.dsd.io'
 }));
 
 

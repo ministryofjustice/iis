@@ -11,6 +11,7 @@ dependencies:
 test:
   override:
     - gulp build set-test-env unittestreport
+    - npm run snyk-protect
   post:
     - mv test-results.xml $CIRCLE_TEST_REPORTS/test-results.xml
     - mkdir $CIRCLE_ARTIFACTS/test-coverage-html

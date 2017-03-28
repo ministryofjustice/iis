@@ -62,8 +62,15 @@ let ssoConfig = config.sso;
 app.use(cookieSession({
     name: 'session',
     keys: [config.sessionSecret],
-    maxAge: 60 * 60 * 1000 // 60 minute
+    maxAge: 60 * 60 * 1000,
+    secure: config.https,
+    httpOnly: true,
+    signed: true,
+    overwrite: true,
+    sameSite: true
+    // domain: 'hpa.service.hmpps.dsd.io'
 }));
+
 
 if (testMode === 'true') {
     logger.info('Authentication disabled - using default test user profile');

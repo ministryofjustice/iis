@@ -80,4 +80,6 @@ describe('Utility methods', function () {
        expect(utils.pagination(rows, pagePosition+1).showNext)
            .to.equal(false); 
     });
+    
+    it('should return the date in the dd/mm/yyyy format')
 });

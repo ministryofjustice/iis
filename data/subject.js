@@ -2,6 +2,8 @@
 
 let db = require('../server/db');
 let TYPES = require('tedious').TYPES;
+let utils = require('../data/utils');
+
 
 module.exports = {
 
@@ -11,15 +13,69 @@ module.exports = {
         ];
 
         /* eslint-disable */
-        let sql = "";
-        sql += "SELECT PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2,";
-        sql += "INMATE_BIRTH_DATE AS DOB, FK_PERSON_IDENTIFIER,";
-        sql += "(SELECT CODE_DESCRIPTION FROM IIS.IIS_CODE WHERE PK_CODE_TYPE = 14 AND PK_CODE_REF=LOSS_OF_LIBERTY.BIRTH_COUNTRY_CODE) AS BIRTH_COUNTRY,";
-        sql += "(SELECT CODE_DESCRIPTION FROM IIS.IIS_CODE WHERE PK_CODE_TYPE = 63 AND PK_CODE_REF=LOSS_OF_LIBERTY.MARITAL_STATUS_CODE) AS MARITAL_STATUS,";
-        sql += "(SELECT CODE_DESCRIPTION FROM IIS.IIS_CODE WHERE PK_CODE_TYPE = 22 AND PK_CODE_REF=LOSS_OF_LIBERTY.ETHNIC_GROUP_CODE) AS ETHNICITY,";
-        sql += "(SELECT CODE_DESCRIPTION FROM IIS.IIS_CODE WHERE PK_CODE_TYPE = 25 AND PK_CODE_REF=LOSS_OF_LIBERTY.NATIONALITY_CODE) AS NATIONALITY,";
-        sql += "CASE INMATE_SEX WHEN 'M' THEN 'Male' WHEN 'F' THEN 'FEMALE' ELSE '' END AS INMATE_SEX";
-        sql += " FROM IIS.LOSS_OF_LIBERTY WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER;";
+        let sql = `SELECT 
+                            PK_PRISON_NUMBER, 
+                            INMATE_SURNAME, 
+                            INMATE_FORENAME_1, 
+                            INMATE_FORENAME_2,
+                            INMATE_BIRTH_DATE DOB, 
+                            FK_PERSON_IDENTIFIER,
+                            (
+                            SELECT 
+                                    CODE_DESCRIPTION 
+                            FROM 
+                                    IIS.IIS_CODE 
+                            WHERE 
+                                    PK_CODE_TYPE = 14 
+                            AND 
+                                    PK_CODE_REF=LOSS_OF_LIBERTY.BIRTH_COUNTRY_CODE
+                            ) BIRTH_COUNTRY,
+
+                            (
+                            SELECT 
+                                    CODE_DESCRIPTION 
+                            FROM    
+                                    IIS.IIS_CODE 
+                            WHERE 
+                                    PK_CODE_TYPE = 63 
+                            AND 
+                                    PK_CODE_REF=LOSS_OF_LIBERTY.MARITAL_STATUS_CODE
+                            ) MARITAL_STATUS,
+
+                            (
+                            SELECT 
+                                    CODE_DESCRIPTION 
+                            FROM 
+                                    IIS.IIS_CODE 
+                            WHERE 
+                                    PK_CODE_TYPE = 22 
+                            AND 
+                                    PK_CODE_REF=LOSS_OF_LIBERTY.ETHNIC_GROUP_CODE
+                            ) ETHNICITY,
+
+                            (
+                            SELECT 
+                                    CODE_DESCRIPTION 
+                            FROM 
+                                    IIS.IIS_CODE 
+                            WHERE 
+                                    PK_CODE_TYPE = 25 
+                            AND 
+                                    PK_CODE_REF=LOSS_OF_LIBERTY.NATIONALITY_CODE
+                            ) NATIONALITY,
+
+                            (
+                            CASE INMATE_SEX 
+                            WHEN 'M' THEN 'Male' 
+                            WHEN 'F' THEN 'FEMALE' 
+                            ELSE '' 
+                            END
+                            ) INMATE_SEX
+
+                    FROM 
+                            IIS.LOSS_OF_LIBERTY 
+                    WHERE 
+                            PK_PRISON_NUMBER = @PK_PRISON_NUMBER;`;
         /* eslint-enable */
 
         db.getTuple(sql, params, function(err, cols) {
@@ -41,10 +97,50 @@ module.exports = {
         ];
 
         /* eslint-disable */
-        let sql = "SELECT ESTAB_COMP_OF_MOVE, DATE_OF_MOVE, MOVEMENT_CODE, TYPE_OF_MOVE";
-        sql += " FROM IIS.INMATE_MOVEMENT";
-        sql += " WHERE FK_PRISON_NUMBER = @FK_PRISON_NUMBER";
-        sql += " ORDER BY DATE_OF_MOVE DESC, TIME_OF_MOVE DESC;";
+        let sql = `SELECT  
+                            DATE_OF_MOVE, 
+                            MOVEMENT_CODE, 
+                            TYPE_OF_MOVE,
+                            (
+                             SELECT 
+                                    ESTABLISHMENT_NAME 
+                             FROM 
+                                    IIS.ESTABLISHMENT 
+                             WHERE 
+                                    PK_ESTABLISHMENT_CODE = SUBSTRING(ESTAB_COMP_OF_MOVE,1,2)
+                            ) ESTAB_COMP_OF_MOVE, 
+                            (
+                             CASE TYPE_OF_MOVE
+                             WHEN 'R' 
+                                    THEN (
+                                            SELECT 
+                                                    CODE_DESCRIPTION 
+                                            FROM 
+                                                    IIS.IIS_CODE 
+                                            WHERE 
+                                                    PK_CODE_TYPE=34 
+                                            AND 
+                                                    PK_CODE_REF = MOVEMENT_CODE
+                                         )
+                                    ELSE 
+                                         (
+                                            SELECT 
+                                                    CODE_DESCRIPTION 
+                                            FROM 
+                                                    IIS.IIS_CODE 
+                                            WHERE 
+                                                    PK_CODE_TYPE=35 
+                                            AND 
+                                                    PK_CODE_REF = MOVEMENT_CODE
+                                         )
+                             END
+                            ) STATUS
+                    FROM 
+                            IIS.INMATE_MOVEMENT 
+                    WHERE 
+                            FK_PRISON_NUMBER = @FK_PRISON_NUMBER 
+                    ORDER BY 
+                            DATE_OF_MOVE DESC, TIME_OF_MOVE DESC;`;
         /* eslint-enable */
 
         db.getCollection(sql, params, function(err, rows) {
@@ -62,9 +158,15 @@ module.exports = {
         ];
 
         /* eslint-disable */
-        let sql = "SELECT PERSON_SURNAME, PERSON_FORENAME_1, PERSON_FORENAME_2, PERSON_BIRTH_DATE";
-        sql += " FROM IIS.KNOWN_AS";
-        sql += " WHERE FK_PERSON_IDENTIFIER = @FK_PERSON_IDENTIFIER;";
+        let sql = `SELECT 
+                            PERSON_SURNAME, 
+                            PERSON_FORENAME_1, 
+                            PERSON_FORENAME_2, 
+                            PERSON_BIRTH_DATE
+                    FROM 
+                            IIS.KNOWN_AS
+                    WHERE 
+                            FK_PERSON_IDENTIFIER = @FK_PERSON_IDENTIFIER;`;
         /* eslint-enable */
 
         db.getCollection(sql, params, function(err, rows) {
@@ -82,9 +184,15 @@ module.exports = {
         ];
 
         /* eslint-disable */
-        let sql = "SELECT ADDRESS_NUM, INMATE_ADDRESS_1, INMATE_ADDRESS_2";
-        sql += " FROM IIS.INMATE_ADDRESS";
-        sql += " WHERE FK_PRISON_NUMBER = @FK_PRISON_NUMBER;";
+        let sql = `SELECT 
+                            ADDRESS_NUM, 
+                            INMATE_ADDRESS_1, 
+                            INMATE_ADDRESS_2
+                    FROM 
+                            IIS.INMATE_ADDRESS
+                    WHERE 
+                            FK_PRISON_NUMBER = @FK_PRISON_NUMBER;`;
+        
         /* eslint-enable */
 
         db.getCollection(sql, params, function(err, rows) {
@@ -102,10 +210,16 @@ module.exports = {
         ];
 
         /* eslint-disable */
-        let sql = "SELECT o.IIS_OFFENCE_CODE, o.DATE_COMMITTED";
-        sql += " FROM IIS.CASE_OFFENCE o, IIS.INMATE_CASE c";
-        sql += " WHERE c.PKTS_INMATE_CASE = o.FK_CASE";
-        sql += " AND c.FK_PRISON_NUMBER='TW007364';";
+        let sql = `SELECT 
+                            o.IIS_OFFENCE_CODE, 
+                            o.DATE_COMMITTED
+                    FROM 
+                            IIS.CASE_OFFENCE o, 
+                            IIS.INMATE_CASE c
+                    WHERE 
+                            c.PKTS_INMATE_CASE = o.FK_CASE
+                    AND 
+                            c.FK_PRISON_NUMBER = @FK_PRISON_NUMBER;`;
         /* eslint-enable */
 
         db.getCollection(sql, params, function(err, rows) {
@@ -114,6 +228,52 @@ module.exports = {
             }
 
             return callback(null, rows.length > 0 ? rows.map(formatOffenceRows) : 0);
+        });
+    },
+    
+    hdcinfo: function(obj, callback) {
+        let params = [
+            {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+        ];
+
+        /* eslint-disable */
+        let sql = `SELECT 
+                            h.STAGE_DATE,
+                            (
+                            SELECT 
+                                    CODE_DESCRIPTION 
+                            FROM 
+                                    IIS.IIS_CODE 
+                            WHERE 
+                                    PK_CODE_TYPE=118 
+                            AND 
+                                    PK_CODE_REF_NUM = h.STAGE
+                            ) STAGE,
+
+                            (
+                            SELECT 
+                                    CODE_DESCRIPTION 
+                            FROM 
+                                    IIS.IIS_CODE 
+                            WHERE 
+                                    PK_CODE_TYPE=119 
+                            AND 
+                                    PK_CODE_REF_NUM = h.HDC_STATUS
+                            ) STATUS
+                    FROM 
+                            IIS.HDC_HISTORY h
+                    WHERE 
+                            h.FK_PRISON_NUMBER = @FK_PRISON_NUMBER
+                    ORDER BY 
+                            STAGE_DATE DESC;`;
+        /* eslint-enable */
+        
+        db.getCollection(sql, params, function(err, rows) {
+            if (err) {
+                return callback(new Error('No results'));
+            }
+  
+            return callback(null, rows.length > 0 ? rows.map(formatHdcInfoRows) : 0);
         });
     }
 
@@ -138,7 +298,7 @@ function formatRow(dbRow) {
 function formatMovementRows(dbRow) {
     return {
         establishment: dbRow.ESTAB_COMP_OF_MOVE.value,
-        date: dbRow.DATE_OF_MOVE.value,
+        date: utils.getFormattedDateFromString(dbRow.DATE_OF_MOVE.value),
         code: dbRow.MOVEMENT_CODE.value,
         type: dbRow.TYPE_OF_MOVE.value
 
@@ -165,6 +325,14 @@ function formatAddressRows(dbRow) {
 function formatOffenceRows(dbRow) {
     return {
         offenceCode: dbRow.IIS_OFFENCE_CODE.value,
-        dateCommitted: dbRow.DATE_COMMITTED.value
+        dateCommitted: utils.getFormattedDateFromString(dbRow.DATE_COMMITTED.value)
+    };
+}
+
+function formatHdcInfoRows(dbRow) {
+    return {
+        stageDate: utils.getFormattedDateFromString(dbRow.STAGE_DATE.value),
+        stage: dbRow.STAGE.value,
+        status: dbRow.STATUS.value
     };
 }

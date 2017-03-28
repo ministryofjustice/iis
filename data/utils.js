@@ -51,5 +51,9 @@ module.exports = {
     
     getCurrentTime: function() {
         return moment();
-    }    
+    },
+    
+    getFormattedDateFromString: function(d) {
+        return moment(d, 'YYYYMMDD').format('DD/MM/YYYY');
+    }
 };

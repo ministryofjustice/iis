@@ -21,17 +21,17 @@ function prepareFakeDB(onRequest) {
 
 
 describe('Subject/inmate details', function(){
-//    it("should return array of columns", function(done) {
-//        prepareFakeDB(function(req) {
-//            expect(req.sqlTextOrProcedure).to.contain("WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER");
-//            let result = [{PK_PRISON_NUMBER:{value: 'AA112233'}}];
-//            req.callback(null, 1, [result]);
-//        });
-//
-//        subject.details('AA112233', function(err, data) {
-//            expect(err).to.be.null;
-//            expect(data).to.be.an("array");
-//            done();
-//        });
-//    });
+    it.skip("should return array of columns", function(done) {
+        prepareFakeDB(function(req) {
+            expect(req.sqlTextOrProcedure).to.contain("WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER");
+            let result = [{PK_PRISON_NUMBER:{value: 'AA112233'}}];
+            req.callback(null, 1, [result]);
+        });
+
+        subject.details('AA112233', function(err, data) {
+            expect(err).to.be.null;
+            expect(data).to.be.an("array");
+            done();
+        });
+    });
 });

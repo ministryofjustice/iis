@@ -22,17 +22,17 @@ function prepareFakeDB(onRequest) {
 }
 
 
-describe('Search', function(){
-//    it("should return recordset as an array", function(done) {
-//        prepareFakeDB(function(req) {
-//            expect(req.sqlTextOrProcedure).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER');
-//            req.callback(null, 1, [{INMATE_SURNAME: {value: "David"}}]);
-//        });
-//
-//        search.inmate({prisonNumber: 7}, function(err, data) {
-//            expect(err).to.be.null;
-//            expect(data).to.be.an("array");
-//            done();
-//        });
-//    });
+describe.skip('Search', function(){
+    it("should return recordset as an array", function(done) {
+        prepareFakeDB(function(req) {
+            expect(req.sqlTextOrProcedure).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER');
+            req.callback(null, 1, [{INMATE_SURNAME: {value: "David"}}]);
+        });
+
+        search.inmate({prisonNumber: 7}, function(err, data) {
+            expect(err).to.be.null;
+            expect(data).to.be.an("array");
+            done();
+        });
+    });
 });

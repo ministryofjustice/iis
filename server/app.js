@@ -43,7 +43,9 @@ app.use(function(req, res, next) {
 });
 
 
-// Secure code best practice - see https://expressjs.com/en/advanced/best-practice-security.html, https://www.npmjs.com/package/helmet
+// Secure code best practice - see:
+// 1. https://expressjs.com/en/advanced/best-practice-security.html, 
+// 2. https://www.npmjs.com/package/helmet
 app.use(helmet({
     noCache: true
 }));

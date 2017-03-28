@@ -1,7 +1,7 @@
 {
-  "name": "hoa-ui",
+  "name": "hpa-ui",
   "version": "1.0.0",
-  "description": "Historical Offenders Application",
+  "description": "Historical Prisoner Application",
   "main": "server.js",
   "engines": {
     "npm": "3.10.10",

@@ -1,5 +1,4 @@
-# HOA-UI
-Ministry of Justice Inmate Information System - Historical Offenders Application UI.
+# Historical Prisoner Application UI.
 
 [![CircleCI](https://circleci.com/gh/noms-digital-studio/iis/tree/master.svg?style=svg)](https://circleci.com/gh/noms-digital-studio/iis/tree/master)
 [![JavaScript Style Guide](https://img.shields.io/badge/code%20style-google-brightgreen.svg)](http://standardjs.com/)
@@ -57,7 +56,6 @@ The following environment variables are required
 * DB_PASS - password for DB access
 * DB_SERVER - DB server host
 * DB_NAME - DB name
-* HTTPS - set to true to run in HTTPS mode, otherwise HTTP
 * SESSION_SECRET - ? todo
 * CLIENT_ID - SSO Client ID
 * CLIENT_SECRET - SSO Client secret

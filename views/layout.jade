@@ -42,14 +42,14 @@ body
                 div(class="content")
                     a(href="#proposition-links", class="js-header-toggle menu") Menu
                     nav(id="proposition-menu")
-                        a(href="/", id="proposition-name") Inmate information system
+                        a(href="/", id="proposition-name") Historical Prisoner Application
                         if nav
                             ul#proposition-links
                                 li
                                     if locals.profile
                                         | Signed in as #{profile.firstName} #{profile.lastName}
                                 li
-                                    a(href="/logout") Exit IIS
+                                    a(href="/logout") Exit HPA
 
     div#global-header-bar
 

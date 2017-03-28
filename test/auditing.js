@@ -9,6 +9,7 @@ let app = require("../server/app");
 
 let db = require('../server/db');
 let subject = require("../data/subject");
+let search = require("../data/search");
 
 let EventEmitter = require("events").EventEmitter;
 
@@ -66,6 +67,7 @@ describe('Auditing', function() {
                     .expect("Location", "/search/results")
             })
             .then(function() {
+                common.sinon.stub(search, 'totalRowsForUserInput').yields(null, 0);
                 common.sinon.stub(audit, "record");
                 return browser.get('/search/results')
                     .set('Referer', 'somewhere')

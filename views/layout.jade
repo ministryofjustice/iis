@@ -28,8 +28,8 @@ body
             a(href="#content", class="skiplink") Skip to main content
 
     div(id="global-cookie-message")
-        p GOV.UK uses cookies to make the site simpler. <a href="#" title="Find out more about cookies">Find out more about cookies
-
+        p GOV.UK uses cookies to make the site simpler.
+            a(href="https://www.gov.uk/help/cookies", target="_blank", title="Find out more about cookies") Find out more about cookies
     header(role="banner", id="global-header", class="with-proposition")
         div(class="header-wrapper")
             div(class="header-global")
@@ -57,8 +57,11 @@ body
         div.phase-banner
             p
                 strong.phase-tag PRIVATE BETA
-                span This is a new service – your <a href="/feedback">feedback</a> will help us to improve it.
-
+                span This is a new service – your
+                    =" "
+                    a(href="/feedback") feedback
+                    =" "
+                    | will help us to improve it.
 
         block content
 

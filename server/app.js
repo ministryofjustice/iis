@@ -29,6 +29,10 @@ let config = require('../server/config');
 //  Express Configuration
 let app = express();
 
+
+// Configure Express for running behind proxies - https://expressjs.com/en/guide/behind-proxies.html
+app.set('trust proxy', true);
+
 // HACK: Azure doesn't support X-Forwarded-Proto so we add it manually
 // http://stackoverflow.com/a/18455265/173062
 app.use(function(req, res, next) {
@@ -37,6 +41,7 @@ app.use(function(req, res, next) {
     }
     return next();
 });
+
 
 // Secure code best practice - see https://expressjs.com/en/advanced/best-practice-security.html, https://www.npmjs.com/package/helmet
 app.use(helmet({

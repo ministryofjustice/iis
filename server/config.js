@@ -20,8 +20,8 @@ module.exports = {
         database: get('DB_NAME', 'iis-sandbox')
     },
 
-    https: get('HTTPS', 'false'),
-    
+    https: production,
+
     sessionSecret: get('SESSION_SECRET', 'iis-insecure-default-session', {requireInProduction: true}),
 
     sso: {

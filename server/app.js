@@ -14,6 +14,8 @@ let passport = require('passport');
 let OAuth2Strategy = require('passport-oauth2').Strategy;
 let request = require('request');
 
+let helmet = require('helmet');
+
 let index = require('../routes/index');
 let disclaimer = require('../routes/disclaimer');
 let search = require('../routes/search');
@@ -30,11 +32,17 @@ let app = express();
 // HACK: Azure doesn't support X-Forwarded-Proto so we add it manually
 // http://stackoverflow.com/a/18455265/173062
 app.use(function(req, res, next) {
-    if(req.headers['x-arr-ssl'] && !req.headers['x-forwarded-proto']) {
+    if (req.headers['x-arr-ssl'] && !req.headers['x-forwarded-proto']) {
         req.headers['x-forwarded-proto'] = 'https';
     }
     return next();
 });
+
+// Secure code best practice - see https://expressjs.com/en/advanced/best-practice-security.html, https://www.npmjs.com/package/helmet
+app.use(helmet({
+    noCache: true
+}));
+
 
 // Automatically log every request with user details, a unique session id, and a unique request id
 app.use(addRequestId);
@@ -62,8 +70,14 @@ let ssoConfig = config.sso;
 app.use(cookieSession({
     name: 'session',
     keys: [config.sessionSecret],
-    maxAge: 60 * 60 * 1000 // 60 minute
+    maxAge: 60 * 60 * 1000,
+    secure: config.https,
+    httpOnly: true,
+    signed: true,
+    overwrite: true,
+    sameSite: true
 }));
+
 
 if (testMode === 'true') {
     logger.info('Authentication disabled - using default test user profile');
@@ -143,7 +157,7 @@ function authRequired(req, res, next) {
         logger.info('Authorisation required - redirecting to login');
         return res.redirect('/login');
     }
-    if(!req.user.disclaimer) {
+    if (!req.user.disclaimer) {
         logger.info('Disclaimer required - redirecting to disclaimer');
         return res.redirect('/disclaimer');
     }

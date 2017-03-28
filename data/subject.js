@@ -2,7 +2,6 @@
 
 let db = require('../server/db');
 let TYPES = require('tedious').TYPES;
-//let moment = require('moment');
 
 module.exports = {
 
@@ -10,7 +9,7 @@ module.exports = {
         let params = [
             {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: id}
         ];
-        
+
         /* eslint-disable */
         let sql = "";
         sql += "SELECT PK_PRISON_NUMBER, INMATE_SURNAME, INMATE_FORENAME_1, INMATE_FORENAME_2,";
@@ -31,11 +30,11 @@ module.exports = {
             return callback(null, formatRow(cols));
         });
     },
-    
+
     summary: function(obj, callback) {
-      return callback(null);  
+      return callback(null);
     },
-    
+
     movements: function(obj, callback) {
         let params = [
             {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
@@ -47,27 +46,27 @@ module.exports = {
         sql += " WHERE FK_PRISON_NUMBER = @FK_PRISON_NUMBER";
         sql += " ORDER BY DATE_OF_MOVE DESC, TIME_OF_MOVE DESC;";
         /* eslint-enable */
-        
+
         db.getCollection(sql, params, function(err, rows) {
             if (err) {
                 return callback(new Error('No results'));
             }
-  
+
             return callback(null, rows.length > 0 ? rows.map(formatMovementRows) : 0);
         });
     },
-    
+
     aliases: function(obj, callback) {
         let params = [
             {column: 'FK_PERSON_IDENTIFIER', type: TYPES.VarChar, value: obj.personIdentifier}
         ];
-        
+
         /* eslint-disable */
         let sql = "SELECT PERSON_SURNAME, PERSON_FORENAME_1, PERSON_FORENAME_2, PERSON_BIRTH_DATE";
         sql += " FROM IIS.KNOWN_AS";
         sql += " WHERE FK_PERSON_IDENTIFIER = @FK_PERSON_IDENTIFIER;";
         /* eslint-enable */
-        
+
         db.getCollection(sql, params, function(err, rows) {
             if (err) {
                 return callback(new Error('No results'));
@@ -76,7 +75,7 @@ module.exports = {
             return callback(null, rows.length > 0 ? rows.map(formatAliasRows) : 0);
         });
     },
-    
+
     addresses: function(obj, callback) {
         let params = [
             {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
@@ -87,16 +86,16 @@ module.exports = {
         sql += " FROM IIS.INMATE_ADDRESS";
         sql += " WHERE FK_PRISON_NUMBER = @FK_PRISON_NUMBER;";
         /* eslint-enable */
-        
+
         db.getCollection(sql, params, function(err, rows) {
             if (err) {
                 return callback(new Error('No results'));
             }
-  
+
             return callback(null, rows.length > 0 ? rows.map(formatAddressRows) : 0);
         });
     },
-    
+
     offences: function(obj, callback) {
         let params = [
             {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
@@ -108,16 +107,16 @@ module.exports = {
         sql += " WHERE c.PKTS_INMATE_CASE = o.FK_CASE";
         sql += " AND c.FK_PRISON_NUMBER='TW007364';";
         /* eslint-enable */
-        
+
         db.getCollection(sql, params, function(err, rows) {
             if (err) {
                 return callback(new Error('No results'));
             }
-  
+
             return callback(null, rows.length > 0 ? rows.map(formatOffenceRows) : 0);
         });
     }
-    
+
 };
 
 function formatRow(dbRow) {
@@ -142,7 +141,7 @@ function formatMovementRows(dbRow) {
         date: dbRow.DATE_OF_MOVE.value,
         code: dbRow.MOVEMENT_CODE.value,
         type: dbRow.TYPE_OF_MOVE.value
-        
+
     };
 }
 

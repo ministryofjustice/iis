@@ -39,7 +39,10 @@ app.use(function(req, res, next) {
 });
 
 // Secure code best practice - see https://expressjs.com/en/advanced/best-practice-security.html, https://www.npmjs.com/package/helmet
-app.use(helmet.noCache());
+app.use(helmet({
+    noCache: true
+}));
+
 
 // Automatically log every request with user details, a unique session id, and a unique request id
 app.use(addRequestId);

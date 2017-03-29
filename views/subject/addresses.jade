@@ -2,6 +2,15 @@ extends ../subject
 
 block subject-details
     div.column-two-thirds
-        div.grid-row
-            each val,index in data.details
-                li= val.addressNumber+val.addressLine1
+        each val,index in data.details
+            div.grid-row.list-row
+                div.column-full(class="movement-type-#{val.type}")
+                    div.left-border.capitalise-text
+                        span #{val.addressLine1.toLowerCase()}
+                        | #{val.addressLine2 ? val.addressLine2.toLowerCase() : ''} 
+                        | #{val.addressLine3 ? val.addressLine3.toLowerCase() : ''} 
+                        | #{val.addressLine4 ? val.addressLine4.toLowerCase() : ''} 
+                        | #{val.addressLine5 ? val.addressLine5.toLowerCase() : ''} 
+
+                    div.left-border
+                        span #{val.postcode ? val.postcode : ''} 

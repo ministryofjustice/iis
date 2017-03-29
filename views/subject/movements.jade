@@ -2,6 +2,18 @@ extends ../subject
 
 block subject-details
     div.column-two-thirds
-        div.grid-row
-            each val,index in data.details
-                li= val.establishment+val.date
+        each val,index in data.details
+            div.grid-row.list-row
+                div.column-full(class="movement-type-#{val.type}")
+                    div.left-border
+                        
+                        span.quiet #{val.date}
+                    div.left-border
+                        span.type.bold-small #{val.type == 'D' ? 'OUT' : 'IN'}
+                        | 
+                        | -
+                        | 
+                        span #{val.status.trim()}
+                    div.left-border
+                        span.capitalise-text #{val.establishment.toLowerCase()}
+                        

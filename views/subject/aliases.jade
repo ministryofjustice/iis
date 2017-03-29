@@ -2,6 +2,11 @@ extends ../subject
 
 block subject-details
     div.column-two-thirds
-        div.grid-row
-            each val,index in data.details
-                li= val.forename
+        each val,index in data.details
+            div.grid-row.list-row
+                div.column-full(class="movement-type-#{val.type}")
+                    ul.capitalise-text
+                        div.left-border #{val.forename.toLowerCase()}
+                            | #{val.forename2 ? val.forename2.toLowerCase() : ''} 
+                            | #{val.surname.toLowerCase().trim()}
+                            span.block Born on #{val.dob} 

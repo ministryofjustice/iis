@@ -185,9 +185,12 @@ module.exports = {
 
         /* eslint-disable */
         let sql = `SELECT 
-                            ADDRESS_NUM, 
                             INMATE_ADDRESS_1, 
-                            INMATE_ADDRESS_2
+                            INMATE_ADDRESS_2,
+                            INMATE_ADDRESS_3,
+                            INMATE_ADDRESS_4,
+                            INMATE_ADDRESS_5,
+                            INMATE_POSTCODE
                     FROM 
                             IIS.INMATE_ADDRESS
                     WHERE 
@@ -212,7 +215,15 @@ module.exports = {
         /* eslint-disable */
         let sql = `SELECT 
                             o.IIS_OFFENCE_CODE, 
-                            o.DATE_COMMITTED
+                            c.CASE_DATE, 
+                            (
+                             SELECT 
+                                    ESTABLISHMENT_NAME 
+                             FROM 
+                                    IIS.ESTABLISHMENT 
+                             WHERE 
+                                    PK_ESTABLISHMENT_CODE = SUBSTRING(c.CASE_ESTAB_COMP_CODE,1,2)
+                            ) CASE_ESTAB_COMP_CODE
                     FROM 
                             IIS.CASE_OFFENCE o, 
                             IIS.INMATE_CASE c
@@ -300,7 +311,8 @@ function formatMovementRows(dbRow) {
         establishment: dbRow.ESTAB_COMP_OF_MOVE.value,
         date: utils.getFormattedDateFromString(dbRow.DATE_OF_MOVE.value),
         code: dbRow.MOVEMENT_CODE.value,
-        type: dbRow.TYPE_OF_MOVE.value
+        type: dbRow.TYPE_OF_MOVE.value,
+        status: dbRow.STATUS.value
 
     };
 }
@@ -310,28 +322,32 @@ function formatAliasRows(dbRow) {
         surname: dbRow.PERSON_SURNAME.value,
         forename: dbRow.PERSON_FORENAME_1.value,
         forename2: dbRow.PERSON_FORENAME_2.value,
-        dob: dbRow.PERSON_BIRTH_DATE.value
+        dob: utils.getFormattedDateFromString(dbRow.PERSON_BIRTH_DATE.value)
     };
 }
 
 function formatAddressRows(dbRow) {
     return {
-        addressNumber: dbRow.ADDRESS_NUM.value,
         addressLine1: dbRow.INMATE_ADDRESS_1.value,
-        addressLine2: dbRow.INMATE_ADDRESS_2.value
+        addressLine2: dbRow.INMATE_ADDRESS_2.value,
+        addressLine3: dbRow.INMATE_ADDRESS_3.value,
+        addressLine4: dbRow.INMATE_ADDRESS_4.value,
+        addressLine4: dbRow.INMATE_ADDRESS_5.value,
+        postcode: dbRow.INMATE_POSTCODE.value
     };
 }
 
 function formatOffenceRows(dbRow) {
     return {
         offenceCode: dbRow.IIS_OFFENCE_CODE.value,
-        dateCommitted: utils.getFormattedDateFromString(dbRow.DATE_COMMITTED.value)
+        caseDate: utils.getFormattedDateFromString(dbRow.CASE_DATE.value),
+        establishment: dbRow.CASE_ESTAB_COMP_CODE.value
     };
 }
 
 function formatHdcInfoRows(dbRow) {
     return {
-        stageDate: utils.getFormattedDateFromString(dbRow.STAGE_DATE.value),
+        date: utils.getFormattedDateFromString(dbRow.STAGE_DATE.value),
         stage: dbRow.STAGE.value,
         status: dbRow.STATUS.value
     };

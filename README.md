@@ -50,13 +50,12 @@ There are two options for authentication:
 
 # Environment variables
 
-The following environment variables are required
+The following environment variables are used. 
 
 * DB_USER - username for DB access
 * DB_PASS - password for DB access
 * DB_SERVER - DB server host
 * DB_NAME - DB name
-* SESSION_SECRET - ? todo
 * CLIENT_ID - SSO Client ID
 * CLIENT_SECRET - SSO Client secret
 * TOKEN_HOST - SSO server host
@@ -64,3 +63,6 @@ The following environment variables are required
 * TOKEN_PATH - SSO token endpoint, usually /oauth/token
 * USER_DETAILS_PATH - SSO user details endpoint, usually /api/user_details
 
+The following environment
+
+* SESSION_SECRET - Secure session configuration

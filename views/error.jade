@@ -10,6 +10,6 @@ block content
     h3 Message
     p.code= error.status =message
 
-
-    h3 Developer mode detail
-    p.code= error.stack
+    if stack
+        h3 Developer mode detail
+        p.code= stack

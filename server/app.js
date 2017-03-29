@@ -25,6 +25,7 @@ let content = require('../data/content.js');
 
 let config = require('../server/config');
 
+const production = process.env.NODE_ENV === 'production';
 
 //  Express Configuration
 let app = express();
@@ -44,7 +45,7 @@ app.use(function(req, res, next) {
 
 
 // Secure code best practice - see:
-// 1. https://expressjs.com/en/advanced/best-practice-security.html, 
+// 1. https://expressjs.com/en/advanced/best-practice-security.html,
 // 2. https://www.npmjs.com/package/helmet
 app.use(helmet({
     noCache: true
@@ -152,6 +153,10 @@ function logErrors(error, req, res, next) {
 function clientErrors(error, req, res, next) {
     res.locals.message = error.message;
     res.locals.error = error;
+    res.locals.stack = production ? 0 : error.stack;
+
+    logger.error('production' + production);
+    logger.error('stack' + res.locals.stack);
 
     res.status(error.status || 500);
 

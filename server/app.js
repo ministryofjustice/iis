@@ -15,6 +15,7 @@ let OAuth2Strategy = require('passport-oauth2').Strategy;
 let request = require('request');
 
 let helmet = require('helmet');
+let compression = require('compression');
 
 let index = require('../routes/index');
 let disclaimer = require('../routes/disclaimer');
@@ -106,6 +107,10 @@ app.set('port', process.env.PORT || 3000);
 // Request Processing Configuration
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+
+
+// Resource Delivery Configuration
+app.use(compression());
 
 
 //  Static Resources Configuration

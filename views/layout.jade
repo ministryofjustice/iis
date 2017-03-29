@@ -7,8 +7,8 @@ head
     title= content.title
 
 
-    <!--[if gt IE 8]><!--><link href="/public/stylesheets/govuk-template.css" media="screen" rel="stylesheet" type="text/css" /><!--<![endif]-->
-    link(rel="stylesheet", media="print", href="/public/stylesheets/print.css")
+    <!--[if gt IE 8]><!--><link href="/public/stylesheets/govuk-template.css?#{version}" media="screen" rel="stylesheet" type="text/css" /><!--<![endif]-->
+    link(rel="stylesheet", media="print", href="/public/stylesheets/print.css?#{version}")
 
     <!--[if gte IE 9]><!--><link href="/public/stylesheets/fonts.css?0.19.2" media="all" rel="stylesheet" /><!--<![endif]-->
 
@@ -19,7 +19,7 @@ head
     link(rel="apple-touch-icon-precomposed", sizes="76x76", href="/public/images/apple-touch-icon-76x76.png?0.19.2")
     link(rel="apple-touch-icon-precomposed", sizes="76x76", href="/public/images/apple-touch-icon-60x60.png?0.19.2")
 
-    link(href="/public/stylesheets/application.css", media="screen", rel="stylesheet", type="text/css")
+    link(href="/public/stylesheets/application.css?#{version}", media="screen", rel="stylesheet", type="text/css")
 
 body
 
@@ -83,12 +83,12 @@ body
     div(id="global-app-error", class="app-error hidden")
 
     script(src="/public/javascripts/govuk-template.js?0.19.2")
-    script(src="/public/javascripts/details.polyfill.js")
-    script(src="/public/javascripts/jquery-1.11.3.js")
-    script(src="/public/javascripts/govuk/selection-buttons.js")
-    script(src="/public/javascripts/govuk/shim-links-with-button-role.js")
-    script(src="/public/javascripts/govuk/show-hide-content.js")
-    script(src="/public/javascripts/application.js")
+    script(src="/public/javascripts/details.polyfill.js?#{version}")
+    script(src="/public/javascripts/jquery-1.11.3.js?#{version}")
+    script(src="/public/javascripts/govuk/selection-buttons.js?#{version}")
+    script(src="/public/javascripts/govuk/shim-links-with-button-role.js?#{version}")
+    script(src="/public/javascripts/govuk/show-hide-content.js?#{version}")
+    script(src="/public/javascripts/application.js?#{version}")
 
     script.
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');

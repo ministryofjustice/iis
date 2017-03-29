@@ -4,6 +4,7 @@ let logger = require('../log.js');
 let expressWinston = require('express-winston');
 let addRequestId = require('express-request-id')();
 let uuidV1 = require('uuid/v1');
+let moment = require('moment');
 
 let bodyParser = require('body-parser');
 let cookieSession = require('cookie-session');
@@ -23,8 +24,11 @@ let search = require('../routes/search');
 let subject = require('../routes/subject');
 
 let content = require('../data/content.js');
-
 let config = require('../server/config');
+
+let version = require('../package.json').version;
+
+const production = process.env.NODE_ENV === 'production';
 
 //  Express Configuration
 let app = express();
@@ -41,7 +45,6 @@ app.use(function(req, res, next) {
     }
     return next();
 });
-
 
 // Secure code best practice - see:
 // 1. https://expressjs.com/en/advanced/best-practice-security.html,
@@ -110,9 +113,17 @@ app.use(bodyParser.urlencoded({extended: false}));
 // Resource Delivery Configuration
 app.use(compression());
 
+if (production) {
+    app.locals.version = version;
+} else {
+    app.use(function(req, res, next) {
+        res.locals.version = moment.now();
+        return next();
+    });
+}
+
 
 //  Static Resources Configuration
-
 let cacheControl = {maxAge: config.staticResourceCacheDuration * 1000};
 
 let publicResourcePaths = [
@@ -138,11 +149,8 @@ iconResourcePaths.forEach((dir) => {
 app.locals.asset_path = '/public/';
 /* jshint ignore:end */
 
-
-app.use(function (req, res, next){
-    res.header('Cache-Control', `public, max-age=${config.appResourceCacheDuration}`);
-    next();
-});
+// Don't cache dynamic resources
+app.use(helmet.noCache());
 
 // Express Routing Configuration
 app.use('/', index);
@@ -174,7 +182,7 @@ function logErrors(error, req, res, next) {
 function clientErrors(error, req, res, next) {
     res.locals.message = error.message;
     res.locals.error = error;
-    res.locals.stack = config.errorStackTraceDisplay ? error.stack : null;
+    res.locals.stack = production ? error.stack : null;
 
     res.status(error.status || 500);
 

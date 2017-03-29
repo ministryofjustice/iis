@@ -14,6 +14,9 @@ function get(name, fallback, options = {}) {
 }
 
 module.exports = {
+
+    version: 0.1,
+
     db: {
         username: get('DB_USER', 'user'),
         password: get('DB_PASS', 'pass'),
@@ -22,8 +25,7 @@ module.exports = {
     },
 
     https: production,
-    errorStackTraceDisplay: !production,
-    staticResourceCacheDuration: oneDay,
+    staticResourceCacheDuration: 365 * oneDay,
     appResourceCacheDuration: oneDay,
 
     sessionSecret: get('SESSION_SECRET', 'iis-insecure-default-session', {requireInProduction: true}),

@@ -26,7 +26,6 @@ module.exports = {
 
     https: production,
     staticResourceCacheDuration: 365 * oneDay,
-    appResourceCacheDuration: oneDay,
 
     sessionSecret: get('SESSION_SECRET', 'iis-insecure-default-session', {requireInProduction: true}),
 

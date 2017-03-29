@@ -25,8 +25,6 @@ let content = require('../data/content.js');
 
 let config = require('../server/config');
 
-const production = process.env.NODE_ENV === 'production';
-
 //  Express Configuration
 let app = express();
 
@@ -153,7 +151,7 @@ function logErrors(error, req, res, next) {
 function clientErrors(error, req, res, next) {
     res.locals.message = error.message;
     res.locals.error = error;
-    res.locals.stack = production ? 0 : error.stack;
+    res.locals.stack = config.errorStackTraceDisplay ? error.stack : null;
 
     res.status(error.status || 500);
 

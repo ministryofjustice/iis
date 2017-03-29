@@ -21,6 +21,7 @@ module.exports = {
     },
 
     https: production,
+    errorStackTraceDisplay: !production,
 
     sessionSecret: get('SESSION_SECRET', 'iis-insecure-default-session', {requireInProduction: true}),
 

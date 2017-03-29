@@ -155,9 +155,6 @@ function clientErrors(error, req, res, next) {
     res.locals.error = error;
     res.locals.stack = production ? 0 : error.stack;
 
-    logger.error('production' + production);
-    logger.error('stack' + res.locals.stack);
-
     res.status(error.status || 500);
 
     res.render('error', {nav: true, content: content.view.error});

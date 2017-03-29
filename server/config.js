@@ -1,6 +1,7 @@
 'use strict';
 
 const production = process.env.NODE_ENV === 'production';
+const oneDay = 24 * 60 * 60;
 
 function get(name, fallback, options = {}) {
     if (process.env[name]) {
@@ -22,6 +23,8 @@ module.exports = {
 
     https: production,
     errorStackTraceDisplay: !production,
+    staticResourceCacheDuration: oneDay,
+    appResourceCacheDuration: oneDay,
 
     sessionSecret: get('SESSION_SECRET', 'iis-insecure-default-session', {requireInProduction: true}),
 

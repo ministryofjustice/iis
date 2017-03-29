@@ -46,9 +46,7 @@ app.use(function(req, res, next) {
 // Secure code best practice - see:
 // 1. https://expressjs.com/en/advanced/best-practice-security.html,
 // 2. https://www.npmjs.com/package/helmet
-app.use(helmet({
-    noCache: true
-}));
+app.use(helmet());
 
 
 // Automatically log every request with user details, a unique session id, and a unique request id
@@ -114,17 +112,37 @@ app.use(compression());
 
 
 //  Static Resources Configuration
-app.use('/public', express.static(path.join(__dirname, '../public')));
-app.use('/public', express.static(path.join(__dirname, '../govuk_modules/govuk_template/assets')));
-app.use('/public', express.static(path.join(__dirname, '../govuk_modules/govuk_frontend_toolkit')));
-app.use('/public/images/icons', express.static(path.join(__dirname, '../govuk_modules/govuk_frontend_toolkit/images')));
 
+let cacheControl = {maxAge: config.staticResourceCacheDuration * 1000};
+
+let publicResourcePaths = [
+    '../public',
+    '../govuk_modules/govuk_template/assets',
+    '../govuk_modules/govuk_frontend_toolkit'
+];
+
+let iconResourcePaths = [
+    '../govuk_modules/govuk_frontend_toolkit/images'
+];
+
+publicResourcePaths.forEach((dir) => {
+    app.use('/public', express.static(path.join(__dirname, dir), cacheControl));
+});
+
+iconResourcePaths.forEach((dir) => {
+    app.use('/public/images/icons', express.static(path.join(__dirname, dir), cacheControl));
+});
 
 // GovUK Template Configuration
 /* jshint ignore:start */
 app.locals.asset_path = '/public/';
 /* jshint ignore:end */
 
+
+app.use(function (req, res, next){
+    res.header('Cache-Control', `public, max-age=${config.appResourceCacheDuration}`);
+    next();
+});
 
 // Express Routing Configuration
 app.use('/', index);

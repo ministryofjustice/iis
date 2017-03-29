@@ -17,6 +17,7 @@ let request = require('request');
 
 let helmet = require('helmet');
 let compression = require('compression');
+let git = require('git-rev-sync');
 
 let index = require('../routes/index');
 let disclaimer = require('../routes/disclaimer');
@@ -26,8 +27,7 @@ let subject = require('../routes/subject');
 let content = require('../data/content.js');
 let config = require('../server/config');
 
-let version = require('../package.json').version;
-
+const version = git.short();
 const production = process.env.NODE_ENV === 'production';
 
 //  Express Configuration

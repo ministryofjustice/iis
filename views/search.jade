@@ -24,6 +24,8 @@ block content
                     fieldset
                         legend.visually-hidden= content.heading
 
+                        input(type="hidden" name="_csrf" value="#{csrfToken}")
+
                         label(class="block-label selection-button-checkbox",for="identifier")
                             input#identifier(name="opt", type="checkbox", value="identifier")
                             | Unique identifier

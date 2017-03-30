@@ -16,6 +16,7 @@ let OAuth2Strategy = require('passport-oauth2').Strategy;
 let request = require('request');
 
 let helmet = require('helmet');
+let csurf = require('csurf');
 let compression = require('compression');
 let git = require('git-rev-sync');
 
@@ -153,6 +154,9 @@ app.locals.asset_path = '/public/';
 app.use(helmet.noCache());
 
 // Express Routing Configuration
+if (testMode !== 'true') {
+    app.use(csurf());
+}
 app.use('/', index);
 app.use('/disclaimer/', disclaimer);
 if (testMode !== 'true') {
@@ -181,8 +185,8 @@ function logErrors(error, req, res, next) {
 
 function clientErrors(error, req, res, next) {
     res.locals.error = error;
-    res.locals.stack = production ? null : error.stack;
-    res.locals.message = production ? 'Something went wrong. The error has been logged. Please try again': error.message;
+    res.locals.stack = !production ? null : error.stack;
+    res.locals.message = !production ? 'Something went wrong. The error has been logged. Please try again' : error.message;
 
     res.status(error.status || 500);
 

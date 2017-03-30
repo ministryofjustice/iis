@@ -13,6 +13,13 @@ let audit = require('../data/audit');
 // eslint-disable-next-line
 let router = express.Router();
 
+router.use(function(req, res, next) {
+    if (typeof req.csrfToken === 'function') {
+        res.locals.csrfToken = req.csrfToken();
+    }
+    next();
+});
+
 router.get('/', function(req, res) {
 
     logger.debug('GET /search');
@@ -77,7 +84,7 @@ router.get('/results', function(req, res) {
     search.totalRowsForUserInput(userInput, function(err, rowcount) {
         if (err) {
             logger.error('Error during search: ' + err);
-            return showDbConnectionError(res);
+            return showDbError(res);
         }
 
         if (rowcount == 0) {
@@ -95,14 +102,14 @@ router.get('/results', function(req, res) {
         search.inmate(userInput, function(err, data) {
             if (err) {
                 logger.error('Error during search: ' + err);
-                return showDbConnectionError(res);
+                return showDbError(res);
             }
 
             renderResultsPage(req, res, rowcount, data);
         });
     }
 
-    function showDbConnectionError(res) {
+    function showDbError(res) {
         let _err = {
             title: content.errMsg.DB_ERROR,
             desc: content.errMsg.DB_ERROR_DESC

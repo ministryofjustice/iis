@@ -20,8 +20,10 @@ block content
             h1.heading-xlarge= content.title
 
             form(method="post")
+                input(type="hidden" name="_csrf" value="#{csrfToken}")
 
                 block search-page
 
                 div.form-group
                     button.button#continue Continue
+

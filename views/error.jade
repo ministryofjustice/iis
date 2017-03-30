@@ -8,8 +8,10 @@ block content
             h1.heading-large There was an error
 
     h3 Message
-    p.code= error.status =message
+    p.code=error.status =message
 
     if stack
         h3 Developer mode detail
         p.code= stack
+    else
+        a(href="/search") New search

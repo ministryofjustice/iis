@@ -47,7 +47,9 @@ body
                             ul#proposition-links
                                 li
                                     if locals.profile
-                                        | Signed in as #{profile.firstName} #{profile.lastName}
+                                        | Signed in as
+                                       =" "
+                                        a(href=profile.profileLink) #{profile.firstName} #{profile.lastName}
                                 li
                                     a(href="/logout") Exit HPA
 

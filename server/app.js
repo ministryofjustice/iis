@@ -172,7 +172,7 @@ app.use('/subject/', subject);
 app.use(function(req, res, next) {
     let error = new Error('Not Found');
     error.status = 404;
-    next(error);
+    res.render('notfound', {nav: true, content: content.view.notfound});
 });
 
 app.use(logErrors);

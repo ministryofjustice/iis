@@ -21,6 +21,7 @@ module.exports = {
 
     view: {
         error: {title: 'Error'},
+        notfound: {title: 'Not found'},
 
         disclaimer: {title: 'Usage'},
 

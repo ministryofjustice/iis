@@ -154,11 +154,11 @@ app.locals.asset_path = '/public/';
 app.use(helmet.noCache());
 
 // Express Routing Configuration
+app.use('/', index);
+app.use('/disclaimer/', disclaimer);
 if (testMode !== 'true') {
     app.use(csurf());
 }
-app.use('/', index);
-app.use('/disclaimer/', disclaimer);
 if (testMode !== 'true') {
     app.use(authRequired);
     app.use(addTemplateVariables);

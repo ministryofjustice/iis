@@ -18,7 +18,6 @@ let request = require('request');
 let helmet = require('helmet');
 let csurf = require('csurf');
 let compression = require('compression');
-let git = require('git-rev-sync');
 
 let index = require('../routes/index');
 let disclaimer = require('../routes/disclaimer');
@@ -28,7 +27,7 @@ let subject = require('../routes/subject');
 let content = require('../data/content.js');
 let config = require('../server/config');
 
-const version = git.short();
+const version = moment.now().toString();
 const production = process.env.NODE_ENV === 'production';
 
 //  Express Configuration
@@ -118,7 +117,7 @@ if (production) {
     app.locals.version = version;
 } else {
     app.use(function(req, res, next) {
-        res.locals.version = moment.now();
+        res.locals.version = moment.now().toString();
         return next();
     });
 }

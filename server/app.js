@@ -152,12 +152,14 @@ app.locals.asset_path = '/public/';
 // Don't cache dynamic resources
 app.use(helmet.noCache());
 
-// Express Routing Configuration
-app.use('/', index);
-app.use('/disclaimer/', disclaimer);
+// CSRF protection
 if (testMode !== 'true') {
     app.use(csurf());
 }
+
+// Express Routing Configuration
+app.use('/', index);
+app.use('/disclaimer/', disclaimer);
 if (testMode !== 'true') {
     app.use(authRequired);
     app.use(addTemplateVariables);

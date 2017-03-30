@@ -9,6 +9,13 @@ let logger = require('winston');
 // eslint-disable-next-line
 let router = express.Router();
 
+router.use(function(req, res, next) {
+    if (typeof req.csrfToken === 'function') {
+        res.locals.csrfToken = req.csrfToken();
+    }
+    next();
+});
+
 router.get('/', function(req, res, next) {
     if (req.user && req.user.disclaimer === 'true') {
         res.redirect('/search');

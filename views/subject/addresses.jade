@@ -4,7 +4,7 @@ block subject-details
     div.column-two-thirds
         each val,index in data.details
             div.grid-row.list-row
-                div.column-full(class="movement-type-#{val.type}")
+                div.column-full
                     div.left-border.capitalise-text
                         span #{val.addressLine1.toLowerCase()}
                         | #{val.addressLine2 ? val.addressLine2.toLowerCase() : ''} 
@@ -14,3 +14,8 @@ block subject-details
 
                     div.left-border
                         span #{val.postcode ? val.postcode : ''} 
+                        
+                        
+            
+        if (!data.details)
+            span= data.noResultsText

@@ -46,7 +46,12 @@ module.exports = {
         results: {title: 'Your search returned _x_ result',
                   title_no_results: 'Your search did not return any results'},
 
-        subject: {title: 'Subject details'}
+        subject: {title: 'Subject details',
+                  aliases: 'This subject has no aliases',
+                  movements: 'This subject has no movements',
+                  hdcinfo: 'This subject has no HDC history',
+                  offences: 'This subject has no offences',
+                  addresses: 'This subject has no addresses'}
     }
 
 };

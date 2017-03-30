@@ -4,9 +4,12 @@ block subject-details
     div.column-two-thirds
         each val,index in data.details
             div.grid-row.list-row
-                div.column-full(class="movement-type-#{val.type}")
+                div.column-full
                     ul.capitalise-text
                         div.left-border #{val.forename.toLowerCase()}
                             | #{val.forename2 ? val.forename2.toLowerCase() : ''} 
                             | #{val.surname.toLowerCase().trim()}
                             span.block Born on #{val.dob} 
+                            
+        if (!data.details)
+            span= data.noResultsText

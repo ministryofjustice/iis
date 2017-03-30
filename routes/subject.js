@@ -46,7 +46,7 @@ router.get('/:id/:page', function(req, res) {
                 renderErrorPage(res, err);
                 return;
             }
-            let data = {subject: summary, details: details};
+            let data = {subject: summary, details: details, noResultsText: content.view.subject[page]};
             renderPage(res, {page: page, data: data});
         });        
     });
@@ -54,7 +54,7 @@ router.get('/:id/:page', function(req, res) {
 
 
 router.get('/:id', function(req, res) {
-   res.redirect('/subject/' + req.params.id + '/summary'); 
+   res.redirect('/subject/' + req.params.id + '/aliases'); 
 });
 
 module.exports = router;
@@ -80,11 +80,10 @@ function renderErrorPage(res, err) {
 
 function getNavigation(page) {
     let nav = {
-      summary: {title: 'Summary'},  
+      aliases: {title: 'Aliases' },  
       movements: {title: 'Movements'},  
       hdcinfo: {title: 'HDC history'},  
       offences: {title: 'Offences'},  
-      aliases: {title: 'Aliases'},  
       addresses: {title: 'Addresses'}
     };
     

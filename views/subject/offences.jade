@@ -5,10 +5,13 @@ block subject-details
         div.grid-row
             each val,index in data.details
                 div.grid-row.list-row
-                        div.column-full(class="movement-type-#{val.type}")
+                        div.column-full
                             div.left-border
                                 span.quiet.block #{val.caseDate}
                                 span.bold-small Case code #{val.offenceCode} 
 
                             div.left-border
                                 span.capitalise-text #{val.establishment.trim().toLowerCase()} 
+            
+        if (!data.details)
+            span= data.noResultsText

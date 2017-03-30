@@ -4,10 +4,13 @@ block subject-details
     div.column-two-thirds
         each val,index in data.details
             div.grid-row.list-row
-                div.column-full(class="movement-type-#{val.type}")
+                div.column-full
                     div.left-border
                         span.quiet.block #{val.date}
                         span.bold-small #{val.status} 
                         
                     div.left-border
                         span #{val.stage.trim()} 
+            
+        if (!data.details)
+            span= data.noResultsText

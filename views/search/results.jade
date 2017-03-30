@@ -10,7 +10,7 @@ block content
             mixin inmate(name, href)
                 div
                     div.inmate-details
-                        a.bold-medium(href="/subject/#{href}/summary").capitalise-text #{name}
+                        a.bold-medium(href="/subject/#{href}/aliases").capitalise-text #{name}
                         block
             
             if data && data != 0

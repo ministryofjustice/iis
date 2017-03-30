@@ -83,7 +83,7 @@ app.use(cookieSession({
     httpOnly: true,
     signed: true,
     overwrite: true,
-    sameSite: true
+    sameSite: 'lax'
 }));
 
 

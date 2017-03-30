@@ -5,13 +5,20 @@ block content
     if err
         div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
             h1(class="heading-medium error-summary-heading", id="error-message")= err.title
-            
+
     div#print-header(aria-hidden="true")
         span GOV.UK - Inmate information system
 
     div#print-disclaimer(aria-hidden="true")
         p.title Disclaimer
-        p In euismod nulla nec diam ullamcorper, in posuere magna rhoncus. Aliquam erat volutpat. Suspendisse at dolor mattis, euismod ligula non, placerat eros. Etiam sollicitudin rutrum tincidunt.
+        p
+        | This information is Official Sensitive and should not be shared with anyone who
+        | does not have a valid reason to use it. The Information in this document which was created
+        | using the legacy application, LIDS, is accurate for that period of time entered and should be
+        | used in conjunction with legislation and codes which applied at the time of entry. Information
+        | in this document which was created using Prison NOMIS may not be accurate and should be
+        | discounted. Any information which can be found on Prison NOMIS should be taken from Prison
+        | NOMIS. Please note that MoJ/HMPPS will not accept any responsibility for errors on the system.
 
     if !err
         div.grid-row
@@ -21,7 +28,7 @@ block content
                     | #{data.subject.forename2 ? data.subject.forename2.toLowerCase() : ''}
                     | #{data.subject.surname}
                     span.heading-secondary#subjectId PRISON NO. #{data.subject.prisonNumber}
-                    
+
                 p.font-medium
                     | #{data.subject.maritalStatus}
                     | #{data.subject.ethnicity}
@@ -31,14 +38,13 @@ block content
                     | #{(data.subject.countryOfBirth) || (data.subject.dob) ? 'Born' : ''}
                     | #{data.subject.countryOfBirth ? ' in ' + data.subject.countryOfBirth : ''}
                     | #{data.subject.dob ? ' on ' + data.subject.dob + ' ('+data.subject.age+' years)' : ''}
-                    
-                div.form-group 
+
+                div.form-group
                     button.button(onclick="window.print();") Print
-                    
+
         section
             div.grid-row
                 div.column-one-third
                     include subject/nav.jade
 
                 block subject-details
-                    

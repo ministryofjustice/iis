@@ -158,13 +158,13 @@ if (testMode !== 'true') {
 }
 
 // Express Routing Configuration
+app.use(requestLogger());
 app.use('/', index);
 app.use('/disclaimer/', disclaimer);
 if (testMode !== 'true') {
     app.use(authRequired);
     app.use(addTemplateVariables);
 }
-app.use(requestLogger());
 app.use('/search/', search);
 app.use('/subject/', subject);
 

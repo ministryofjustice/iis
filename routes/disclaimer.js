@@ -17,7 +17,7 @@ router.use(function(req, res, next) {
 });
 
 router.get('/', function(req, res, next) {
-    if (req.user && req.user.disclaimer === 'true') {
+    if (req.user && req.user.disclaimer) {
         res.redirect('/search');
     } else if (req.user) {
         audit.record('LOG_IN', req.user.email);

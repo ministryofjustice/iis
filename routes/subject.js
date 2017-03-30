@@ -80,7 +80,7 @@ function renderErrorPage(res, err) {
 
 function getNavigation(page) {
     let nav = {
-      aliases: {title: 'Aliases' },  
+      aliases: {title: 'Aliases'},  
       movements: {title: 'Movements'},  
       hdcinfo: {title: 'HDC history'},  
       offences: {title: 'Offences'},  

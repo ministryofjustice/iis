@@ -10,10 +10,11 @@ block subject-details
                         span.quiet #{val.date}
                     div.left-border
                         span.type.bold-small #{val.type == 'D' ? 'OUT' : 'IN'}
-                        | 
-                        | -
-                        | 
-                        span #{val.status.trim()}
+                        if(val.status)
+                            | 
+                            | -
+                            | 
+                            span #{val.status.trim()}
                     div.left-border
                         span.capitalise-text #{val.establishment.toLowerCase()}
                         

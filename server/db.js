@@ -61,7 +61,7 @@ module.exports = {
         connection = this.connect();
 
         connection.on('debug', function(err) {
-            logger.info('debug:', err);
+            logger.debug('debug:', err);
         });
 
         connection.on('connect', function(err) {

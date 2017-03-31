@@ -10,7 +10,7 @@ block content
             mixin inmate(name, href)
                 div
                     div.inmate-details
-                        a.bold-medium(href="/subject/#{href}/aliases").capitalise-text #{name}
+                        a.bold-medium(href="/subject/#{href}/movements").capitalise-text #{name}
                         block
             
             if data && data != 0
@@ -19,8 +19,9 @@ block content
                             + (item.forename2 ? item.forename2.toLowerCase() : '')
                             + item.surname, item.prisonNumber)
                         span.bold-medium &middot; #{item.dob}
-                        span.form-hint.capitalise-text  #{item.alias ? item.alias.trim().toLowerCase().substr(0, item.alias.trim().length-1) : '' }
-                        span.capitalise-text #{(item.sentencingCourt) ? 'Sentenced by ' + item.sentencingCourt.toLowerCase() + ', ' + item.sentencingDate : ''}
+                        //-
+                            span.form-hint.capitalise-text  #{item.alias ? item.alias.trim().toLowerCase().substr(0, item.alias.trim().length-1) : '' }
+                            span.capitalise-text #{(item.sentencingCourt) ? 'Sentenced by ' + item.sentencingCourt.toLowerCase() + ', ' + item.sentencingDate : ''}
 
             if pagination
                 div.form-group.c-align

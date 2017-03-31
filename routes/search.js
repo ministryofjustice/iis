@@ -13,6 +13,7 @@ let audit = require('../data/audit');
 // eslint-disable-next-line
 let router = express.Router();
 
+
 router.use(function(req, res, next) {
     if (typeof req.csrfToken === 'function') {
         res.locals.csrfToken = req.csrfToken();
@@ -190,7 +191,16 @@ const options = {
 
 router.get('/:view', function(req, res) {
 
+<<<<<<< HEAD
     logger.info('GET /search/', {view: req.params.view});
+=======
+    logger.debug('GET /search/' + req.params.view);
+    
+    if (req.headers.referer == undefined) {
+        res.redirect('/search');
+        return;
+    }
+>>>>>>> added padding to prison number when < 8 chars
 
     req.session.rowcount = null;
 

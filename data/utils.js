@@ -7,6 +7,17 @@ module.exports = {
         return (n < 10) ? ('0' + parseInt(n)) : n;
     },
     
+    padPrisonNumber: function(v) {
+        let spaces = '';
+        const lenPrisonNumber = 8;
+        
+        for(let i=0; i < lenPrisonNumber-v.length; i++) {
+            spaces += ' ';
+        }
+        
+        return (v.length < lenPrisonNumber) ? (spaces + v) : v;
+    },
+    
     getAgeFromDOB: function(dob) {
         return moment().diff(dob, 'years', false);
     },

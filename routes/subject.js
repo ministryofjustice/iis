@@ -18,8 +18,8 @@ router.get('/', function(req, res) {
 
 router.get('/:id/:page', function(req, res) {
     let page = req.params.page;
-    let prisonNumber = req.params.id;
-
+    let prisonNumber = utils.padPrisonNumber(req.params.id);
+    
     audit.record('VIEW', req.user.email, {page: page, prisonNumber: prisonNumber});
 
     subject.details(prisonNumber, function(err, data) {
@@ -54,7 +54,7 @@ router.get('/:id/:page', function(req, res) {
 
 
 router.get('/:id', function(req, res) {
-   res.redirect('/subject/' + req.params.id + '/aliases');
+   res.redirect('/subject/' + req.params.id + '/movements'); 
 });
 
 module.exports = router;
@@ -80,11 +80,17 @@ function renderErrorPage(res, err) {
 
 function getNavigation(page) {
     let nav = {
+<<<<<<< HEAD
       aliases: {title: 'Aliases'},
       movements: {title: 'Movements'},
       hdcinfo: {title: 'HDC history'},
       offences: {title: 'Offences'},
       addresses: {title: 'Addresses'}
+=======
+      movements: {title: 'Movements'},  
+      hdcinfo: {title: 'HDC history'},  
+      offences: {title: 'Offences'}
+>>>>>>> added padding to prison number when < 8 chars
     };
 
     nav[page].active = true;

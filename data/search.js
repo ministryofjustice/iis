@@ -9,7 +9,10 @@ let TYPES = require('tedious').TYPES;
 const filters = {
     prisonNumber: {
         dbColumn: 'PK_PRISON_NUMBER',
-        getSql: getSqlWithParams
+        getSql: function(obj) {
+            obj.val = utils.padPrisonNumber(obj.val);
+            return getSqlWithParams.call(this, obj);
+        }
     },
 
     forename: {

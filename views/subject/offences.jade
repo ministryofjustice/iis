@@ -10,8 +10,9 @@ block subject-details
                                 span.quiet.block #{val.caseDate}
                                 span.bold-small Case code #{val.offenceCode} 
 
-                            div.left-border
-                                span.capitalise-text #{val.establishment.trim().toLowerCase()} 
+                            if(val.establishment)
+                                div.left-border
+                                    span.capitalise-text #{val.establishment.trim().toLowerCase()} 
             
         if (!data.details)
             span= data.noResultsText

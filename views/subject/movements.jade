@@ -15,8 +15,9 @@ block subject-details
                             | -
                             | 
                             span #{val.status.trim()}
-                    div.left-border
-                        span.capitalise-text #{val.establishment.toLowerCase()}
+                    if(val.establishment)
+                        div.left-border
+                            span.capitalise-text #{val.establishment.toLowerCase()}
                         
         if (!data.details)
             span= data.noResultsText

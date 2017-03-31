@@ -8,9 +8,10 @@ block subject-details
                     div.left-border
                         span.quiet.block #{val.date}
                         span.bold-small #{val.status} 
-                        
-                    div.left-border
-                        span #{val.stage.trim()} 
+                    
+                    if(val.stage)
+                        div.left-border
+                            span #{val.stage.trim()} 
             
         if (!data.details)
             span= data.noResultsText

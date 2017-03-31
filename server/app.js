@@ -33,7 +33,6 @@ const production = process.env.NODE_ENV === 'production';
 //  Express Configuration
 let app = express();
 
-
 // Configure Express for running behind proxies - https://expressjs.com/en/guide/behind-proxies.html
 app.set('trust proxy', true);
 

@@ -46,8 +46,9 @@ router.get('/:id/:page', function(req, res) {
                 renderErrorPage(res, err);
                 return;
             }
+
             let data = {subject: summary, details: details, noResultsText: content.view.subject[page]};
-            renderPage(res, {page: page, data: data});
+            renderPage(res, {page: page, data: data, lastPageNum: req.session.lastPage || 1});
         });
     });
 });
@@ -63,6 +64,7 @@ function renderPage(res, obj) {
     res.render('subject/'+obj.page, {
         data: obj.data,
         content: content.view.subject,
+        lastPageNum: obj.lastPageNum,
         nav: getNavigation(obj.page)
     });
 }

@@ -24,7 +24,7 @@ router.use(function(req, res, next) {
 router.get('/', function(req, res) {
 
     logger.debug('GET /search');
-
+    
     return res.render('search', {
         content: content.view.search
     });
@@ -68,6 +68,7 @@ router.get('/results', function(req, res) {
 
     let userInput = req.session.userInput;
     let page = getCurrentPage(req);
+    req.session.lastPage = page;
 
     if (req.session.rowcount) {
         let rowcount = req.session.rowcount;
@@ -126,7 +127,8 @@ router.get('/results', function(req, res) {
 });
 
 function getCurrentPage(req) {
-    return (req.query.page) ? req.query.page : 1;
+    const page = Number(req.query.page);
+    return Number.isNaN(page) ? 1 : req.query.page;
 }
 
 function isValidPage(page, rowcount) {
@@ -202,12 +204,21 @@ router.get('/:view', function(req, res) {
 
     const view = req.params.view;
     const viewInfo = options[view];
-
+    
     if (!viewInfo) {
         logger.warn('No such search option', {view: req.params.view});
         res.redirect('/search');
         return;
     }
+    
+//    let indexOfCurrView = req.session.opt.indexOf(view);
+//    let prevView = req.session.opt[indexOfCurrView-1];
+//    
+//    if(prevView) {
+//        prevView = prevView;
+//    } else {
+//        prevView = 'search';
+//    }
 
     let err = req.session.error;
     req.session.error = null;

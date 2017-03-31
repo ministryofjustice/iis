@@ -1,5 +1,6 @@
 'use strict';
 let moment = require('moment');
+let url = require('url');
 
 module.exports = {
 
@@ -66,5 +67,9 @@ module.exports = {
     
     getFormattedDateFromString: function(d) {
         return moment(d, 'YYYYMMDD').format('DD/MM/YYYY');
+    },
+    
+    getPathFromURL: function(v) {
+        return url.parse(v).path;
     }
 };

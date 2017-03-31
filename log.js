@@ -28,7 +28,6 @@ if (process.env.NODE_ENV === 'test') {
         prettyPrint: true
     });
 } else if (process.env.NODE_ENV === 'production') {
-    // TODO: connect to azure storage directly?
     winston.add(winston.transports.Console, {
         name: 'log',
         level: 'info',
@@ -51,6 +50,18 @@ if (process.env.NODE_ENV === 'test') {
         handleExceptions: true,
         json: false,
         humanReadableUnhandledException: true
+    });
+}
+
+const appInsights = require('./azure-appinsights');
+if (appInsights) {
+    const aiLogger = require('winston-azure-application-insights');
+    winston.info('Activating application insights logger');
+    winston.add(aiLogger.AzureApplicationInsightsLogger, {
+        insights: appInsights,
+        level: 'info',
+        silent: false,
+        treatErrorsAsExceptions: true
     });
 }
 

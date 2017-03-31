@@ -80,17 +80,9 @@ function renderErrorPage(res, err) {
 
 function getNavigation(page) {
     let nav = {
-<<<<<<< HEAD
-      aliases: {title: 'Aliases'},
-      movements: {title: 'Movements'},
-      hdcinfo: {title: 'HDC history'},
-      offences: {title: 'Offences'},
-      addresses: {title: 'Addresses'}
-=======
       movements: {title: 'Movements'},  
       hdcinfo: {title: 'HDC history'},  
       offences: {title: 'Offences'}
->>>>>>> added padding to prison number when < 8 chars
     };
 
     nav[page].active = true;

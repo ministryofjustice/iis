@@ -46,7 +46,7 @@ html
                             if nav
                                 ul#proposition-links
                                     li
-                                        if locals.profile
+                                        if profile
                                             | Signed in as
                                            =" "
                                             a(href=profile.profileLink) #{profile.firstName} #{profile.lastName}

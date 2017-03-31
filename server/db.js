@@ -11,7 +11,7 @@ function addParams(params, request) {
     params.forEach(function(param) {
         let paramValue = param.value;
 
-        if(isNaN(paramValue)) {
+        if (isNaN(paramValue)) {
             paramValue = paramValue.toUpperCase();
         }
 
@@ -59,6 +59,10 @@ module.exports = {
 
         let connected = false;
         connection = this.connect();
+
+        connection.on('debug', function(err) {
+            logger.info('debug:', err);
+        });
 
         connection.on('connect', function(err) {
             if (err) {
@@ -160,51 +164,51 @@ module.exports = {
 
     saveRowToDb: function(obj) {
         /*
-        let connected = false;
-        connection = this.connect();
+         let connected = false;
+         connection = this.connect();
 
-        connection.on('connect', function(err) {
-            if (err) {
-                logger.error('Error while inserting a record: ' + err);
-                return finish(err);
-            }
+         connection.on('connect', function(err) {
+         if (err) {
+         logger.error('Error while inserting a record: ' + err);
+         return finish(err);
+         }
 
-            connected = true;
+         connected = true;
 
-            let Request = require('tedious').Request;
-            let request = new Request(sql, function(err, rowCount) {
-                if (err) {
-                    return finish(err);
-                }
-            });
+         let Request = require('tedious').Request;
+         let request = new Request(sql, function(err, rowCount) {
+         if (err) {
+         return finish(err);
+         }
+         });
 
-            if (params) {
-                addParams(params, request);
-            }
+         if (params) {
+         addParams(params, request);
+         }
 
-            request.on('row', function(columns) {
-                return finish(null, columns);
-            });
+         request.on('row', function(columns) {
+         return finish(null, columns);
+         });
 
-            logger.debug('Executing tuple request: ' + util.inspect(request));
-            connection.execSql(request);
-        });
+         logger.debug('Executing tuple request: ' + util.inspect(request));
+         connection.execSql(request);
+         });
 
-        let that = this;
+         let that = this;
 
-        function finish(err, result) {
+         function finish(err, result) {
 
-            if (err) {
-                logger.error('Error during tuple query: ' + err);
-            }
+         if (err) {
+         logger.error('Error during tuple query: ' + err);
+         }
 
-            if (connected) {
-                that.disconnect();
-            }
+         if (connected) {
+         that.disconnect();
+         }
 
-            return callback(err, result);
-        }
-        */
+         return callback(err, result);
+         }
+         */
     },
 
     disconnect: function() {

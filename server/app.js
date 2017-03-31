@@ -60,11 +60,9 @@ function requestLogger() {
         meta: true,
         dynamicMeta: function(req, res) {
             let meta = {
-                userId: req.user ? req.user.id : null,
                 userEmail: req.user ? req.user.email : null,
                 requestId: req.id,
-                sessionTag: req.user ? req.user.sessionTag : null,
-                req_header_referrer: req.header('referrer')
+                sessionTag: req.user ? req.user.sessionTag : null
             };
 
             if(res._headers.location) {

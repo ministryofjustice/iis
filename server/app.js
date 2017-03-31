@@ -194,7 +194,8 @@ function logErrors(error, req, res, next) {
 function clientErrors(error, req, res, next) {
     res.locals.error = error;
     res.locals.stack = production ? null : error.stack;
-    res.locals.message = production ? 'Something went wrong. The error has been logged. Please try again' : error.message;
+    res.locals.message = production ?
+        'Something went wrong. The error has been logged. Please try again' : error.message;
 
     res.status(error.status || 500);
 

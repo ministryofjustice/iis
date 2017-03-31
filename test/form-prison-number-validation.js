@@ -13,6 +13,7 @@ describe('Prison number validation tests', function(){
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/identifier')
+                    .set('referrer', '/search/ ')
                     .send({prison_number: ''})
                     .redirects(1)
                     .expect(200)
@@ -26,6 +27,7 @@ describe('Prison number validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/identifier')
+                    .set('referrer', '/search/ ')
                     .send({prison_number: 'AA00AA00'})
                     .redirects(1)
                     .expect(200)
@@ -39,6 +41,7 @@ describe('Prison number validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/identifier')
+                    .set('referrer', '/search/ ')
                     .send({prison_number: '11AAAAA'})
                     .redirects(1)
                     .expect(200)
@@ -52,6 +55,7 @@ describe('Prison number validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/identifier')
+                    .set('referrer', '/search/ ')
                     .send({prison_number: 'AA00000'})
                     .redirects(1)
                     .expect(200)

@@ -61,7 +61,7 @@ router.get('/results', function(req, res) {
 
     logger.info('GET /search/results');
 
-    if (req.headers.referer == undefined) {
+    if (req.headers.referrer == undefined) {
         res.redirect('/search');
         return;
     }
@@ -192,8 +192,8 @@ const options = {
 router.get('/:view', function(req, res) {
 
     logger.info('GET /search/', {view: req.params.view, error: req.session.error});
-    
-    if (req.headers.referer == undefined) {
+
+    if (req.headers.referrer == undefined) {
         res.redirect('/search');
         return;
     }
@@ -262,6 +262,7 @@ function renderViewWithErrorAndUserInput(req, res, viewName, err) {
     req.session.error = err;
     res.redirect(viewName);
 }
+
 
 function proceedToTheNextView(req, res, currView) {
     let nextView = options[currView].nextView;

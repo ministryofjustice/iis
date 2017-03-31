@@ -1,7 +1,5 @@
 'use strict';
 
-let util = require('util');
-
 let logger = require('../log.js');
 let expressWinston = require('express-winston');
 let addRequestId = require('express-request-id')();

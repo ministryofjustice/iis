@@ -70,7 +70,7 @@ describe('Auditing', function() {
                 common.sinon.stub(search, 'totalRowsForUserInput').yields(null, 0);
                 common.sinon.stub(audit, "record");
                 return browser.get('/search/results')
-                    .set('Referrer', 'somewhere')
+                    .set('Referer', 'somewhere')
             })
             .then(function() {
                 common.sinon.assert.calledOnce(audit.record);

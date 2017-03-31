@@ -61,7 +61,7 @@ router.get('/results', function(req, res) {
 
     logger.info('GET /search/results');
 
-    if (req.headers.referrer == undefined) {
+    if (!req.headers.referer) {
         res.redirect('/search');
         return;
     }
@@ -193,7 +193,7 @@ router.get('/:view', function(req, res) {
 
     logger.info('GET /search/', {view: req.params.view, error: req.session.error});
 
-    if (req.headers.referrer == undefined) {
+    if (!req.headers.referer) {
         res.redirect('/search');
         return;
     }

@@ -12,7 +12,7 @@ describe('Date/Age/Age-range validation tests', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .set('referrer', '/search/ ')
+                    .set('referer', '/search/ ')
                     .send({dobOrAge: 'dob', dobDay: '29', dobMonth: '02', dobYear: '2017'})
                     .redirects(1)
                     .expect(200)
@@ -26,7 +26,7 @@ describe('Date/Age/Age-range validation tests', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .set('referrer', '/search/ ')
+                    .set('referer', '/search/ ')
                     .send({dobOrAge: 'dob', dobDay: '20', dobMonth: '12', dobYear: '2020'})
                     .redirects(1)
                     .expect(200)
@@ -49,7 +49,7 @@ describe('Date/Age/Age-range validation tests', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .set('referrer', '/search/ ')
+                    .set('referer', '/search/ ')
                     .send({age: '-13'})
                     .redirects(1)
                     .expect(200)
@@ -64,7 +64,7 @@ describe('Date/Age/Age-range validation tests', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .set('referrer', '/search/ ')
+                    .set('referer', '/search/ ')
                     .send({dobOrAge: 'age', age: '33-30'})
                     .redirects(1)
                     .expect(200)
@@ -78,7 +78,7 @@ describe('Date/Age/Age-range validation tests', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
-                    .set('referrer', '/search/ ')
+                    .set('referer', '/search/ ')
                     .send({dobOrAge: 'age', age: '33-40'})
                     .redirects(1)
                     .expect(200)

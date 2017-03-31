@@ -13,7 +13,7 @@ describe('Name(s) validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/names')
-                    .set('referrer', '/search/ ')
+                    .set('referer', '/search/ ')
                     .send({forename: '', forename2: '', surname: ''})
                     .redirects(1)
                     .expect(200)
@@ -27,7 +27,7 @@ describe('Name(s) validation tests', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/names')
-                    .set('referrer', '/search/ ')
+                    .set('referer', '/search/ ')
                     .send({forename: 'Zed', forename2: 'Forename2', surname: ''})
                     .redirects(1)
                     .expect(200)

@@ -1,5 +1,7 @@
 'use strict';
 
+let util = require('util');
+
 let logger = require('../log.js');
 let expressWinston = require('express-winston');
 let addRequestId = require('express-request-id')();
@@ -59,12 +61,19 @@ function requestLogger() {
         winstonInstance: logger,
         meta: true,
         dynamicMeta: function(req, res) {
-            return {
+            let meta = {
                 userId: req.user ? req.user.id : null,
                 userEmail: req.user ? req.user.email : null,
                 requestId: req.id,
-                sessionTag: req.user ? req.user.sessionTag : null
+                sessionTag: req.user ? req.user.sessionTag : null,
+                req_header_referrer: req.header('referrer')
             };
+
+            if(res._headers.location) {
+                meta.res_header_location = res._headers.location;
+            }
+
+            return meta;
         },
         colorize: true,
         requestWhitelist: ['url', 'method', 'originalUrl', 'query', 'body']

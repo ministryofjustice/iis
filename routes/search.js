@@ -83,7 +83,7 @@ router.get('/results', function(req, res) {
 
     search.totalRowsForUserInput(userInput, function(err, rowcount) {
         if (err) {
-            logger.error('Error during search: ' + err);
+            logger.error('Error during search', {error: error});
             return showDbError(res);
         }
 
@@ -101,7 +101,7 @@ router.get('/results', function(req, res) {
         userInput.page = page;
         search.inmate(userInput, function(err, data) {
             if (err) {
-                logger.error('Error during search: ' + err);
+                logger.error('Error during search', {error: error});
                 return showDbError(res);
             }
 
@@ -190,7 +190,7 @@ const options = {
 
 router.get('/:view', function(req, res) {
 
-    logger.debug('GET /search/' + req.params.view);
+    logger.info('GET /search/', {view: req.params.view});
 
     req.session.rowcount = null;
 
@@ -198,7 +198,7 @@ router.get('/:view', function(req, res) {
     const viewInfo = options[view];
 
     if (!viewInfo) {
-        logger.warn('No such search option: ' + view);
+        logger.warn('No such search option', {view: req.params.view});
         res.redirect('/search');
         return;
     }
@@ -212,20 +212,19 @@ router.get('/:view', function(req, res) {
 
 router.post('/:view', function(req, res) {
 
-    logger.debug('POST /search/' + req.params.view);
+    logger.debug('POST /search/', {view: req.params.view});
 
     const view = req.params.view;
     const viewInfo = options[view];
 
     if (!viewInfo) {
-        logger.warn('No such search option: ' + view);
+        logger.warn('No such search option', {view: view});
         res.redirect('/search');
         return;
     }
 
     const input = {};
 
-    // ZED - Why was this working before? How was it ever set during tests?
     if (req.session.userInput === undefined) {
         req.session.userInput = {};
     }
@@ -238,8 +237,7 @@ router.post('/:view', function(req, res) {
 
     viewInfo.validator(input, function(err) {
         if (err) {
-            // TODO: Record details in the db
-            logger.info('Input validation error: ' + err);
+            logger.info('Input validation error', {error: err});
             renderViewWithErrorAndUserInput(req, res, view, err);
             return;
         }

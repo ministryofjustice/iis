@@ -19,7 +19,7 @@ router.get('/', function(req, res) {
 router.get('/:id/:page', function(req, res) {
     let page = req.params.page;
     let prisonNumber = req.params.id;
-    
+
     audit.record('VIEW', req.user.email, {page: page, prisonNumber: prisonNumber});
 
     subject.details(prisonNumber, function(err, data) {
@@ -33,14 +33,14 @@ router.get('/:id/:page', function(req, res) {
             data.age = utils.getAgeFromDOB(dob);
             data.dob = dob.format('DD/MM/YYYY');
         }
-        
-        
+
+
         let summary = data;
         let ids = {
           prisonNumber: prisonNumber,
           personIdentifier: data.personIdentifier
         };
-        
+
         subject[page](ids, function(err, details) {
             if (err) {
                 renderErrorPage(res, err);
@@ -48,13 +48,13 @@ router.get('/:id/:page', function(req, res) {
             }
             let data = {subject: summary, details: details, noResultsText: content.view.subject[page]};
             renderPage(res, {page: page, data: data});
-        });        
+        });
     });
 });
 
 
 router.get('/:id', function(req, res) {
-   res.redirect('/subject/' + req.params.id + '/aliases'); 
+   res.redirect('/subject/' + req.params.id + '/aliases');
 });
 
 module.exports = router;
@@ -68,7 +68,7 @@ function renderPage(res, obj) {
 }
 
 function renderErrorPage(res, err) {
-    logger.error('Error getting subject details: ' + err);
+    logger.error('Error getting subject details', {error: error});
     res.render('subject/error', {
         content: content.view.subject,
         title: content.errMsg.INVALID_ID,
@@ -80,14 +80,14 @@ function renderErrorPage(res, err) {
 
 function getNavigation(page) {
     let nav = {
-      aliases: {title: 'Aliases'},  
-      movements: {title: 'Movements'},  
-      hdcinfo: {title: 'HDC history'},  
-      offences: {title: 'Offences'},  
+      aliases: {title: 'Aliases'},
+      movements: {title: 'Movements'},
+      hdcinfo: {title: 'HDC history'},
+      offences: {title: 'Offences'},
       addresses: {title: 'Addresses'}
     };
-    
+
     nav[page].active = true;
-    
+
     return nav;
 }

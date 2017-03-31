@@ -8,11 +8,12 @@ let app = require("../server.js");
 
 describe('Date/Age/Age-range validation tests', function() {
 
-    it('should display error if an invalid date is passed', function() {
+    it('should redirect and display error if an invalid date is passed', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
                     .send({dobOrAge: 'dob', dobDay: '29', dobMonth: '02', dobYear: '2017'})
+                    .redirects(1)
                     .expect(200)
                     .expect(function(res) {
                         expect(res.text).to.contain('error-summary');
@@ -20,11 +21,12 @@ describe('Date/Age/Age-range validation tests', function() {
             });
     });
 
-    it('should display error if the date is in the future', function() {
+    it('should redirect and display error if the date is in the future', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
                     .send({dobOrAge: 'dob', dobDay: '20', dobMonth: '12', dobYear: '2020'})
+                    .redirects(1)
                     .expect(200)
                     .expect(function(res) {
                         expect(res.text).to.contain('error-summary')
@@ -41,11 +43,12 @@ describe('Date/Age/Age-range validation tests', function() {
             });
     });
 
-    it('should display error if the age is not a valid number', function() {
+    it('should redirect and display error if the age is not a valid number', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
                     .send({age: '-13'})
+                    .redirects(1)
                     .expect(200)
                     .expect(function(res) {
                         expect(res.text).to.contain('error-summary')
@@ -54,11 +57,12 @@ describe('Date/Age/Age-range validation tests', function() {
     });
 
 
-    it('should display error if the age range is not valid', function() {
+    it('should redirect and display error if the age range is not valid', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
                     .send({dobOrAge: 'age', age: '33-30'})
+                    .redirects(1)
                     .expect(200)
                     .expect(function(res) {
                         expect(res.text).to.contain('error-summary')
@@ -66,11 +70,12 @@ describe('Date/Age/Age-range validation tests', function() {
             });
     });
 
-    it('should display error if the age range is more than 5 years', function() {
+    it('should redirect and display error if the age range is more than 5 years', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/dob')
                     .send({dobOrAge: 'age', age: '33-40'})
+                    .redirects(1)
                     .expect(200)
                     .expect(function(res) {
                         expect(res.text).to.contain('error-summary')

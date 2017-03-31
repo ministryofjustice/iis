@@ -191,7 +191,7 @@ const options = {
 
 router.get('/:view', function(req, res) {
 
-    logger.debug('GET /search/' + req.params.view);
+    logger.info('GET /search/', {view: req.params.view, error: req.session.error});
     
     if (req.headers.referer == undefined) {
         res.redirect('/search');
@@ -209,10 +209,14 @@ router.get('/:view', function(req, res) {
         return;
     }
 
+    let err = req.session.error;
+    req.session.error = null;
+
     res.render('search/' + view, {
         content: content.view[view],
         view: view,
-        body: {}
+        body: {},
+        err: err
     });
 });
 
@@ -248,7 +252,6 @@ router.post('/:view', function(req, res) {
             return;
         }
 
-
         Object.assign(req.session.userInput, input);
 
         proceedToTheNextView(req, res, view);
@@ -256,12 +259,8 @@ router.post('/:view', function(req, res) {
 });
 
 function renderViewWithErrorAndUserInput(req, res, viewName, err) {
-    res.render('search/' + viewName, {
-        content: content.view[viewName],
-        view: viewName,
-        err: err,
-        body: req.body
-    });
+    req.session.error = err;
+    res.redirect(viewName);
 }
 
 function proceedToTheNextView(req, res, currView) {

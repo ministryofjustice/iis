@@ -9,11 +9,12 @@ let app = require("../server.js");
 
 describe('Prison number validation tests', function(){
 
-   it('should display error to the user if prison number is empty', function(){
+   it('should redirect and display error to the user if prison number is empty', function(){
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/identifier')
                     .send({prison_number: ''})
+                    .redirects(1)
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
@@ -21,11 +22,12 @@ describe('Prison number validation tests', function(){
             });
    });
 
-    it('should display error to the user if the format is invalid: AA00AA00', function(){
+    it('should redirect and display error to the user if the format is invalid: AA00AA00', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/identifier')
                     .send({prison_number: 'AA00AA00'})
+                    .redirects(1)
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
@@ -33,11 +35,12 @@ describe('Prison number validation tests', function(){
             });
     });
 
-    it('should display error to the user if the format is invalid: 11AAAAA', function(){
+    it('should redirect and display error to the user if the format is invalid: 11AAAAA', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/identifier')
                     .send({prison_number: '11AAAAA'})
+                    .redirects(1)
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
@@ -45,11 +48,12 @@ describe('Prison number validation tests', function(){
             });
     });
 
-    it('should display error to the user if prison number length is less than 8: AA00000', function(){
+    it('should redirect and display error to the user if prison number length is less than 8: AA00000', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/identifier')
                     .send({prison_number: 'AA00000'})
+                    .redirects(1)
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')

@@ -9,11 +9,12 @@ let app = require("../server.js");
 
 describe('Name(s) validation tests', function(){
 
-   it('should display error if all the names are empty strings', function(){
+   it('should redirect and display error if all the names are empty strings', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/names')
                     .send({forename: '', forename2: '', surname: ''})
+                    .redirects(1)
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')
@@ -21,11 +22,12 @@ describe('Name(s) validation tests', function(){
             });
    });
 
-   it('should display error if the names have a number or special character', function(){
+   it('should redirect and display error if the names have a number or special character', function(){
        return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/names')
                     .send({forename: 'Zed', forename2: 'Forename2', surname: ''})
+                    .redirects(1)
                     .expect(200)
                     .expect(function(res){
                         expect(res.text).to.contain('error-summary')

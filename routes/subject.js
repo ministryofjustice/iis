@@ -68,7 +68,7 @@ function renderPage(res, obj) {
 }
 
 function renderErrorPage(res, err) {
-    logger.error('Error getting subject details', {error: error});
+    logger.error('Error getting subject details', {error: err});
     res.render('subject/error', {
         content: content.view.subject,
         title: content.errMsg.INVALID_ID,

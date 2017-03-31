@@ -84,7 +84,7 @@ router.get('/results', function(req, res) {
 
     search.totalRowsForUserInput(userInput, function(err, rowcount) {
         if (err) {
-            logger.error('Error during search', {error: error});
+            logger.error('Error during search', {error: err});
             return showDbError(res);
         }
 
@@ -102,7 +102,7 @@ router.get('/results', function(req, res) {
         userInput.page = page;
         search.inmate(userInput, function(err, data) {
             if (err) {
-                logger.error('Error during search', {error: error});
+                logger.error('Error during search', {error: err});
                 return showDbError(res);
             }
 

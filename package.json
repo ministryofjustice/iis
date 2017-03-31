@@ -11,7 +11,8 @@
     "postinstall": "gulp",
     "start": "gulp && node .",
     "test": "gulp build test",
-    "snyk-protect": "snyk protect"
+    "snyk-protect": "snyk protect",
+    "lint": "gulp lint"
   },
   "repository": {
     "type": "git",

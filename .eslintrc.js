@@ -3,6 +3,9 @@ module.exports = {
     "parserOptions": {
         "ecmaVersion": 6
     },
+    "env": {
+        "node": true
+    },
     "globals":{
         "jQuery": false,
         "$": true
@@ -12,7 +15,8 @@ module.exports = {
         "max-len": ["error", 120, 4],
         "padded-blocks": "off",
         "no-trailing-spaces": "off",
-        "require-jsdoc": "off"
+        "require-jsdoc": "off",
+        "no-undef": "error"
     }
 }
 ;

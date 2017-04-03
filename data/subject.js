@@ -6,10 +6,36 @@ let utils = require('../data/utils');
 
 
 module.exports = {
-
-    details: function(id, callback) {
+    
+    info: function(prisonNumber, callback) {
         let params = [
-            {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: id}
+            {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
+        ];
+
+        /* eslint-disable */
+        let sql = `SELECT 
+                            PK_PRISON_NUMBER, 
+                            INMATE_SURNAME, 
+                            INMATE_FORENAME_1, 
+                            INMATE_FORENAME_2
+                    FROM 
+                            IIS.LOSS_OF_LIBERTY 
+                    WHERE 
+                            PK_PRISON_NUMBER = @PK_PRISON_NUMBER;`;
+        /* eslint-enable */
+
+        db.getTuple(sql, params, function(err, cols) {
+            if (err || cols === 0) {
+                return callback(new Error('No results'));
+            }
+
+            return callback(null, formatInfoRow(cols));
+        });
+    },
+
+    summary: function(obj, callback) {
+        let params = [
+            {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
         ];
 
         /* eslint-disable */
@@ -83,12 +109,8 @@ module.exports = {
                 return callback(new Error('No results'));
             }
 
-            return callback(null, formatRow(cols));
+            return callback(null, formatSummaryRow(cols));
         });
-    },
-
-    summary: function(obj, callback) {
-      return callback(null);
     },
 
     movements: function(obj, callback) {
@@ -216,6 +238,7 @@ module.exports = {
         let sql = `SELECT 
                             o.IIS_OFFENCE_CODE, 
                             c.CASE_DATE, 
+                            c.CASE_ESTAB_COMP_CODE,
                             (
                              SELECT 
                                     ESTABLISHMENT_NAME 
@@ -223,7 +246,7 @@ module.exports = {
                                     IIS.ESTABLISHMENT 
                              WHERE 
                                     PK_ESTABLISHMENT_CODE = SUBSTRING(c.CASE_ESTAB_COMP_CODE,1,2)
-                            ) CASE_ESTAB_COMP_CODE
+                            ) ESTABLISHMENT
                     FROM 
                             IIS.CASE_OFFENCE o, 
                             IIS.INMATE_CASE c
@@ -290,14 +313,18 @@ module.exports = {
 
 };
 
-function formatRow(dbRow) {
+function formatInfoRow(dbRow) {
     return {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
-        personIdentifier: dbRow.FK_PERSON_IDENTIFIER.value,
         surname: dbRow.INMATE_SURNAME.value,
         forename: dbRow.INMATE_FORENAME_1.value,
-        forename2: dbRow.INMATE_FORENAME_2.value,
-        dob: dbRow.DOB.value,
+        forename2: dbRow.INMATE_FORENAME_2.value
+    };
+}
+
+function formatSummaryRow(dbRow) {
+    return {
+        dob: utils.getFormattedDateFromString(dbRow.DOB.value),
         countryOfBirth: dbRow.BIRTH_COUNTRY.value,
         maritalStatus: dbRow.MARITAL_STATUS.value,
         ethnicity: dbRow.ETHNICITY.value,
@@ -341,7 +368,8 @@ function formatOffenceRows(dbRow) {
     return {
         offenceCode: dbRow.IIS_OFFENCE_CODE.value,
         caseDate: utils.getFormattedDateFromString(dbRow.CASE_DATE.value),
-        establishment: dbRow.CASE_ESTAB_COMP_CODE.value
+        establishment_code: dbRow.CASE_ESTAB_COMP_CODE.value,
+        establishment: dbRow.ESTABLISHMENT.value
     };
 }
 

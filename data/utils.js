@@ -19,7 +19,8 @@ module.exports = {
         return (v.length < lenPrisonNumber) ? (spaces + v) : v;
     },
     
-    getAgeFromDOB: function(dob) {
+    getAgeFromDOB: function(dateInGDSFormat) {
+        let dob = moment(dateInGDSFormat, 'DD/MM/YYYY');
         return moment().diff(dob, 'years', false);
     },
 
@@ -65,8 +66,8 @@ module.exports = {
         return moment();
     },
     
-    getFormattedDateFromString: function(d) {
-        return moment(d, 'YYYYMMDD').format('DD/MM/YYYY');
+    getFormattedDateFromString: function(dateAsIISDateFormat) {
+        return dateAsIISDateFormat == '18991231' ? null : moment(dateAsIISDateFormat, 'YYYYMMDD').format('DD/MM/YYYY');
     },
     
     getPathFromURL: function(v) {

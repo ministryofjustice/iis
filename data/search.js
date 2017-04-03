@@ -93,7 +93,7 @@ module.exports = {
         let fields = `PK_PRISON_NUMBER, 
                         INMATE_SURNAME, 
                         INMATE_FORENAME_1, 
-                        INMATE_FORENAME_2, 
+                        INMATE_FORENAME_2,
                         INMATE_BIRTH_DATE DOB,
                         SUBSTRING(
                             (
@@ -213,7 +213,7 @@ function formatRow(dbRow) {
         surname: dbRow.INMATE_SURNAME.value,
         forename: dbRow.INMATE_FORENAME_1.value,
         forename2: dbRow.INMATE_FORENAME_2.value,
-        dob: moment(dbRow.DOB.value, 'YYYYMMDD').format('DD/MM/YYYY'),
+        dob: utils.getFormattedDateFromString(dbRow.DOB.value),
         alias: dbRow.ALIAS.value,
         sentencingCourt: sentencingCourt,
         sentencingDate: sentencingDate

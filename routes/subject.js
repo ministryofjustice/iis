@@ -22,18 +22,11 @@ router.get('/:id/:page', function(req, res) {
     
     audit.record('VIEW', req.user.email, {page: page, prisonNumber: prisonNumber});
 
-    subject.details(prisonNumber, function(err, data) {
+    subject.info(prisonNumber, function(err, data) {
         if (err) {
             renderErrorPage(res, err);
             return;
         }
-
-        if (data.dob) {
-            const dob = moment(data.dob);
-            data.age = utils.getAgeFromDOB(dob);
-            data.dob = dob.format('DD/MM/YYYY');
-        }
-
 
         let summary = data;
         let ids = {
@@ -46,8 +39,15 @@ router.get('/:id/:page', function(req, res) {
                 renderErrorPage(res, err);
                 return;
             }
+            
+            if (details.dob) {
+                details.age = utils.getAgeFromDOB(details.dob);
+            }
 
-            let data = {subject: summary, details: details, noResultsText: content.view.subject[page]};
+            let data = {subject: summary, 
+                        details: details, 
+                        noResultsText: 
+                        content.view.subject[page]};
             renderPage(res, {page: page, data: data, lastPageNum: req.session.lastPage || 1});
         });
     });
@@ -55,7 +55,7 @@ router.get('/:id/:page', function(req, res) {
 
 
 router.get('/:id', function(req, res) {
-   res.redirect('/subject/' + req.params.id + '/movements'); 
+   res.redirect('/subject/' + req.params.id + '/summary'); 
 });
 
 module.exports = router;
@@ -82,6 +82,7 @@ function renderErrorPage(res, err) {
 
 function getNavigation(page) {
     let nav = {
+      summary: {title: 'Summary'},  
       movements: {title: 'Movements'},  
       hdcinfo: {title: 'HDC history'},  
       offences: {title: 'Offences'}

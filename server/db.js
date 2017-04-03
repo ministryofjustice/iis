@@ -4,7 +4,6 @@ let util = require('util');
 let logger = require('winston');
 
 let fakeDBFactory;
-let connection;
 
 
 function addParams(params, request) {
@@ -37,7 +36,7 @@ module.exports = {
         let config = require('./config');
         let Connection = require('tedious').Connection;
 
-        connection = new Connection({
+        const connection = new Connection({
             userName: config.db.username,
             password: config.db.password,
             server: config.db.server,
@@ -53,9 +52,6 @@ module.exports = {
     },
 
     getTuple: function(sql, params, callback) {
-
-//        console.log('SQL: ' + sql);
-//        console.log(params);
 
         let connected = false;
         let connection = this.connect();
@@ -99,7 +95,7 @@ module.exports = {
             }
 
             if (connected) {
-                that.disconnect();
+                that.disconnect(connection);
             }
 
             return callback(err, result);
@@ -111,9 +107,6 @@ module.exports = {
     },
 
     getCollection: function(sql, params, callback) {
-
-//        console.log('SQL: ' + sql);
-//        console.log(params);
 
         let connected = false;
         let connection = this.connect();
@@ -155,63 +148,15 @@ module.exports = {
             }
 
             if (connected) {
-                that.disconnect();
+                that.disconnect(connection);
             }
 
             return callback(err, result);
         }
+
     },
 
-    saveRowToDb: function(obj) {
-        /*
-         let connected = false;
-         connection = this.connect();
-
-         connection.on('connect', function(err) {
-         if (err) {
-         logger.error('Error while inserting a record: ' + err);
-         return finish(err);
-         }
-
-         connected = true;
-
-         let Request = require('tedious').Request;
-         let request = new Request(sql, function(err, rowCount) {
-         if (err) {
-         return finish(err);
-         }
-         });
-
-         if (params) {
-         addParams(params, request);
-         }
-
-         request.on('row', function(columns) {
-         return finish(null, columns);
-         });
-
-         logger.debug('Executing tuple request: ' + util.inspect(request));
-         connection.execSql(request);
-         });
-
-         let that = this;
-
-         function finish(err, result) {
-
-         if (err) {
-         logger.error('Error during tuple query: ' + err);
-         }
-
-         if (connected) {
-         that.disconnect();
-         }
-
-         return callback(err, result);
-         }
-         */
-    },
-
-    disconnect: function() {
+    disconnect: function(connection) {
 
         if (fakeDBFactory) {
             return;

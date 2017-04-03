@@ -1,7 +1,7 @@
 'use strict';
 
 let util = require('util');
-let logger = require('winston');
+let logger = require('../log.js');
 
 let fakeDBFactory;
 

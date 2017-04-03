@@ -2,7 +2,9 @@
 
 let winston = require('winston');
 
-winston.setLevels({
+const logger = new (winston.Logger);
+
+logger.setLevels({
     audit: 0,
     error: 1,
     warn: 2,
@@ -17,9 +19,9 @@ winston.addColors({
     debug: 'grey'
 });
 
-winston.clear();
+logger.clear();
 if (process.env.NODE_ENV === 'test') {
-    winston.add(winston.transports.File, {
+    logger.add(winston.transports.File, {
         name: 'log',
         level: 'debug',
         filename: 'tests.log',
@@ -28,7 +30,7 @@ if (process.env.NODE_ENV === 'test') {
         prettyPrint: true
     });
 } else if (process.env.NODE_ENV === 'production') {
-    winston.add(winston.transports.Console, {
+    logger.add(winston.transports.Console, {
         name: 'log',
         level: 'info',
         prettyPrint: false,
@@ -40,7 +42,7 @@ if (process.env.NODE_ENV === 'test') {
         handleExceptions: true
     });
 } else {
-    winston.add(winston.transports.Console, {
+    logger.add(winston.transports.Console, {
         name: 'log',
         level: 'info',
         // prettyPrint: true,
@@ -56,14 +58,14 @@ if (process.env.NODE_ENV === 'test') {
 const appInsights = require('./azure-appinsights');
 if (appInsights) {
     const aiLogger = require('winston-azure-application-insights');
-    winston.info('Activating application insights logger');
-    winston.add(aiLogger.AzureApplicationInsightsLogger, {
+    logger.info('Activating application insights logger');
+    logger.add(aiLogger.AzureApplicationInsightsLogger, {
         insights: appInsights,
         level: 'info',
         silent: false,
         treatErrorsAsExceptions: true
     });
-    aiLogger.rewriters.push(function(level, msg, meta) {
+    logger.rewriters.push(function(level, msg, meta) {
         return flattenMeta(meta);
     });
 }
@@ -93,4 +95,4 @@ function flattenMeta(meta) {
     return flat;
 }
 
-module.exports = winston;
+module.exports = logger;

@@ -4,7 +4,7 @@ let express = require('express');
 let content = require('../data/content');
 let audit = require('../data/audit');
 
-let logger = require('winston');
+let logger = require('../log.js');
 
 // eslint-disable-next-line
 let router = express.Router();

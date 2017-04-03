@@ -2,7 +2,7 @@
 
 let passport = require('passport');
 let express = require('express');
-let logger = require('winston');
+let logger = require('../log.js');
 let content = require('../data/content.js');
 
 

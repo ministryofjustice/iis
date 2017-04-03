@@ -1,6 +1,6 @@
 'use strict';
 
-let logger = require('winston');
+let logger = require('../log.js');
 let express = require('express');
 let content = require('../data/content.js');
 let search = require('../data/search.js');
@@ -24,7 +24,7 @@ router.use(function(req, res, next) {
 router.get('/', function(req, res) {
 
     logger.debug('GET /search');
-    
+
     return res.render('search', {
         content: content.view.search
     });
@@ -204,16 +204,16 @@ router.get('/:view', function(req, res) {
 
     const view = req.params.view;
     const viewInfo = options[view];
-    
+
     if (!viewInfo) {
         logger.warn('No such search option', {view: req.params.view});
         res.redirect('/search');
         return;
     }
-    
+
 //    let indexOfCurrView = req.session.opt.indexOf(view);
 //    let prevView = req.session.opt[indexOfCurrView-1];
-//    
+//
 //    if(prevView) {
 //        prevView = prevView;
 //    } else {

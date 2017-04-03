@@ -19,7 +19,8 @@ block content
                    +inmate(item.forename.toLowerCase()
                             + (item.forename2 ? item.forename2.toLowerCase() : '')
                             + item.surname, item.prisonNumber)
-                        span.bold-medium #{item.dob ? item.dob : ''}
+                        if item.dob
+                            span.bold-medium &middot; #{item.dob}
                         //-
                             span.form-hint.capitalise-text  #{item.alias ? item.alias.trim().toLowerCase().substr(0, item.alias.trim().length-1) : '' }
                             span.capitalise-text #{(item.sentencingCourt) ? 'Sentenced by ' + item.sentencingCourt.toLowerCase() + ', ' + item.sentencingDate : ''}

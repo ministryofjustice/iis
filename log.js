@@ -2,7 +2,9 @@
 
 let winston = require('winston');
 
-winston.setLevels({
+const logger = new (winston.Logger);
+
+logger.setLevels({
     audit: 0,
     error: 1,
     warn: 2,
@@ -17,9 +19,9 @@ winston.addColors({
     debug: 'grey'
 });
 
-winston.clear();
+logger.clear();
 if (process.env.NODE_ENV === 'test') {
-    winston.add(winston.transports.File, {
+    logger.add(winston.transports.File, {
         name: 'log',
         level: 'debug',
         filename: 'tests.log',
@@ -28,7 +30,7 @@ if (process.env.NODE_ENV === 'test') {
         prettyPrint: true
     });
 } else if (process.env.NODE_ENV === 'production') {
-    winston.add(winston.transports.Console, {
+    logger.add(winston.transports.Console, {
         name: 'log',
         level: 'info',
         prettyPrint: false,
@@ -40,7 +42,7 @@ if (process.env.NODE_ENV === 'test') {
         handleExceptions: true
     });
 } else {
-    winston.add(winston.transports.Console, {
+    logger.add(winston.transports.Console, {
         name: 'log',
         level: 'info',
         // prettyPrint: true,
@@ -56,13 +58,41 @@ if (process.env.NODE_ENV === 'test') {
 const appInsights = require('./azure-appinsights');
 if (appInsights) {
     const aiLogger = require('winston-azure-application-insights');
-    winston.info('Activating application insights logger');
-    winston.add(aiLogger.AzureApplicationInsightsLogger, {
+    logger.info('Activating application insights logger');
+    logger.add(aiLogger.AzureApplicationInsightsLogger, {
         insights: appInsights,
         level: 'info',
         silent: false,
         treatErrorsAsExceptions: true
     });
+    logger.rewriters.push(function(level, msg, meta) {
+        return flattenMeta(meta);
+    });
 }
 
-module.exports = winston;
+function flattenObject(source, target, prefix) {
+    Object.keys(source).forEach(function(key) {
+        let sourceVal = source[key];
+        let fullKey = prefix + '_' + key;
+        if (sourceVal && typeof sourceVal === "object") {
+            flattenObject(sourceVal, target, fullKey)
+        } else {
+            target[fullKey] = sourceVal;
+        }
+    });
+}
+
+function flattenMeta(meta) {
+    let flat = {};
+    Object.keys(meta).forEach(function(key) {
+        let val = meta[key];
+        if (val && typeof val === "object") {
+            flattenObject(val, flat, key);
+        } else {
+            flat[key] = val;
+        }
+    });
+    return flat;
+}
+
+module.exports = logger;

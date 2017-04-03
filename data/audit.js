@@ -1,6 +1,6 @@
 'use strict';
 
-let logger = require('winston');
+let logger = require('../log.js');
 
 const keys = ['LOG_IN', 'DISCLAIMER_ACCEPTED', 'SEARCH', 'VIEW'];
 

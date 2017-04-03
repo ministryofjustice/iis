@@ -7,7 +7,7 @@ let subject = require('../data/subject.js');
 let utils = require('../data/utils.js');
 let audit = require('../data/audit');
 
-let logger = require('winston');
+let logger = require('../log.js');
 
 // eslint-disable-next-line
 let router = express.Router();
@@ -19,7 +19,7 @@ router.get('/', function(req, res) {
 router.get('/:id/:page', function(req, res) {
     let page = req.params.page;
     let prisonNumber = utils.padPrisonNumber(req.params.id);
-    
+
     audit.record('VIEW', req.user.email, {page: page, prisonNumber: prisonNumber});
 
     subject.info(prisonNumber, function(err, data) {

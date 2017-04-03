@@ -71,7 +71,7 @@ function requestLogger() {
             return meta;
         },
         colorize: true,
-        requestWhitelist: ['url', 'method', 'originalUrl', 'query', 'body']
+        requestWhitelist: ['url', 'method', 'query', 'body']
     });
 }
 

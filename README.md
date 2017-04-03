@@ -62,6 +62,7 @@ The following environment variables are used and values should be supplied for c
 * AUTHORIZE_PATH - SSO authorization endpoint, usually /oauth/authorize
 * TOKEN_PATH - SSO token endpoint, usually /oauth/token
 * USER_DETAILS_PATH - SSO user details endpoint, usually /api/user_details
+* APPINSIGHTS_INSTRUMENTATIONKEY - Key for Azure application inisghts logger
 
 The following environment variables are used and a value MUST be supplied in production.
 

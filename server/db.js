@@ -58,7 +58,7 @@ module.exports = {
 //        console.log(params);
 
         let connected = false;
-        connection = this.connect();
+        let connection = this.connect();
 
         connection.on('debug', function(err) {
             logger.debug('debug:', err);
@@ -116,7 +116,7 @@ module.exports = {
 //        console.log(params);
 
         let connected = false;
-        connection = this.connect();
+        let connection = this.connect();
 
         connection.on('connect', function(err) {
             if (err) {

@@ -2,16 +2,51 @@ extends ../subject
 
 block subject-details
     div.column-two-thirds
-        div.grid-row
-            div.column-two-thirds
-                ul
-                    li date convicted
-                    li date sentenced
-                    li sentencing court
-                    li length of sentence
-                    li main offence code and description
-                    li last movement
-                    li date of last movement 
-                    li last movement establishment, movement code and description
+        div.grid-row.list-row
+            div.column-full
+                div.left-border
+                    span.quiet.block Gender
+                    span.capitalise-text.bold-small #{data.details.sex ? data.details.sex : 'Unknown'}
+                    
+                    
+        div.grid-row.list-row      
+            div.column-full
+                div.left-border
+                    span.quiet.block Age
+                    span.bold-small.capitalise-text #{data.details.age ? data.details.age : 'Unknown'}
+                    
+                    
+        div.grid-row.list-row      
+            div.column-full
+                div.left-border
+                    span.quiet.block Ethnicity
+                    span.bold-small.capitalise-text #{data.details.ethnicity ? data.details.ethnicity.toLowerCase() : 'Unknown'}
+                    
 
+        div.grid-row.list-row      
+            div.column-full
+                div.left-border
+                    span.quiet.block Nationality
+                    span.bold-small.capitalise-text #{data.details.nationality ? data.details.nationality.toLowerCase() : 'Unknown'}
+
+
+        div.grid-row.list-row      
+            div.column-full
+                div.left-border
+                    span.quiet.block Marital status
+                    span.bold-small.capitalise-text #{data.details.maritalStatus ? data.details.maritalStatus.toLowerCase() : 'Unknown'}
+
+
+        div.grid-row.list-row      
+            div.column-full
+                div.left-border
+                    span.quiet.block Date of birth
+                    span.bold-small.capitalise-text #{data.details.dob ? data.details.dob : 'Unknown'}
+
+
+        div.grid-row.list-row      
+            div.column-full
+                div.left-border
+                    span.quiet.block Place of birth
+                    span.bold-small.capitalise-text #{data.details.countryOfBirth ? data.details.countryOfBirth.toLowerCase() : 'Unknown'}
                     

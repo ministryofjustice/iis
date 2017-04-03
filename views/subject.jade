@@ -31,15 +31,16 @@ block content
                     | #{data.subject.surname}
                     span.heading-secondary#subjectId PRISON NO. #{data.subject.prisonNumber}
 
-                p.font-medium
-                    | #{data.subject.maritalStatus}
-                    | #{data.subject.ethnicity}
-                    | #{data.subject.sex}
-                    | #{data.subject.nationality ? 'from ' + data.subject.nationality : ''}
-                    | #{(data.subject.maritalStatus) ? '. ' : '' }
-                    | #{(data.subject.countryOfBirth) || (data.subject.dob) ? 'Born' : ''}
-                    | #{data.subject.countryOfBirth ? ' in ' + data.subject.countryOfBirth : ''}
-                    | #{data.subject.dob ? ' on ' + data.subject.dob + ' ('+data.subject.age+' years)' : ''}
+                //-
+                    p.font-medium
+                        | #{data.subject.maritalStatus}
+                        | #{data.subject.ethnicity}
+                        | #{data.subject.sex}
+                        | #{data.subject.nationality ? 'from ' + data.subject.nationality : ''}
+                        | #{(data.subject.maritalStatus) ? '. ' : '' }
+                        | #{(data.subject.countryOfBirth) || (data.subject.dob) ? 'Born' : ''}
+                        | #{data.subject.countryOfBirth ? ' in ' + data.subject.countryOfBirth : ''}
+                        | #{data.subject.dob ? ' on ' + data.subject.dob + ' ('+data.subject.age+' years)' : ''}
 
                 div.form-group
                     button.button(onclick="window.print();") Print

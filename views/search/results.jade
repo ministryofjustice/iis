@@ -1,7 +1,8 @@
 extends ../layout
 
 block content
-    include ../includes/back-button.jade
+    div.back-link-container
+        a.link-back(href="/search") Back to search
 
     div.grid-row
         div.column-two-thirds
@@ -10,7 +11,7 @@ block content
             mixin inmate(name, href)
                 div
                     div.inmate-details
-                        a.bold-medium(href="/subject/#{href}/movements").capitalise-text #{name}
+                        a.bold-medium(href="/subject/#{href}/summary").capitalise-text #{name}
                         block
             
             if data && data != 0
@@ -18,7 +19,7 @@ block content
                    +inmate(item.forename.toLowerCase()
                             + (item.forename2 ? item.forename2.toLowerCase() : '')
                             + item.surname, item.prisonNumber)
-                        span.bold-medium &middot; #{item.dob}
+                        span.bold-medium #{item.dob ? item.dob : ''}
                         //-
                             span.form-hint.capitalise-text  #{item.alias ? item.alias.trim().toLowerCase().substr(0, item.alias.trim().length-1) : '' }
                             span.capitalise-text #{(item.sentencingCourt) ? 'Sentenced by ' + item.sentencingCourt.toLowerCase() + ', ' + item.sentencingDate : ''}

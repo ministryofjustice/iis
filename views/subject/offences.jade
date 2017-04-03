@@ -2,17 +2,18 @@ extends ../subject
 
 block subject-details
     div.column-two-thirds
-        div.grid-row
-            each val,index in data.details
-                div.grid-row.list-row
-                        div.column-full
-                            div.left-border
-                                span.quiet.block #{val.caseDate}
-                                span.bold-small Case code #{val.offenceCode} 
+        each val,index in data.details
+            div.grid-row.list-row
+                    div.column-full
+                        div.left-border
+                            span.quiet.block #{val.caseDate}
+                            span.bold-small Offence code #{val.offenceCode} 
 
-                            if(val.establishment)
-                                div.left-border
-                                    span.capitalise-text #{val.establishment.trim().toLowerCase()} 
+                        if(val.establishment)
+                            div.left-border
+                                span (#{val.establishment_code})
+                                | 
+                                span.capitalise-text #{val.establishment.trim().toLowerCase()} 
             
         if (!data.details)
             span= data.noResultsText

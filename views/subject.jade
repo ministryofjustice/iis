@@ -3,7 +3,7 @@ extends layout
 block content
     div.back-link-container
         a.link-back(href="/search/results?page=#{lastPageNum}") Back to results
-        
+
     if err
         div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
             h1(class="heading-medium error-summary-heading", id="error-message")= err.title
@@ -25,7 +25,7 @@ block content
     if !err
         div.grid-row
             div.column-two-thirds
-                h1.heading-xlarge.capitalise-text
+                h1.heading-xlarge.capitalise-text#subjectName
                     | #{data.subject.forename.toLowerCase()}
                     | #{data.subject.forename2 ? data.subject.forename2.toLowerCase() : ''}
                     | #{data.subject.surname}

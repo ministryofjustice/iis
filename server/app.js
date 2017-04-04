@@ -117,6 +117,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 // Resource Delivery Configuration
 app.use(compression());
 
+// Cachebusting version string
 if (production) {
     app.locals.version = version;
 } else {
@@ -125,7 +126,6 @@ if (production) {
         return next();
     });
 }
-
 
 //  Static Resources Configuration
 let cacheControl = {maxAge: config.staticResourceCacheDuration * 1000};

@@ -33,11 +33,11 @@ if (process.env.NODE_ENV === 'test') {
     logger.add(winston.transports.Console, {
         name: 'log',
         level: 'info',
-        prettyPrint: false,
+        json: true,
         colorize: false,
+        prettyPrint: false,
         silent: false,
         timestamp: true,
-        json: true,
         stringify: true,
         handleExceptions: true
     });
@@ -45,12 +45,12 @@ if (process.env.NODE_ENV === 'test') {
     logger.add(winston.transports.Console, {
         name: 'log',
         level: 'info',
-        // prettyPrint: true,
+        json: false,
         colorize: true,
+        // prettyPrint: true,
         silent: false,
         timestamp: true,
         handleExceptions: true,
-        json: false,
         humanReadableUnhandledException: true
     });
 }

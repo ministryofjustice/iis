@@ -1,7 +1,6 @@
 'use strict';
 
 let express = require('express');
-let moment = require('moment');
 let content = require('../data/content.js');
 let subject = require('../data/subject.js');
 let utils = require('../data/utils.js');
@@ -39,14 +38,14 @@ router.get('/:id/:page', function(req, res) {
                 renderErrorPage(res, err);
                 return;
             }
-            
+
             if (details.dob) {
                 details.age = utils.getAgeFromDOB(details.dob);
             }
 
-            let data = {subject: summary, 
-                        details: details, 
-                        noResultsText: 
+            let data = {subject: summary,
+                        details: details,
+                        noResultsText:
                         content.view.subject[page]};
             renderPage(res, {page: page, data: data, lastPageNum: req.session.lastPage || 1});
         });
@@ -55,7 +54,7 @@ router.get('/:id/:page', function(req, res) {
 
 
 router.get('/:id', function(req, res) {
-   res.redirect('/subject/' + req.params.id + '/summary'); 
+   res.redirect('/subject/' + req.params.id + '/summary');
 });
 
 module.exports = router;
@@ -82,9 +81,9 @@ function renderErrorPage(res, err) {
 
 function getNavigation(page) {
     let nav = {
-      summary: {title: 'Summary'},  
-      movements: {title: 'Movements'},  
-      hdcinfo: {title: 'HDC history'},  
+      summary: {title: 'Summary'},
+      movements: {title: 'Movements'},
+      hdcinfo: {title: 'HDC history'},
       offences: {title: 'Offences'}
     };
 

@@ -6,7 +6,7 @@ let utils = require('../data/utils');
 
 
 module.exports = {
-    
+
     info: function(prisonNumber, callback) {
         let params = [
             {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
@@ -217,7 +217,7 @@ module.exports = {
                             IIS.INMATE_ADDRESS
                     WHERE 
                             FK_PRISON_NUMBER = @FK_PRISON_NUMBER;`;
-        
+
         /* eslint-enable */
 
         db.getCollection(sql, params, function(err, rows) {
@@ -264,7 +264,7 @@ module.exports = {
             return callback(null, rows.length > 0 ? rows.map(formatOffenceRows) : 0);
         });
     },
-    
+
     hdcinfo: function(obj, callback) {
         let params = [
             {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
@@ -301,12 +301,12 @@ module.exports = {
                     ORDER BY 
                             STAGE_DATE DESC;`;
         /* eslint-enable */
-        
+
         db.getCollection(sql, params, function(err, rows) {
             if (err) {
                 return callback(new Error('No results'));
             }
-  
+
             return callback(null, rows.length > 0 ? rows.map(formatHdcInfoRows) : 0);
         });
     }
@@ -359,7 +359,7 @@ function formatAddressRows(dbRow) {
         addressLine2: dbRow.INMATE_ADDRESS_2.value,
         addressLine3: dbRow.INMATE_ADDRESS_3.value,
         addressLine4: dbRow.INMATE_ADDRESS_4.value,
-        addressLine4: dbRow.INMATE_ADDRESS_5.value,
+        addressLine5: dbRow.INMATE_ADDRESS_5.value,
         postcode: dbRow.INMATE_POSTCODE.value
     };
 }

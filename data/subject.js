@@ -1,13 +1,17 @@
 'use strict';
 
 let db = require('../server/db');
-let TYPES = require('tedious').TYPES;
 let utils = require('../data/utils');
+let logger = require('../log.js');
 
+let TYPES = require('tedious').TYPES;
 
 module.exports = {
 
     info: function(prisonNumber, callback) {
+
+        logger.debug('Subject info search');
+
         let params = [
             {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
         ];
@@ -24,9 +28,18 @@ module.exports = {
                             PK_PRISON_NUMBER = @PK_PRISON_NUMBER;`;
         /* eslint-enable */
 
+        logger.debug('Subject info search', sql);
+
+        // why 'err' and not simply 'error'?
         db.getTuple(sql, params, function(err, cols) {
-            if (err || cols === 0) {
-                return callback(new Error('No results'));
+            if (err) {
+                logger.error('Error searching database', err);
+                return callback(new Error('No results')); // Why is the message no results when there was an error?
+
+            } else if (cols === 0) {
+                logger.debug('No results');
+                return callback(new Error('No results')); // why is it an error if no results?
+
             }
 
             return callback(null, formatInfoRow(cols));
@@ -34,6 +47,9 @@ module.exports = {
     },
 
     summary: function(obj, callback) {
+
+        logger.debug('Subject summary search');
+
         let params = [
             {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
         ];
@@ -104,6 +120,7 @@ module.exports = {
                             PK_PRISON_NUMBER = @PK_PRISON_NUMBER;`;
         /* eslint-enable */
 
+        // Whay are we replioating this structure multiple times?
         db.getTuple(sql, params, function(err, cols) {
             if (err || cols === 0) {
                 return callback(new Error('No results'));
@@ -314,12 +331,14 @@ module.exports = {
 };
 
 function formatInfoRow(dbRow) {
-    return {
+    let info = {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
         surname: dbRow.INMATE_SURNAME.value,
         forename: dbRow.INMATE_FORENAME_1.value,
         forename2: dbRow.INMATE_FORENAME_2.value
     };
+    logger.debug('Subject info result', info);
+    return info;
 }
 
 function formatSummaryRow(dbRow) {

@@ -3,14 +3,15 @@ extends wrapper-view
 block search-page
 
 
-    mixin radioInput(caption, _target, _for, _val, _checked)
-        label.block-label.selection-button-radio.bold-small(class=_checked ? "selected" : "", data-target=_target, for=_for )
-            input(type="radio", name="dobOrAge", id=_for, value=_val checked=_checked)
+    mixin radioInput(caption, _for, _val, _checked)
+        input(type="radio", name="dobOrAge", id=_for, value=_val checked=_checked)
+        label(class=_checked ? "selected" : "", for=_for )
             | #{caption}
 
     div.form-group
 
-            +radioInput('Date of birth', 'dob_container','optDob', 'dob', !body.dobOrAge || body.dobOrAge == 'dob')
+        div.multiple-choice(data-target="dob_container")
+            +radioInput('Date of birth', 'optDob', 'dob', !body.dobOrAge || body.dobOrAge == 'dob')
 
         div.panel.panel-border-narrow#dob_container
             fieldset
@@ -32,7 +33,8 @@ block search-page
 
     div.form-group
 
-         +radioInput('Age', 'age_container','optAge', 'age', body.dobOrAge == 'age')
+        div.multiple-choice(data-target='age_container')
+            +radioInput('Age', 'optAge', 'age', body.dobOrAge == 'age')
 
 
          div.panel.panel-border-narrow.js-hidden#age_container

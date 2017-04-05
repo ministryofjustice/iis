@@ -83,6 +83,9 @@ describe('Auditing', function() {
         const fakeSubject = {prisonNumber: 'AA123456'};
         common.sinon.stub(subject, "info").yields(null, fakeSubject);
 
+        const fakeSummary = {};
+        common.sinon.stub(subject, "summary").yields(null, fakeSummary);
+
         let browser;
         return common.logInAs()
             .then(function(_browser) {

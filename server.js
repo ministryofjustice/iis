@@ -7,7 +7,10 @@ const app = require('./server/app');
 const healthcheck = require('./server/healthcheck');
 
 if (config.healthcheckInterval) {
-    setInterval(() => {
+    reportHealthcheck();
+    setInterval(reportHealthcheck, config.healthcheckInterval * 60 * 1000);
+
+    function reportHealthcheck() {
         healthcheck((err, results) => {
             if (err) {
                 logger.error('healthcheck failed', err);
@@ -15,7 +18,7 @@ if (config.healthcheckInterval) {
                 logger.info('healthcheck', results);
             }
         });
-    }, config.healthcheckInterval * 60 * 1000);
+    }
 }
 
 app.listen(app.get('port'), function() {

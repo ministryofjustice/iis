@@ -34,6 +34,8 @@ module.exports = function healthcheck(callback) {
 
     function finalize() {
         if (pending) return;
+
+        results.uptime = process.uptime();
         callback(null, results);
     }
 };

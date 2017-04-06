@@ -7,7 +7,7 @@ function get(name, fallback, options = {}) {
     if (process.env[name]) {
         return process.env[name];
     }
-    if (fallback && (!production || !options.requireInProduction)) {
+    if (fallback !== undefined && (!production || !options.requireInProduction)) {
         return fallback;
     }
     throw new Error('Missing env var ' + name);
@@ -26,6 +26,7 @@ module.exports = {
 
     https: production,
     staticResourceCacheDuration: 365 * oneDay,
+    healthcheckInterval: Number(get('HEALTHCHECK_INTERVAL', 0)),
 
     sessionSecret: get('SESSION_SECRET', 'iis-insecure-default-session', {requireInProduction: true}),
 

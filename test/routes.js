@@ -4,7 +4,7 @@ let request = require('supertest');
 let expect = require('chai').expect;
 
 let common = require('./common');
-let app = require("../server.js");
+let app = require("../server/app");
 
 describe('Test redirections when session set and not set', function() {
 

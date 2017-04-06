@@ -26,12 +26,16 @@ let subject = require('../routes/subject');
 
 let content = require('../data/content.js');
 let config = require('../server/config');
+const healthcheck = require('../server/healthcheck');
 
 const version = moment.now().toString();
 const production = process.env.NODE_ENV === 'production';
 const testMode = process.env.NODE_ENV === 'test';
 
+//  Express Configuration
 const app = express();
+app.set('json spaces', 2);
+
 
 // Configure Express for running behind proxies
 // https://expressjs.com/en/guide/behind-proxies.html
@@ -147,6 +151,16 @@ app.use(expressWinston.logger({
 }));
 
 // Express Routing Configuration
+app.get('/health', (req, res, next) => {
+    healthcheck((err, result) => {
+        if (err) return next(err);
+        if (!result.status) {
+            res.status(503);
+        }
+        res.json(result);
+    });
+});
+
 app.use('/', index);
 app.use('/disclaimer/', disclaimer);
 if (!testMode) {

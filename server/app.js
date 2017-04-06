@@ -220,6 +220,7 @@ function addTemplateVariables(req, res, next) {
 
 function dummyUserProfile(req, res, next) {
     req.user = {
+        'id': 1,
         'email': 'test@test.com',
         'firstName': 'Test',
         'lastName': 'Tester',

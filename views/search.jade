@@ -26,21 +26,20 @@ block content
 
                         input(type="hidden" name="_csrf" value="#{csrfToken}")
 
-                        label(class="block-label selection-button-checkbox",for="identifier")
+                        div.multiple-choice
                             input#identifier(name="opt", type="checkbox", value="identifier")
-                            | Unique identifier
+                            label(for="identifier")
+                                | Unique identifier
 
-
-                        label(class="block-label selection-button-checkbox",for="names")
+                        div.multiple-choice
                             input#names(name="opt", type="checkbox", value="names")
-                            | Name(s)
+                            label(for="names")
+                                | Name(s)
 
-
-                        label(class="block-label selection-button-checkbox",for="dob")
+                        div.multiple-choice
                             input#dob(name="opt", type="checkbox", value="dob")
-                            | Date of birth or age
-
-
+                            label(for="dob")
+                                | Date of birth or age
 
 
                 div.form-group

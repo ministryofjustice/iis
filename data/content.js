@@ -47,11 +47,12 @@ module.exports = {
                   title_no_results: 'Your search did not return any results'},
 
         subject: {title: 'Subject details',
-                  aliases: 'This subject has no aliases',
-                  movements: 'This subject has no movements',
-                  hdcinfo: 'This subject has no HDC history',
-                  offences: 'This subject has no offences',
-                  addresses: 'This subject has no addresses'}
+                  aliases: 'Subject has no aliases',
+                  movements: 'Subject has no movements',
+                  hdcinfo: 'Subject has no HDC history',
+                  hdcrecall: 'Subject has no HDC recall history',
+                  offences: 'Subject has no offences',
+                  addresses: 'Subject has no addresses'}
     }
 
 };

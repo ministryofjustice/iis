@@ -44,6 +44,8 @@ router.get('/:id/:page', function(req, res) {
             if (details.dob) {
                 details.age = utils.getAgeFromDOB(details.dob);
             }
+            
+            console.log(details)
 
             let data = {
                 subject: summary,
@@ -84,10 +86,11 @@ function renderErrorPage(res, err) {
 
 function getNavigation(page) {
     let nav = {
-        summary: {title: 'Summary'},
-        movements: {title: 'Movements'},
-        hdcinfo: {title: 'HDC history'},
-        offences: {title: 'Offences'}
+      summary: {title: 'Summary'},  
+      movements: {title: 'Movements'},  
+      hdcinfo: {title: 'HDC history'},  
+      hdcrecall: {title: 'HDC recall history'},  
+      offences: {title: 'Offences'}
     };
 
     nav[page].active = true;

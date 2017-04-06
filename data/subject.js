@@ -326,6 +326,33 @@ module.exports = {
 
             return callback(null, rows.length > 0 ? rows.map(formatHdcInfoRows) : 0);
         });
+    },
+    
+    hdcrecall: function(obj, callback) {
+        let params = [
+            {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+        ];
+
+        /* eslint-disable */
+        let sql = `SELECT 
+                            RECALL_DATE_CREATED,
+                            RECALL_OUTCOME,
+                            RECALL_OUTCOME_DATE
+                    FROM 
+                            IIS.HDC_RECALL
+                    WHERE 
+                            FK_PRISON_NUMBER = @FK_PRISON_NUMBER
+                    ORDER BY 
+                            HDC_RECALL_NUMBER ASC;`;
+        /* eslint-enable */
+        
+        db.getCollection(sql, params, function(err, rows) {
+            if (err) {
+                return callback(new Error('No results'));
+            }
+  
+            return callback(null, rows.length > 0 ? rows.map(formatHdcRecallRows) : 0);
+        });
     }
 
 };
@@ -399,3 +426,12 @@ function formatHdcInfoRows(dbRow) {
         status: dbRow.STATUS.value
     };
 }
+
+function formatHdcRecallRows(dbRow) {
+    return {
+        date: utils.getFormattedDateFromString(dbRow.RECALL_DATE_CREATED.value),
+        outcome: dbRow.RECALL_OUTCOME.value,
+        outcomeDate: utils.getFormattedDateFromString(dbRow.RECALL_OUTCOME_DATE.value)
+    };
+}
+

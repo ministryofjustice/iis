@@ -6,8 +6,9 @@ block subject-details
             div.grid-row.list-row
                 div.column-full
                     div.left-border
-                        span.quiet.block #{val.stage ? val.stage.trim() : 'Stage unknown'} 
-                        span #{val.status ? val.status.trim() : 'Status unknown'}, #{val.date ? val.date.trim() : 'date unknown'}
+                        span.quiet.block Created #{val.date.trim()} 
+                        span Outcome #{val.outcome}, #{val.outcomeDate ? val.outcomeDate : 'date of outcome unknown'}
+
             
         if (!data.details)
             span= data.noResultsText

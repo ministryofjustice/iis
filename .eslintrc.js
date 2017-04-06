@@ -16,7 +16,8 @@ module.exports = {
         "padded-blocks": "off",
         "no-trailing-spaces": "off",
         "require-jsdoc": "off",
-        "no-undef": "error"
+        "no-undef": "error",
+        "curly": "error"
     }
 }
 ;

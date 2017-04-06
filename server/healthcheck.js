@@ -3,7 +3,9 @@ const db = require('./db');
 const checks = {
     db: function(callback) {
         db.getTuple('SELECT 1 AS [ok]', null, function(err, row) {
-            if (err) return callback(err);
+            if (err) {
+                return callback(err);
+            }
             if (row.ok.value !== 1) {
                 return callback(new Error('DB query error'));
             }
@@ -33,7 +35,9 @@ module.exports = function healthcheck(callback) {
     });
 
     function finalize() {
-        if (pending) return;
+        if (pending) {
+            return;
+        }
 
         results.uptime = process.uptime();
         callback(null, results);

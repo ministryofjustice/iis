@@ -104,8 +104,8 @@ if (production) {
 
 //  Static Resources Configuration
 const cacheControl = {maxAge: config.staticResourceCacheDuration * 1000};
-[
-    '../public',
+
+['../public',
     '../govuk_modules/govuk_template/assets',
     '../govuk_modules/govuk_frontend_toolkit'
 ].forEach((dir) => {
@@ -140,7 +140,7 @@ app.use(expressWinston.logger({
             sessionTag: req.user ? req.user.sessionTag : null
         };
 
-        if(res._headers.location) {
+        if (res._headers.location) {
             meta.res_header_location = res._headers.location;
         }
 
@@ -153,7 +153,9 @@ app.use(expressWinston.logger({
 // Express Routing Configuration
 app.get('/health', (req, res, next) => {
     healthcheck((err, result) => {
-        if (err) return next(err);
+        if (err) {
+            return next(err);
+        }
         if (!result.status) {
             res.status(503);
         }

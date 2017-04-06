@@ -16,6 +16,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/:id/:page', function(req, res) {
+
     let page = req.params.page;
     let prisonNumber = utils.padPrisonNumber(req.params.id);
 
@@ -23,14 +24,15 @@ router.get('/:id/:page', function(req, res) {
 
     subject.info(prisonNumber, function(err, data) {
         if (err) {
+            logger.error('Error during get subject info', err);
             renderErrorPage(res, err);
             return;
         }
 
         let summary = data;
         let ids = {
-          prisonNumber: prisonNumber,
-          personIdentifier: data.personIdentifier
+            prisonNumber: prisonNumber,
+            personIdentifier: data.personIdentifier
         };
 
         subject[page](ids, function(err, details) {
@@ -43,10 +45,11 @@ router.get('/:id/:page', function(req, res) {
                 details.age = utils.getAgeFromDOB(details.dob);
             }
 
-            let data = {subject: summary,
-                        details: details,
-                        noResultsText:
-                        content.view.subject[page]};
+            let data = {
+                subject: summary,
+                details: details,
+                noResultsText: content.view.subject[page]
+            };
             renderPage(res, {page: page, data: data, lastPageNum: req.session.lastPage || 1});
         });
     });
@@ -54,13 +57,13 @@ router.get('/:id/:page', function(req, res) {
 
 
 router.get('/:id', function(req, res) {
-   res.redirect('/subject/' + req.params.id + '/summary');
+    res.redirect('/subject/' + req.params.id + '/summary');
 });
 
 module.exports = router;
 
 function renderPage(res, obj) {
-    res.render('subject/'+obj.page, {
+    res.render('subject/' + obj.page, {
         data: obj.data,
         content: content.view.subject,
         lastPageNum: obj.lastPageNum,
@@ -81,10 +84,10 @@ function renderErrorPage(res, err) {
 
 function getNavigation(page) {
     let nav = {
-      summary: {title: 'Summary'},
-      movements: {title: 'Movements'},
-      hdcinfo: {title: 'HDC history'},
-      offences: {title: 'Offences'}
+        summary: {title: 'Summary'},
+        movements: {title: 'Movements'},
+        hdcinfo: {title: 'HDC history'},
+        offences: {title: 'Offences'}
     };
 
     nav[page].active = true;

@@ -30,13 +30,23 @@ const healthcheck = require('../server/healthcheck');
 
 const version = moment.now().toString();
 const production = process.env.NODE_ENV === 'production';
+const testMode = process.env.NODE_ENV === 'test';
 
 //  Express Configuration
-let app = express();
+const app = express();
 app.set('json spaces', 2);
 
-// Configure Express for running behind proxies - https://expressjs.com/en/guide/behind-proxies.html
+
+// Configure Express for running behind proxies
+// https://expressjs.com/en/guide/behind-proxies.html
 app.set('trust proxy', true);
+
+// View Engine Configuration
+app.set('views', path.join(__dirname, '..', 'views'));
+app.set('view engine', 'jade');
+
+// Server Configuration
+app.set('port', process.env.PORT || 3000);
 
 // HACK: Azure doesn't support X-Forwarded-Proto so we add it manually
 // http://stackoverflow.com/a/18455265/173062
@@ -52,34 +62,7 @@ app.use(function(req, res, next) {
 // 2. https://www.npmjs.com/package/helmet
 app.use(helmet());
 
-
-// Automatically log every request with user details, a unique session id, and a unique request id
 app.use(addRequestId);
-function requestLogger() {
-    return expressWinston.logger({
-        winstonInstance: logger,
-        meta: true,
-        dynamicMeta: function(req, res) {
-            let meta = {
-                userEmail: req.user ? req.user.email : null,
-                requestId: req.id,
-                sessionTag: req.user ? req.user.sessionTag : null
-            };
-
-            if(res._headers.location) {
-                meta.res_header_location = res._headers.location;
-            }
-
-            return meta;
-        },
-        colorize: true,
-        requestWhitelist: ['url', 'method', 'query', 'body']
-    });
-}
-
-// SSO configuration
-let testMode = process.env.NODE_ENV === 'test' ? 'true' : 'false';
-let ssoConfig = config.sso;
 
 app.use(cookieSession({
     name: 'session',
@@ -92,8 +75,7 @@ app.use(cookieSession({
     sameSite: 'lax'
 }));
 
-
-if (testMode === 'true') {
+if (testMode) {
     logger.info('Authentication disabled - using default test user profile');
     app.use(dummyUserProfile);
 } else {
@@ -101,28 +83,19 @@ if (testMode === 'true') {
     enableSSO();
 }
 
-
-// View Engine Configuration
-app.set('views', path.join(__dirname, '..', 'views'));
-app.set('view engine', 'jade');
-
-
-// Server Configuration
-app.set('port', process.env.PORT || 3000);
-
-
 // Request Processing Configuration
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-
 
 // Resource Delivery Configuration
 app.use(compression());
 
 // Cachebusting version string
 if (production) {
+    // Version only changes on reboot
     app.locals.version = version;
 } else {
+    // Version changes every request
     app.use(function(req, res, next) {
         res.locals.version = moment.now().toString();
         return next();
@@ -130,42 +103,54 @@ if (production) {
 }
 
 //  Static Resources Configuration
-let cacheControl = {maxAge: config.staticResourceCacheDuration * 1000};
-
-let publicResourcePaths = [
+const cacheControl = {maxAge: config.staticResourceCacheDuration * 1000};
+[
     '../public',
     '../govuk_modules/govuk_template/assets',
     '../govuk_modules/govuk_frontend_toolkit'
-];
-
-let iconResourcePaths = [
-    '../govuk_modules/govuk_frontend_toolkit/images'
-];
-
-publicResourcePaths.forEach((dir) => {
+].forEach((dir) => {
     app.use('/public', express.static(path.join(__dirname, dir), cacheControl));
 });
 
-iconResourcePaths.forEach((dir) => {
+[
+    '../govuk_modules/govuk_frontend_toolkit/images'
+].forEach((dir) => {
     app.use('/public/images/icons', express.static(path.join(__dirname, dir), cacheControl));
 });
 
 // GovUK Template Configuration
-/* jshint ignore:start */
 app.locals.asset_path = '/public/';
-/* jshint ignore:end */
 
 // Don't cache dynamic resources
 app.use(helmet.noCache());
 
 // CSRF protection
-if (testMode !== 'true') {
+if (!testMode) {
     app.use(csurf());
 }
 
-// Express Routing Configuration
-app.use(requestLogger());
+// Request logging
+app.use(expressWinston.logger({
+    winstonInstance: logger,
+    meta: true,
+    dynamicMeta: function(req, res) {
+        let meta = {
+            userEmail: req.user ? req.user.email : null,
+            requestId: req.id,
+            sessionTag: req.user ? req.user.sessionTag : null
+        };
 
+        if(res._headers.location) {
+            meta.res_header_location = res._headers.location;
+        }
+
+        return meta;
+    },
+    colorize: true,
+    requestWhitelist: ['url', 'method', 'originalUrl', 'query', 'body']
+}));
+
+// Express Routing Configuration
 app.get('/health', (req, res, next) => {
     healthcheck((err, result) => {
         if (err) return next(err);
@@ -178,7 +163,7 @@ app.get('/health', (req, res, next) => {
 
 app.use('/', index);
 app.use('/disclaimer/', disclaimer);
-if (testMode !== 'true') {
+if (!testMode) {
     app.use(authRequired);
     app.use(addTemplateVariables);
 }
@@ -194,14 +179,14 @@ app.use(function(req, res, next) {
 });
 
 app.use(logErrors);
-app.use(clientErrors);
+app.use(renderErrors);
 
 function logErrors(error, req, res, next) {
     logger.error('Unhandled error: ' + error.stack);
     next(error);
 }
 
-function clientErrors(error, req, res, next) {
+function renderErrors(error, req, res, next) {
     res.locals.error = error;
     res.locals.stack = production ? null : error.stack;
     res.locals.message = production ?
@@ -233,6 +218,7 @@ function addTemplateVariables(req, res, next) {
 
 function dummyUserProfile(req, res, next) {
     req.user = {
+        'id': 1,
         'email': 'test@test.com',
         'firstName': 'Test',
         'lastName': 'Tester',
@@ -244,6 +230,7 @@ function dummyUserProfile(req, res, next) {
 }
 
 function enableSSO() {
+    const ssoConfig = config.sso;
 
     app.use(passport.initialize());
     app.use(passport.session());

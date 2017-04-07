@@ -83,8 +83,13 @@ describe('Utility methods', function () {
     
     it('should return the date in the dd/mm/yyyy format')
     
-    it('should convert the accronyms to uppercase', function() {
+    it.only('should convert the accronyms to uppercase', function() {
         expect(utils.acronymsToUpperCase('Hdc is Home Detention Curfew. And ard is actual release date'))
             .to.equal('HDC is Home Detention Curfew. And ARD is actual release date')
+    });
+    
+    it.only('should not convert the accronym letters in a word', function() {
+        expect(utils.acronymsToUpperCase('This code was done by a beardy guy, chilling in a barnyard.'))
+            .to.equal('This code was done by a beardy guy, chilling in a barnyard.')
     });
 });

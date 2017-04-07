@@ -6,8 +6,8 @@ block subject-details
             div.grid-row.list-row
                 div.column-full
                     div.left-border
-                        span.quiet.block #{val.stage ? val.stage.trim() : 'Stage unknown'} 
-                        span #{val.status ? val.status.trim() : 'Status unknown'}, #{val.date ? val.date.trim() : 'date unknown'}
+                        span.quiet.block #{val.stage} 
+                        span #{val.status}, #{val.date}
             
         if (!data.details)
             span= data.noResultsText

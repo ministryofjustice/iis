@@ -1,6 +1,9 @@
 'use strict';
 let moment = require('moment');
 let url = require('url');
+let changeCase = require('change-case');
+
+const acronyms = ['HDC', 'ARD'];
 
 module.exports = {
 
@@ -36,23 +39,23 @@ module.exports = {
             return [startDate, endDate];
         }
 
-        let arrAge = age.split('-');
+        let ages = age.split('-');
         let startDate = this.getCurrentTime()
-                        .subtract(arrAge[1], 'years')
+                        .subtract(ages[1], 'years')
                         .subtract(1, 'years')
                         .add(1, 'days')
                         .format('YYYYMMDD');
         
-        let endDate = this.getCurrentTime().subtract(arrAge[0], 'years').format('YYYYMMDD');
+        let endDate = this.getCurrentTime().subtract(ages[0], 'years').format('YYYYMMDD');
         return [startDate, endDate];
     },
     
     resultsPerPage: 5,
     
-    pagination: function(rowcount, currPage) {
+    pagination: function(rowCount, currPage) {
         currPage = (currPage) ? currPage : 1;
         
-        let totalPages = Math.ceil(rowcount / this.resultsPerPage);
+        let totalPages = Math.ceil(rowCount / this.resultsPerPage);
         let showPrev = (currPage - 1) == 0 ? false : true;
         let showNext = currPage == totalPages ? false : true;
         
@@ -72,5 +75,13 @@ module.exports = {
     
     getPathFromURL: function(v) {
         return url.parse(v).path;
+    },
+    
+    acronymsToUpperCase: function(text) {
+        return acronyms.map(function(acronym){
+            let regex = new RegExp(acronym, 'gi');
+            text = text.replace(regex, changeCase.upperCase(acronym));
+            return text;
+        }).pop();
     }
 };

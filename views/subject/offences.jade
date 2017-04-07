@@ -9,11 +9,11 @@ block subject-details
                             span.quiet.block #{val.caseDate}
                             span Offence code #{val.offenceCode} 
 
-                        if(val.establishment)
-                            div.left-border
-                                span (#{val.establishment_code})
-                                | 
-                                span.capitalise-text #{val.establishment.trim().toLowerCase()} 
+
+                        div.left-border
+                            span (#{val.establishment_code})
+                            | 
+                            span #{val.establishment.trim()} 
             
         if (!data.details)
             span= data.noResultsText

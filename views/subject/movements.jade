@@ -6,18 +6,16 @@ block subject-details
             div.grid-row.list-row
                 div.column-full(class="movement-type-#{val.type}")
                     div.left-border
-                        
                         span.quiet #{val.date}
                     div.left-border
                         span.type.bold-small #{val.type == 'D' ? 'OUT' : 'IN'}
-                        if(val.status)
-                            | 
-                            | -
-                            | 
-                            span #{val.status.trim()}
-                    if(val.establishment)
-                        div.left-border
-                            span.capitalise-text #{val.establishment.toLowerCase()}
+                        |  
+                        | -
+                        | 
+                        span #{val.status}
+                        
+                    div.left-border
+                        span #{val.establishment}
                         
         if (!data.details)
             span= data.noResultsText

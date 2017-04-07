@@ -45,8 +45,6 @@ router.get('/:id/:page', function(req, res) {
                 details.age = utils.getAgeFromDOB(details.dob);
             }
             
-            console.log(details)
-
             let data = {
                 subject: summary,
                 details: details,

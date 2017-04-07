@@ -82,4 +82,9 @@ describe('Utility methods', function () {
     });
     
     it('should return the date in the dd/mm/yyyy format')
+    
+    it('should convert the accronyms to uppercase', function() {
+        expect(utils.acronymsToUpperCase('Hdc is Home Detention Curfew. And ard is actual release date'))
+            .to.equal('HDC is Home Detention Curfew. And ARD is actual release date')
+    });
 });

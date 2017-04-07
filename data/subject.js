@@ -3,6 +3,7 @@
 let db = require('../server/db');
 let utils = require('../data/utils');
 let logger = require('../log.js');
+let changeCase = require('change-case');
 
 let TYPES = require('tedious').TYPES;
 
@@ -370,22 +371,21 @@ function formatInfoRow(dbRow) {
 
 function formatSummaryRow(dbRow) {
     return {
-        dob: utils.getFormattedDateFromString(dbRow.DOB.value),
-        countryOfBirth: dbRow.BIRTH_COUNTRY.value,
-        maritalStatus: dbRow.MARITAL_STATUS.value,
-        ethnicity: dbRow.ETHNICITY.value,
-        nationality: dbRow.NATIONALITY.value,
-        sex: dbRow.INMATE_SEX.value
+        dob: dbRow.DOB.value ? utils.getFormattedDateFromString(dbRow.DOB.value) : 'Unknown',
+        countryOfBirth: dbRow.BIRTH_COUNTRY.value ? changeCase.titleCase(dbRow.BIRTH_COUNTRY.value) : 'Unknown',
+        maritalStatus: dbRow.MARITAL_STATUS.value ? changeCase.sentenceCase(dbRow.MARITAL_STATUS.value) : 'Unknown',
+        ethnicity: dbRow.ETHNICITY.value ? changeCase.titleCase(dbRow.ETHNICITY.value) : 'Unknown',
+        nationality: dbRow.NATIONALITY.value ? changeCase.titleCase(dbRow.NATIONALITY.value) : 'Unknown',
+        sex: dbRow.INMATE_SEX.value ? changeCase.sentenceCase(dbRow.INMATE_SEX.value) : 'Unknown'
     };
 }
 
 function formatMovementRows(dbRow) {
     return {
-        establishment: dbRow.ESTAB_COMP_OF_MOVE.value,
+        establishment: dbRow.ESTAB_COMP_OF_MOVE.value ? changeCase.titleCase(dbRow.ESTAB_COMP_OF_MOVE.value) : 'Establishment unknown',
         date: utils.getFormattedDateFromString(dbRow.DATE_OF_MOVE.value),
-        code: dbRow.MOVEMENT_CODE.value,
         type: dbRow.TYPE_OF_MOVE.value,
-        status: dbRow.STATUS.value
+        status: dbRow.STATUS.value ? utils.acronymsToUpperCase(changeCase.sentenceCase(dbRow.STATUS.value)) : 'Status unknown'
 
     };
 }
@@ -412,18 +412,18 @@ function formatAddressRows(dbRow) {
 
 function formatOffenceRows(dbRow) {
     return {
-        offenceCode: dbRow.IIS_OFFENCE_CODE.value,
-        caseDate: utils.getFormattedDateFromString(dbRow.CASE_DATE.value),
-        establishment_code: dbRow.CASE_ESTAB_COMP_CODE.value,
-        establishment: dbRow.ESTABLISHMENT.value
+        offenceCode: dbRow.IIS_OFFENCE_CODE.value ? dbRow.IIS_OFFENCE_CODE.value : 'Unknown offence code',
+        caseDate: dbRow.CASE_DATE.value ? utils.getFormattedDateFromString(dbRow.CASE_DATE.value) : 'Unknown case date',
+        establishment_code: dbRow.CASE_ESTAB_COMP_CODE.value ? changeCase.upperCase(dbRow.CASE_ESTAB_COMP_CODE.value) : 'Unknown establishment',
+        establishment: dbRow.ESTABLISHMENT.value ? changeCase.sentenceCase(dbRow.ESTABLISHMENT.value) : 'Unknown establishment'
     };
 }
 
 function formatHdcInfoRows(dbRow) {
     return {
-        date: utils.getFormattedDateFromString(dbRow.STAGE_DATE.value),
-        stage: dbRow.STAGE.value,
-        status: dbRow.STATUS.value
+        date: dbRow.STAGE_DATE.value ? utils.getFormattedDateFromString(dbRow.STAGE_DATE.value.trim()) : 'Date unknown',
+        stage: dbRow.STAGE.value ? utils.acronymsToUpperCase(changeCase.sentenceCase(dbRow.STAGE.value.trim())) : 'Stage unknown',
+        status: dbRow.STATUS.value ? utils.acronymsToUpperCase(changeCase.sentenceCase(dbRow.STATUS.value.trim())) : 'Status unknown'
     };
 }
 
@@ -434,4 +434,3 @@ function formatHdcRecallRows(dbRow) {
         outcomeDate: utils.getFormattedDateFromString(dbRow.RECALL_OUTCOME_DATE.value)
     };
 }
-

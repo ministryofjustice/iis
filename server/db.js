@@ -102,10 +102,6 @@ module.exports = {
         }
     },
 
-    test: function(cb) {
-        console.log(cb);
-    },
-
     getCollection: function(sql, params, callback) {
 
         let connected = false;

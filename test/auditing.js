@@ -78,7 +78,7 @@ describe('Auditing', function() {
             });
     });
 
-    it('should record view event with prison id', function() {
+    it('should record view event with prison id and page type', function() {
 
         const fakeSubject = {prisonNumber: 'AA123456', forename: 'Name'};
         common.sinon.stub(subject, "info").yields(null, fakeSubject);
@@ -93,14 +93,22 @@ describe('Auditing', function() {
             })
             .then(function() {
                 common.sinon.stub(audit, "record");
-                return browser.get('/subject/AA123456/summary')
+                return browser
+                    .get('/subject/AA123456/summary')
                     .set('Referer', 'somewhere')
             })
             .then(function() {
-                common.sinon.assert.calledOnce(audit.record);
-                common.sinon.assert.calledWithExactly(
-                    audit.record, "VIEW", "test@test.com",
-                    {page: 'summary', prisonNumber: 'AA123456'}
+                return browser
+                    .get('/subject/AA123456/movements')
+                    .set('Referer', 'somewhere')
+            })
+            .then(function() {
+                common.sinon.assert.calledTwice(audit.record);
+                common.sinon.assert.calledWith(
+                    audit.record, "VIEW", "test@test.com", {page: 'summary', prisonNumber: 'AA123456'}
+                );
+                common.sinon.assert.calledWith(
+                    audit.record, "VIEW", "test@test.com", {page: 'movements', prisonNumber: 'AA123456'}
                 );
             });
     });

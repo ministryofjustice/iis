@@ -40,6 +40,13 @@ module.exports = function healthcheck(callback) {
         }
 
         results.uptime = process.uptime();
+
+        try {
+            results.build = require('../build-info.json');
+        } catch (ex) {
+            // no build info to show
+        }
+
         callback(null, results);
     }
 };

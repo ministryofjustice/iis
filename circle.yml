@@ -21,9 +21,25 @@ deployment:
   dev:
     branch: master
     commands:
+        # Create version info
+        - npm run record-build-info:
+            environment:
+                BUILD_NUMBER: $CIRCLE_BUILD_NUM
+                GIT_REF: $CIRCLE_SHA1
+        - git add --force --verbose build-info.json
+        - git config user.name "Circle CI"
+        - git config user.email "circle@circleci.com"
+        - git commit -m "Deployment of $CIRCLE_SHA1"
+
         # Push the Dev Branch to Azure
         - git push --force origin $CIRCLE_SHA1:azure
+        - npm run wait-for-deploy:
+            environment:
+                GIT_REF: $CIRCLE_SHA1
+                APP_BASE_URL: https://hpa-stage.noms.dsd.io﻿
+                WAIT_DURATION: 45000
 
-
+        # Trigger feature tests
+        - curl -v -X POST https://circleci.com/api/v1.1/project/github/noms-digital-studio/iis-feature-specs?circle-token=$CIRCLE_TOKEN
 
 

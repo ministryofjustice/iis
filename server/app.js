@@ -156,9 +156,10 @@ app.get('/health', (req, res, next) => {
         if (err) {
             return next(err);
         }
-        if (!result.status) {
+        if (!result.healthy) {
             res.status(503);
         }
+
         res.json(result);
     });
 });

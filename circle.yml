@@ -32,7 +32,7 @@ deployment:
         - git commit -m "Deployment of $CIRCLE_SHA1"
 
         # Push the Dev Branch to Azure
-        - git push --force origin $CIRCLE_SHA1:azure
+        - git push --force origin HEAD:azure
         - npm run wait-for-deploy:
             environment:
                 GIT_REF: $CIRCLE_SHA1

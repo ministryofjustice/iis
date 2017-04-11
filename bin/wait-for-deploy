@@ -2,13 +2,11 @@
 
 /* eslint-disable no-console, comma-dangle */
 
-const poolEndpointForGitRef = require('./wait-for-deployment.js');
-
-console.log('Starting pool for status endpoint...');
+const pollEndpointForGitRef = require('./wait-for-deployment.js');
 
 setTimeout(
     () => {
-        poolEndpointForGitRef({
+        pollEndpointForGitRef({
             appUrl: process.env.APP_BASE_URL,
             gitRef: process.env.GIT_REF,
             retryCount: 60,

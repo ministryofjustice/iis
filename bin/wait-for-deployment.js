@@ -5,34 +5,49 @@ const throttle = new Throttle({
     active: true,
     rate: 1,
     ratePer: 5000,
-    concurrent: 1,
+    concurrent: 1
 });
 
-const poolEndpointForGitRef = (config) => {
+function log(...args) {
     /* eslint-disable no-console */
-    console.log(`${new Date()}:`, 'Pooling attempts remaining:', config.retryCount);
+    console.log(`${new Date()}:`, ...args);
+}
+
+const pollEndpointForGitRef = (config) => {
+    log('Starting polling for status endpoint, looking for', config.gitRef);
+
+    doPoll(config);
+};
+
+const doPoll = (config) => {
+    log('Pooling attempts remaining:', config.retryCount);
 
     if (config.retryCount === 0) {
         return config.onError();
     }
 
+    const url = `${config.appUrl}/health`;
+    log(`GET ${url}`);
+
     return request
-        .get(`${config.appUrl}/health`)
+        .get(url)
         .use(throttle.plugin())
         .timeout({
             response: 5000, // Wait 5 seconds for the server to be available,
-            deadline: 5000, // but allow 5 seconds for request.
+            deadline: 5000  // but allow 5 seconds for request.
         })
         .end((error, response) => {
 
             const updatedConfig = Object.assign({}, config, {
-                retryCount: config.retryCount - 1,
+                retryCount: config.retryCount - 1
             });
 
             if (error || !response.ok) {
-                return poolEndpointForGitRef(updatedConfig);
+                log('Got failed response', error, response);
+                return doPoll(updatedConfig);
             }
 
+            log('Got readable response', response.body);
             if (
                 response.body && response.body.build &&
                 response.body.build.gitRef === config.gitRef
@@ -40,8 +55,8 @@ const poolEndpointForGitRef = (config) => {
                 return config.onSuccess(response.body);
             }
 
-            return poolEndpointForGitRef(updatedConfig);
+            return doPoll(updatedConfig);
         });
 };
 
-module.exports = poolEndpointForGitRef;
+module.exports = pollEndpointForGitRef;

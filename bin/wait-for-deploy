@@ -4,21 +4,17 @@
 
 const pollEndpointForGitRef = require('./wait-for-deployment.js');
 
-setTimeout(
-    () => {
-        pollEndpointForGitRef({
-            appUrl: process.env.APP_BASE_URL,
-            gitRef: process.env.GIT_REF,
-            retryCount: 60,
-            onSuccess: (result) => {
-                console.log(result);
-                process.exit(0);
-            },
-            onError: () => {
-                console.log(`Failed to receive an "OK" status from ${process.env.APP_BASE_URL}`);
-                process.exit(1);
-            },
-        });
+pollEndpointForGitRef({
+    appUrl: process.env.APP_BASE_URL,
+    gitRef: process.env.GIT_REF,
+    initialWait: process.env.WAIT_DURATION,
+    retryCount: 60,
+    onSuccess: (result) => {
+        console.log(result);
+        process.exit(0);
     },
-    process.env.WAIT_DURATION
-);
+    onError: () => {
+        console.log(`Failed to receive an "OK" status from ${process.env.APP_BASE_URL}`);
+        process.exit(1);
+    },
+});

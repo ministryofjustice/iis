@@ -10,11 +10,13 @@ function log(...args) {
 const pollEndpointForGitRef = (config) => {
     log('Starting polling for status endpoint, looking for', config.gitRef);
 
-    schedulePoll(config);
+    schedulePoll(config, config.initialWait);
 };
 
-const schedulePoll = (config) => {
-    setTimeout(() => doPoll(config), POLL_INTERVAL);
+const schedulePoll = (config, interval) => {
+    interval = interval || POLL_INTERVAL;
+    log(`Waiting for ${interval}ms...`);
+    setTimeout(() => doPoll(config), interval);
 };
 
 const doPoll = (config) => {

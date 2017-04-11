@@ -64,7 +64,6 @@
     "require-dir": "^0.3.0",
     "run-sequence": "^1.2.2",
     "snyk": "^1.25.2",
-    "superagent-throttle": "^0.2.3",
     "tedious": "^1.14.0",
     "util": "^0.10.3",
     "uuid": "^3.0.1",

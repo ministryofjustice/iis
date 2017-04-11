@@ -1,12 +1,6 @@
 const request = require('superagent');
-const Throttle = require('superagent-throttle');
 
-const throttle = new Throttle({
-    active: true,
-    rate: 1,
-    ratePer: 5000,
-    concurrent: 1
-});
+const POLL_INTERVAL = 5000;
 
 function log(...args) {
     /* eslint-disable no-console */
@@ -16,11 +10,15 @@ function log(...args) {
 const pollEndpointForGitRef = (config) => {
     log('Starting polling for status endpoint, looking for', config.gitRef);
 
-    doPoll(config);
+    schedulePoll(config);
+};
+
+const schedulePoll = (config) => {
+    setTimeout(() => doPoll(config), POLL_INTERVAL);
 };
 
 const doPoll = (config) => {
-    log('Pooling attempts remaining:', config.retryCount);
+    log('Polling attempts remaining:', config.retryCount);
 
     if (config.retryCount === 0) {
         return config.onError();
@@ -31,7 +29,6 @@ const doPoll = (config) => {
 
     return request
         .get(url)
-        .use(throttle.plugin())
         .timeout({
             response: 5000, // Wait 5 seconds for the server to be available,
             deadline: 5000  // but allow 5 seconds for request.
@@ -44,7 +41,7 @@ const doPoll = (config) => {
 
             if (error || !response.ok) {
                 log('Got failed response', error, response);
-                return doPoll(updatedConfig);
+                return schedulePoll(updatedConfig);
             }
 
             log('Got readable response', response.body);
@@ -55,7 +52,7 @@ const doPoll = (config) => {
                 return config.onSuccess(response.body);
             }
 
-            return doPoll(updatedConfig);
+            return schedulePoll(updatedConfig);
         });
 };
 

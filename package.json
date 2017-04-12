@@ -59,6 +59,7 @@
     "passport-oauth2": "^1.4.0",
     "path": "^0.12.7",
     "pg": "^6.1.2",
+    "poll-endpoint-for": "0.0.3",
     "prompt": "^1.0.0",
     "request-promise": "^4.1.1",
     "require-dir": "^0.3.0",

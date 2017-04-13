@@ -87,7 +87,6 @@ function getNavigation(page) {
       summary: {title: 'Summary'},  
       movements: {title: 'Movements'},  
       hdcinfo: {title: 'HDC history'},  
-      hdcrecall: {title: 'HDC recall history'},  
       offences: {title: 'Offences'}
     };
 

@@ -29,7 +29,7 @@ deployment:
         - git add --force --verbose build-info.json
         - git config user.name "Circle CI"
         - git config user.email "circle@circleci.com"
-        - export CHANGE="$git log --format=%B -n 1 $CIRCLE_SHA1"
+        - export CHANGE=\"$(git log --format=oneline -n 1 $CIRCLE_SHA1)\"
         - git commit -m "Deployment of build $CIRCLE_BUILD_NUM $CHANGE From gitref $CIRCLE_SHA1"
 
         # Push the Dev Branch to Azure

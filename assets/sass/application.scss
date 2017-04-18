@@ -13,15 +13,15 @@ $left-border: 8px solid $border-colour;
 .c-align { text-align: center; }
 span.inactive { color: $grey-2; }
 
-.inmate-details { 
-    border-bottom: $divider; 
-    margin-bottom: 30px; 
-    padding-bottom: 30px; 
+.inmate-details {
+    border-bottom: $divider;
+    margin-bottom: 30px;
+    padding-bottom: 30px;
 }
 
-section { 
-    border-top: $divider; 
-    padding-top: 30px; 
+section {
+    border-top: $divider;
+    padding-top: 30px;
 }
 
 div#print-disclaimer,
@@ -39,7 +39,10 @@ div#print-header,
 .quiet { color: $grey-1; }
 .block { display: block; }
 
-
+.js-enabled form[name="search-prisoner-form"] .searchPrisonerItem.initial{
+    display: none;
+    visibility: hidden;
+}
 
 // Add extra styles here, or re-organise the Sass files in whichever way makes most sense to you
 /*

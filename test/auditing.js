@@ -57,11 +57,12 @@ describe('Auditing', function() {
             })
             .then(function() {
                 return browser.post('/search')
-                    .send({opt: 'identifier'})
+                    .send({option: 'identifier'})
                     .expect(302)
+                    .expect("Location", "/search/form?0=identifier")
             })
             .then(function() {
-                return browser.post('/search/identifier')
+                return browser.post('/search/form')
                     .send({prisonNumber: 'AA123456'})
                     .expect(302)
                     .expect("Location", "/search/results")

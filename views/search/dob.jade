@@ -1,47 +1,42 @@
-extends wrapper-view
+mixin radioInput(caption, _for, _val, _checked)
+    input(type="radio", name="dobOrAge", id=_for, value=_val checked=_checked)
+    label(class=_checked ? "selected" : "", for=_for )
+        | #{caption}
 
-block search-page
+div.form-group
 
+    div.multiple-choice(data-target="dob_container")
+        +radioInput('Date of birth', 'optDob', 'dob', true)
 
-    mixin radioInput(caption, _for, _val, _checked)
-        input(type="radio", name="dobOrAge", id=_for, value=_val checked=_checked)
-        label(class=_checked ? "selected" : "", for=_for )
-            | #{caption}
+    div.panel.panel-border-narrow#dob_container
+        fieldset
+            legend
+                span.form-hint#dob-hint For example, 31 3 1980
+            div.form-date
+                div.form-group.form-group-day
+                    label.form-label(for="dobDay") Day
+                    input.form-control#dobDay(name="dobDay", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint")
 
-    div.form-group
+                div.form-group.form-group-month
+                    label.form-label(for="dobMonth") Month
+                    input.form-control#dobMonth(name="dobMonth", type="number", pattern="[0-9]*", min="0", max="12")
 
-        div.multiple-choice(data-target="dob_container")
-            +radioInput('Date of birth', 'optDob', 'dob', !body.dobOrAge || body.dobOrAge == 'dob')
-
-        div.panel.panel-border-narrow#dob_container
-            fieldset
-                legend
-                    span.form-hint#dob-hint For example, 31 3 1980
-                div.form-date
-                    div.form-group.form-group-day
-                        label.form-label(for="dobDay") Day
-                        input.form-control#dobDay(name="dobDay", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint", value=(body.dobDay ? body.dobDay : ''))
-
-                    div.form-group.form-group-month
-                        label.form-label(for="dobMonth") Month
-                        input.form-control#dobMonth(name="dobMonth", type="number", pattern="[0-9]*", min="0", max="12", value=(body.dobMonth ? body.dobMonth : ''))
-
-                    div.form-group.form-group-year
-                        label.form-label(for="dobYear") Year
-                        input.form-control#dobYear(name="dobYear", type="number", pattern="[0-9]*", min="1900", max="#{new Date().getFullYear()}", value=(body.dobYear ? body.dobYear : ''))
+                div.form-group.form-group-year
+                    label.form-label(for="dobYear") Year
+                    input.form-control#dobYear(name="dobYear", type="number", pattern="[0-9]*", min="1900", max="#{new Date().getFullYear()}")
 
 
-    div.form-group
+div.form-group
 
-        div.multiple-choice(data-target='age_container')
-            +radioInput('Age', 'optAge', 'age', body.dobOrAge == 'age')
+    div.multiple-choice(data-target='age_container')
+        +radioInput('Age', 'optAge', 'age')
 
 
-         div.panel.panel-border-narrow.js-hidden#age_container
-            label(for="age")
-                span.form-label-bold.visually-hidden Age or range
-                span.form-hint For example, 32-34
+     div.panel.panel-border-narrow.js-hidden#age_container
+        label(for="age")
+            span.form-label-bold.visually-hidden Age or range
+            span.form-hint For example, 32-34
 
-            input.form-control.form-control-1-4#age(name="age", type="text", min="10" max="99", value=(body.age ? body.age : ''))
+        input.form-control.form-control-1-4#age(name="age", type="text", min="10" max="99")
 
 

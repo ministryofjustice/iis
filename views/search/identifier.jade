@@ -1,8 +1,6 @@
-extends wrapper-view
-
 block search-page
     div.form-group
         label(for="prisonNumber")
             span.form-label-bold Prison number
 
-        input.form-control.u-case#prisonNumber(type="text", name="prisonNumber", maxlength="8", value=(body.prisonNumber ? body.prisonNumber : ''))
+        input.form-control.u-case#prisonNumber(type="text", name="prisonNumber", maxlength="8")

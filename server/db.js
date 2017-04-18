@@ -1,7 +1,7 @@
 'use strict';
 
-let util = require('util');
-let logger = require('../log.js');
+const util = require('util');
+const logger = require('../log.js');
 
 let fakeDBFactory;
 
@@ -33,10 +33,10 @@ module.exports = {
             return fakeDBFactory();
         }
 
-        let config = require('./config');
-        let Connection = require('tedious').Connection;
+        const config = require('./config');
+        const Connection = require('tedious').Connection;
 
-        const connection = new Connection({
+        return new Connection({
             userName: config.db.username,
             password: config.db.password,
             server: config.db.server,
@@ -47,14 +47,12 @@ module.exports = {
                 rowCollectionOnRequestCompletion: true
             }
         });
-
-        return connection;
     },
 
     getTuple: function(sql, params, callback) {
 
         let connected = false;
-        let connection = this.connect();
+        const connection = this.connect();
 
         connection.on('debug', function(err) {
             logger.debug('debug:', err);
@@ -67,7 +65,7 @@ module.exports = {
 
             connected = true;
 
-            let Request = require('tedious').Request;
+            const Request = require('tedious').Request;
             let request = new Request(sql, function(err, rowCount, rows) {
                 if (err) {
                     return finish(err);
@@ -86,7 +84,7 @@ module.exports = {
             connection.execSql(request);
         });
 
-        let that = this;
+        const that = this;
 
         function finish(err, result) {
 
@@ -105,7 +103,7 @@ module.exports = {
     getCollection: function(sql, params, callback) {
 
         let connected = false;
-        let connection = this.connect();
+        const connection = this.connect();
 
         connection.on('connect', function(err) {
             if (err) {
@@ -114,8 +112,8 @@ module.exports = {
 
             connected = true;
 
-            let Request = require('tedious').Request;
-            let request = new Request(sql, function(err, rowCount, rows) {
+            const Request = require('tedious').Request;
+            const request = new Request(sql, function(err, rowCount, rows) {
 
                 if (err) {
                     return finish(err);
@@ -135,7 +133,7 @@ module.exports = {
             connection.execSql(request);
         });
 
-        let that = this;
+        const that = this;
 
         function finish(err, result) {
 

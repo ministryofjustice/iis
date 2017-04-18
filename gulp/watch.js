@@ -14,3 +14,5 @@ gulp.task('watch-assets', function () {
 gulp.task('watch-tests', function () {
     return gulp.watch(['./test/**/*.js'], {cwd: './'}, ['test'])
 });
+
+gulp.task('watch-client-js', () => gulp.watch('./assets/javascripts/search/**', {cwd: './'}, ['webpack']));

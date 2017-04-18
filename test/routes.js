@@ -1,5 +1,5 @@
 'use strict';
-
+process.env.NODE_ENV = 'test';
 let request = require('supertest');
 let expect = require('chai').expect;
 
@@ -76,32 +76,23 @@ describe('Test redirections when session set and not set', function() {
             });
     });
 
-    it('should retune 302 if at least one option has been selected', function() {
+    it('should return 302 if at least one option has been selected', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search')
-                    .send({opt: 'names'})
+                    .send({option: 'names'})
                     .expect(302)
-                    .expect("Location", '/search/names')
+                    .expect("Location", '/search/form?0=names');
             });
     });
 
-    it('should set hidden input with the selected parameter', function() {
+    it('should redirect to appropriate url if multiple selected', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search')
-                    .send({opt: "names"})
+                    .send({option: ["names", "dob"]})
                     .expect(302)
-                    .expect("Location", "/search/names")
-            });
-    });
-
-    it('should redirect to search page when invalid param is manaully entered', function() {
-        return common.logInAs("someone")
-            .then(function(authedReq) {
-                return authedReq.get('/search/whatever')
-                    .expect(302)
-                    .expect("Location", "/search")
+                    .expect("Location", "/search/form?0=names&1=dob")
             });
     });
 

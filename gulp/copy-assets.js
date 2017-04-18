@@ -8,7 +8,7 @@ gulp.task('copy-assets', [
 ]);
 
 gulp.task('copy-local-assets', function() {
-  return gulp.src(['!assets/sass{,/**/*}', 'assets/**'])
+  return gulp.src(['!assets/sass{,/**/*}', '!assets/javascripts/search{,/**/*}', 'assets/**'])
   .pipe(gulp.dest('public'));
 });
 

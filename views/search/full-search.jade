@@ -1,0 +1,21 @@
+extends wrapper-view
+mixin radioInput(caption, _for, _val, _checked)
+    input(type="radio", name="dobOrAge", id=_for, value=_val checked=_checked)
+    label(class=_checked ? "selected" : "", for=_for )
+        | #{caption}
+
+block search-page
+    if searchItems.includes('identifier')
+        div#prisonNumberContainer.searchPrisonerItem
+            include ./identifier.jade
+
+    if searchItems.includes('names')
+        div#forenameContainer.searchPrisonerItem(class = searchItems.includes('identifier') ? 'initial' : undefined )
+            include ./names.jade
+
+    if searchItems.includes('dob')
+        div#ageContainer.searchPrisonerItem(class = searchItems.includes('names') || searchItems.includes('identifier') ? 'initial' : undefined)
+            include ./dob.jade
+
+block scripts
+    script(src="/public/javascripts/searchBundle.js?#{version}")

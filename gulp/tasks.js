@@ -27,6 +27,7 @@ gulp.task('generate-assets', function (done) {
     runSequence(
         'copy-govuk-modules',
         'sass',
+        'webpack',
         'copy-assets', done)
 });
 
@@ -34,6 +35,7 @@ gulp.task('watch', function (done) {
     runSequence(
         'watch-sass',
         'watch-assets',
+        'watch-client-js',
         'watch-tests', done)
 });
 

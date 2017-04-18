@@ -8,13 +8,13 @@ function validateInputs(err, obj) {
 
     let errCount = 0;
 
-    if (obj.forename.length !== 0 && !isString(obj.forename)) {
+    if (obj.forename && !isString(obj.forename)) {
         err.items[errCount++] = {forename: 'Correct the forename'};
     }
-    if (obj.forename2.length !== 0 && !isString(obj.forename2)) {
+    if (obj.forename2 && !isString(obj.forename2)) {
         err.items[errCount++] = {forename2: 'Correct the middle name'};
     }
-    if (obj.surname.length !== 0 && !isString(obj.surname)) {
+    if (obj.surname && !isString(obj.surname)) {
         err.items[errCount++] = {surname: 'Correct the surname'};
     }
 
@@ -31,7 +31,7 @@ module.exports = {
             desc: content.errMsg.ATLEAST_ONE_REQUIRED
         };
 
-        if (obj.forename.length === 0 && obj.forename2.length === 0 && obj.surname.length === 0) {
+        if (!obj.forename && !obj.forename2 && !obj.surname) {
             return callback(err);
         }
 

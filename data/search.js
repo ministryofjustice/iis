@@ -95,6 +95,7 @@ module.exports = {
                         INMATE_FORENAME_1, 
                         INMATE_FORENAME_2,
                         INMATE_BIRTH_DATE DOB,
+                        DATE_1ST_RECEP,
                         SUBSTRING(
                             (
                             SELECT 
@@ -130,7 +131,7 @@ module.exports = {
 
         /* eslint-enable */
         let from = 'IIS.LOSS_OF_LIBERTY l';
-        let orderBy = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB';
+        let orderBy = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP';
         let oLimit = {start: start, resultsPerPage: resultsPerPage};
 
         let sql = prepareSqlStatement(fields, from, obj.where, orderBy, oLimit);
@@ -216,6 +217,7 @@ function formatRow(dbRow) {
         dob: utils.getFormattedDateFromString(dbRow.DOB.value),
         alias: dbRow.ALIAS.value,
         sentencingCourt: sentencingCourt,
-        sentencingDate: sentencingDate
+        sentencingDate: sentencingDate,
+        firstReceptionDate: utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value)
     };
 }

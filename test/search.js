@@ -7,10 +7,10 @@ let EventEmitter = require('events').EventEmitter;
 function prepareFakeDB(onRequest) {
     db.setFakeFactory(function fakeDBFactory() {
         let fake = new EventEmitter();
-        process.nextTick(function() {
+        process.nextTick(() => {
             fake.emit('connect');
         });
-        fake.execSql = function(req) {
+        fake.execSql = (req) => {
             onRequest(req);
         };
         return fake;
@@ -24,17 +24,18 @@ const standardResponse = {
     SENTENCING_COURT: {},
     PK_PRISON_NUMBER: {},
     DOB: {},
-    ALIAS: {}
+    ALIAS: {},
+    DATE_1ST_RECEP: {}
 }
 
-describe('Search', function() {
-    it('should return recordset as an array', function(done) {
+describe('Search', () => {
+    it('should return recordset as an array', (done) => {
 
-        prepareFakeDB(function(req) {
+        prepareFakeDB((req) => {
             req.callback(null, 1, [standardResponse]);
         });
 
-        search.inmate({prisonNumber: 7}, function(err, data) {
+        search.inmate({prisonNumber: 7}, (err, data) => {
             expect(err).to.be.null;
             expect(data).to.be.an('array');
             done();
@@ -43,33 +44,33 @@ describe('Search', function() {
 
     describe('WHERE statement', () => {
         it('should populate prison number if passed in', (done) => {
-            prepareFakeDB(function(req) {
+            prepareFakeDB((req) => {
                 expect(req.sqlTextOrProcedure).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER');
                 expect(req.parametersByName.PK_PRISON_NUMBER.value).to.equal(7);
                 req.callback(null, 1, [standardResponse]);
             });
 
-            search.inmate({prisonNumber: 7}, function(err, data) {
+            search.inmate({prisonNumber: 7}, (err, data) => {
                 expect(err).to.be.null;
                 done();
             });
         });
 
         it('should populate name if passed in', (done) => {
-            prepareFakeDB(function(req) {
+            prepareFakeDB((req) => {
                 expect(req.sqlTextOrProcedure).to.contain('WHERE INMATE_FORENAME_1 = @INMATE_FORENAME_1');
                 expect(req.parametersByName.INMATE_FORENAME_1.value).to.equal('DAVE');
                 req.callback(null, 1, [standardResponse]);
             });
 
-            search.inmate({forename: 'Dave'}, function(err, data) {
+            search.inmate({forename: 'Dave'}, (err, data) => {
                 expect(err).to.be.null;
                 done();
             });
         });
 
         it('should populate full name if passed in', (done) => {
-            prepareFakeDB(function(req) {
+            prepareFakeDB((req) => {
                 expect(req.sqlTextOrProcedure).to.contain('WHERE INMATE_FORENAME_1 = @INMATE_FORENAME_1 AND ' +
                     'INMATE_FORENAME_2 = @INMATE_FORENAME_2 AND ' +
                     'INMATE_SURNAME = @INMATE_SURNAME');
@@ -79,27 +80,27 @@ describe('Search', function() {
                 req.callback(null, 1, [standardResponse]);
             });
 
-            search.inmate({forename: 'Dave', forename2: 'James', surname: 'Jones'}, function(err, data) {
+            search.inmate({forename: 'Dave', forename2: 'James', surname: 'Jones'}, (err, data) => {
                 expect(err).to.be.null;
                 done();
             });
         });
 
         it('should populate dob if passed in', (done) => {
-            prepareFakeDB(function(req) {
+            prepareFakeDB((req) => {
                 expect(req.sqlTextOrProcedure).to.contain('WHERE INMATE_BIRTH_DATE = @INMATE_BIRTH_DATE');
                 expect(req.parametersByName.INMATE_BIRTH_DATE.value).to.equal('NANDATE');
                 req.callback(null, 1, [standardResponse]);
             });
 
-            search.inmate({dobOrAge: 'dob', dobDay: 'date'}, function(err, data) {
+            search.inmate({dobOrAge: 'dob', dobDay: 'date'}, (err, data) => {
                 expect(err).to.be.null;
                 done();
             });
         });
 
         it('should combine where statements', (done) =>{
-            prepareFakeDB(function(req) {
+            prepareFakeDB((req) => {
                 expect(req.sqlTextOrProcedure).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER AND ' +
                     'INMATE_FORENAME_1 = @INMATE_FORENAME_1');
                 expect(req.parametersByName.PK_PRISON_NUMBER.value).to.equal(7);
@@ -114,14 +115,14 @@ describe('Search', function() {
         });
     });
 
-    it('should order the data by surname, first initial then dob', function(done) {
-        prepareFakeDB(function(req) {
+    it('should order the data by surname, first initial, then date of first reception.', (done) => {
+        prepareFakeDB((req) => {
             expect(req.sqlTextOrProcedure).to.contain('ORDER BY ' +
-                'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB');
+                'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP');
             req.callback(null, 1, [standardResponse]);
         });
 
-        search.inmate({prisonNumber: 7}, function(err, data) {
+        search.inmate({prisonNumber: 7}, (err, data) => {
             expect(err).to.be.null;
             done();
         });

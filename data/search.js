@@ -127,14 +127,14 @@ module.exports = {
                                                     ORDER BY 
                                                             HEARING_DATE DESC
                                                   ) SENTENCING_COURT`;
-        
+
         /* eslint-enable */
         let from = 'IIS.LOSS_OF_LIBERTY l';
-        let orderBy = 'INMATE_SURNAME';
-        let oLimit = {start: start, resultsPerPage: resultsPerPage};     
-        
+        let orderBy = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB';
+        let oLimit = {start: start, resultsPerPage: resultsPerPage};
+
         let sql = prepareSqlStatement(fields, from, obj.where, orderBy, oLimit);
-        
+
         db.getCollection(sql, obj.params, function(err, rows) {
             if (err) {
                 return callback(err);
@@ -143,18 +143,18 @@ module.exports = {
             return callback(null, rows.map(formatRow));
         });
     },
-    
-    totalRowsForUserInput: function(userInput, callback) {    
+
+    totalRowsForUserInput: function(userInput, callback) {
         let obj = getParamsForUserInput(userInput);
         let sql = prepareSqlStatement('COUNT(*) AS totalRows', 'IIS.LOSS_OF_LIBERTY', obj.where);
 
         db.getTuple(sql, obj.params, cb);
-        
+
         function cb(err, cols) {
             if(err) {
                 return callback(err);
             }
-            
+
             return callback(null, cols.totalRows.value);
         }
     }
@@ -182,32 +182,32 @@ function getParamsForUserInput(userInput) {
             where += (where !== '') ? ' AND ' + obj.sql : obj.sql;
         }
     });
-    
+
     return {params: params, where: where};
 }
 
 function prepareSqlStatement(fields, from, where, orderBy, limit ) {
-    let sql = 'SELECT'; 
+    let sql = 'SELECT';
     sql += ' ' + fields;
     sql += ' FROM ' + from;
     sql += where ? ' WHERE ' + where : '';
     sql += orderBy ? ' ORDER BY ' + orderBy : '';
     sql += limit ? ' OFFSET ' + limit.start + ' ROWS FETCH NEXT ' + limit.resultsPerPage + ' ROWS ONLY' : '';
-    
+
     return sql;
 }
 
 function formatRow(dbRow) {
-    
+
     let sentencingCourt = null;
     let sentencingDate = null;
-    
+
     if(dbRow.SENTENCING_COURT.value) {
         let sentencing = JSON.parse(dbRow.SENTENCING_COURT.value);
         sentencingCourt = sentencing.court;
         sentencingDate = moment(sentencing.date, 'YYYYMMDD').format('MMM YYYY');
     }
-    
+
     return {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
         surname: dbRow.INMATE_SURNAME.value,

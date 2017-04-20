@@ -118,7 +118,7 @@ describe('Search', () => {
     it('should order the data by surname, first initial, then date of first reception.', (done) => {
         prepareFakeDB((req) => {
             expect(req.sqlTextOrProcedure).to.contain('ORDER BY ' +
-                'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP');
+                'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC');
             req.callback(null, 1, [standardResponse]);
         });
 

@@ -131,7 +131,7 @@ module.exports = {
 
         /* eslint-enable */
         let from = 'IIS.LOSS_OF_LIBERTY l';
-        let orderBy = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP';
+        let orderBy = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC';
         let oLimit = {start: start, resultsPerPage: resultsPerPage};
 
         let sql = prepareSqlStatement(fields, from, obj.where, orderBy, oLimit);

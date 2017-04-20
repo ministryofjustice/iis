@@ -23,9 +23,8 @@ block content
                             span.bold-medium &middot; #{item.dob}
                         if item.prisonNumber
                             span.prisonNumber.block.text-secondary Prison No. #{item.prisonNumber}
-                        //-
-                            span.form-hint.capitalise-text  #{item.alias ? item.alias.trim().toLowerCase().substr(0, item.alias.trim().length-1) : '' }
-                            span.capitalise-text #{(item.sentencingCourt) ? 'Sentenced by ' + item.sentencingCourt.toLowerCase() + ', ' + item.sentencingDate : ''}
+                        if item.firstReceptionDate
+                            span.firstReceptionDate.block.text-secondary First Reception. #{item.firstReceptionDate}
 
             if pagination
                 div.form-group.c-align

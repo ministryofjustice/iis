@@ -1,13 +1,11 @@
 {
-    "MARITAL_STATUS": {
-        "null": "NOT REQUIRED",
-        "C": "Never Married and Cohabiting",
-        "D": "Divorced",
-        "H": "Separated / Divorced / Widowed -",
-        "M": "Married",
-        "P": "Married and Separated",
-        "R": "Refused or Unacceptable Ans.",
-        "S": "Single",
-        "W": "Widowed"
-    }
+    "null": "NOT REQUIRED",
+    "C": "Never Married and Cohabiting",
+    "D": "Divorced",
+    "H": "Separated / Divorced / Widowed -",
+    "M": "Married",
+    "P": "Married and Separated",
+    "R": "Refused or Unacceptable Ans.",
+    "S": "Single",
+    "W": "Widowed"
 }

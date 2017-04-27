@@ -13,6 +13,8 @@ const maritalStatusCodes = require('./codes/maritalStatusCodes.json');
 const nationalityCodes = require('./codes/nationalityCodes.json');
 const movementDischargeCodes = require('./codes/movementDischargeCodes.json');
 const movementReturnCodes = require('./codes/movementReturnCodes.json');
+const hdcStageCodes = require('./codes/hdcStageCodes.json');
+const hdcStatusCodes = require('./codes/hdcStatusCodes.json');
 
 module.exports = {
 
@@ -231,32 +233,13 @@ module.exports = {
 
         /* eslint-disable */
         let sql = `SELECT 
-                            h.STAGE_DATE,
-                            (
-                            SELECT 
-                                    CODE_DESCRIPTION 
-                            FROM 
-                                    IIS.IIS_CODE 
-                            WHERE 
-                                    PK_CODE_TYPE=118 
-                            AND 
-                                    PK_CODE_REF_NUM = h.STAGE
-                            ) STAGE,
-
-                            (
-                            SELECT 
-                                    CODE_DESCRIPTION 
-                            FROM 
-                                    IIS.IIS_CODE 
-                            WHERE 
-                                    PK_CODE_TYPE=119 
-                            AND 
-                                    PK_CODE_REF_NUM = h.HDC_STATUS
-                            ) STATUS
+                            STAGE_DATE,
+                            STAGE,
+                            HDC_STATUS
                     FROM 
-                            IIS.HDC_HISTORY h
+                            IIS.HDC_HISTORY
                     WHERE 
-                            h.FK_PRISON_NUMBER = @FK_PRISON_NUMBER
+                            FK_PRISON_NUMBER = @FK_PRISON_NUMBER
                     ORDER BY 
                             STAGE_DATE DESC;`;
         /* eslint-enable */
@@ -336,11 +319,11 @@ function formatMovementRows(dbRow) {
 }
 
 function formatMovementCode(dbRow) {
-     let status = dbRow.TYPE_OF_MOVE.value === 'R' ?
+    let status = dbRow.TYPE_OF_MOVE.value === 'R' ?
         codeDescription(movementReturnCodes, dbRow.MOVEMENT_CODE.value.trim())
         : codeDescription(movementDischargeCodes, dbRow.MOVEMENT_CODE.value.trim())
 
-        return utils.acronymsToUpperCase(changeCase.sentenceCase(status));
+    return utils.acronymsToUpperCase(changeCase.sentenceCase(status));
 }
 
 function formatAliasRows(dbRow) {
@@ -375,9 +358,17 @@ function formatOffenceRows(dbRow) {
 function formatHdcInfoRows(dbRow) {
     return {
         date: dbRow.STAGE_DATE.value ? utils.getFormattedDateFromString(dbRow.STAGE_DATE.value.trim()) : 'Date unknown',
-        stage: dbRow.STAGE.value ? utils.acronymsToUpperCase(changeCase.sentenceCase(dbRow.STAGE.value.trim())) : 'Stage unknown',
-        status: dbRow.STATUS.value ? utils.acronymsToUpperCase(changeCase.sentenceCase(dbRow.STATUS.value.trim())) : 'Status unknown'
+        stage: dbRow.STAGE.value ? formatHdcStageCode(dbRow.STAGE.value) : 'Stage unknown',
+        status: dbRow.HDC_STATUS.value ? formatHdcStatusCode(dbRow.HDC_STATUS.value) : 'Status unknown'
     };
+}
+
+function formatHdcStageCode(code) {
+    return utils.acronymsToUpperCase(changeCase.sentenceCase(codeDescription(hdcStageCodes, code)));
+}
+
+function formatHdcStatusCode(code) {
+    return utils.acronymsToUpperCase(changeCase.sentenceCase(codeDescription(hdcStatusCodes, code)));
 }
 
 function formatHdcRecallRows(dbRow) {

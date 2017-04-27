@@ -1,11 +1,16 @@
 'use strict';
 
-let db = require('../server/db');
-let utils = require('../data/utils');
-let logger = require('../log.js');
 let changeCase = require('change-case');
-
 let TYPES = require('tedious').TYPES;
+
+let db = require('../server/db.js');
+let utils = require('../data/utils.js');
+let logger = require('../log.js');
+
+const birthCountryCodes = require('./codes/birthCountryCodes.json');
+const ethnicityCodes = require('./codes/ethnicityCodes.json');
+const maritalStatusCodes = require('./codes/maritalStatusCodes.json');
+const nationalityCodes = require('./codes/nationalityCodes.json');
 
 module.exports = {
 
@@ -63,50 +68,10 @@ module.exports = {
                             INMATE_FORENAME_2,
                             INMATE_BIRTH_DATE DOB, 
                             FK_PERSON_IDENTIFIER,
-                            (
-                            SELECT 
-                                    CODE_DESCRIPTION 
-                            FROM 
-                                    IIS.IIS_CODE 
-                            WHERE 
-                                    PK_CODE_TYPE = 14 
-                            AND 
-                                    PK_CODE_REF=LOSS_OF_LIBERTY.BIRTH_COUNTRY_CODE
-                            ) BIRTH_COUNTRY,
-
-                            (
-                            SELECT 
-                                    CODE_DESCRIPTION 
-                            FROM    
-                                    IIS.IIS_CODE 
-                            WHERE 
-                                    PK_CODE_TYPE = 63 
-                            AND 
-                                    PK_CODE_REF=LOSS_OF_LIBERTY.MARITAL_STATUS_CODE
-                            ) MARITAL_STATUS,
-
-                            (
-                            SELECT 
-                                    CODE_DESCRIPTION 
-                            FROM 
-                                    IIS.IIS_CODE 
-                            WHERE 
-                                    PK_CODE_TYPE = 22 
-                            AND 
-                                    PK_CODE_REF=LOSS_OF_LIBERTY.ETHNIC_GROUP_CODE
-                            ) ETHNICITY,
-
-                            (
-                            SELECT 
-                                    CODE_DESCRIPTION 
-                            FROM 
-                                    IIS.IIS_CODE 
-                            WHERE 
-                                    PK_CODE_TYPE = 25 
-                            AND 
-                                    PK_CODE_REF=LOSS_OF_LIBERTY.NATIONALITY_CODE
-                            ) NATIONALITY,
-
+                            BIRTH_COUNTRY_CODE,
+                            MARITAL_STATUS_CODE,
+                            ETHNIC_GROUP_CODE,
+                            NATIONALITY_CODE,                            
                             (
                             CASE INMATE_SEX 
                             WHEN 'M' THEN 'Male' 
@@ -328,7 +293,7 @@ module.exports = {
             return callback(null, rows.length > 0 ? rows.map(formatHdcInfoRows) : 0);
         });
     },
-    
+
     hdcrecall: function(obj, callback) {
         let params = [
             {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
@@ -346,12 +311,12 @@ module.exports = {
                     ORDER BY 
                             HDC_RECALL_NUMBER ASC;`;
         /* eslint-enable */
-        
+
         db.getCollection(sql, params, function(err, rows) {
             if (err) {
                 return callback(new Error('No results'));
             }
-  
+
             return callback(null, rows.length > 0 ? rows.map(formatHdcRecallRows) : 0);
         });
     }
@@ -372,12 +337,16 @@ function formatInfoRow(dbRow) {
 function formatSummaryRow(dbRow) {
     return {
         dob: dbRow.DOB.value ? utils.getFormattedDateFromString(dbRow.DOB.value) : 'Unknown',
-        countryOfBirth: dbRow.BIRTH_COUNTRY.value ? changeCase.titleCase(dbRow.BIRTH_COUNTRY.value) : 'Unknown',
-        maritalStatus: dbRow.MARITAL_STATUS.value ? changeCase.sentenceCase(dbRow.MARITAL_STATUS.value) : 'Unknown',
-        ethnicity: dbRow.ETHNICITY.value ? changeCase.titleCase(dbRow.ETHNICITY.value) : 'Unknown',
-        nationality: dbRow.NATIONALITY.value ? changeCase.titleCase(dbRow.NATIONALITY.value) : 'Unknown',
+        countryOfBirth: codeDescription(birthCountryCodes, dbRow.BIRTH_COUNTRY_CODE.value),
+        maritalStatus: codeDescription(maritalStatusCodes, dbRow.MARITAL_STATUS_CODE.value),
+        ethnicity: codeDescription(ethnicityCodes, dbRow.ETHNIC_GROUP_CODE.value),
+        nationality: codeDescription(nationalityCodes, dbRow.NATIONALITY_CODE.value),
         sex: dbRow.INMATE_SEX.value ? changeCase.sentenceCase(dbRow.INMATE_SEX.value) : 'Unknown'
     };
+}
+
+function codeDescription(codeSet, codeValue) {
+    return codeValue ? changeCase.titleCase(codeSet[codeValue]) : 'Unknown';
 }
 
 function formatMovementRows(dbRow) {

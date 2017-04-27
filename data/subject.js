@@ -313,16 +313,16 @@ function formatInfoRow(dbRow) {
 function formatSummaryRow(dbRow) {
     return {
         dob: dbRow.DOB.value ? utils.getFormattedDateFromString(dbRow.DOB.value) : 'Unknown',
-        countryOfBirth: codeDescription(birthCountryCodes, dbRow.BIRTH_COUNTRY_CODE.value),
-        maritalStatus: codeDescription(maritalStatusCodes, dbRow.MARITAL_STATUS_CODE.value),
-        ethnicity: codeDescription(ethnicityCodes, dbRow.ETHNIC_GROUP_CODE.value),
-        nationality: codeDescription(nationalityCodes, dbRow.NATIONALITY_CODE.value),
+        countryOfBirth: changeCase.titleCase(codeDescription(birthCountryCodes, dbRow.BIRTH_COUNTRY_CODE.value)),
+        maritalStatus: changeCase.titleCase(codeDescription(maritalStatusCodes, dbRow.MARITAL_STATUS_CODE.value)),
+        ethnicity: changeCase.titleCase(codeDescription(ethnicityCodes, dbRow.ETHNIC_GROUP_CODE.value)),
+        nationality: changeCase.titleCase(codeDescription(nationalityCodes, dbRow.NATIONALITY_CODE.value)),
         sex: dbRow.INMATE_SEX.value ? changeCase.sentenceCase(dbRow.INMATE_SEX.value) : 'Unknown'
     };
 }
 
 function codeDescription(codeSet, codeValue) {
-    return codeValue ? changeCase.titleCase(codeSet[codeValue.trim()]) : 'Unknown';
+    return codeValue ? codeSet[codeValue] : 'Unknown';
 }
 
 function formatMovementRows(dbRow) {
@@ -336,9 +336,11 @@ function formatMovementRows(dbRow) {
 }
 
 function formatMovementCode(dbRow) {
-    return dbRow.TYPE_OF_MOVE.value === 'R' ?
-        codeDescription(movementReturnCodes, dbRow.MOVEMENT_CODE.value)
-        : codeDescription(movementDischargeCodes, dbRow.MOVEMENT_CODE.value)
+     let status = dbRow.TYPE_OF_MOVE.value === 'R' ?
+        codeDescription(movementReturnCodes, dbRow.MOVEMENT_CODE.value.trim())
+        : codeDescription(movementDischargeCodes, dbRow.MOVEMENT_CODE.value.trim())
+
+        return utils.acronymsToUpperCase(changeCase.sentenceCase(status));
 }
 
 function formatAliasRows(dbRow) {

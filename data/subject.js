@@ -11,6 +11,8 @@ const birthCountryCodes = require('./codes/birthCountryCodes.json');
 const ethnicityCodes = require('./codes/ethnicityCodes.json');
 const maritalStatusCodes = require('./codes/maritalStatusCodes.json');
 const nationalityCodes = require('./codes/nationalityCodes.json');
+const movementDischargeCodes = require('./codes/movementDischargeCodes.json');
+const movementReturnCodes = require('./codes/movementReturnCodes.json');
 
 module.exports = {
 
@@ -113,33 +115,7 @@ module.exports = {
                                     IIS.ESTABLISHMENT 
                              WHERE 
                                     PK_ESTABLISHMENT_CODE = SUBSTRING(ESTAB_COMP_OF_MOVE,1,2)
-                            ) ESTAB_COMP_OF_MOVE, 
-                            (
-                             CASE TYPE_OF_MOVE
-                             WHEN 'R' 
-                                    THEN (
-                                            SELECT 
-                                                    CODE_DESCRIPTION 
-                                            FROM 
-                                                    IIS.IIS_CODE 
-                                            WHERE 
-                                                    PK_CODE_TYPE=34 
-                                            AND 
-                                                    PK_CODE_REF = MOVEMENT_CODE
-                                         )
-                                    ELSE 
-                                         (
-                                            SELECT 
-                                                    CODE_DESCRIPTION 
-                                            FROM 
-                                                    IIS.IIS_CODE 
-                                            WHERE 
-                                                    PK_CODE_TYPE=35 
-                                            AND 
-                                                    PK_CODE_REF = MOVEMENT_CODE
-                                         )
-                             END
-                            ) STATUS
+                            ) ESTAB_COMP_OF_MOVE
                     FROM 
                             IIS.INMATE_MOVEMENT 
                     WHERE 
@@ -346,7 +322,7 @@ function formatSummaryRow(dbRow) {
 }
 
 function codeDescription(codeSet, codeValue) {
-    return codeValue ? changeCase.titleCase(codeSet[codeValue]) : 'Unknown';
+    return codeValue ? changeCase.titleCase(codeSet[codeValue.trim()]) : 'Unknown';
 }
 
 function formatMovementRows(dbRow) {
@@ -354,9 +330,15 @@ function formatMovementRows(dbRow) {
         establishment: dbRow.ESTAB_COMP_OF_MOVE.value ? changeCase.titleCase(dbRow.ESTAB_COMP_OF_MOVE.value) : 'Establishment unknown',
         date: utils.getFormattedDateFromString(dbRow.DATE_OF_MOVE.value),
         type: dbRow.TYPE_OF_MOVE.value,
-        status: dbRow.STATUS.value ? utils.acronymsToUpperCase(changeCase.sentenceCase(dbRow.STATUS.value)) : 'Status unknown'
+        status: dbRow.TYPE_OF_MOVE.value && dbRow.MOVEMENT_CODE.value ? formatMovementCode(dbRow) : 'Status unknown'
 
     };
+}
+
+function formatMovementCode(dbRow) {
+    return dbRow.TYPE_OF_MOVE.value === 'R' ?
+        codeDescription(movementReturnCodes, dbRow.MOVEMENT_CODE.value)
+        : codeDescription(movementDischargeCodes, dbRow.MOVEMENT_CODE.value)
 }
 
 function formatAliasRows(dbRow) {

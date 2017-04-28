@@ -1,0 +1,17 @@
+{
+    "1": "HDC GRANTED",
+    "2": "HDC REFUSED",
+    "3": "HDC NO LONGER APPLIES",
+    "4": "AUTO CHECK PASS",
+    "5": "MANUAL CHECK PASS",
+    "6": "AUTO CHECK FAIL",
+    "7": "MANUAL CHECK FAIL",
+    "8": "ELIGIBLE",
+    "9": "NOT ELIGIBLE FOR HDC",
+    "10": "SUIT ASSESS",
+    "11": "ENHANCED ASSESS",
+    "12": "NO MANUAL CHECK",
+    "13": "ALL CHECK FAIL",
+    "14": "OPT OUT",
+    "15": "OPT IN"
+}

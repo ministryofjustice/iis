@@ -1,11 +1,20 @@
 'use strict';
 
-let db = require('../server/db');
-let utils = require('../data/utils');
-let logger = require('../log.js');
 let changeCase = require('change-case');
-
 let TYPES = require('tedious').TYPES;
+
+let db = require('../server/db.js');
+let utils = require('../data/utils.js');
+let logger = require('../log.js');
+
+const birthCountryCodes = require('./codes/birthCountryCodes.json');
+const ethnicityCodes = require('./codes/ethnicityCodes.json');
+const maritalStatusCodes = require('./codes/maritalStatusCodes.json');
+const nationalityCodes = require('./codes/nationalityCodes.json');
+const movementDischargeCodes = require('./codes/movementDischargeCodes.json');
+const movementReturnCodes = require('./codes/movementReturnCodes.json');
+const hdcStageCodes = require('./codes/hdcStageCodes.json');
+const hdcStatusCodes = require('./codes/hdcStatusCodes.json');
 
 module.exports = {
 
@@ -63,50 +72,10 @@ module.exports = {
                             INMATE_FORENAME_2,
                             INMATE_BIRTH_DATE DOB, 
                             FK_PERSON_IDENTIFIER,
-                            (
-                            SELECT 
-                                    CODE_DESCRIPTION 
-                            FROM 
-                                    IIS.IIS_CODE 
-                            WHERE 
-                                    PK_CODE_TYPE = 14 
-                            AND 
-                                    PK_CODE_REF=LOSS_OF_LIBERTY.BIRTH_COUNTRY_CODE
-                            ) BIRTH_COUNTRY,
-
-                            (
-                            SELECT 
-                                    CODE_DESCRIPTION 
-                            FROM    
-                                    IIS.IIS_CODE 
-                            WHERE 
-                                    PK_CODE_TYPE = 63 
-                            AND 
-                                    PK_CODE_REF=LOSS_OF_LIBERTY.MARITAL_STATUS_CODE
-                            ) MARITAL_STATUS,
-
-                            (
-                            SELECT 
-                                    CODE_DESCRIPTION 
-                            FROM 
-                                    IIS.IIS_CODE 
-                            WHERE 
-                                    PK_CODE_TYPE = 22 
-                            AND 
-                                    PK_CODE_REF=LOSS_OF_LIBERTY.ETHNIC_GROUP_CODE
-                            ) ETHNICITY,
-
-                            (
-                            SELECT 
-                                    CODE_DESCRIPTION 
-                            FROM 
-                                    IIS.IIS_CODE 
-                            WHERE 
-                                    PK_CODE_TYPE = 25 
-                            AND 
-                                    PK_CODE_REF=LOSS_OF_LIBERTY.NATIONALITY_CODE
-                            ) NATIONALITY,
-
+                            BIRTH_COUNTRY_CODE,
+                            MARITAL_STATUS_CODE,
+                            ETHNIC_GROUP_CODE,
+                            NATIONALITY_CODE,                            
                             (
                             CASE INMATE_SEX 
                             WHEN 'M' THEN 'Male' 
@@ -148,33 +117,7 @@ module.exports = {
                                     IIS.ESTABLISHMENT 
                              WHERE 
                                     PK_ESTABLISHMENT_CODE = SUBSTRING(ESTAB_COMP_OF_MOVE,1,2)
-                            ) ESTAB_COMP_OF_MOVE, 
-                            (
-                             CASE TYPE_OF_MOVE
-                             WHEN 'R' 
-                                    THEN (
-                                            SELECT 
-                                                    CODE_DESCRIPTION 
-                                            FROM 
-                                                    IIS.IIS_CODE 
-                                            WHERE 
-                                                    PK_CODE_TYPE=34 
-                                            AND 
-                                                    PK_CODE_REF = MOVEMENT_CODE
-                                         )
-                                    ELSE 
-                                         (
-                                            SELECT 
-                                                    CODE_DESCRIPTION 
-                                            FROM 
-                                                    IIS.IIS_CODE 
-                                            WHERE 
-                                                    PK_CODE_TYPE=35 
-                                            AND 
-                                                    PK_CODE_REF = MOVEMENT_CODE
-                                         )
-                             END
-                            ) STATUS
+                            ) ESTAB_COMP_OF_MOVE
                     FROM 
                             IIS.INMATE_MOVEMENT 
                     WHERE 
@@ -290,32 +233,13 @@ module.exports = {
 
         /* eslint-disable */
         let sql = `SELECT 
-                            h.STAGE_DATE,
-                            (
-                            SELECT 
-                                    CODE_DESCRIPTION 
-                            FROM 
-                                    IIS.IIS_CODE 
-                            WHERE 
-                                    PK_CODE_TYPE=118 
-                            AND 
-                                    PK_CODE_REF_NUM = h.STAGE
-                            ) STAGE,
-
-                            (
-                            SELECT 
-                                    CODE_DESCRIPTION 
-                            FROM 
-                                    IIS.IIS_CODE 
-                            WHERE 
-                                    PK_CODE_TYPE=119 
-                            AND 
-                                    PK_CODE_REF_NUM = h.HDC_STATUS
-                            ) STATUS
+                            STAGE_DATE,
+                            STAGE,
+                            HDC_STATUS
                     FROM 
-                            IIS.HDC_HISTORY h
+                            IIS.HDC_HISTORY
                     WHERE 
-                            h.FK_PRISON_NUMBER = @FK_PRISON_NUMBER
+                            FK_PRISON_NUMBER = @FK_PRISON_NUMBER
                     ORDER BY 
                             STAGE_DATE DESC;`;
         /* eslint-enable */
@@ -328,7 +252,7 @@ module.exports = {
             return callback(null, rows.length > 0 ? rows.map(formatHdcInfoRows) : 0);
         });
     },
-    
+
     hdcrecall: function(obj, callback) {
         let params = [
             {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
@@ -346,12 +270,12 @@ module.exports = {
                     ORDER BY 
                             HDC_RECALL_NUMBER ASC;`;
         /* eslint-enable */
-        
+
         db.getCollection(sql, params, function(err, rows) {
             if (err) {
                 return callback(new Error('No results'));
             }
-  
+
             return callback(null, rows.length > 0 ? rows.map(formatHdcRecallRows) : 0);
         });
     }
@@ -372,12 +296,16 @@ function formatInfoRow(dbRow) {
 function formatSummaryRow(dbRow) {
     return {
         dob: dbRow.DOB.value ? utils.getFormattedDateFromString(dbRow.DOB.value) : 'Unknown',
-        countryOfBirth: dbRow.BIRTH_COUNTRY.value ? changeCase.titleCase(dbRow.BIRTH_COUNTRY.value) : 'Unknown',
-        maritalStatus: dbRow.MARITAL_STATUS.value ? changeCase.sentenceCase(dbRow.MARITAL_STATUS.value) : 'Unknown',
-        ethnicity: dbRow.ETHNICITY.value ? changeCase.titleCase(dbRow.ETHNICITY.value) : 'Unknown',
-        nationality: dbRow.NATIONALITY.value ? changeCase.titleCase(dbRow.NATIONALITY.value) : 'Unknown',
+        countryOfBirth: changeCase.titleCase(codeDescription(birthCountryCodes, dbRow.BIRTH_COUNTRY_CODE.value)),
+        maritalStatus: changeCase.titleCase(codeDescription(maritalStatusCodes, dbRow.MARITAL_STATUS_CODE.value)),
+        ethnicity: changeCase.titleCase(codeDescription(ethnicityCodes, dbRow.ETHNIC_GROUP_CODE.value)),
+        nationality: changeCase.titleCase(codeDescription(nationalityCodes, dbRow.NATIONALITY_CODE.value)),
         sex: dbRow.INMATE_SEX.value ? changeCase.sentenceCase(dbRow.INMATE_SEX.value) : 'Unknown'
     };
+}
+
+function codeDescription(codeSet, codeValue) {
+    return codeValue ? codeSet[codeValue] : 'Unknown';
 }
 
 function formatMovementRows(dbRow) {
@@ -385,9 +313,17 @@ function formatMovementRows(dbRow) {
         establishment: dbRow.ESTAB_COMP_OF_MOVE.value ? changeCase.titleCase(dbRow.ESTAB_COMP_OF_MOVE.value) : 'Establishment unknown',
         date: utils.getFormattedDateFromString(dbRow.DATE_OF_MOVE.value),
         type: dbRow.TYPE_OF_MOVE.value,
-        status: dbRow.STATUS.value ? utils.acronymsToUpperCase(changeCase.sentenceCase(dbRow.STATUS.value)) : 'Status unknown'
+        status: dbRow.TYPE_OF_MOVE.value && dbRow.MOVEMENT_CODE.value ? formatMovementCode(dbRow) : 'Status unknown'
 
     };
+}
+
+function formatMovementCode(dbRow) {
+    let status = dbRow.TYPE_OF_MOVE.value === 'R' ?
+        codeDescription(movementReturnCodes, dbRow.MOVEMENT_CODE.value.trim())
+        : codeDescription(movementDischargeCodes, dbRow.MOVEMENT_CODE.value.trim())
+
+    return utils.acronymsToUpperCase(changeCase.sentenceCase(status));
 }
 
 function formatAliasRows(dbRow) {
@@ -422,9 +358,17 @@ function formatOffenceRows(dbRow) {
 function formatHdcInfoRows(dbRow) {
     return {
         date: dbRow.STAGE_DATE.value ? utils.getFormattedDateFromString(dbRow.STAGE_DATE.value.trim()) : 'Date unknown',
-        stage: dbRow.STAGE.value ? utils.acronymsToUpperCase(changeCase.sentenceCase(dbRow.STAGE.value.trim())) : 'Stage unknown',
-        status: dbRow.STATUS.value ? utils.acronymsToUpperCase(changeCase.sentenceCase(dbRow.STATUS.value.trim())) : 'Status unknown'
+        stage: dbRow.STAGE.value ? formatHdcStageCode(dbRow.STAGE.value) : 'Stage unknown',
+        status: dbRow.HDC_STATUS.value ? formatHdcStatusCode(dbRow.HDC_STATUS.value) : 'Status unknown'
     };
+}
+
+function formatHdcStageCode(code) {
+    return utils.acronymsToUpperCase(changeCase.sentenceCase(codeDescription(hdcStageCodes, code)));
+}
+
+function formatHdcStatusCode(code) {
+    return utils.acronymsToUpperCase(changeCase.sentenceCase(codeDescription(hdcStatusCodes, code)));
 }
 
 function formatHdcRecallRows(dbRow) {

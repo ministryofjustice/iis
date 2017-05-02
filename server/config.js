@@ -33,10 +33,9 @@ module.exports = {
     sso: {
         CLIENT_ID: get('CLIENT_ID', '123'),
         CLIENT_SECRET: get('CLIENT_SECRET', '123'),
-        TOKEN_HOST: get('TOKEN_HOST', 'http://localhost:3001'),
+        TOKEN_HOST: get('TOKEN_HOST', 'http://192.168.9.26:3001'),
         AUTHORIZE_PATH: get('AUTHORIZE_PATH', '/oauth/authorize'),
         TOKEN_PATH: get('TOKEN_PATH', '/oauth/token'),
         USER_DETAILS_PATH: get('USER_DETAILS_PATH', '/api/user_details')
     }
-
 };

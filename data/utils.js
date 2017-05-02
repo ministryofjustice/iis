@@ -87,7 +87,7 @@ module.exports = {
     },
 
     acronymsToUpperCase: function(text) {
-        return acronyms.map(function(acronym){
+        return acronyms.map(function(acronym) {
             let pattern = '\\b('+acronym+')\\b';
             let regex = new RegExp(pattern, 'gi');
             text = text.replace(regex, changeCase.upperCase(acronym));

@@ -10,6 +10,6 @@ $(document).ready(function() {
     // Show and hide toggled content
     // Where .block-label uses the data-target attribute
     // to toggle hidden content
-    let showHideContent = new GOVUK.ShowHideContent();
+    var showHideContent = new GOVUK.ShowHideContent();
     showHideContent.init();
 });

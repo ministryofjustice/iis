@@ -1,80 +1,122 @@
 'use strict';
 
-let db = require('../server/db');
-let utils = require('./utils');
-let moment = require('moment');
+const db = require('../server/db');
+const utils = require('./utils');
+const moment = require('moment');
 
-let TYPES = require('tedious').TYPES;
+const TYPES = require('tedious').TYPES;
+const SELECT = `PK_PRISON_NUMBER, 
+                INMATE_SURNAME, 
+                INMATE_FORENAME_1, 
+                INMATE_FORENAME_2,
+                INMATE_BIRTH_DATE DOB,
+                DATE_1ST_RECEP,
+                SUBSTRING(
+                    (SELECT ', ' + k.PERSON_FORENAME_1 + ' ' + PERSON_FORENAME_2 + ' ' + k.PERSON_SURNAME 
+                     FROM IIS.KNOWN_AS k 
+                     WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER FOR XML PATH('')),2,200000
+                ) 
+                ALIAS,
+                (SELECT TOP 1 CONCAT('{\"court\":\"',(SELECT TMPU_COURT_NAME 
+                                                      FROM IIS.TMPU_COURT 
+                                                      WHERE PK_TMPU_COURT_CODE = c.IIS_COURT_CODE), 
+                                                      '\", \"date\":\"', HEARING_DATE, '\"}')
+                             
+                    FROM IIS.COURT_HEARING c 
+                    WHERE c.COURT_TYPE_CODE='SC' 
+                    AND c.FK_CASE IN (SELECT PKTS_INMATE_CASE 
+                                      FROM IIS.INMATE_CASE 
+                                      WHERE CASE_STATUS_CODE 
+                                      LIKE 'SENT%' 
+                                      AND FK_PRISON_NUMBER=l.PK_PRISON_NUMBER) 
+                                      ORDER BY HEARING_DATE DESC) SENTENCING_COURT`;
+const TABLE = 'IIS.LOSS_OF_LIBERTY l';
+const ORDER_BY = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC';
 
-const filters = {
-    prisonNumber: {
-        dbColumn: 'PK_PRISON_NUMBER',
-        getSql: function(obj) {
-            obj.val = utils.padPrisonNumber(obj.val);
-            return getSqlWithParams.call(this, obj);
+const getSearchOperatorSql = {
+    prisonNumber: getPrisonNumberSqlWithParams,
+    forename: getStringSqlWithParams('INMATE_FORENAME_1', {wildcardEnabled: true}),
+    forename2: getStringSqlWithParams('INMATE_FORENAME_2', {wildcardEnabled: true}),
+    surname: getStringSqlWithParams('INMATE_SURNAME', {wildcardEnabled: true}),
+    dobDay: getDobSqlWithParams,
+    age: getAgeSqlWithParams
+};
+
+exports.inmate = function(userInput, callback) {
+    let obj = getParamsForUserInput(userInput);
+
+    const resultLimits = getPaginationLimits(userInput.page);
+    let sql = prepareSqlStatement(SELECT, TABLE, obj.where, ORDER_BY, resultLimits);
+
+    db.getCollection(sql, obj.params, function(err, rows) {
+        if (err) {
+            return callback(err);
         }
-    },
 
-    forename: {
-        dbColumn: 'INMATE_FORENAME_1',
-        getSql: getSqlWithParams
-    },
+        return callback(null, rows.map(formatRow));
+    });
+};
 
-    forename2: {
-        dbColumn: 'INMATE_FORENAME_2',
-        getSql: getSqlWithParams
-    },
+exports.totalRowsForUserInput = function(userInput, callback) {
+    let obj = getParamsForUserInput(userInput);
+    let sql = prepareSqlStatement('COUNT(*) AS totalRows', 'IIS.LOSS_OF_LIBERTY', obj.where);
 
-    surname: {
-        dbColumn: 'INMATE_SURNAME',
-        getSql: getSqlWithParams
-    },
+    db.getTuple(sql, obj.params, cb);
 
-    dobDay: {
-        dbColumn: 'INMATE_BIRTH_DATE',
-        getSql: function(obj) {
-
-            if (obj.userInput.dobOrAge !== 'dob') {
-                return null;
-            }
-
-            obj.val = obj.userInput.dobYear +
-                utils.pad(obj.userInput.dobMonth) +
-                utils.pad(obj.userInput.dobDay);
-
-            return getSqlWithParams.call(this, obj);
+    function cb(err, cols) {
+        if(err) {
+            return callback(err);
         }
-    },
-    age: {
-        dbColumn: 'INMATE_BIRTH_DATE',
-        getSql: function(obj) {
 
-            if (obj.userInput.dobOrAge !== 'age') {
-                return null;
-            }
-
-            let dateRange = utils.getDateRange(obj.userInput.age);
-
-            let sql = '(INMATE_BIRTH_DATE >= @from_date AND INMATE_BIRTH_DATE <= @to_date)';
-            return {
-                sql: sql,
-                params: [
-                    {column: 'from_date', type: getType('string'), value: dateRange[0]},
-                    {column: 'to_date', type: getType('string'), value: dateRange[1]}
-                ]
-            };
-        }
+        return callback(null, cols.totalRows.value);
     }
 };
 
 
-function getSqlWithParams(obj) {
-    let sql = this.dbColumn + ' = @' + this.dbColumn;
+function getPrisonNumberSqlWithParams(obj) {
+    obj.val = utils.padPrisonNumber(obj.val);
+    return getStringSqlWithParams('PK_PRISON_NUMBER')(obj);
+}
 
+function getStringSqlWithParams(dbColumn, options) {
+    const operator = options && options.wildcardEnabled ? 'LIKE' : '=';
+    return (obj) => {
+        return {
+            sql: `${dbColumn} ${operator} @${dbColumn}`,
+            params: [{
+                column: dbColumn,
+                type: getType('string'),
+                value: obj.val
+            }]
+        };
+    };
+}
+
+function getDobSqlWithParams(obj) {
+    if (obj.userInput.dobOrAge !== 'dob') {
+        return null;
+    }
+
+    obj.val = obj.userInput.dobYear +
+        utils.pad(obj.userInput.dobMonth) +
+        utils.pad(obj.userInput.dobDay);
+
+    return getStringSqlWithParams('INMATE_BIRTH_DATE', false)(obj);
+}
+
+function getAgeSqlWithParams(obj) {
+    if (obj.userInput.dobOrAge !== 'age') {
+        return null;
+    }
+
+    let dateRange = utils.getDateRange(obj.userInput.age);
+
+    let sql = '(INMATE_BIRTH_DATE >= @from_date AND INMATE_BIRTH_DATE <= @to_date)';
     return {
         sql: sql,
         params: [
-            {column: this.dbColumn, type: getType('string'), value: obj.val}
+            {column: 'from_date', type: getType('string'), value: dateRange[0]},
+            {column: 'to_date', type: getType('string'), value: dateRange[1]}
         ]
     };
 }
@@ -84,107 +126,31 @@ function getType(v) {
     return TYPES.VarChar;
 }
 
-module.exports = {
-    inmate: function(userInput, callback) {
-        let obj = getParamsForUserInput(userInput);
-        let resultsPerPage = utils.resultsPerPage;
-        let start = (resultsPerPage * userInput.page) - resultsPerPage;
-        /* eslint-disable */
-        let fields = `PK_PRISON_NUMBER, 
-                        INMATE_SURNAME, 
-                        INMATE_FORENAME_1, 
-                        INMATE_FORENAME_2,
-                        INMATE_BIRTH_DATE DOB,
-                        DATE_1ST_RECEP,
-                        SUBSTRING(
-                            (
-                            SELECT 
-                                    ', ' + k.PERSON_FORENAME_1 + ' ' + PERSON_FORENAME_2 + ' ' + k.PERSON_SURNAME 
-                             FROM 
-                                    IIS.KNOWN_AS k 
-                             WHERE 
-                                    k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER FOR XML PATH('')
-                            )
-                            ,2,200000) ALIAS,
-
-                            (SELECT TOP 1 
-                                    CONCAT('{\"court\":\"',(SELECT TMPU_COURT_NAME FROM IIS.TMPU_COURT WHERE PK_TMPU_COURT_CODE = c.IIS_COURT_CODE), '\", \"date\":\"', HEARING_DATE, '\"}') 
-                            FROM 
-                                    IIS.COURT_HEARING c 
-                            WHERE 
-                                    c.COURT_TYPE_CODE='SC' 
-                            AND
-                                    c.FK_CASE IN (
-                                                    SELECT 
-                                                            PKTS_INMATE_CASE 
-                                                    FROM 
-                                                            IIS.INMATE_CASE 
-                                                    WHERE 
-                                                            CASE_STATUS_CODE 
-                                                    LIKE 
-                                                            'SENT%' 
-                                                    AND 
-                                                            FK_PRISON_NUMBER=l.PK_PRISON_NUMBER) 
-                                                    ORDER BY 
-                                                            HEARING_DATE DESC
-                                                  ) SENTENCING_COURT`;
-
-        /* eslint-enable */
-        let from = 'IIS.LOSS_OF_LIBERTY l';
-        let orderBy = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC';
-        let oLimit = {start: start, resultsPerPage: resultsPerPage};
-
-        let sql = prepareSqlStatement(fields, from, obj.where, orderBy, oLimit);
-
-        db.getCollection(sql, obj.params, function(err, rows) {
-            if (err) {
-                return callback(err);
-            }
-
-            return callback(null, rows.map(formatRow));
-        });
-    },
-
-    totalRowsForUserInput: function(userInput, callback) {
-        let obj = getParamsForUserInput(userInput);
-        let sql = prepareSqlStatement('COUNT(*) AS totalRows', 'IIS.LOSS_OF_LIBERTY', obj.where);
-
-        db.getTuple(sql, obj.params, cb);
-
-        function cb(err, cols) {
-            if(err) {
-                return callback(err);
-            }
-
-            return callback(null, cols.totalRows.value);
-        }
-    }
-};
+function getPaginationLimits(pageOn) {
+    let resultsPerPage = utils.resultsPerPage;
+    return {
+        start: (resultsPerPage * pageOn) - resultsPerPage,
+        resultsPerPage
+    };
+}
 
 function getParamsForUserInput(userInput) {
-    let where = '';
-    let params = [];
-
-    Object.keys(userInput).forEach(function(key) {
-        let val = userInput[key];
-
-        if (val.length === 0) {
-            return;
+    return Object.keys(userInput).reduce((allParams, key) => {
+        const val = userInput[key];
+        if (!val || !getSearchOperatorSql[key]) {
+            return allParams;
         }
 
-        if (!filters[key]) {
-            return;
+        const objectParams = getSearchOperatorSql[key]({val, userInput});
+        if (!objectParams) {
+            return allParams;
         }
 
-        let obj = filters[key].getSql({val: val, userInput: userInput});
+        allParams.params = allParams.params.concat(objectParams.params);
+        allParams.where = (allParams.where) ? `${allParams.where} AND ${objectParams.sql}` : objectParams.sql;
+        return allParams;
 
-        if (obj !== null) {
-            params = params.concat(obj.params);
-            where += (where !== '') ? ' AND ' + obj.sql : obj.sql;
-        }
-    });
-
-    return {params: params, where: where};
+    }, {where: '', params: []});
 }
 
 function prepareSqlStatement(fields, from, where, orderBy, limit ) {

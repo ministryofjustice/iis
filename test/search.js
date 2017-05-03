@@ -58,7 +58,7 @@ describe('Search', () => {
 
         it('should populate name if passed in', (done) => {
             prepareFakeDB((req) => {
-                expect(req.sqlTextOrProcedure).to.contain('WHERE INMATE_FORENAME_1 = @INMATE_FORENAME_1');
+                expect(req.sqlTextOrProcedure).to.contain('WHERE INMATE_FORENAME_1 LIKE @INMATE_FORENAME_1');
                 expect(req.parametersByName.INMATE_FORENAME_1.value).to.equal('DAVE');
                 req.callback(null, 1, [standardResponse]);
             });
@@ -71,9 +71,9 @@ describe('Search', () => {
 
         it('should populate full name if passed in', (done) => {
             prepareFakeDB((req) => {
-                expect(req.sqlTextOrProcedure).to.contain('WHERE INMATE_FORENAME_1 = @INMATE_FORENAME_1 AND ' +
-                    'INMATE_FORENAME_2 = @INMATE_FORENAME_2 AND ' +
-                    'INMATE_SURNAME = @INMATE_SURNAME');
+                expect(req.sqlTextOrProcedure).to.contain('WHERE INMATE_FORENAME_1 LIKE @INMATE_FORENAME_1 AND ' +
+                    'INMATE_FORENAME_2 LIKE @INMATE_FORENAME_2 AND ' +
+                    'INMATE_SURNAME LIKE @INMATE_SURNAME');
                 expect(req.parametersByName.INMATE_FORENAME_1.value).to.equal('DAVE');
                 expect(req.parametersByName.INMATE_FORENAME_2.value).to.equal('JAMES');
                 expect(req.parametersByName.INMATE_SURNAME.value).to.equal('JONES');
@@ -102,7 +102,7 @@ describe('Search', () => {
         it('should combine where statements', (done) =>{
             prepareFakeDB((req) => {
                 expect(req.sqlTextOrProcedure).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER AND ' +
-                    'INMATE_FORENAME_1 = @INMATE_FORENAME_1');
+                    'INMATE_FORENAME_1 LIKE @INMATE_FORENAME_1');
                 expect(req.parametersByName.PK_PRISON_NUMBER.value).to.equal(7);
                 expect(req.parametersByName.INMATE_FORENAME_1.value).to.equal('DAVE');
                 req.callback(null, 1, [standardResponse]);

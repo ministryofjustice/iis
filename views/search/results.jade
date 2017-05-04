@@ -27,22 +27,13 @@ block content
                             span.firstReceptionDate.block.text-secondary First Reception. #{item.firstReceptionDate}
 
             if pagination
-                div.form-group.c-align
-                    - var page = pagination.currPage;
-                    if !pagination.showPrev
-                        span.inactive Previous
-                    else
-                        a(href="/search/results?page=#{parseInt(page)-1}") Previous
-                    |  &nbsp;
-
-                    span.bold-small#pageIndicator #{page} of #{pagination.totalPages}
-                    | &nbsp;
-
-                    if !pagination.showNext
-                        span.inactive Next
-                    else
-                        a(href="/search/results?page=#{parseInt(page)+1}") Next
-
+                form(method="post")
+                    input(type="hidden" name="_csrf" value="#{csrfToken}")
+                    div.form-group.c-align
+                        span
+                            input.form-control#paginationInput(type="number", name="pageNumber", min="0" max=pagination.totalPages value=pagination.currPage)
+                        span
+                            | of #{pagination.totalPages}
 
             div.form-group
                 a(href="/search") New search

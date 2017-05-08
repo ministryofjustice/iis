@@ -176,17 +176,20 @@ const options = {
     identifier: {
         fields: ['prisonNumber'],
         validator: identifier.validate,
-        nextView: 'names'
+        nextView: 'names',
+        hints: []
     },
     names: {
         fields: ['forename', 'forename2', 'surname'],
         validator: names.validate,
-        nextView: 'dob'
+        nextView: 'dob',
+        hints: ['wildcard']
     },
     dob: {
         fields: ['dobOrAge', 'dobDay', 'dobMonth', 'dobYear', 'age'],
         validator: dob.validate,
-        nextView: 'results'
+        nextView: 'results',
+        hints: []
     }
 };
 
@@ -227,6 +230,7 @@ router.get('/:view', function(req, res) {
         content: content.view[view],
         view: view,
         body: {},
+        hints: viewInfo.hints,
         err: err
     });
 });

@@ -20,15 +20,15 @@ const codeSets = {
     HDC_STATUS: hdcStatusCodesJson
 };
 
-exports.describeCodes = function(codeType, codeValue) {
+exports.describeCode = function(codeType, codeValue) {
 
-    const json = codeSets[codeType];
+    const codeSet = codeSets[codeType];
 
-    if (!json || !codeValue) {
+    if (!codeSet || !codeValue) {
         return 'Unknown';
     }
 
-    let desc = json[codeValue];
+    let desc = codeSet[codeValue];
 
     return desc ? desc : 'Unknown';
 };

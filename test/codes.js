@@ -1,51 +1,40 @@
 'use strict';
 
 const expect = require('chai').expect;
-const subject = require("../data/subject.js");
+const {describeCode} = require('../data/codes.js');
 
-const aCodeSet = {
-    "A": "FIRST",
-    "TWO": "SECOND",
-    " ": "EMPTY"
-}
-
-describe.skip('Code description lookup', function() {
+describe('Code description lookup', function() {
 
 
     it('should return unknown when empty value given', function() {
-        expect(subject.codeDescription(aCodeSet, ''))
+        expect(describeCode('MARITAL_STATUS', ''))
             .to.equal('Unknown');
     });
 
     it('should return unknown when no value given', function() {
-        expect(subject.codeDescription(aCodeSet))
-            .to.equal('Unknown');
-    });
-
-    it('should return unknown when empty code set given', function() {
-        expect(subject.codeDescription({}, 'value'))
+        expect(describeCode('MARITAL_STATUS'))
             .to.equal('Unknown');
     });
 
     it('should return unknown when no code set given', function() {
-        expect(subject.codeDescription('', 'value'))
+        expect(describeCode('', 'value'))
             .to.equal('Unknown');
     });
 
     it('should return unknown when no match for the value in the code set', function() {
-        expect(subject.codeDescription(aCodeSet, 'no-such-value'))
+        expect(describeCode('MARITAL_STATUS', 'no-such-value'))
             .to.equal('Unknown');
     });
 
     it('should return description matching the given value', function() {
-        expect(subject.codeDescription(aCodeSet, 'A'))
-            .to.equal('FIRST');
-        expect(subject.codeDescription(aCodeSet, 'TWO'))
-            .to.equal('SECOND');
+        expect(describeCode('MARITAL_STATUS', 'S'))
+            .to.equal('Single');
+        expect(describeCode('MARITAL_STATUS', 'W'))
+            .to.equal('Widowed');
     });
 
     it('should return description matching the given value when value is some spaces', function() {
-        expect(subject.codeDescription(aCodeSet, ' '))
-            .to.equal('EMPTY');
+        expect(describeCode('MARITAL_STATUS', ' '))
+            .to.equal('NOT REQUIRED');
     });
 });

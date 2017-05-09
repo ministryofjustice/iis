@@ -39,7 +39,7 @@ div#print-header,
 .quiet { color: $grey-1; }
 .block { display: block; }
 
-.js-enabled form[name="search-prisoner-form"] .searchPrisonerItem.initial{
+.js-enabled .initial{
     display: none;
     visibility: hidden;
 }

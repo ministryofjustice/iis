@@ -8,7 +8,7 @@ const search = require('../data/search.js');
 const utils = require('../data/utils.js');
 const audit = require('../data/audit');
 
-const availableSearchOptions = {
+const availableSearchOptions = exports.availableSearchOptions = {
     identifier: {
         fields: ['prisonNumber'],
         validator: identifier.validate,
@@ -73,9 +73,11 @@ exports.getSearchForm = function(req, res) {
         return res.redirect('/search');
     }
 
+    const hints = flatten(searchItems.map((item) => availableSearchOptions[item].hints));
     res.render('search/full-search', {
         content: content.view.search,
-        searchItems
+        searchItems,
+        hints
     });
 };
 
@@ -115,6 +117,10 @@ const composeFieldsForOptionReducer = (requestBody) => (collatedData, option) =>
 
 const inputValidates = (searchItems, userInput) => {
     return !searchItems.some((item) => availableSearchOptions[item].validator(userInput, (err) => err));
+};
+
+const flatten = (arr) => {
+    return Array.prototype.concat(...arr);
 };
 
 // original function
@@ -161,7 +167,7 @@ exports.getResults = function(req, res) {
 
     function getListOfInmates(rowcount) {
         userInput.page = page;
-        search.inmate(userInput, function (err, data) {
+        search.inmate(userInput, function(err, data) {
             if (err) {
                 logger.error('Error during search', {error: err});
                 return showDbError(res);

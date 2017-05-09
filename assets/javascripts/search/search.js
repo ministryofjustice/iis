@@ -7,7 +7,9 @@ const state = exports.state = {
     position: 0,
     totalPositions: {},
     searchItems: {},
-    form: {}
+    form: {},
+    hints: {},
+    currentUserInputs: {},
 };
 
 (() => {
@@ -15,24 +17,20 @@ const state = exports.state = {
     setState({
         totalPositions: searchItems.length - 1,
         searchItems: searchItems,
-        form: $('form[name="search-prisoner-form"]')
+        form: $('form[name="search-prisoner-form"]'),
+        hints: $('.hint')
     });
 
-    $(state.searchItems).each((index, item) => {
-        $(item).removeClass('initial');
-    });
-
+    $('.initial').removeClass('initial');
     $('#continue').on('click', continueBtnHandler);
     $('.back-link-container a').on('click', backBtnHandler);
-
-
 })();
 
 function setState(newState) {
     Object.keys(newState).forEach((key) => {
         state[key] = newState[key];
     });
-
+    state.currentUserInputs = $(state.searchItems[state.position]).find('input');
     render();
 }
 
@@ -44,6 +42,19 @@ function render() {
             hideItem(item);
         }
     });
+
+    showHideHints();
+}
+
+function showHideHints() {
+    const formItem = getFormItem(state.currentUserInputs);
+    $(state.hints).each((index, hint) => {
+        if($(hint).hasClass(`${formItem}Hint`)) {
+            revealItem(hint);
+        } else {
+            hideItem(hint);
+        }
+    })
 }
 
 function revealItem(item) {
@@ -93,19 +104,19 @@ function incrementPosition(amount) {
 }
 
 function getValidationError() {
-    const $userInputs = $(state.searchItems[state.position]).find('input');
-    const formItem = getFormItem($userInputs);
+    const {currentUserInputs} = state;
+    const formItem = getFormItem(currentUserInputs);
 
-    if (formItem === 'dob') return validator.isValidDob($userInputs);
-    if (formItem === 'forename') return validator.isValidName($userInputs);
-    if (formItem === 'prisonNumber') return validator.isValidPrisonNumber($userInputs);
+    if (formItem === 'dob') return validator.isValidDob(currentUserInputs);
+    if (formItem === 'names') return validator.isValidName(currentUserInputs);
+    if (formItem === 'prisonNumber') return validator.isValidPrisonNumber(currentUserInputs);
 
     return null
 }
 
 function getFormItem ($userInputs) {
     if ($($userInputs, 0).attr('id').toLowerCase().indexOf('dob') > -1) return 'dob';
-    if ($($userInputs, 0).attr('id').toLowerCase().indexOf('forename') > -1) return 'forename';
+    if ($($userInputs, 0).attr('id').toLowerCase().indexOf('forename') > -1) return 'names';
     if ($($userInputs, 0).attr('id').toLowerCase().indexOf('prisonnumber') > -1) return 'prisonNumber';
 
     return null

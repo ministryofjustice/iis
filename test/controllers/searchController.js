@@ -81,8 +81,9 @@ describe('searchController', () => {
                     body: 'Select all that apply',
                     title: 'What information do you have on the inmate?'
                 },
-                searchItems: ['names', 'dob']}
-            );
+                searchItems: ['names', 'dob'],
+                hints: ['wildcard']
+            });
 
         });
 

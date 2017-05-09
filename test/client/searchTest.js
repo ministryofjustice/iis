@@ -20,6 +20,7 @@ const initialPage = '<html>' +
     '<div class="searchPrisonerItem"><input id="optDob" type="text" name="optDob"></div>' +
     '<div><button id="continue">Continue</button></div>' +
     '</form>' +
+    '<div id="namehint" class="hint namesHint"><p>Hint</p></div>' +
     '</html>';
 
 describe('Client side search form', () => {
@@ -59,6 +60,10 @@ describe('Client side search form', () => {
             })
         });
 
+        it('should initially hide hint', () => {
+            expect($('#namehint').hasClass('js-hidden')).to.equal(true)
+        });
+
         it('should call validator for the item being submitted each item', () => {
 
             $continueBtn.click();
@@ -83,6 +88,12 @@ describe('Client side search form', () => {
             })
         });
 
+        it('should reveal hint when on names page', () => {
+            $continueBtn.click();
+
+            expect($('#namehint').hasClass('js-hidden')).to.equal(false)
+        });
+
         it('should hide all but third after second click of continue button', () => {
 
             $continueBtn.click();
@@ -95,6 +106,13 @@ describe('Client side search form', () => {
                     expect($(value).hasClass('js-hidden')).to.equal(true)
                 }
             })
+        });
+
+        it('should hide hint when not on names page', () => {
+            $continueBtn.click();
+            $continueBtn.click();
+
+            expect($('#namehint').hasClass('js-hidden')).to.equal(true)
         });
 
         it('should submit the form after all inputs have been completed', () => {

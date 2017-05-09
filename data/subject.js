@@ -1,13 +1,20 @@
 'use strict';
 
-const changeCase = require('change-case');
-const TYPES = require('tedious').TYPES;
+let changeCase = require('change-case');
+let TYPES = require('tedious').TYPES;
 
-const db = require('../server/db.js');
-const codes = require('../data/codes.js');
-const utils = require('../data/utils.js');
-const logger = require('../log.js');
+let db = require('../server/db.js');
+let utils = require('../data/utils.js');
+let logger = require('../log.js');
 
+const birthCountryCodes = require('./codes/birthCountryCodes.json');
+const ethnicityCodes = require('./codes/ethnicityCodes.json');
+const maritalStatusCodes = require('./codes/maritalStatusCodes.json');
+const nationalityCodes = require('./codes/nationalityCodes.json');
+const movementDischargeCodes = require('./codes/movementDischargeCodes.json');
+const movementReturnCodes = require('./codes/movementReturnCodes.json');
+const hdcStageCodes = require('./codes/hdcStageCodes.json');
+const hdcStatusCodes = require('./codes/hdcStatusCodes.json');
 
 module.exports = {
 
@@ -271,6 +278,17 @@ module.exports = {
 
             return callback(null, rows.length > 0 ? rows.map(formatHdcRecallRows) : 0);
         });
+    },
+
+    codeDescription: function(codeSet, codeValue) {
+
+        if (!codeSet || !codeValue) {
+            return 'Unknown';
+        }
+
+        let desc = codeSet[codeValue];
+
+        return desc ? desc : 'Unknown';
     }
 };
 
@@ -288,10 +306,10 @@ function formatInfoRow(dbRow) {
 function formatSummaryRow(dbRow) {
     return {
         dob: dbRow.DOB.value ? utils.getFormattedDateFromString(dbRow.DOB.value) : 'Unknown',
-        countryOfBirth: changeCase.titleCase(codes.describe(codes.birthCountryCodes, dbRow.BIRTH_COUNTRY_CODE.value)),
-        maritalStatus: changeCase.titleCase(codes.describe(codes.maritalStatusCodes, dbRow.MARITAL_STATUS_CODE.value)),
-        ethnicity: changeCase.titleCase(codes.describe(codes.ethnicityCodes, dbRow.ETHNIC_GROUP_CODE.value)),
-        nationality: changeCase.titleCase(codes.describe(codes.nationalityCodes, dbRow.NATIONALITY_CODE.value)),
+        countryOfBirth: changeCase.titleCase(codeDescription(birthCountryCodes, dbRow.BIRTH_COUNTRY_CODE.value)),
+        maritalStatus: changeCase.titleCase(codeDescription(maritalStatusCodes, dbRow.MARITAL_STATUS_CODE.value)),
+        ethnicity: changeCase.titleCase(codeDescription(ethnicityCodes, dbRow.ETHNIC_GROUP_CODE.value)),
+        nationality: changeCase.titleCase(codeDescription(nationalityCodes, dbRow.NATIONALITY_CODE.value)),
         sex: dbRow.INMATE_SEX.value ? changeCase.sentenceCase(dbRow.INMATE_SEX.value) : 'Unknown'
     };
 }
@@ -308,8 +326,8 @@ function formatMovementRows(dbRow) {
 
 function formatMovementCode(dbRow) {
     let status = dbRow.TYPE_OF_MOVE.value === 'R' ?
-        codes.describe(codes.movementReturnCodes, dbRow.MOVEMENT_CODE.value.trim())
-        : codes.describe(codes.movementDischargeCodes, dbRow.MOVEMENT_CODE.value.trim())
+        codeDescription(movementReturnCodes, dbRow.MOVEMENT_CODE.value.trim())
+        : codeDescription(movementDischargeCodes, dbRow.MOVEMENT_CODE.value.trim())
 
     return utils.acronymsToUpperCase(changeCase.sentenceCase(status));
 }
@@ -352,11 +370,11 @@ function formatHdcInfoRows(dbRow) {
 }
 
 function formatHdcStageCode(code) {
-    return utils.acronymsToUpperCase(changeCase.sentenceCase(codes.describe(codes.hdcStageCodes, code)));
+    return utils.acronymsToUpperCase(changeCase.sentenceCase(codeDescription(hdcStageCodes, code)));
 }
 
 function formatHdcStatusCode(code) {
-    return utils.acronymsToUpperCase(changeCase.sentenceCase(codes.describe(codes.hdcStatusCodes, code)));
+    return utils.acronymsToUpperCase(changeCase.sentenceCase(codeDescription(hdcStatusCodes, code)));
 }
 
 function formatHdcRecallRows(dbRow) {

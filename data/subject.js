@@ -280,16 +280,18 @@ module.exports = {
         });
     },
 
-    codeDescription: function(codeSet, codeValue) {
 
-        if (!codeSet || !codeValue) {
-            return 'Unknown';
-        }
+};
 
-        let desc = codeSet[codeValue];
+function codeDescription(codeSet, codeValue) {
 
-        return desc ? desc : 'Unknown';
+    if (!codeSet || !codeValue) {
+        return 'Unknown';
     }
+
+    let desc = codeSet[codeValue];
+
+    return desc ? desc : 'Unknown';
 };
 
 function formatInfoRow(dbRow) {

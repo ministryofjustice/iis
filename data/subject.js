@@ -278,8 +278,18 @@ module.exports = {
 
             return callback(null, rows.length > 0 ? rows.map(formatHdcRecallRows) : 0);
         });
-    }
+    },
 
+    codeDescription: function(codeSet, codeValue) {
+
+        if (!codeSet || !codeValue) {
+            return 'Unknown';
+        }
+
+        let desc = codeSet[codeValue];
+
+        return desc ? desc : 'Unknown';
+    }
 };
 
 function formatInfoRow(dbRow) {
@@ -302,10 +312,6 @@ function formatSummaryRow(dbRow) {
         nationality: changeCase.titleCase(codeDescription(nationalityCodes, dbRow.NATIONALITY_CODE.value)),
         sex: dbRow.INMATE_SEX.value ? changeCase.sentenceCase(dbRow.INMATE_SEX.value) : 'Unknown'
     };
-}
-
-function codeDescription(codeSet, codeValue) {
-    return codeValue ? codeSet[codeValue] : 'Unknown';
 }
 
 function formatMovementRows(dbRow) {

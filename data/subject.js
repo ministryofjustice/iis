@@ -341,7 +341,7 @@ function formatOffenceRows(dbRow) {
         offenceCode: dbRow.IIS_OFFENCE_CODE.value ? dbRow.IIS_OFFENCE_CODE.value : 'Unknown offence code',
         caseDate: dbRow.CASE_DATE.value ? utils.getFormattedDateFromString(dbRow.CASE_DATE.value) : 'Unknown case date',
         establishment_code: dbRow.CASE_ESTAB_COMP_CODE.value ? changeCase.upperCase(dbRow.CASE_ESTAB_COMP_CODE.value) : 'Unknown establishment',
-        establishment: dbRow.ESTABLISHMENT.value ? changeCase.sentenceCase(dbRow.ESTABLISHMENT.value) : 'Unknown establishment'
+        establishment: dbRow.ESTABLISHMENT.value ? changeCase.titleCase(dbRow.ESTABLISHMENT.value) : 'Unknown establishment'
     };
 }
 

@@ -1,22 +1,34 @@
 'use strict';
 
-const birthCountryCodes = exports.birthCountryCodes = require('./codes/birthCountryCodes.json');
-const ethnicityCodes = exports.ethnicityCodes = require('./codes/ethnicityCodes.json');
-const maritalStatusCodes = exports.maritalStatusCodes = require('./codes/maritalStatusCodes.json');
-const nationalityCodes = exports.nationalityCodes = require('./codes/nationalityCodes.json');
-const movementDischargeCodes = exports.movementDischargeCodes = require('./codes/movementDischargeCodes.json');
-const movementReturnCodes = exports.movementReturnCodes = require('./codes/movementReturnCodes.json');
-const hdcStageCodes = exports.hdcStageCodes = require('./codes/hdcStageCodes.json');
-const hdcStatusCodes = exports.hdcStatusCodes = require('./codes/hdcStatusCodes.json');
+const birthCountryCodesJson = require('./codes/birthCountryCodes.json');
+const ethnicityCodesJson = require('./codes/ethnicityCodes.json');
+const maritalStatusCodesJson = require('./codes/maritalStatusCodes.json');
+const nationalityCodesJson = require('./codes/nationalityCodes.json');
+const movementDischargeCodesJson = require('./codes/movementDischargeCodes.json');
+const movementReturnCodesJson = require('./codes/movementReturnCodes.json');
+const hdcStageCodesJson = require('./codes/hdcStageCodes.json');
+const hdcStatusCodesJson = require('./codes/hdcStatusCodes.json');
 
-exports.describe = function(codeSet, codeValue) {
+const codeSets = {
+    BIRTH_COUNTRY: birthCountryCodesJson,
+    ETHNIC_GROUP: ethnicityCodesJson,
+    MARITAL_STATUS: maritalStatusCodesJson,
+    NATIONALITY: nationalityCodesJson,
+    MOVEMENT_DISCHARGE: movementDischargeCodesJson,
+    MOVEMENT_RETURN: movementReturnCodesJson,
+    HDC_STAGE: hdcStageCodesJson,
+    HDC_STATUS: hdcStatusCodesJson
+};
 
-    if (!codeSet || !codeValue) {
+exports.describeCodes = function(codeType, codeValue) {
+
+    const json = codeSets[codeType];
+
+    if (!json || !codeValue) {
         return 'Unknown';
     }
 
-    let desc = codeSet[codeValue];
+    let desc = json[codeValue];
 
     return desc ? desc : 'Unknown';
-
 };

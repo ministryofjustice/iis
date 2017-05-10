@@ -189,7 +189,37 @@ describe('searchController', () => {
             expect(resMock.redirect).to.have.callCount(1);
             expect(resMock.redirect).to.have.been.calledWith('/search');
         });
+    });
+    describe('postPagination', () => {
+        it('should render the full search and pass in search items from query string', () => {
+            reqMock = {
+                query: {0: 'names', 1: 'dob'}
+            };
 
+            getSearchForm(reqMock, resMock);
+            expect(resMock.render).to.have.callCount(1);
+            expect(resMock.render).to.have.been.calledWith('search/full-search', {
+                content: {
+                    body: 'Select all that apply',
+                    title: 'What information do you have on the inmate?'
+                },
+                searchItems: ['names', 'dob'],
+                hints: ['wildcard']
+            });
 
+        });
+
+        it('should redirect to search if query contains unsupported search items', () => {
+            reqMock = {
+                query: {0: 'names', 1: 'dob', 2: 'bob'},
+                params: {
+                    view: 'view'
+                }
+            };
+
+            getSearchForm(reqMock, resMock);
+            expect(resMock.redirect).to.have.callCount(1);
+            expect(resMock.redirect).to.have.been.calledWith('/search');
+        });
     });
 });

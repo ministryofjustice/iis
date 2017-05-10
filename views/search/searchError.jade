@@ -1,0 +1,11 @@
+div(id="errors" class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
+    h1(class="heading-medium error-summary-heading", id="error-message") #{err.title}
+    if err.desc
+        p= err.desc
+
+    if err.items && err.items.length > 0
+        ul.error-summary-list
+            each item in err.items
+                li
+                    each val, index in item
+                        a(href="##{index}") #{val}

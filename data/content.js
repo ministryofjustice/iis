@@ -16,7 +16,8 @@ module.exports = {
         INVALID_DOB: 'Invalid date of birth',
         INVALID_AGE: 'Age must be a whole number',
         INVALID_AGE_RANGE: 'Invalid age range or age range too big',
-        TRY_AGAIN: 'Try again'
+        TRY_AGAIN: 'Try again',
+        INVALID_PAGE: 'The page you requested does not exist'
     },
 
     view: {

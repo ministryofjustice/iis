@@ -191,6 +191,35 @@ exports.getResults = function(req, res) {
     }
 };
 
+exports.postPagination = function(req, res) {
+    const {page, error} = getValidatedPage(req.body.pageNumber, req.session.rowcount);
+    const query = error ? {page, error} : {page};
+
+    const redirectUrl = url.format({'pathname': '/search/results', query});
+    return res.redirect(redirectUrl);
+};
+
+function getValidatedPage(value, rowCount) {
+
+    if (!value || !isNumeric(value)) {
+        return {page: 1, error: 'Invalid page'};
+    }
+
+    if (value < 1) {
+        return {page: 1, error: 'Too low'};
+    }
+
+    if (rowCount && value > rowCount) {
+        return {page: rowCount, error: 'Too high'};
+    }
+
+    return {page: value, error: null};
+}
+
+function isNumeric(value) {
+    return /^\d+$/.test(value);
+}0
+
 function isValidPage(page, rowcount) {
     if (Number.isNaN(parseInt(page))) {
         return false;

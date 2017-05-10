@@ -6,7 +6,8 @@ const {
     postIndex,
     getSearchForm,
     postSearchForm,
-    getResults
+    getResults,
+    postPagination
 } = require('../controllers/searchController');
 
 // eslint-disable-next-line
@@ -24,28 +25,6 @@ router.post('/', postIndex);
 router.get('/form', getSearchForm);
 router.post('/form', postSearchForm);
 router.get('/results', getResults);
-
-router.post('/results', (req, res) => {
-    const validatedPage = getValidatedPage(req.body.pageNumber, req.session.rowCount);
-
-    const redirectUrl = url.format({'pathname': '/search/results', 'query': {page: validatedPage}});
-    return res.redirect(redirectUrl);
-});
-
-function getValidatedPage(value, rowCount) {
-    if (!value || !isNumeric(value) || value < 1) {
-        return 1;
-    }
-
-    if (rowCount && value > rowCount) {
-        return rowCount;
-    }
-
-    return value;
-}
-
-function isNumeric(value) {
-    return /^\d+$/.test(value);
-}
+router.post('/results', postPagination);
 
 module.exports = router;

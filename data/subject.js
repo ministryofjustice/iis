@@ -271,8 +271,7 @@ module.exports = {
 
             return callback(null, rows.length > 0 ? rows.map(formatHdcRecallRows) : 0);
         });
-    },
-
+    }
 
 };
 

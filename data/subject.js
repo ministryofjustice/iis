@@ -181,10 +181,7 @@ module.exports = {
         let sql = `SELECT 
                             INMATE_ADDRESS_1, 
                             INMATE_ADDRESS_2,
-                            INMATE_ADDRESS_3,
                             INMATE_ADDRESS_4,
-                            INMATE_ADDRESS_5,
-                            INMATE_POSTCODE,
                             ADDRESS_TYPE
                     FROM 
                             IIS.INMATE_ADDRESS

@@ -330,7 +330,7 @@ function formatMovementRows(dbRow) {
 function formatMovementCode(dbRow) {
     let status = dbRow.TYPE_OF_MOVE.value === 'R' ?
         describeCode('MOVEMENT_RETURN', dbRow.MOVEMENT_CODE.value.trim())
-        : describeCode('MOVEMENT_DISCHARGE', dbRow.MOVEMENT_CODE.value.trim())
+        : describeCode('MOVEMENT_DISCHARGE', dbRow.MOVEMENT_CODE.value.trim());
 
     return utils.acronymsToUpperCase(changeCase.sentenceCase(status));
 }

@@ -347,13 +347,10 @@ function formatAliasRows(dbRow) {
 
 function formatAddressRows(dbRow) {
     return {
-        addressLine1: dbRow.INMATE_ADDRESS_1.value,
-        addressLine2: dbRow.INMATE_ADDRESS_2.value,
-        addressLine3: dbRow.INMATE_ADDRESS_3.value,
-        addressLine4: dbRow.INMATE_ADDRESS_4.value,
-        addressLine5: dbRow.INMATE_ADDRESS_5.value,
-        postcode: dbRow.INMATE_POSTCODE.value,
-        type: describeCode('ADDRESS', dbRow.ADDRESS_TYPE.value)
+        addressLine1: changeCase.titleCase(dbRow.INMATE_ADDRESS_1.value),
+        addressLine2: changeCase.titleCase(dbRow.INMATE_ADDRESS_2.value),
+        addressLine4: changeCase.titleCase(dbRow.INMATE_ADDRESS_4.value),
+        type: changeCase.titleCase(describeCode('ADDRESS', dbRow.ADDRESS_TYPE.value))
     };
 }
 

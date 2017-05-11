@@ -88,7 +88,7 @@ function getNavigation(page) {
       movements: {title: 'Movements'},
       hdcinfo: {title: 'HDC history'},
       offences: {title: 'Offences'},
-      addresses: {title: 'Address'}
+      addresses: {title: 'Addresses'}
     };
 
     nav[page].active = true;

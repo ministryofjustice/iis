@@ -56,10 +56,6 @@ div#print-header,
 section { border-top: 2px solid #BFC1C3; margin-top: 25px; padding-top: 30px; }
 section .grid-row { padding: 5px 0; }
 .btn-show-more { padding: 25px 0 25px 0; }
-.well { padding: 20px; background-color: #F8F8F8; }
-.refs-box { margin-top: 20px; }
-.refs-box li { padding-bottom: 10px; }
-.refs-box li:last-child { padding-bottom: 0; }
 .highlight { color: #28A197; }
 span.label { background-color: #28A197; color: #FFFFFF; padding: 0 5px;  }
 
@@ -72,3 +68,7 @@ span.label { background-color: #28A197; color: #FFFFFF; padding: 0 5px;  }
 div.search-terms a { padding: 0 0 15px 23px;  }
 abbr { border-bottom: 1px dashed #6F777B; }
 */
+.well { padding: 20px; background-color: #F8F8F8; }
+.refs-box { margin-top: 20px; }
+.refs-box li { padding-bottom: 10px; }
+.refs-box li:last-child { padding-bottom: 0; }

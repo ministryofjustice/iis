@@ -20,17 +20,38 @@ function prepareFakeDB(onRequest) {
 }
 
 
-describe('Subject/inmate details', function(){
-    it.skip("should return array of columns", function(done) {
-        prepareFakeDB(function(req) {
-            expect(req.sqlTextOrProcedure).to.contain("WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER");
-            let result = [{PK_PRISON_NUMBER:{value: 'AA112233'}}];
-            req.callback(null, 1, [result]);
+describe('Subject data', function() {
+
+    let infoResponse = {
+        PK_PRISON_NUMBER: {value: 'AA112233'},
+        INMATE_SURNAME: {value: 'SURNAME'},
+        INMATE_FORENAME_1: {value: 'FORENAMEA'},
+        INMATE_FORENAME_2: {value: 'FORENAME2'},
+        PNC: {value: 'ABC/99A'},
+        PAROLE_REF_LIST: {value: 'AAA1,BB2'}
+    };
+
+    it("should return expected info object", function(done) {
+
+        prepareFakeDB((req) => {
+            req.callback(null, 1, [infoResponse]);
         });
 
-        subject.details('AA112233', function(err, data) {
+        let expectedInfo = {
+            prisonNumber: 'AA112233',
+            surname: 'SURNAME',
+            forename: 'FORENAMEA',
+            forename2: 'FORENAME2',
+            pnc: 'ABC/99A',
+            paroleRefList: 'AAA1,BB2'
+        };
+
+        subject.info('AA112233', function(err, data) {
+
             expect(err).to.be.null;
-            expect(data).to.be.an("array");
+
+            expect(data).to.deep.equal(expectedInfo);
+
             done();
         });
     });

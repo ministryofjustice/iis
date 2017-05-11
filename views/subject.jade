@@ -44,6 +44,15 @@ block content
 
                 div.form-group
                     button.button(onclick="window.print();") Print
+            div.column-one-third
+                if data.subject.paroleRefList || data.subject.pnc
+                    ul.list.well.refs-box
+                        if data.subject.paroleRefList
+                            li#parole-refs= data.subject.paroleRefList
+                                span.form-hint Parole ref.
+                        if data.subject.pnc
+                            li#pnc= data.subject.pnc
+                                span.form-hint PNC
 
         section
             div.grid-row

@@ -184,7 +184,8 @@ module.exports = {
                             INMATE_ADDRESS_3,
                             INMATE_ADDRESS_4,
                             INMATE_ADDRESS_5,
-                            INMATE_POSTCODE
+                            INMATE_POSTCODE,
+                            ADDRESS_TYPE
                     FROM 
                             IIS.INMATE_ADDRESS
                     WHERE 
@@ -351,7 +352,8 @@ function formatAddressRows(dbRow) {
         addressLine3: dbRow.INMATE_ADDRESS_3.value,
         addressLine4: dbRow.INMATE_ADDRESS_4.value,
         addressLine5: dbRow.INMATE_ADDRESS_5.value,
-        postcode: dbRow.INMATE_POSTCODE.value
+        postcode: dbRow.INMATE_POSTCODE.value,
+        type: describeCode('ADDRESS', dbRow.ADDRESS_TYPE.value)
     };
 }
 

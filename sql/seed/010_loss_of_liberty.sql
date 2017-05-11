@@ -26,15 +26,18 @@ INSERT INTO IIS.LOSS_OF_LIBERTY (
     FK_PERSON_IDENTIFIER)
 VALUES
 
-    ('AB111111', '19990101', 1,  'CE',  'W1', 'S', 'SURNAMEA ', 'FIRSTA', 'MIDDLEA', '19800101', 'M', 'UK', 1.0, '1234567891'),
-    ('AB111112', '19990102', 2,  'CE',  'A2', 'M', 'SURNAMEB ', 'FIRSTB', 'MIDDLEB', '19800102', 'F', 'GM', 1.0, '1234567892'),
-    ('AB111113', '19990103', 98, 'MOS', 'BO', 'S', 'SURNAMEC ', 'FIRSTC', 'MIDDLEC', '19800103', 'M', 'ZW', 1.0, '1234567893'),
-    ('AB111114', '19990104', 99, 'GOS', 'W1', 'M', 'SURNAMED ', 'FIRSTD', 'MIDDLED', '19800104', 'F', '',   1.0, '1234567894'),
-    ('AB111115', '19990105', 1,  'CE',  'A2', 'S', 'SURNAMEE ', 'FIRSTE', 'MIDDLEE', '19800105', 'M', 'GM', 1.0, '1234567895'),
-    ('AB111116', '19990106', 2,  'CE',  'BO', 'M', 'SURNAMEF ', 'FIRSTF', 'MIDDLEF', '19800106', 'F', 'ZW', 1.0, null),
-    ('AB111117', '19990107', 98, 'MOS', 'W1', 'S', 'SURNAMEG ', 'FIRSTG', 'MIDDLEG', '19800107', 'M', 'UK', 1.0, null),
-    ('AB111118', '19990108', 99, 'GOS', 'A2', 'M', 'SURNAMEH ', 'FIRSTH', 'MIDDLEH', '19800108', 'F', 'GM', 1.0, null),
-    ('AB111119', '19990109', 1,  '',    'BO', '' , 'SURNAMEI ', 'FIRSTI', 'MIDDLEI', '19800109', 'M', 'ZW', 1.0, null)
+    ('AB111111', '19990101', 1,  'CE',  'W1', 'S', 'SURNAMEA ',   'FIRSTA',   'MIDDLEA',   '19800101', 'M', 'UK', 1.0, '1234567891'),
+    ('AB111112', '19990102', 2,  'CE',  'A2', 'M', 'SURNAMEB ',   'FIRSTB',   'MIDDLEB',   '19800102', 'F', 'GM', 1.0, '1234567892'),
+    ('AB111113', '19990103', 98, 'MOS', 'BO', 'S', 'SURNAMEC ',   'FIRSTC',   'MIDDLEC',   '19800103', 'M', 'ZW', 1.0, '1234567893'),
+    ('AB111114', '19990104', 99, 'GOS', 'W1', 'M', 'SURNAMED ',   'FIRSTD',   'MIDDLED',   '19800104', 'F', '',   1.0, '1234567894'),
+    ('AB111115', '19990105', 1,  'CE',  'A2', 'S', 'SURNAMEE ',   'FIRSTE',   'MIDDLEE',   '19800105', 'M', 'GM', 1.0, '1234567895'),
+    ('AB111116', '19990106', 2,  'CE',  'BO', 'M', 'SURNAMEF ',   'FIRSTF',   'MIDDLEF',   '19800106', 'F', 'ZW', 1.0, null),
+    ('AB111117', '19990107', 98, 'MOS', 'W1', 'S', 'SURNAMEG ',   'FIRSTG',   'MIDDLEG',   '19800107', 'M', 'UK', 1.0, null),
+    ('AB111118', '19990108', 99, 'GOS', 'A2', 'M', 'SURNAMEH ',   'FIRSTH',   'MIDDLEH',   '19800108', 'F', 'GM', 1.0, null),
+    ('AB111119', '19990109', 1,  '',    'BO', '' , 'SURNAMEI ',   'FIRSTI',   'MIDDLEI',   '19800109', 'M', 'ZW', 1.0, null),
+    ('AB111120', '19990110', 1,  'CE',  'BO', 'S', 'SURNAME''J ', 'FIRST''J', 'MIDDLE''J', '19800109', 'M', 'ZW', 1.0, null),
+    ('AB111121', '19990111', 1,  'CE',  'BO', 'S', 'SURNAME-K ',  'FIRST-K',  'MIDDLE-K',  '19800109', 'M', 'ZW', 1.0, null),
+    ('AB111122', '19990112', 1,  'CE',  'BO', 'S', 'SURNAME L ',  'FIRST L',  'MIDDLE L',  '19800109', 'M', 'ZW', 1.0, null)
 ;
 
 GO

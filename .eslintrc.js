@@ -4,7 +4,8 @@ module.exports = {
         "ecmaVersion": 6
     },
     "env": {
-        "node": true
+        "node": true,
+        "es6": true
     },
     "globals":{
         "jQuery": false,

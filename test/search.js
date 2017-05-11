@@ -1,23 +1,16 @@
-let expect = require('chai').expect;
-let db = require('../server/db');
-let search = require('../data/search');
+process.env.NODE_ENV = 'test';
 
-let EventEmitter = require('events').EventEmitter;
+const proxyquire = require('proxyquire');
+proxyquire.noCallThru();
 
-function prepareFakeDB(onRequest) {
-    db.setFakeFactory(function fakeDBFactory() {
-        let fake = new EventEmitter();
-        process.nextTick(() => {
-            fake.emit('connect');
-        });
-        fake.execSql = (req) => {
-            onRequest(req);
-        };
-        return fake;
-    });
-}
+const chai = require('chai');
+const expect = chai.expect;
+const sinon = require('sinon');
+const sinonChai = require('sinon-chai');
+chai.use(sinonChai);
+const sandbox = sinon.sandbox.create();
 
-const standardResponse = {
+const standardResponse = [{
     INMATE_FORENAME_1: {},
     INMATE_FORENAME_2: {},
     INMATE_SURNAME: {value: 'David'},
@@ -26,105 +19,155 @@ const standardResponse = {
     DOB: {},
     ALIAS: {},
     DATE_1ST_RECEP: {}
-}
+}];
 
 describe('Search', () => {
-    it('should return recordset as an array', (done) => {
+    let getCollectionStub = sandbox.stub().callsArgWith(2, standardResponse);
+    let getTupleStub = sandbox.stub().returns(null);
 
-        prepareFakeDB((req) => {
-            req.callback(null, 1, [standardResponse]);
+    const inmateProxy = (getCollection = getCollectionStub,
+                         getTuple = getTupleStub) => {
+        return proxyquire('../data/search', {
+            '../server/db': {
+                'getCollection': getCollection,
+                'getTuple': getTuple
+            }
+        }).inmate;
+    };
+
+    afterEach(() => {
+        sandbox.reset();
+    });
+
+    describe('inmate', () => {
+
+        it('should call db.getCollection', () => {
+            const result = inmateProxy()({prisonNumber: 7});
+
+            return result.then((data) => {
+                expect(getCollectionStub).to.have.callCount(1);
+            });
         });
 
-        search.inmate({prisonNumber: 7}, (err, data) => {
-            expect(err).to.be.null;
-            expect(data).to.be.an('array');
-            done();
+        it('should return recordset as an array', () => {
+            const result = inmateProxy()({prisonNumber: 7});
+
+            return result.then((data) => {
+                expect(data).to.be.an('array');
+            });
+        });
+
+        it('should correctly format the result', () => {
+            const result = inmateProxy()({prisonNumber: 7});
+            const expectedResult = [
+                {
+                    'surname': 'David',
+                    'dob': 'Invalid date',
+                    'sentencingCourt': null,
+                    'sentencingDate': null,
+                    'firstReceptionDate': 'Invalid date',
+                    'forename': undefined,
+                    'forename2': undefined,
+                    'prisonNumber': undefined,
+                    'alias': undefined
+                }
+            ];
+
+            return result.then((data) => {
+                expect(data).to.eql(expectedResult);
+            });
         });
     });
 
     describe('WHERE statement', () => {
-        it('should populate prison number if passed in', (done) => {
-            prepareFakeDB((req) => {
-                expect(req.sqlTextOrProcedure).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER');
-                expect(req.parametersByName.PK_PRISON_NUMBER.value).to.equal(7);
-                req.callback(null, 1, [standardResponse]);
-            });
 
-            search.inmate({prisonNumber: 7}, (err, data) => {
-                expect(err).to.be.null;
-                done();
-            });
-        });
+        it('should populate prison number if passed in', () => {
+            const result = inmateProxy()({prisonNumber: 7});
 
-        it('should populate name if passed in', (done) => {
-            prepareFakeDB((req) => {
-                expect(req.sqlTextOrProcedure).to.contain('WHERE INMATE_FORENAME_1 LIKE @INMATE_FORENAME_1');
-                expect(req.parametersByName.INMATE_FORENAME_1.value).to.equal('DAVE');
-                req.callback(null, 1, [standardResponse]);
-            });
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
 
-            search.inmate({forename: 'Dave'}, (err, data) => {
-                expect(err).to.be.null;
-                done();
+                expect(sql).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER');
+                expect(params[0].column).to.eql('PK_PRISON_NUMBER');
+                expect(params[0].value).to.eql(7);
             });
         });
 
-        it('should populate full name if passed in', (done) => {
-            prepareFakeDB((req) => {
-                expect(req.sqlTextOrProcedure).to.contain('WHERE INMATE_FORENAME_1 LIKE @INMATE_FORENAME_1 AND ' +
+        it('should populate name if passed in', () => {
+            const result = inmateProxy()({forename: 'Dave'});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('WHERE INMATE_FORENAME_1 LIKE @INMATE_FORENAME_1');
+                expect(params[0].column).to.eql('INMATE_FORENAME_1');
+                expect(params[0].value).to.eql('Dave');
+            });
+        });
+
+        it('should populate full name if passed in', () => {
+            const result = inmateProxy()({forename: 'Dave', forename2: 'James', surname: 'Jones'});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('WHERE INMATE_FORENAME_1 LIKE @INMATE_FORENAME_1 AND ' +
                     'INMATE_FORENAME_2 LIKE @INMATE_FORENAME_2 AND ' +
                     'INMATE_SURNAME LIKE @INMATE_SURNAME');
-                expect(req.parametersByName.INMATE_FORENAME_1.value).to.equal('DAVE');
-                expect(req.parametersByName.INMATE_FORENAME_2.value).to.equal('JAMES');
-                expect(req.parametersByName.INMATE_SURNAME.value).to.equal('JONES');
-                req.callback(null, 1, [standardResponse]);
-            });
 
-            search.inmate({forename: 'Dave', forename2: 'James', surname: 'Jones'}, (err, data) => {
-                expect(err).to.be.null;
-                done();
-            });
-        });
+                expect(params[0].column).to.eql('INMATE_FORENAME_1');
+                expect(params[0].value).to.eql('Dave');
 
-        it('should populate dob if passed in', (done) => {
-            prepareFakeDB((req) => {
-                expect(req.sqlTextOrProcedure).to.contain('WHERE INMATE_BIRTH_DATE = @INMATE_BIRTH_DATE');
-                expect(req.parametersByName.INMATE_BIRTH_DATE.value).to.equal('NANDATE');
-                req.callback(null, 1, [standardResponse]);
-            });
+                expect(params[1].column).to.eql('INMATE_FORENAME_2');
+                expect(params[1].value).to.eql('James');
 
-            search.inmate({dobOrAge: 'dob', dobDay: 'date'}, (err, data) => {
-                expect(err).to.be.null;
-                done();
+                expect(params[2].column).to.eql('INMATE_SURNAME');
+                expect(params[2].value).to.eql('Jones');
             });
         });
 
-        it('should combine where statements', (done) =>{
-            prepareFakeDB((req) => {
-                expect(req.sqlTextOrProcedure).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER AND ' +
+        it('should populate dob if passed in', () => {
+            const result = inmateProxy()({dobOrAge: 'dob', dobDay: 'date'});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('WHERE INMATE_BIRTH_DATE = @INMATE_BIRTH_DATE');
+                expect(params[0].column).to.eql('INMATE_BIRTH_DATE');
+                expect(params[0].value).to.eql('NaNdate');
+            });
+
+        });
+
+        it('should combine where statements', () => {
+            const result = inmateProxy()({prisonNumber: 7, forename: 'Dave'});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER AND ' +
                     'INMATE_FORENAME_1 LIKE @INMATE_FORENAME_1');
-                expect(req.parametersByName.PK_PRISON_NUMBER.value).to.equal(7);
-                expect(req.parametersByName.INMATE_FORENAME_1.value).to.equal('DAVE');
-                req.callback(null, 1, [standardResponse]);
-            });
-
-            search.inmate({prisonNumber: 7, forename: 'Dave'}, function(err, data) {
-                expect(err).to.be.null;
-                done();
+                expect(params[0].column).to.eql('PK_PRISON_NUMBER');
+                expect(params[0].value).to.eql(7);
+                expect(params[1].column).to.eql('INMATE_FORENAME_1');
+                expect(params[1].value).to.eql('Dave');
             });
         });
     });
 
-    it('should order the data by surname, first initial, then date of first reception.', (done) => {
-        prepareFakeDB((req) => {
-            expect(req.sqlTextOrProcedure).to.contain('ORDER BY ' +
-                'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC');
-            req.callback(null, 1, [standardResponse]);
-        });
+    it('should order the data by surname, first initial, then date of first reception.', () => {
+        const result = inmateProxy()({prisonNumber: 7});
 
-        search.inmate({prisonNumber: 7}, (err, data) => {
-            expect(err).to.be.null;
-            done();
+        return result.then((data) => {
+            const sql = getCollectionStub.getCalls()[0].args[0];
+            const params = getCollectionStub.getCalls()[0].args[1];
+
+            expect(sql).to.contain('INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC');
         });
     });
 });

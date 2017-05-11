@@ -4,8 +4,8 @@ const url = require('url');
 const dob = require('../data/dob');
 const identifier = require('../data/identifier');
 const names = require('../data/names');
-const search = require('../data/search.js');
-const utils = require('../data/utils.js');
+const search = require('../data/search');
+const utils = require('../data/utils');
 const audit = require('../data/audit');
 
 const availableSearchOptions = exports.availableSearchOptions = {
@@ -94,7 +94,6 @@ exports.postSearchForm = function(req, res) {
     }
 
     // /search/results to be addressed when audit table is included
-    req.session.rowcount = null;
     req.session.userInput = userInput;
     res.redirect('/search/results');
 };
@@ -123,59 +122,34 @@ const flatten = (arr) => {
     return Array.prototype.concat(...arr);
 };
 
-// original function
-// to be updated to use audit table rather than session
 exports.getResults = function(req, res) {
     logger.info('GET /search/results');
-
     if (!req.headers.referer) {
-        res.redirect('/search');
-        return;
+        return res.redirect('/search');
     }
 
     let userInput = req.session.userInput;
     let page = getCurrentPage(req);
     req.session.lastPage = page;
-
-    if (req.session.rowcount) {
-        let rowcount = req.session.rowcount;
-
-        if (isValidPage(page, rowcount)) {
-            return getListOfInmates(rowcount);
-        }
-
-        res.redirect('/search');
-        return;
-    }
-
     audit.record('SEARCH', req.user.email, userInput);
 
-    search.totalRowsForUserInput(userInput, function(err, rowcount) {
-        if (err) {
-            logger.error('Error during search', {error: err});
-            return showDbError(res);
-        }
-
-        if (rowcount === 0) {
-            return renderResultsPage(req, res, rowcount);
-        }
-
-        req.session.rowcount = rowcount;
-        getListOfInmates(rowcount);
-
-    });
-
-    function getListOfInmates(rowcount) {
-        userInput.page = page;
-        search.inmate(userInput, function(err, data) {
-            if (err) {
-                logger.error('Error during search', {error: err});
-                return showDbError(res);
+    search.totalRowsForUserInput(userInput)
+        .then((rowCount) => {
+            if (rowCount === 0) {
+                return renderResultsPage(req, res, rowCount);
+            }
+            if (!isValidPage(page, rowCount)) {
+                return res.redirect('/search');
             }
 
-            renderResultsPage(req, res, rowcount, data);
-        });
-    }
+            userInput.page = page;
+
+            search.inmate(userInput).then((data) => renderResultsPage(req, res, rowCount, data));
+        })
+        .catch((error) => {
+            logger.error('Error during search', {error});
+            return showDbError(res);
+    });
 
     function showDbError(res) {
         let _err = {
@@ -235,7 +209,7 @@ function renderResultsPage(req, res, rowcount, data) {
         },
         view: req.params.v,
         pagination: (rowcount > utils.resultsPerPage ) ? utils.pagination(rowcount, getCurrentPage(req)) : null,
-        data: data
+        data
     });
 }
 

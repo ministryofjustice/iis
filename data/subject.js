@@ -24,7 +24,26 @@ module.exports = {
                             PK_PRISON_NUMBER, 
                             INMATE_SURNAME, 
                             INMATE_FORENAME_1, 
-                            INMATE_FORENAME_2
+                            INMATE_FORENAME_2,
+                            (
+                            SELECT
+                              TOP 1 PERSON_IDENTIFIER_VALUE
+                            FROM
+                              IIS.IIS_IDENTIFIER
+                            WHERE
+                              PERSON_IDENT_TYPE_CODE = 'PNC'
+                              AND
+                              FK_PERSON_IDENTIFIER=LOSS_OF_LIBERTY.FK_PERSON_IDENTIFIER
+                            ) PNC,
+                            (
+                            STUFF(
+                                (SELECT DISTINCT
+                                  ', ' + CAST(PAROLE_REF_NUMBER AS VARCHAR(7))
+                                FROM
+                                  IIS.PAROLE_REVIEW
+                                WHERE FK_PRISON_NUMBER = @PK_PRISON_NUMBER
+                                FOR XML PATH('')), 1, 1, '')
+                            ) PAROLE_REF_LIST
                     FROM 
                             IIS.LOSS_OF_LIBERTY 
                     WHERE 
@@ -76,7 +95,6 @@ module.exports = {
                             ELSE '' 
                             END
                             ) INMATE_SEX
-
                     FROM 
                             IIS.LOSS_OF_LIBERTY 
                     WHERE 
@@ -280,7 +298,9 @@ function formatInfoRow(dbRow) {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
         surname: dbRow.INMATE_SURNAME.value,
         forename: dbRow.INMATE_FORENAME_1.value,
-        forename2: dbRow.INMATE_FORENAME_2.value
+        forename2: dbRow.INMATE_FORENAME_2.value,
+        pnc: dbRow.PNC.value,
+        paroleRefList: dbRow.PAROLE_REF_LIST.value
     };
     logger.debug('Subject info result', info);
     return info;

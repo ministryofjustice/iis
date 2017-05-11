@@ -12,14 +12,18 @@ const sandbox = sinon.sandbox.create();
 const content = require('../../data/content');
 const proxyquire = require('proxyquire');
 proxyquire.noCallThru();
+const sinonStubPromise = require('sinon-stub-promise');
+sinonStubPromise(sinon);
 
 describe('searchController', () => {
     let reqMock;
     let resMock;
 
     beforeEach(() => {
-        reqMock = {};
-        resMock = {render: sandbox.spy(), redirect: sandbox.spy()};
+        reqMock = {user: {
+            email: 'x@y.com'
+        }};
+        resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
     });
 
     afterEach(() => {
@@ -126,7 +130,7 @@ describe('searchController', () => {
                     forename: 'Matthew',
                     forename2: 'James',
                     surname: 'Whitfield',
-                    prisonNumber: '',
+                    prisonNumber: ''
                 },
                 query: {0: 'names', 1: 'identifier'},
                 session: {}
@@ -143,7 +147,7 @@ describe('searchController', () => {
                     forename: 'Matthew',
                     forename2: 'James',
                     surname: 'Whitfield',
-                    prisonNumber: '666',
+                    prisonNumber: '666'
                 },
                 query: {0: 'names', 1: 'identifier'},
                 session: {}
@@ -159,7 +163,7 @@ describe('searchController', () => {
                     forename: 'Matthew',
                     forename2: 'James',
                     surname: 'Whitfield',
-                    prisonNumber: '666',
+                    prisonNumber: '666'
                 },
                 query: {0: 'names', 1: 'identifier', 2: 'incorrect'},
                 session: {}
@@ -179,7 +183,7 @@ describe('searchController', () => {
                     forename: 'Matthew',
                     forename2: 'James',
                     surname: 'Whitfield',
-                    prisonNumber: '666',
+                    prisonNumber: '666'
                 },
                 query: {0: 'names'},
                 session: {}
@@ -190,12 +194,17 @@ describe('searchController', () => {
             expect(resMock.redirect).to.have.been.calledWith('/search');
         });
     });
+    describe('getResults', () => {
+    });
     describe('postPagination', () => {
         it('should render the full search and pass in search items from query string', () => {
             reqMock = {
                 query: {0: 'names', 1: 'dob'}
             };
 
+        let getRowsStub;
+        let getInmatesStub;
+        let auditStub;
             getSearchForm(reqMock, resMock);
             expect(resMock.render).to.have.callCount(1);
             expect(resMock.render).to.have.been.calledWith('search/full-search', {
@@ -207,6 +216,118 @@ describe('searchController', () => {
                 hints: ['wildcard']
             });
 
+        beforeEach(() => {
+            getRowsStub = sandbox.stub().returnsPromise().resolves(20);
+            getInmatesStub = sandbox.stub().returnsPromise().resolves({forename: 'Matt'});
+            auditStub = sandbox.spy();
+
+            reqMock = {
+                headers: {
+                    referer: 'something'
+                },
+                session: {
+                    userInput: {
+                        forename: 'Matthew',
+                        forename2: 'James',
+                        surname: 'Whitfield',
+                        prisonNumber: '666'
+                    }
+                },
+                query: {page: 1},
+                user: {email: 'x@y.com'},
+                params: {v: 'not sure what this is for'}
+            };
+        });
+
+
+
+        const getResultsProxy = (getRows = getRowsStub,
+                                 getInmates = getInmatesStub) => {
+            return proxyquire('../../controllers/searchController', {
+                '../data/search': {
+                    'totalRowsForUserInput': getRows,
+                    'inmate': getInmates
+                },
+                '../data/audit': {
+                    'record': auditStub
+                }
+            }).getResults;
+        };
+
+        it('should redirect to search if no referrer', () => {
+            reqMock = {headers: {referer: undefined}};
+
+            getResultsProxy()(reqMock, resMock);
+            expect(resMock.redirect).to.have.callCount(1);
+            expect(resMock.redirect).to.have.been.calledWith('/search');
+        });
+
+        it('should set session.lastPage as current pagination position', () => {
+            getResultsProxy()(reqMock, resMock);
+            expect(reqMock.session.lastPage).to.eql(1);
+        });
+
+        context('rowcounts = 0', () => {
+            it('should not call getInmates', () => {
+                getRowsStub = sinon.stub().returnsPromise().resolves(0);
+                getResultsProxy(getRowsStub)(reqMock, resMock);
+
+                expect(getInmatesStub).to.have.callCount(0);
+            });
+
+            it('should render results page', () => {
+                getRowsStub = sinon.stub().returnsPromise().resolves(0);
+
+                getResultsProxy(getRowsStub)(reqMock, resMock);
+                expect(resMock.render).to.have.callCount(1);
+            });
+        });
+
+        context('rowcounts > 0', () => {
+            it('should call getInmates', () => {
+                getResultsProxy()(reqMock, resMock);
+                expect(getInmatesStub).to.have.callCount(1);
+            });
+
+            it('should audit the search', () => {
+                getResultsProxy()(reqMock, resMock);
+                expect(auditStub).to.have.callCount(1);
+            });
+
+            it('should pass the appropriate data to audit', () => {
+                getResultsProxy()(reqMock, resMock);
+                expect(auditStub).to.be.calledWith('SEARCH', 'x@y.com', {forename: 'Matthew',
+                                                                         forename2: 'James',
+                                                                         page: 1,
+                                                                         prisonNumber: '666',
+                                                                         surname: 'Whitfield'});
+            });
+
+            it('should render results page', () => {
+                getResultsProxy()(reqMock, resMock);
+                expect(resMock.render).to.have.callCount(1);
+            });
+
+            it('should pass appropriate data to view', () => {
+                getResultsProxy()(reqMock, resMock);
+
+                const expectedPayload = {
+                    content: {
+                        title: 'Your search returned 20 results'
+                    },
+                    view: 'not sure what this is for',
+                    pagination: {
+                        'totalPages': 4,
+                        'currPage': 1,
+                        'showPrev': false,
+                        'showNext': true
+                    },
+                    data: {forename: 'Matt'}
+                };
+
+                expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
+            });
+        });
         });
 
         it('should redirect to search if query contains unsupported search items', () => {

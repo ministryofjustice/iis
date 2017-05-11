@@ -42,36 +42,26 @@ const getSearchOperatorSql = {
     age: getAgeSqlWithParams
 };
 
-exports.inmate = function(userInput, callback) {
-    let obj = getParamsForUserInput(userInput);
+exports.inmate = function(userInput) {
+    return new Promise((resolve, reject) => {
+        const obj = getParamsForUserInput(userInput);
+        const resultLimits = getPaginationLimits(userInput.page);
+        const sql = prepareSqlStatement(SELECT, TABLE, obj.where, ORDER_BY, resultLimits);
 
-    const resultLimits = getPaginationLimits(userInput.page);
-    let sql = prepareSqlStatement(SELECT, TABLE, obj.where, ORDER_BY, resultLimits);
-
-    db.getCollection(sql, obj.params, function(err, rows) {
-        if (err) {
-            return callback(err);
-        }
-
-        return callback(null, rows.map(formatRow));
+        db.getCollection(sql, obj.params, resolveWithFormattedData(resolve), reject);
     });
 };
 
-exports.totalRowsForUserInput = function(userInput, callback) {
-    let obj = getParamsForUserInput(userInput);
-    let sql = prepareSqlStatement('COUNT(*) AS totalRows', 'IIS.LOSS_OF_LIBERTY', obj.where);
+const resolveWithFormattedData = (resolve) => (dbRows) => resolve(dbRows.map(formatRow));
 
-    db.getTuple(sql, obj.params, cb);
+exports.totalRowsForUserInput = function(userInput) {
+    return new Promise((resolve, reject) => {
+        let obj = getParamsForUserInput(userInput);
+        let sql = prepareSqlStatement('COUNT(*) AS totalRows', 'IIS.LOSS_OF_LIBERTY', obj.where);
 
-    function cb(err, cols) {
-        if(err) {
-            return callback(err);
-        }
-
-        return callback(null, cols.totalRows.value);
-    }
+        db.getTuple(sql, obj.params, resolve, reject);
+    });
 };
-
 
 function getPrisonNumberSqlWithParams(obj) {
     obj.val = utils.padPrisonNumber(obj.val);

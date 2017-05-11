@@ -3,6 +3,8 @@
 let request = require('supertest');
 let expect = require('chai').expect;
 let sinon = require("sinon");
+const sinonStubPromise = require('sinon-stub-promise');
+sinonStubPromise(sinon);
 
 let app = require("../server/app.js");
 

@@ -49,8 +49,8 @@ module.exports = {
         });
     },
 
-    getTuple: function(sql, params, callback) {
-
+    getTuple: function(sql, params, successCallback, errorCallback) {
+        const promise = arguments.length === 4;
         let connected = false;
         const connection = this.connect();
 
@@ -87,21 +87,25 @@ module.exports = {
         const that = this;
 
         function finish(err, result) {
-
-            if (err) {
-                logger.error('Error during tuple query: ' + err);
-            }
-
             if (connected) {
                 that.disconnect(connection);
             }
 
-            return callback(err, result);
+            if (err) {
+                logger.error('Error during tuple query: ' + err);
+                if (promise) {
+                    return errorCallback(err);
+                }
+            }
+            if (promise) {
+                return successCallback(result.totalRows.value);
+            }
+            successCallback(err, result);
         }
     },
 
-    getCollection: function(sql, params, callback) {
-
+    getCollection: function(sql, params, successCallback, errorCallback) {
+        const promise = arguments.length === 4;
         let connected = false;
         const connection = this.connect();
 
@@ -136,18 +140,22 @@ module.exports = {
         const that = this;
 
         function finish(err, result) {
-
-            if (err) {
-                logger.error('Error during collection query: ' + err);
-            }
-
             if (connected) {
                 that.disconnect(connection);
             }
 
-            return callback(err, result);
-        }
+            if (err) {
+                logger.error('Error during collection query: ' + err);
+                if (promise) {
+                    return errorCallback(err);
+                }
 
+            }
+            if (promise) {
+                return successCallback(result);
+            }
+            successCallback(err, result);
+        }
     },
 
     disconnect: function(connection) {

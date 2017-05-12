@@ -55,7 +55,7 @@ describe('Subject data', function() {
         });
     });
 
-    it.only("should return array of expected addresses objects", function(done) {
+    it("should return array of expected addresses objects", function(done) {
 
         let address1 = {
             INMATE_ADDRESS_1: {value: '1 STREET'},

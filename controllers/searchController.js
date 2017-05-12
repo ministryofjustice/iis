@@ -98,6 +98,53 @@ exports.postSearchForm = function(req, res) {
     res.redirect('/search/results');
 };
 
+exports.getResults = function(req, res) {
+    logger.info('GET /search/results');
+    if (!req.headers.referer) {
+        return res.redirect('/search');
+    }
+
+    let userInput = req.session.userInput;
+    let page = getCurrentPage(req.query);
+    req.session.lastPage = page;
+    const pageError = getPaginationErrors(req.query);
+
+    audit.record('SEARCH', req.user.email, userInput);
+    search.totalRowsForUserInput(userInput)
+        .then((rowCount) => {
+            if (rowCount === 0) {
+                return renderResultsPage(req, res, rowCount);
+            }
+
+            if (!isValidPage(page, rowCount)) {
+                return redirectToReferer(req, res, page);
+            }
+
+            userInput.page = page;
+            search.inmate(userInput).then((data) => {
+                return renderResultsPage(req, res, rowCount, data, page, pageError);
+            });
+        })
+        .catch((error) => {
+            logger.error('Error during search', {error});
+            return showDbError(res);
+    });
+
+    function showDbError(res) {
+        let _err = {
+            title: content.errMsg.DB_ERROR,
+            desc: content.errMsg.DB_ERROR_DESC
+        };
+
+        res.status(500);
+        res.render('search', {
+            err: _err,
+            content: content.view.search
+        });
+    }
+};
+
+
 const objectKeysInArray = (object, array) => Object.keys(object).filter((objectKey) => array.includes(objectKey));
 
 const itemsInQueryString = (queryString) => Object.keys(queryString).map((key) => queryString[key]);
@@ -122,100 +169,49 @@ const flatten = (arr) => {
     return Array.prototype.concat(...arr);
 };
 
-exports.getResults = function(req, res) {
-    logger.info('GET /search/results');
-    if (!req.headers.referer) {
-        return res.redirect('/search');
-    }
-
-    let userInput = req.session.userInput;
-    let page = getCurrentPage(req);
-    req.session.lastPage = page;
-    audit.record('SEARCH', req.user.email, userInput);
-
-    search.totalRowsForUserInput(userInput)
-        .then((rowCount) => {
-            if (rowCount === 0) {
-                return renderResultsPage(req, res, rowCount);
-            }
-            if (!isValidPage(page, rowCount)) {
-                return res.redirect('/search');
-            }
-
-            userInput.page = page;
-
-            search.inmate(userInput).then((data) => renderResultsPage(req, res, rowCount, data));
-        })
-        .catch((error) => {
-            logger.error('Error during search', {error});
-            return showDbError(res);
-    });
-
-    function showDbError(res) {
-        let _err = {
-            title: content.errMsg.DB_ERROR,
-            desc: content.errMsg.DB_ERROR_DESC
-        };
-
-        res.status(500);
-        res.render('search', {
-            err: _err,
-            content: content.view.search
-        });
-    }
-};
-
 exports.postPagination = function(req, res) {
-    const {page, error} = getValidatedPage(req.body.pageNumber, req.session.rowcount);
-    const query = error ? {page, error} : {page};
-
-    const redirectUrl = url.format({'pathname': '/search/results', query});
-    return res.redirect(redirectUrl);
+    const redirectUrl = url.format({pathname: '/search/results', query: {page: req.body.pageNumber}});
+    res.redirect(redirectUrl);
 };
 
-function getValidatedPage(value, rowCount) {
-
-    if (!value || !isNumeric(value)) {
-        return {page: 1, error: 'Invalid page'};
+const getPaginationErrors = (query) => {
+    if (query.invalidPage) {
+        return {
+            title: 'Invalid selection',
+            desc: `The page number ${query.invalidPage} does not exist`
+        };
     }
+    return null;
+};
 
-    if (value < 1) {
-        return {page: 1, error: 'Too low'};
-    }
+function redirectToReferer(req, res, attemptedPage) {
+    const urlObj = url.parse(req.get('referrer'), true);
+    urlObj.query.invalidPage = attemptedPage;
 
-    if (rowCount && value > rowCount) {
-        return {page: rowCount, error: 'Too high'};
-    }
-
-    return {page: value, error: null};
+    return res.redirect(url.format({pathname: urlObj.pathname, query: urlObj.query}));
 }
 
-function isNumeric(value) {
-    return /^\d+$/.test(value);
-}0
+const isNumeric = (value) => /^\d+$/.test(value);
 
-function isValidPage(page, rowcount) {
-    if (Number.isNaN(parseInt(page))) {
-        return false;
-    }
-
-    return !(rowcount > 0 && page > Math.ceil(rowcount / utils.resultsPerPage));
+function isValidPage(page, rowCount) {
+    return isNumeric(page) && page > 0 && !(rowCount > 0 && page > Math.ceil(rowCount / utils.resultsPerPage));
 }
 
-function renderResultsPage(req, res, rowcount, data) {
+function renderResultsPage(req, res, rowcount, data, page, error = null) {
     res.render('search/results', {
         content: {
             title: getPageTitle(rowcount)
         },
         view: req.params.v,
-        pagination: (rowcount > utils.resultsPerPage ) ? utils.pagination(rowcount, getCurrentPage(req)) : null,
-        data
+        pagination: (rowcount > utils.resultsPerPage ) ? utils.pagination(rowcount, page) : null,
+        data,
+        err: error
     });
 }
 
-function getCurrentPage(req) {
-    const page = Number(req.query.page);
-    return Number.isNaN(page) ? 1 : req.query.page;
+function getCurrentPage(query) {
+    const page = query ? Number(query.page) : 1;
+    return Number.isNaN(page) ? 1 : page;
 }
 
 function getPageTitle(rowcount) {

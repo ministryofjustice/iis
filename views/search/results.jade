@@ -34,7 +34,7 @@ block content
                     input(type="hidden" name="_csrf" value="#{csrfToken}")
                     div.form-group.c-align
                         span
-                            input.form-control#paginationInput(type="number", name="pageNumber", value=pagination.currPage)
+                            input.form-control#paginationInput(type="number", name="pageNumber", min="0", max=pagination.totalPages, value=pagination.currPage)
                         span
                             | of #{pagination.totalPages}
 

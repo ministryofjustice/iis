@@ -1,7 +1,8 @@
 const {
     getIndex,
     postIndex,
-    getSearchForm
+    getSearchForm,
+    postPagination
 } = require('../../controllers/searchController');
 const chai = require('chai');
 const sinon = require('sinon');
@@ -195,26 +196,10 @@ describe('searchController', () => {
         });
     });
     describe('getResults', () => {
-    });
-    describe('postPagination', () => {
-        it('should render the full search and pass in search items from query string', () => {
-            reqMock = {
-                query: {0: 'names', 1: 'dob'}
-            };
 
         let getRowsStub;
         let getInmatesStub;
         let auditStub;
-            getSearchForm(reqMock, resMock);
-            expect(resMock.render).to.have.callCount(1);
-            expect(resMock.render).to.have.been.calledWith('search/full-search', {
-                content: {
-                    body: 'Select all that apply',
-                    title: 'What information do you have on the inmate?'
-                },
-                searchItems: ['names', 'dob'],
-                hints: ['wildcard']
-            });
 
         beforeEach(() => {
             getRowsStub = sandbox.stub().returnsPromise().resolves(20);
@@ -223,7 +208,7 @@ describe('searchController', () => {
 
             reqMock = {
                 headers: {
-                    referer: 'something'
+                    referer: 'http://something.com/search/results?page=2'
                 },
                 session: {
                     userInput: {
@@ -235,11 +220,10 @@ describe('searchController', () => {
                 },
                 query: {page: 1},
                 user: {email: 'x@y.com'},
-                params: {v: 'not sure what this is for'}
+                params: {v: 'not sure what this is for'},
+                get: (item) => 'http://something.com/search/results?page=2'
             };
         });
-
-
 
         const getResultsProxy = (getRows = getRowsStub,
                                  getInmates = getInmatesStub) => {
@@ -303,6 +287,14 @@ describe('searchController', () => {
                                                                          surname: 'Whitfield'});
             });
 
+            it('should redirectToReferer if the page is not valid', () => {
+                reqMock.query.page = '20';
+                getResultsProxy()(reqMock, resMock);
+
+                expect(resMock.redirect).to.have.callCount(1);
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?page=2&invalidPage=20');
+            });
+
             it('should render results page', () => {
                 getResultsProxy()(reqMock, resMock);
                 expect(resMock.render).to.have.callCount(1);
@@ -322,25 +314,39 @@ describe('searchController', () => {
                         'showPrev': false,
                         'showNext': true
                     },
-                    data: {forename: 'Matt'}
+                    data: {forename: 'Matt'},
+                    err: null
                 };
 
                 expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
             });
-        });
+
+            it('should pass a pageError if one is present', () => {
+                reqMock.query.invalidPage = '20';
+                getResultsProxy()(reqMock, resMock);
+
+                const expectedPayloadError = {
+                    title: 'Invalid selection',
+                    desc: 'The page number 20 does not exist'
+                };
+                const payload = resMock.render.getCalls()[0].args[1];
+                expect(payload.err).to.eql(expectedPayloadError);
+
+            });
         });
 
-        it('should redirect to search if query contains unsupported search items', () => {
-            reqMock = {
-                query: {0: 'names', 1: 'dob', 2: 'bob'},
-                params: {
-                    view: 'view'
-                }
-            };
+        describe('postPagination', () => {
+            it('should redirect to appropriate page', () => {
+                reqMock = {
+                    body: {
+                        pageNumber: '8'
+                    }
+                };
+                postPagination(reqMock, resMock);
+                expect(resMock.redirect).to.have.callCount(1);
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?page=8');
 
-            getSearchForm(reqMock, resMock);
-            expect(resMock.redirect).to.have.callCount(1);
-            expect(resMock.redirect).to.have.been.calledWith('/search');
+            });
         });
     });
 });

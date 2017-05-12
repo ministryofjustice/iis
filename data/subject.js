@@ -181,10 +181,9 @@ module.exports = {
         let sql = `SELECT 
                             INMATE_ADDRESS_1, 
                             INMATE_ADDRESS_2,
-                            INMATE_ADDRESS_3,
                             INMATE_ADDRESS_4,
-                            INMATE_ADDRESS_5,
-                            INMATE_POSTCODE
+                            ADDRESS_TYPE,
+                            PERSON_DETS
                     FROM 
                             IIS.INMATE_ADDRESS
                     WHERE 
@@ -346,12 +345,11 @@ function formatAliasRows(dbRow) {
 
 function formatAddressRows(dbRow) {
     return {
-        addressLine1: dbRow.INMATE_ADDRESS_1.value,
-        addressLine2: dbRow.INMATE_ADDRESS_2.value,
-        addressLine3: dbRow.INMATE_ADDRESS_3.value,
-        addressLine4: dbRow.INMATE_ADDRESS_4.value,
-        addressLine5: dbRow.INMATE_ADDRESS_5.value,
-        postcode: dbRow.INMATE_POSTCODE.value
+        addressLine1: dbRow.INMATE_ADDRESS_1.value ? changeCase.titleCase(dbRow.INMATE_ADDRESS_1.value) : '',
+        addressLine2: dbRow.INMATE_ADDRESS_2.value ? changeCase.titleCase(dbRow.INMATE_ADDRESS_2.value) : '',
+        addressLine4: dbRow.INMATE_ADDRESS_4.value ? changeCase.titleCase(dbRow.INMATE_ADDRESS_4.value) : '',
+        type: dbRow.ADDRESS_TYPE.value ? changeCase.titleCase(describeCode('ADDRESS', dbRow.ADDRESS_TYPE.value)) : 'Unknown',
+        name: dbRow.PERSON_DETS.value ? changeCase.titleCase(dbRow.PERSON_DETS.value) : ''
     };
 }
 

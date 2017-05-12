@@ -6,11 +6,11 @@ block subject-details
             div.grid-row.list-row
                 div.column-full
                     div.left-border
-                        span.quiet.block  #{val.type}
-                        div #{val.name}
-                        div #{val.addressLine1}
-                        div #{val.addressLine2}
-                        div #{val.addressLine4}
+                        span.quiet.block= val.type
+                        div= val.name
+                        div= val.addressLine1
+                        div= val.addressLine2
+                        div= val.addressLine4
 
         if (!data.details)
             span= data.noResultsText

@@ -63,6 +63,20 @@ describe('Prison number validation tests', function(){
             });
    });
 
+   it('should return 302 if the prison number not supplied but any CRO or PNC is supplied', function(){
+        return common.logInAs("someone")
+            .then(function(authedReq) {
+                authedReq.post('/search')
+                    .send({opt: 'results'})
+                    .expect(302, function(){
+                        return authedReq.post('/search/form?0=identifier')
+                            .send({prison_number: '',
+                                   pncNumber: 'A'})
+                            .expect(302)
+                            .expect("Location", "/results")
+                    });
+            });
+    });
 });
 
 

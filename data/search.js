@@ -35,6 +35,8 @@ const ORDER_BY = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_
 
 const getSearchOperatorSql = {
     prisonNumber: getPrisonNumberSqlWithParams,
+    pncNumber: getPncNumberSqlWithParams,
+    croNumber: getCroNumberSqlWithParams,
     forename: getStringSqlWithParams('INMATE_FORENAME_1', {wildcardEnabled: true}),
     forename2: getStringSqlWithParams('INMATE_FORENAME_2', {wildcardEnabled: true}),
     surname: getStringSqlWithParams('INMATE_SURNAME', {wildcardEnabled: true}),
@@ -66,6 +68,28 @@ exports.totalRowsForUserInput = function(userInput) {
 function getPrisonNumberSqlWithParams(obj) {
     obj.val = utils.padPrisonNumber(obj.val);
     return getStringSqlWithParams('PK_PRISON_NUMBER')(obj);
+}
+
+function getPncNumberSqlWithParams(obj) {
+    let sql = "FK_PERSON_IDENTIFIER = (SELECT FK_PERSON_IDENTIFIER FROM iis.IIS_IDENTIFIER WHERE iis.IIS_IDENTIFIER.PERSON_IDENT_TYPE_CODE = 'PNC' AND iis.IIS_IDENTIFIER.PERSON_IDENTIFIER_VALUE = @PNC)";
+
+    return {
+        sql: sql,
+        params: [
+            {column: 'PNC', type: getType('string'), value: obj.userInput.pncNumber}
+        ]
+    };
+}
+
+function getCroNumberSqlWithParams(obj) {
+    let sql = "FK_PERSON_IDENTIFIER = (SELECT FK_PERSON_IDENTIFIER FROM iis.IIS_IDENTIFIER WHERE iis.IIS_IDENTIFIER.PERSON_IDENT_TYPE_CODE = 'CRO' AND iis.IIS_IDENTIFIER.PERSON_IDENTIFIER_VALUE = @CRO)";
+
+    return {
+        sql: sql,
+        params: [
+            {column: 'CRO', type: getType('string'), value: obj.userInput.croNumber}
+        ]
+    };
 }
 
 function getStringSqlWithParams(dbColumn, options) {

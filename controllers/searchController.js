@@ -10,7 +10,7 @@ const audit = require('../data/audit');
 
 const availableSearchOptions = exports.availableSearchOptions = {
     identifier: {
-        fields: ['prisonNumber'],
+        fields: ['prisonNumber', 'pncNumber', 'croNumber'],
         validator: identifier.validate,
         nextView: 'names',
         hints: []

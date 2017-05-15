@@ -142,10 +142,12 @@ describe('Client side search form', () => {
             expect(identifierValidatorStub).to.have.callCount(1)
         });
 
-        it('should pass appropriate fields if name is selected', () => {
+        it('should pass appropriate fields if identifier is selected', () => {
             const $userInput = $('#prisonNumberContainer input');
             const expectedArgument = {
-                prisonNumber: ''
+                prisonNumber: '',
+                pncNumber: '',
+                croNumber: ''
             };
             searchValidator.isValidPrisonNumber($userInput);
 

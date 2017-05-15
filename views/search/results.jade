@@ -1,7 +1,20 @@
 extends ../layout
+mixin inmate(name, prisonNumber, dob, firstReceptionDate, visited)
+    div.inmateDetails(class=visited ? 'visited' : '')
+        a(href="/subject/#{prisonNumber}/summary").capitalise-text
+            span.inmateContainer
+                span(class=visited ? '' : 'bold-medium') #{name}
+                if dob
+                    span(class=visited ? '' : 'bold-medium') &middot; #{dob}
+                if prisonNumber
+                    span.prisonNumber.block.text-secondary Prison No. #{prisonNumber}
+                if firstReceptionDate
+                    span.firstReceptionDate.block.text-secondary First Reception. #{firstReceptionDate}
+        block
+
 
 block content
-    div.back-link-container
+    div.backLinkContainer
         a.link-back(href="/search") Back to search
 
     if err
@@ -11,23 +24,14 @@ block content
         div.column-two-thirds
             h1.heading-xlarge#contentTitle= content.title
 
-            mixin inmate(name, href)
-                div
-                    div.inmate-details
-                        a.bold-medium(href="/subject/#{href}/summary").capitalise-text #{name}
-                        block
-
             if data && data != 0
-                each item in data
-                   +inmate(item.forename.toLowerCase()
-                            + (item.forename2 ? item.forename2.toLowerCase() : '')
-                            + item.surname, item.prisonNumber)
-                        if item.dob
-                            span.bold-medium &middot; #{item.dob}
-                        if item.prisonNumber
-                            span.prisonNumber.block.text-secondary Prison No. #{item.prisonNumber}
-                        if item.firstReceptionDate
-                            span.firstReceptionDate.block.text-secondary First Reception. #{item.firstReceptionDate}
+                div#searchResults
+                    each item in data
+                       +inmate(item.forename.toLowerCase()
+                                + (item.forename2 ? item.forename2.toLowerCase() : '')
+                                + item.surname,
+                               item.prisonNumber, item.dob, item.firstReceptionDate, item.visited)
+
 
             if pagination
                 form(method="post")

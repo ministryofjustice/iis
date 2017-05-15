@@ -194,6 +194,24 @@ describe('searchController', () => {
             expect(resMock.redirect).to.have.callCount(1);
             expect(resMock.redirect).to.have.been.calledWith('/search');
         });
+
+        it('should reset the visited results', () => {
+            reqMock = {
+                body: {
+                    forename: 'Matthew',
+                    forename2: 'James',
+                    surname: 'Whitfield',
+                    prisonNumber: '666'
+                },
+                query: {0: 'names', 1: 'identifier', 2: 'incorrect'},
+                session: {
+                    visited: ['id1']
+                }
+            };
+
+            postSearchFormProxy()(reqMock, resMock);
+            expect(reqMock.session.visited).to.eql([]);
+        });
     });
     describe('getResults', () => {
 
@@ -315,6 +333,39 @@ describe('searchController', () => {
                         'showNext': true
                     },
                     data: {forename: 'Matt'},
+                    err: null
+                };
+
+                expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
+            });
+
+            it('should add visited data', () => {
+                reqMock.session.visited = ['1', '3'];
+                const receivedData = [
+                    {prisonNumber: '1', forename: 'Matt'},
+                    {prisonNumber: '2', forename: 'Alistair'},
+                    {prisonNumber: '3', forename: 'Zed'},
+                ];
+                getInmatesStub = sandbox.stub().returnsPromise().resolves(receivedData)
+
+                getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+
+                const expectedPayload = {
+                    content: {
+                        title: 'Your search returned 20 results'
+                    },
+                    view: 'not sure what this is for',
+                    pagination: {
+                        'totalPages': 4,
+                        'currPage': 1,
+                        'showPrev': false,
+                        'showNext': true
+                    },
+                    data: [
+                        {forename: 'Matt', prisonNumber: '1', visited: true},
+                        {forename: 'Alistair', prisonNumber: '2', visited: false},
+                        {forename: 'Zed', prisonNumber: '3', visited: true}
+                    ],
                     err: null
                 };
 

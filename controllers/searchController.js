@@ -94,6 +94,7 @@ exports.postSearchForm = function(req, res) {
     }
 
     // /search/results to be addressed when audit table is included
+    req.session.visited = [];
     req.session.userInput = userInput;
     res.redirect('/search/results');
 };
@@ -122,7 +123,8 @@ exports.getResults = function(req, res) {
 
             userInput.page = page;
             search.inmate(userInput).then((data) => {
-                return renderResultsPage(req, res, rowCount, data, page, pageError);
+                const dataWithVisited = addVisitedData(data, req.session);
+                return renderResultsPage(req, res, rowCount, dataWithVisited, page, pageError);
             });
         })
         .catch((error) => {
@@ -226,6 +228,17 @@ function getPageTitle(rowcount) {
     }
 
     return title.replace('_x_', rowcount);
+}
+
+function addVisitedData(data, session) {
+    if (!session.visited || session.visited.length === 0) {
+        return data;
+    }
+
+    return data.map((inmate) => {
+        inmate.visited = session.visited.includes(inmate.prisonNumber);
+        return inmate;
+    });
 }
 
 

@@ -165,9 +165,7 @@ const inputValidates = (searchItems, userInput) => {
     return !searchItems.some((item) => availableSearchOptions[item].validator(userInput, (err) => err));
 };
 
-const flatten = (arr) => {
-    return Array.prototype.concat(...arr);
-};
+const flatten = (arr) => Array.prototype.concat(...arr);
 
 exports.postPagination = function(req, res) {
     const redirectUrl = url.format({pathname: '/search/results', query: {page: req.body.pageNumber}});

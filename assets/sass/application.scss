@@ -9,15 +9,11 @@ $path: "/public/images/";
 $divider: 2px solid $border-colour;
 $left-border: 8px solid $border-colour;
 
+$left-border-blue: 4px solid $govuk-blue;
+
 #proposition-links li { color: $grey-4; }
 .c-align { text-align: center; }
 span.inactive { color: $grey-2; }
-
-.inmate-details {
-    border-bottom: $divider;
-    margin-bottom: 30px;
-    padding-bottom: 30px;
-}
 
 section {
     border-top: $divider;
@@ -26,8 +22,8 @@ section {
 
 div#print-disclaimer,
 div#print-header,
-.back-link-container{ display: none; }
-.js-enabled .back-link-container { display: inline-block; }
+.backLinkContainer{ display: none; }
+.js-enabled .backLinkContainer { display: inline-block; }
 .capitalise-text { text-transform: capitalize; }
 
 .list-row { padding-bottom: 20px; }
@@ -54,7 +50,33 @@ div#print-header,
     float: right;
     padding-top: 5px;
 }
+#searchResults {
+    margin-bottom: 20px;
+}
+.inmateDetails a{
+    color: black;
+    text-decoration: none;
+    display: block;
+    padding: 20px 15px 20px 0;
+    border-bottom: $divider;
+}
 
+.inmateDetails a:hover {
+    background-color: #efefef;
+}
+.inmateDetails .prisonNumber {
+    text-decoration: none;
+}
+
+.inmateDetails a .inmateContainer {
+    padding-left: 15px;
+    display: block;
+    border-left: 4px solid $govuk-blue
+}
+.inmateDetails.visited a .inmateContainer{
+    border-left: none;
+    padding-left: 19px;
+}
 
 // Add extra styles here, or re-organise the Sass files in whichever way makes most sense to you
 /*

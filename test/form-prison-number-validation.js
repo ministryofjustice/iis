@@ -2,76 +2,66 @@
 process.env.NODE_ENV = 'test';
 let common = require('./common');
 
-describe('Prison number validation tests', function(){
+describe('Prison number validation tests', function() {
 
-   it('should redirect and display error to the user if prison number is empty', function(){
+    it('should redirect and display error to the user if everything is empty', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {
                 return authedReq.post('/search/form?0=identifier')
                     .set('referer', '/search/ ')
-                    .send({prison_number: ''})
+                    .send({
+                        prisonNumber: '',
+                        pncNumber: '',
+                        croNumber: ''
+                    })
                     .expect(302)
                     .expect('Location', '/search');
 
             });
-   });
-
-    it('should redirect and display error to the user if the format is invalid: AA00AA00', function(){
-       return common.logInAs("someone")
-            .then(function(authedReq) {
-                return authedReq.post('/search/form?0=identifier')
-                    .set('referer', '/search/ ')
-                    .send({prison_number: 'AA00AA00'})
-                    .expect(302)
-                    .expect('Location', '/search');
-            });
     });
 
-    it('should redirect and display error to the user if the format is invalid: 11AAAAA', function(){
-       return common.logInAs("someone")
-            .then(function(authedReq) {
-                return authedReq.post('/search/form?0=identifier')
-                    .set('referer', '/search/ ')
-                    .send({prison_number: '11AAAAA'})
-                    .expect(302)
-                    .expect('Location', '/search');
-            });
-    });
-
-    it('should redirect and display error to the user if prison number length is less than 8: AA00000', function(){
-       return common.logInAs("someone")
-            .then(function(authedReq) {
-                return authedReq.post('/search/form?0=identifier')
-                    .set('referer', '/search/ ')
-                    .send({prison_number: 'AA00000'})
-                    .expect(302)
-                    .expect('Location', '/search');
-                });
-    });
-
-   it('should return 302 if the prison number format is valid', function(){
-       return common.logInAs("someone")
+    it('should return 302 if the prison number format is valid', function() {
+        return common.logInAs("someone")
             .then(function(authedReq) {
                 authedReq.post('/search')
                     .send({opt: 'results'})
-                    .expect(302, function(){
+                    .expect(302, function() {
                         return authedReq.post('/search/form?0=identifier')
-                            .send({prison_number: 'AA000000'})
+                            .send({prisonNumber: 'AA000000'})
                             .expect(302)
                             .expect("Location", "/results")
                     });
             });
-   });
+    });
 
-   it('should return 302 if the prison number not supplied but any CRO or PNC is supplied', function(){
+    it('should return 302 if the prison number not supplied but PNC is supplied', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {
                 authedReq.post('/search')
                     .send({opt: 'results'})
-                    .expect(302, function(){
+                    .expect(302, function() {
                         return authedReq.post('/search/form?0=identifier')
-                            .send({prison_number: '',
-                                   pncNumber: 'A'})
+                            .send({
+                                prison_number: '',
+                                pncNumber: 'A'
+                            })
+                            .expect(302)
+                            .expect("Location", "/results")
+                    });
+            });
+    });
+
+    it('should return 302 if the prison number not supplied but CRO is supplied', function() {
+        return common.logInAs("someone")
+            .then(function(authedReq) {
+                authedReq.post('/search')
+                    .send({opt: 'results'})
+                    .expect(302, function() {
+                        return authedReq.post('/search/form?0=identifier')
+                            .send({
+                                prison_number: '',
+                                croNumber: 'A'
+                            })
                             .expect(302)
                             .expect("Location", "/results")
                     });

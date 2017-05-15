@@ -1,6 +1,6 @@
 'use strict';
 
-let content = require('./content.js');
+const content = require('./content.js');
 
 module.exports = {
 
@@ -8,11 +8,11 @@ module.exports = {
 
         let err = {
             title: content.errMsg.CANNOT_SUBMIT,
-            items: [{prisonNumber: 'Re-enter the prison number'}],
-            desc: content.errMsg.INVALID_ID
+            items: [{prisonNumber: 'Enter prison number'}, {pncNumber: 'Enter PNC number'}, {croNumber: 'Enter CRO number'}],
+            desc: content.errMsg.ATLEAST_ONE_REQUIRED
         };
 
-        if (!isPrisonNumber(input.prisonNumber)) {
+        if (!input.prisonNumber && !input.pncNumber && !input.croNumber) {
             return callback(err);
         }
 
@@ -20,6 +20,3 @@ module.exports = {
     }
 };
 
-function isPrisonNumber(v) {
-    return /^[A-Za-z0-9]{1,8}$/.test(v);
-}

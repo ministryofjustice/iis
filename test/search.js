@@ -94,6 +94,34 @@ describe('Search', () => {
             });
         });
 
+        it('should populate PNC number if passed in', () => {
+            const result = inmateProxy()({pncNumber: 7});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain("WHERE iis.IIS_IDENTIFIER.PERSON_IDENT_TYPE_CODE = 'PNC'");
+                expect(sql).to.contain("AND iis.IIS_IDENTIFIER.PERSON_IDENTIFIER_VALUE = @PNC");
+                expect(params[0].column).to.eql('PNC');
+                expect(params[0].value).to.eql(7);
+            });
+        });
+
+        it('should populate CRO number if passed in', () => {
+            const result = inmateProxy()({croNumber: 7});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain("WHERE iis.IIS_IDENTIFIER.PERSON_IDENT_TYPE_CODE = 'CRO'");
+                expect(sql).to.contain("AND iis.IIS_IDENTIFIER.PERSON_IDENTIFIER_VALUE = @CRO");
+                expect(params[0].column).to.eql('CRO');
+                expect(params[0].value).to.eql(7);
+            });
+        });
+
         it('should populate name if passed in', () => {
             const result = inmateProxy()({forename: 'Dave'});
 

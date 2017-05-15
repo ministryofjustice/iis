@@ -4,8 +4,8 @@ const dob = require('../../../data/dob');
 const names = require('../../../data/names');
 const prisonNumber = require('../../../data/identifier');
 
-const getValue = (items) => (itemWantedId) => $(items.get(items.index($('#'+itemWantedId)))).val();
-const getChecked = (items) => (itemWantedId) => $(items.get(items.index($('#'+itemWantedId)))).prop('checked');
+const getValue = (items) => (itemWantedId) => $(items.get(items.index($('#' + itemWantedId)))).val();
+const getChecked = (items) => (itemWantedId) => $(items.get(items.index($('#' + itemWantedId)))).prop('checked');
 
 exports.isValidDob = function(userInput) {
     const formObject = {};
@@ -30,13 +30,19 @@ exports.isValidDob = function(userInput) {
 exports.isValidName = function(userInput) {
     const value = getValue(userInput);
 
-    return names.validate({forename: value('forename'),
-                           forename2: value('forename2'),
-                           surname: value('surname')}, (err) => err);
+    return names.validate({
+        forename: value('forename'),
+        forename2: value('forename2'),
+        surname: value('surname')
+    }, (err) => err);
 };
 
 exports.isValidPrisonNumber = function(userInput) {
     const value = getValue(userInput);
 
-    return prisonNumber.validate({prisonNumber: value('prisonNumber')}, (err) => err);
+    return prisonNumber.validate({
+        prisonNumber: value('prisonNumber'),
+        pncNumber: value('pncNumber'),
+        croNumber: value('croNumber')
+    }, (err) => err);
 };

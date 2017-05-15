@@ -45,7 +45,7 @@ block content
                 div.form-group
                     button.button(onclick="window.print();") Print
             div.column-one-third
-                if data.subject.paroleRefList || data.subject.pnc
+                if data.subject.paroleRefList || data.subject.pnc || data.subject.cro
                     ul.list.well.refs-box
                         if data.subject.paroleRefList
                             li#parole-refs= data.subject.paroleRefList
@@ -53,6 +53,9 @@ block content
                         if data.subject.pnc
                             li#pnc= data.subject.pnc
                                 span.form-hint PNC
+                        if data.subject.cro
+                            li#cro= data.subject.cro
+                                span.form-hint CRO
 
         section
             div.grid-row

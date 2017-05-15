@@ -33,10 +33,24 @@ block content
                 form(method="post")
                     input(type="hidden" name="_csrf" value="#{csrfToken}")
                     div.form-group.c-align
+                        - var page = pagination.currPage;
+                            span#paginationPrev
+                                if !pagination.showPrev
+                                    span.inactive Previous
+                                else
+                                    a(href="/search/results?page=#{parseInt(page) - 1}") Previous
+                                |  &nbsp;
+
                         span
                             input.form-control#paginationInput(type="number", name="pageNumber", min="0", max=pagination.totalPages, value=pagination.currPage)
                         span
                             | of #{pagination.totalPages}
 
+                        span#paginationNext
+                            if !pagination.showNext
+                                span.inactive Next
+                            else
+                                a(href="/search/results?page=#{parseInt(page) + 1}") Next
             div.form-group
                 a(href="/search") New search
+

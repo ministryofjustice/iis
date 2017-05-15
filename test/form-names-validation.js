@@ -27,6 +27,17 @@ describe('Name(s) validation tests', function(){
             });
    });
 
+    it('should allow spostrophe, hyphen, and spaces', function(){
+        return common.logInAs("someone")
+            .then(function(authedReq) {
+                return authedReq.post('/search/form?0=names')
+                    .send({forename: "allow'apostrophe", forename2: 'allow-hyphen', surname: 'allow space'})
+                    .expect(302)
+                    .expect('Location', '/search/results');
+
+            });
+    });
+
     it('should return 302 if the name is valid and redirect to results', function() {
         return common.logInAs('someone')
             .then(function(authedReq) {

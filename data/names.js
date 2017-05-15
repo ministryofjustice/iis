@@ -47,5 +47,5 @@ module.exports = {
 
 
 function isString(v) {
-    return /^[A-Za-z%_]+$/.test(v);
+    return /^[\sA-Za-z%_'-]+$/.test(v);
 }

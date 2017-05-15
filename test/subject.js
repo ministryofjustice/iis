@@ -30,6 +30,7 @@ describe('Subject data', function() {
             INMATE_FORENAME_1: {value: 'FORENAMEA'},
             INMATE_FORENAME_2: {value: 'FORENAME2'},
             PNC: {value: 'ABC/99A'},
+            CRO: {value: 'XYZ/11Z'},
             PAROLE_REF_LIST: {value: 'AAA1,BB2'}
         };
 
@@ -43,6 +44,7 @@ describe('Subject data', function() {
             forename: 'FORENAMEA',
             forename2: 'FORENAME2',
             pnc: 'ABC/99A',
+            cro: 'XYZ/11Z',
             paroleRefList: 'AAA1,BB2'
         };
 

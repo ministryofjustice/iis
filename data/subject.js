@@ -36,6 +36,16 @@ module.exports = {
                               FK_PERSON_IDENTIFIER=LOSS_OF_LIBERTY.FK_PERSON_IDENTIFIER
                             ) PNC,
                             (
+                            SELECT
+                              TOP 1 PERSON_IDENTIFIER_VALUE
+                            FROM
+                              IIS.IIS_IDENTIFIER
+                            WHERE
+                              PERSON_IDENT_TYPE_CODE = 'CRO'
+                              AND
+                              FK_PERSON_IDENTIFIER=LOSS_OF_LIBERTY.FK_PERSON_IDENTIFIER
+                            ) CRO,
+                            (
                             STUFF(
                                 (SELECT DISTINCT
                                   ', ' + CAST(PAROLE_REF_NUMBER AS VARCHAR(7))
@@ -299,6 +309,7 @@ function formatInfoRow(dbRow) {
         forename: dbRow.INMATE_FORENAME_1.value,
         forename2: dbRow.INMATE_FORENAME_2.value,
         pnc: dbRow.PNC.value,
+        cro: dbRow.CRO.value,
         paroleRefList: dbRow.PAROLE_REF_LIST.value
     };
     logger.debug('Subject info result', info);

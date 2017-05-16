@@ -2,6 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/noms-digital-studio/iis/tree/master.svg?style=svg)](https://circleci.com/gh/noms-digital-studio/iis/tree/master)
 [![JavaScript Style Guide](https://img.shields.io/badge/code%20style-google-brightgreen.svg)](http://standardjs.com/)
+[![Known Vulnerabilities](https://github.com/noms-digital-studio/iis/badge.svg)](https://github.com/noms-digital-studio/iis)
 
 # Get Started
 

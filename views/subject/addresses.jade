@@ -3,14 +3,15 @@ extends ../subject
 block subject-details
     div.column-two-thirds
         each val,index in data.details
-            div(id="address#{index}").grid-row.list-row.address
-                div.column-full
-                    div.left-border
-                        span(id="address#{index}-type").quiet.block= val.type
-                        div(id="address#{index}-name")= val.name
-                        div(id="address#{index}-line1")= val.addressLine1
-                        div(id="address#{index}-line2")= val.addressLine2
-                        div(id="address#{index}-line4")= val.addressLine4
+            if (val.addressLine1)
+                div(id="address#{index}").grid-row.list-row.address
+                    div.column-full
+                        div.left-border
+                            span(id="address#{index}-type").quiet.block= val.type
+                            div(id="address#{index}-name")= val.name
+                            div(id="address#{index}-line1")= val.addressLine1
+                            div(id="address#{index}-line2")= val.addressLine2
+                            div(id="address#{index}-line4")= val.addressLine4
 
         if (!data.details)
             span= data.noResultsText

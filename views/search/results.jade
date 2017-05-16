@@ -3,7 +3,7 @@ mixin inmate(name, prisonNumber, dob, firstReceptionDate, visited)
     div.inmateDetails(class=visited ? 'visited' : '')
         a(href="/subject/#{prisonNumber}/summary").capitalise-text
             span.inmateContainer
-                span(class=visited ? '' : 'bold-medium') #{name}
+                span(class=visited ? '' : 'bold-medium').capitalise-text #{name}
                 if dob
                     span(class=visited ? '' : 'bold-medium') &middot; #{dob}
                 if prisonNumber

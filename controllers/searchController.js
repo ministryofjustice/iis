@@ -122,13 +122,16 @@ exports.getResults = function(req, res) {
             }
 
             userInput.page = page;
-            search.inmate(userInput).then((data) => {
+            return search.inmate(userInput).then((data) => {
                 const dataWithVisited = addVisitedData(data, req.session);
                 return renderResultsPage(req, res, rowCount, dataWithVisited, page, pageError);
+            }).catch((error) => {
+                logger.error('Error during inmate search ', {error});
+                return showDbError(res);
             });
         })
         .catch((error) => {
-            logger.error('Error during search', {error});
+            logger.error('Error during number of rows search ', {error});
             return showDbError(res);
     });
 

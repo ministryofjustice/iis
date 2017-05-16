@@ -346,7 +346,7 @@ describe('searchController', () => {
                     {prisonNumber: '2', forename: 'Alistair'},
                     {prisonNumber: '3', forename: 'Zed'},
                 ];
-                getInmatesStub = sandbox.stub().returnsPromise().resolves(receivedData)
+                getInmatesStub = sandbox.stub().returnsPromise().resolves(receivedData);
 
                 getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
 
@@ -383,6 +383,26 @@ describe('searchController', () => {
                 const payload = resMock.render.getCalls()[0].args[1];
                 expect(payload.err).to.eql(expectedPayloadError);
 
+            });
+
+            context('Rejected getRows promise', () => {
+                it('should redirect to search page', () => {
+                    getRowsStub = sinon.stub().returnsPromise().rejects('rejection');
+                    getResultsProxy(getRowsStub)(reqMock, resMock);
+
+                    expect(resMock.render).to.have.callCount(1);
+                    expect(resMock.render).to.have.been.calledWith('search');
+                });
+            });
+
+            context('Rejected getInmates promise', () => {
+                it('should redirect to search page', () => {
+                    getInmatesStub = sinon.stub().returnsPromise().rejects('rejection');
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+
+                    expect(resMock.render).to.have.callCount(1);
+                    expect(resMock.render).to.have.been.calledWith('search');
+                });
             });
         });
 

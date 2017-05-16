@@ -47,6 +47,12 @@ module.exports = function healthcheck(callback) {
             // no build info to show
         }
 
+        try {
+            results.version = require('../package.json').version;
+        } catch (ex) {
+            // no version info to show
+        }
+
         callback(null, results);
     }
 };

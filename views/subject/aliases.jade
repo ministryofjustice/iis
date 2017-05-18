@@ -7,7 +7,8 @@ block subject-details
                     div.column-full
                         div.left-border
                             div(id="alias#{index}-name") #{val.forename + ' ' + val.forename2 + ' ' + val.surname}
-                            div(id="alias#{index}-dob") Born on #{val.dob}
+                            if (val.dob)
+                                div(id="alias#{index}-dob") Born on: #{val.dob}
 
         if (!data.details)
             span= data.noResultsText

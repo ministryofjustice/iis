@@ -335,7 +335,7 @@ function formatAliasRows(dbRow) {
         surname: dbRow.PERSON_SURNAME.value ? changeCase.titleCase(dbRow.PERSON_SURNAME.value) : '',
         forename: dbRow.PERSON_FORENAME_1.value ? changeCase.titleCase(dbRow.PERSON_FORENAME_1.value) : '',
         forename2: dbRow.PERSON_FORENAME_2.value ? changeCase.titleCase(dbRow.PERSON_FORENAME_2.value) : '',
-        dob: dbRow.PERSON_BIRTH_DATE.value ? utils.getFormattedDateFromString(dbRow.PERSON_BIRTH_DATE.value) : ''
+        dob: dbRow.PERSON_BIRTH_DATE.value ? utils.getFormattedDateFromString(dbRow.PERSON_BIRTH_DATE.value) : 'Unknown'
     };
 }
 

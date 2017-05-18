@@ -15,14 +15,22 @@ exports.getInfo = function(prisonNumber) {
             {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
         ];
 
-        const sql = `SELECT PK_PRISON_NUMBER, 
-                          INMATE_SURNAME, 
-                          INMATE_FORENAME_1, 
-                          INMATE_FORENAME_2,
-                            (SELECT TOP 1 PERSON_IDENTIFIER_VALUE
-                             FROM IIS.IIS_IDENTIFIER
-                             WHERE PERSON_IDENT_TYPE_CODE = 'PNC'
-                             AND FK_PERSON_IDENTIFIER=LOSS_OF_LIBERTY.FK_PERSON_IDENTIFIER
+        /* eslint-disable */
+        let sql = `SELECT 
+                            PK_PRISON_NUMBER, 
+                            INMATE_SURNAME, 
+                            INMATE_FORENAME_1, 
+                            INMATE_FORENAME_2,
+                            FK_PERSON_IDENTIFIER,
+                            (
+                            SELECT
+                              TOP 1 PERSON_IDENTIFIER_VALUE
+                            FROM
+                              IIS.IIS_IDENTIFIER
+                            WHERE
+                              PERSON_IDENT_TYPE_CODE = 'PNC'
+                              AND
+                              FK_PERSON_IDENTIFIER=LOSS_OF_LIBERTY.FK_PERSON_IDENTIFIER
                             ) PNC,
                             (
                             SELECT TOP 1 PERSON_IDENTIFIER_VALUE
@@ -114,6 +122,29 @@ exports.getAddresses = function(obj) {
     const params = [
         {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
     ];
+        /* eslint-disable */
+        let sql = `SELECT DISTINCT
+                            k.PERSON_SURNAME,
+                            k.PERSON_FORENAME_1,
+                            k.PERSON_FORENAME_2,
+                            k.PERSON_BIRTH_DATE
+                    FROM
+                            IIS.LOSS_OF_LIBERTY l
+                    LEFT JOIN
+                            IIS.KNOWN_AS k 
+                    ON
+                            l.FK_PERSON_IDENTIFIER = k.FK_PERSON_IDENTIFIER
+                    WHERE
+                            l.PK_PRISON_NUMBER = @PK_PRISON_NUMBER
+                    AND (
+                        NOT
+                                l.INMATE_SURNAME = k.PERSON_SURNAME
+                        OR NOT
+                                l.INMATE_FORENAME_1 = k.PERSON_FORENAME_1
+                        OR NOT
+                                l.INMATE_FORENAME_2 = k.PERSON_FORENAME_2
+                    )`;
+        /* eslint-enable */
 
     const sql = `SELECT INMATE_ADDRESS_1, INMATE_ADDRESS_2, INMATE_ADDRESS_4, ADDRESS_TYPE, PERSON_DETS
                FROM IIS.INMATE_ADDRESS
@@ -202,6 +233,7 @@ const resolveWithFormattedRow = (resolve, type) => (rows) => {
 function formatInfoRow(dbRow) {
     const info = {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
+        personIdentifier: dbRow.FK_PERSON_IDENTIFIER.value,
         surname: dbRow.INMATE_SURNAME.value,
         forename: dbRow.INMATE_FORENAME_1.value,
         forename2: dbRow.INMATE_FORENAME_2.value,
@@ -226,7 +258,8 @@ function formatSummaryRow(dbRow) {
 
 function formatMovementRows(dbRow) {
     return {
-        establishment: dbRow.ESTAB_COMP_OF_MOVE.value ? changeCase.titleCase(dbRow.ESTAB_COMP_OF_MOVE.value) : 'Establishment unknown',
+        establishment: dbRow.ESTAB_COMP_OF_MOVE.value ? changeCase.titleCase(dbRow.ESTAB_COMP_OF_MOVE.value) :
+         'Establishment unknown',
         date: utils.getFormattedDateFromString(dbRow.DATE_OF_MOVE.value),
         type: dbRow.TYPE_OF_MOVE.value,
         status: dbRow.TYPE_OF_MOVE.value && dbRow.MOVEMENT_CODE.value ? formatMovementCode(dbRow) : 'Status unknown'
@@ -244,10 +277,10 @@ function formatMovementCode(dbRow) {
 
 function formatAliasRows(dbRow) {
     return {
-        surname: dbRow.PERSON_SURNAME.value,
-        forename: dbRow.PERSON_FORENAME_1.value,
-        forename2: dbRow.PERSON_FORENAME_2.value,
-        dob: utils.getFormattedDateFromString(dbRow.PERSON_BIRTH_DATE.value)
+        surname: dbRow.PERSON_SURNAME.value ? changeCase.titleCase(dbRow.PERSON_SURNAME.value) : '',
+        forename: dbRow.PERSON_FORENAME_1.value ? changeCase.titleCase(dbRow.PERSON_FORENAME_1.value) : '',
+        forename2: dbRow.PERSON_FORENAME_2.value ? changeCase.titleCase(dbRow.PERSON_FORENAME_2.value) : '',
+        dob: dbRow.PERSON_BIRTH_DATE.value ? utils.getFormattedDateFromString(dbRow.PERSON_BIRTH_DATE.value) : ''
     };
 }
 
@@ -256,7 +289,8 @@ function formatAddressRows(dbRow) {
         addressLine1: dbRow.INMATE_ADDRESS_1.value ? changeCase.titleCase(dbRow.INMATE_ADDRESS_1.value) : '',
         addressLine2: dbRow.INMATE_ADDRESS_2.value ? changeCase.titleCase(dbRow.INMATE_ADDRESS_2.value) : '',
         addressLine4: dbRow.INMATE_ADDRESS_4.value ? changeCase.titleCase(dbRow.INMATE_ADDRESS_4.value) : '',
-        type: dbRow.ADDRESS_TYPE.value ? changeCase.titleCase(describeCode('ADDRESS', dbRow.ADDRESS_TYPE.value)) : 'Unknown',
+        type: dbRow.ADDRESS_TYPE.value ? changeCase.titleCase(describeCode('ADDRESS', dbRow.ADDRESS_TYPE.value)) :
+        'Unknown',
         name: dbRow.PERSON_DETS.value ? changeCase.titleCase(dbRow.PERSON_DETS.value) : ''
     };
 }
@@ -265,8 +299,10 @@ function formatOffenceRows(dbRow) {
     return {
         offenceCode: dbRow.IIS_OFFENCE_CODE.value ? dbRow.IIS_OFFENCE_CODE.value : 'Unknown offence code',
         caseDate: dbRow.CASE_DATE.value ? utils.getFormattedDateFromString(dbRow.CASE_DATE.value) : 'Unknown case date',
-        establishment_code: dbRow.CASE_ESTAB_COMP_CODE.value ? changeCase.upperCase(dbRow.CASE_ESTAB_COMP_CODE.value) : 'Unknown establishment',
-        establishment: dbRow.ESTABLISHMENT.value ? changeCase.titleCase(dbRow.ESTABLISHMENT.value) : 'Unknown establishment'
+        establishment_code: dbRow.CASE_ESTAB_COMP_CODE.value ? changeCase.upperCase(dbRow.CASE_ESTAB_COMP_CODE.value)
+        : 'Unknown establishment',
+        establishment: dbRow.ESTABLISHMENT.value ? changeCase.titleCase(dbRow.ESTABLISHMENT.value) :
+        'Unknown establishment'
     };
 }
 
@@ -274,18 +310,19 @@ function formatHdcInfoRows(dbRow) {
     return {
         date: dbRow.STAGE_DATE.value ? utils.getFormattedDateFromString(dbRow.STAGE_DATE.value.trim()) : 'Date unknown',
         stage: dbRow.STAGE.value ? sentenceCaseWithAcronyms('HDC_STAGE', dbRow.STAGE.value) : 'Stage unknown',
-        status: dbRow.HDC_STATUS.value ? sentenceCaseWithAcronyms('HDC_STATUS', dbRow.HDC_STATUS.value) : 'Status unknown',
-        reason: dbRow.HDC_REASON.value ? sentenceCaseWithAcronyms('HDC_REASON', dbRow.HDC_REASON.value) : '',
+        status: dbRow.HDC_STATUS.value ? sentenceCaseWithAcronyms('HDC_STATUS', dbRow.HDC_STATUS.value) :
+        'Status unknown',
+        reason: dbRow.HDC_REASON.value ? sentenceCaseWithAcronyms('HDC_REASON', dbRow.HDC_REASON.value) : ''
     };
 }
 
-function sentenceCaseWithAcronyms(codeset, code){
+function sentenceCaseWithAcronyms(codeset, code) {
     return utils.acronymsToUpperCase(changeCase.sentenceCase(describeCode(codeset, code)));
 }
 
-function titleCaseWithAcronyms(codeset, code){
-    return utils.acronymsToUpperCase(changeCase.titleCase(describeCode(codeset, code)));
-}
+// function titleCaseWithAcronyms(codeset, code) {
+//     return utils.acronymsToUpperCase(changeCase.titleCase(describeCode(codeset, code)));
+// }
 
 function formatHdcRecallRows(dbRow) {
     return {

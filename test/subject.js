@@ -32,6 +32,7 @@ describe('Subject data', function() {
     it('should return expected info object', () => {
         let infoResponse = {
             PK_PRISON_NUMBER: {value: 'AA112233'},
+            FK_PERSON_IDENTIFIER: {value: '123456789'},
             INMATE_SURNAME: {value: 'SURNAME'},
             INMATE_FORENAME_1: {value: 'FORENAMEA'},
             INMATE_FORENAME_2: {value: 'FORENAME2'},
@@ -42,6 +43,7 @@ describe('Subject data', function() {
 
         let expectedInfo = {
             prisonNumber: 'AA112233',
+            personIdentifier: '123456789',
             surname: 'SURNAME',
             forename: 'FORENAMEA',
             forename2: 'FORENAME2',
@@ -116,6 +118,47 @@ describe('Subject data', function() {
         const result = subjectProxy(getCollectionStub, getTupleStub).getHDCInfo('AA112233');
         return result.then((data) => {
             expect(data).to.deep.equal(expectedHdcHistory);
+        });
+    });
+
+    it("should return expected Aliases object", function(done) {
+
+        let aliasOne = {
+            PERSON_SURNAME: {value: 'AAA'},
+            PERSON_FORENAME_1: {value: 'A'},
+            PERSON_FORENAME_2: {value: 'AA'},
+            PERSON_BIRTH_DATE: {value: '19800101'}
+        };
+
+        let aliasTwo = {
+            PERSON_SURNAME: {value: 'BBB'},
+            PERSON_FORENAME_1: {value: 'B'},
+            PERSON_FORENAME_2: {value: 'BB'},
+            PERSON_BIRTH_DATE: {value: '19800202'}
+        };
+
+        prepareFakeDB((req) => {
+            req.callback(null, 1, [aliasOne, aliasTwo]);
+        });
+
+        let expectedAliases = [{
+            surname: 'Aaa',
+            forename: 'A',
+            forename2: 'Aa',
+            dob: '01/01/1980'
+        }, {
+            surname: 'Bbb',
+            forename: 'B',
+            forename2: 'Bb',
+            dob: '02/02/1980'
+        }];
+
+        subject.aliases({prisonNumber: 'AA112233'}, function(err, data) {
+
+            expect(err).to.be.null;
+            expect(data).to.deep.equal(expectedAliases);
+
+            done();
         });
     });
 });

@@ -1,15 +1,9 @@
 const db = require('./db');
 
 const checks = {
-    db: function(callback) {
-        db.getTuple('SELECT 1 AS [ok]', null, function(err, row) {
-            if (err) {
-                return callback(err);
-            }
-            if (row.ok.value !== 1) {
-                return callback(new Error('DB query error'));
-            }
-            return callback(null);
+    db: () => {
+        return new Promise((resolve, reject) => {
+            db.getTuple('SELECT 1 AS [ok]', null, resolve, reject);
         });
     }
 };
@@ -22,16 +16,17 @@ module.exports = function healthcheck(callback) {
     };
     Object.keys(checks).forEach((checkName) => {
         pending += 1;
-        checks[checkName]((err, result) => {
-            if (err) {
-                results.healthy = false;
-                results.checks[checkName] = err.message;
-            } else {
+        checks[checkName]()
+            .then(() => {
                 results.checks[checkName] = 'ok';
-            }
-            pending -= 1;
-            finalize();
-        });
+                pending -= 1;
+                finalize();
+            }).catch((error) => {
+                results.healthy = false;
+                results.checks[checkName] = error.message;
+                pending -= 1;
+                finalize();
+            });
     });
 
     function finalize() {

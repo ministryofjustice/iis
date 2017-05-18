@@ -92,7 +92,7 @@ describe('Subject data', function() {
         }];
 
         getCollectionStub = sandbox.stub().callsArgWith(2, [address1, address2]);
-        const result = subjectProxy(getCollectionStub, getTupleStub).getAddresses('AA112233');
+        const result = subjectProxy(getCollectionStub, getTupleStub).getAddresses({prisonNumber: 'AA112233'});
         return result.then((data) => {
             expect(data).to.deep.equal(expectedAddresses);
         });
@@ -115,13 +115,13 @@ describe('Subject data', function() {
         }];
 
         getCollectionStub = sandbox.stub().callsArgWith(2, [historyResponse]);
-        const result = subjectProxy(getCollectionStub, getTupleStub).getHDCInfo('AA112233');
+        const result = subjectProxy(getCollectionStub, getTupleStub).getHDCInfo({prisonNumber: 'AA112233'});
         return result.then((data) => {
             expect(data).to.deep.equal(expectedHdcHistory);
         });
     });
 
-    it("should return expected Aliases object", function(done) {
+    it("should return expected Aliases object", function() {
 
         let aliasOne = {
             PERSON_SURNAME: {value: 'AAA'},
@@ -137,10 +137,6 @@ describe('Subject data', function() {
             PERSON_BIRTH_DATE: {value: '19800202'}
         };
 
-        prepareFakeDB((req) => {
-            req.callback(null, 1, [aliasOne, aliasTwo]);
-        });
-
         let expectedAliases = [{
             surname: 'Aaa',
             forename: 'A',
@@ -153,12 +149,10 @@ describe('Subject data', function() {
             dob: '02/02/1980'
         }];
 
-        subject.aliases({prisonNumber: 'AA112233'}, function(err, data) {
-
-            expect(err).to.be.null;
+        getCollectionStub = sandbox.stub().callsArgWith(2, [aliasOne, aliasTwo]);
+        const result = subjectProxy(getCollectionStub, getTupleStub).getAliases({prisonNumber: 'AA112233'});
+        return result.then((data) => {
             expect(data).to.deep.equal(expectedAliases);
-
-            done();
         });
     });
 });

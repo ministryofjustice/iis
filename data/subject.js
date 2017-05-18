@@ -15,7 +15,6 @@ exports.getInfo = function(prisonNumber) {
             {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
         ];
 
-        /* eslint-disable */
         let sql = `SELECT 
                             PK_PRISON_NUMBER, 
                             INMATE_SURNAME, 
@@ -106,24 +105,10 @@ exports.getMovements = function(obj) {
 
 exports.getAliases = function(obj) {
     const params = [
-        {column: 'FK_PERSON_IDENTIFIER', type: TYPES.VarChar, value: obj.personIdentifier}
+        {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
     ];
 
-    const sql = `SELECT PERSON_SURNAME, PERSON_FORENAME_1, PERSON_FORENAME_2, PERSON_BIRTH_DATE
-               FROM IIS.KNOWN_AS
-               WHERE FK_PERSON_IDENTIFIER = @FK_PERSON_IDENTIFIER;`;
-
-    return new Promise((resolve, reject) => {
-        db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'alias'), reject);
-    });
-};
-
-exports.getAddresses = function(obj) {
-    const params = [
-        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
-    ];
-        /* eslint-disable */
-        let sql = `SELECT DISTINCT
+    const sql = `SELECT DISTINCT
                             k.PERSON_SURNAME,
                             k.PERSON_FORENAME_1,
                             k.PERSON_FORENAME_2,
@@ -144,7 +129,16 @@ exports.getAddresses = function(obj) {
                         OR NOT
                                 l.INMATE_FORENAME_2 = k.PERSON_FORENAME_2
                     )`;
-        /* eslint-enable */
+
+    return new Promise((resolve, reject) => {
+        db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'alias'), reject);
+    });
+};
+
+exports.getAddresses = function(obj) {
+    const params = [
+        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+    ];
 
     const sql = `SELECT INMATE_ADDRESS_1, INMATE_ADDRESS_2, INMATE_ADDRESS_4, ADDRESS_TYPE, PERSON_DETS
                FROM IIS.INMATE_ADDRESS
@@ -252,7 +246,7 @@ function formatSummaryRow(dbRow) {
         maritalStatus: changeCase.titleCase(describeCode('MARITAL_STATUS', dbRow.MARITAL_STATUS_CODE.value)),
         ethnicity: changeCase.titleCase(describeCode('ETHNIC_GROUP', dbRow.ETHNIC_GROUP_CODE.value)),
         nationality: changeCase.titleCase(describeCode('NATIONALITY', dbRow.NATIONALITY_CODE.value)),
-        sex: dbRow.INMATE_SEX.value ? changeCase.sentenceCase(dbRow.INMATE_SEX.value) : 'Unknown',
+        sex: dbRow.INMATE_SEX.value ? changeCase.sentenceCase(dbRow.INMATE_SEX.value) : 'Unknown'
     };
 }
 

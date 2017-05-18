@@ -16,35 +16,49 @@ exports.getInfo = function(prisonNumber) {
         ];
 
         let sql = `SELECT 
-                            PK_PRISON_NUMBER, 
-                            INMATE_SURNAME, 
-                            INMATE_FORENAME_1, 
-                            INMATE_FORENAME_2,
-                            FK_PERSON_IDENTIFIER,
-                            (
+                        PK_PRISON_NUMBER, 
+                        INMATE_SURNAME, 
+                        INMATE_FORENAME_1, 
+                        INMATE_FORENAME_2,
+                        FK_PERSON_IDENTIFIER,
+                        (
                             SELECT
-                              TOP 1 PERSON_IDENTIFIER_VALUE
+                                TOP 1 PERSON_IDENTIFIER_VALUE
                             FROM
-                              IIS.IIS_IDENTIFIER
+                                IIS.IIS_IDENTIFIER
                             WHERE
-                              PERSON_IDENT_TYPE_CODE = 'PNC'
-                              AND
-                              FK_PERSON_IDENTIFIER=LOSS_OF_LIBERTY.FK_PERSON_IDENTIFIER
-                            ) PNC,
+                                PERSON_IDENT_TYPE_CODE = 'PNC'
+                            AND
+                                FK_PERSON_IDENTIFIER=LOSS_OF_LIBERTY.FK_PERSON_IDENTIFIER
+                        ) PNC,
+                        (
+                            SELECT
+                                TOP 1 PERSON_IDENTIFIER_VALUE
+                            FROM 
+                                IIS.IIS_IDENTIFIER
+                            WHERE 
+                                PERSON_IDENT_TYPE_CODE = 'CRO'
+                            AND 
+                                FK_PERSON_IDENTIFIER=LOSS_OF_LIBERTY.FK_PERSON_IDENTIFIER
+                        ) CRO,
+                        (
+                            STUFF
                             (
-                            SELECT TOP 1 PERSON_IDENTIFIER_VALUE
-                            FROM IIS.IIS_IDENTIFIER
-                            WHERE PERSON_IDENT_TYPE_CODE = 'CRO'
-                            AND FK_PERSON_IDENTIFIER=LOSS_OF_LIBERTY.FK_PERSON_IDENTIFIER
-                            ) CRO,
-                            (STUFF(
-                                (SELECT DISTINCT ', ' + CAST(PAROLE_REF_NUMBER AS VARCHAR(7))
-                                 FROM IIS.PAROLE_REVIEW
-                                 WHERE FK_PRISON_NUMBER = @PK_PRISON_NUMBER
-                                 FOR XML PATH('')), 1, 1, '')
-                            ) PAROLE_REF_LIST
-                    FROM IIS.LOSS_OF_LIBERTY 
-                    WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER;`;
+                                (
+                                    SELECT
+                                        DISTINCT ', ' + CAST(PAROLE_REF_NUMBER AS VARCHAR(7))
+                                    FROM
+                                        IIS.PAROLE_REVIEW
+                                    WHERE
+                                        FK_PRISON_NUMBER = @PK_PRISON_NUMBER
+                                    FOR XML PATH('')
+                                ), 1, 1, ''
+                            )
+                        ) PAROLE_REF_LIST
+                    FROM
+                        IIS.LOSS_OF_LIBERTY 
+                    WHERE
+                        PK_PRISON_NUMBER = @PK_PRISON_NUMBER;`;
 
         logger.debug('Subject info search', sql);
 
@@ -60,7 +74,8 @@ exports.getSummary = function(obj) {
         {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
     ];
 
-    const sql = `SELECT PK_PRISON_NUMBER, 
+    const sql = `SELECT
+                        PK_PRISON_NUMBER, 
                         INMATE_SURNAME, 
                         INMATE_FORENAME_1, 
                         INMATE_FORENAME_2,
@@ -70,14 +85,17 @@ exports.getSummary = function(obj) {
                         MARITAL_STATUS_CODE,
                         ETHNIC_GROUP_CODE,
                         NATIONALITY_CODE,                            
-                            (CASE INMATE_SEX 
-                            WHEN 'M' THEN 'Male' 
-                            WHEN 'F' THEN 'FEMALE' 
-                            ELSE '' 
+                        (
+                            CASE INMATE_SEX 
+                                WHEN 'M' THEN 'Male' 
+                                WHEN 'F' THEN 'FEMALE' 
+                                ELSE '' 
                             END
-                            ) INMATE_SEX
-                 FROM IIS.LOSS_OF_LIBERTY 
-                 WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER;`;
+                        ) INMATE_SEX
+                 FROM 
+                    IIS.LOSS_OF_LIBERTY 
+                 WHERE
+                    PK_PRISON_NUMBER = @PK_PRISON_NUMBER;`;
 
     return new Promise((resolve, reject) => {
         db.getTuple(sql, params, resolveWithFormattedRow(resolve, 'summary'), reject);
@@ -89,14 +107,24 @@ exports.getMovements = function(obj) {
         {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
     ];
 
-    const sql = `SELECT DATE_OF_MOVE, MOVEMENT_CODE, TYPE_OF_MOVE,
-                    (SELECT ESTABLISHMENT_NAME
-                     FROM IIS.ESTABLISHMENT
-                     WHERE PK_ESTABLISHMENT_CODE = SUBSTRING(ESTAB_COMP_OF_MOVE,1,2)
-                    ) ESTAB_COMP_OF_MOVE
-                 FROM IIS.INMATE_MOVEMENT
-                 WHERE FK_PRISON_NUMBER = @FK_PRISON_NUMBER
-                 ORDER BY DATE_OF_MOVE DESC, TIME_OF_MOVE DESC;`;
+    const sql = `SELECT
+                        DATE_OF_MOVE,
+                        MOVEMENT_CODE,
+                        TYPE_OF_MOVE,
+                        (
+                            SELECT
+                                ESTABLISHMENT_NAME
+                            FROM
+                                IIS.ESTABLISHMENT
+                            WHERE
+                                PK_ESTABLISHMENT_CODE = SUBSTRING(ESTAB_COMP_OF_MOVE,1,2)
+                        ) ESTAB_COMP_OF_MOVE
+                 FROM
+                    IIS.INMATE_MOVEMENT
+                 WHERE
+                    FK_PRISON_NUMBER = @FK_PRISON_NUMBER
+                 ORDER BY
+                    DATE_OF_MOVE DESC, TIME_OF_MOVE DESC;`;
 
     return new Promise((resolve, reject) => {
         db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'movement'), reject);
@@ -140,9 +168,16 @@ exports.getAddresses = function(obj) {
         {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
     ];
 
-    const sql = `SELECT INMATE_ADDRESS_1, INMATE_ADDRESS_2, INMATE_ADDRESS_4, ADDRESS_TYPE, PERSON_DETS
-               FROM IIS.INMATE_ADDRESS
-               WHERE FK_PRISON_NUMBER = @FK_PRISON_NUMBER;`;
+    const sql = `SELECT
+                        INMATE_ADDRESS_1, 
+                        INMATE_ADDRESS_2, 
+                        INMATE_ADDRESS_4, 
+                        ADDRESS_TYPE, 
+                        PERSON_DETS
+                FROM 
+                    IIS.INMATE_ADDRESS
+                WHERE
+                    FK_PRISON_NUMBER = @FK_PRISON_NUMBER;`;
 
     return new Promise((resolve, reject) => {
         db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'address'), reject);
@@ -155,14 +190,24 @@ exports.getOffences = function(obj) {
         {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
     ];
 
-    const sql = `SELECT o.IIS_OFFENCE_CODE, c.CASE_DATE, c.CASE_ESTAB_COMP_CODE,
-                    (SELECT ESTABLISHMENT_NAME
-                     FROM IIS.ESTABLISHMENT
-                     WHERE PK_ESTABLISHMENT_CODE = SUBSTRING(c.CASE_ESTAB_COMP_CODE,1,2)
-                    ) ESTABLISHMENT
-                FROM IIS.CASE_OFFENCE o, IIS.INMATE_CASE c
-                WHERE c.PKTS_INMATE_CASE = o.FK_CASE
-                AND c.FK_PRISON_NUMBER = @FK_PRISON_NUMBER;`;
+    const sql = `SELECT 
+                        o.IIS_OFFENCE_CODE, 
+                        c.CASE_DATE, 
+                        c.CASE_ESTAB_COMP_CODE,
+                        (
+                            SELECT
+                                ESTABLISHMENT_NAME
+                            FROM 
+                                IIS.ESTABLISHMENT
+                            WHERE
+                                PK_ESTABLISHMENT_CODE = SUBSTRING(c.CASE_ESTAB_COMP_CODE,1,2)
+                        ) ESTABLISHMENT
+                FROM
+                    IIS.CASE_OFFENCE o, IIS.INMATE_CASE c
+                WHERE
+                    c.PKTS_INMATE_CASE = o.FK_CASE
+                AND 
+                    c.FK_PRISON_NUMBER = @FK_PRISON_NUMBER;`;
 
     return new Promise((resolve, reject) => {
         db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'offences'), reject);
@@ -174,14 +219,24 @@ exports.getHDCInfo = function(obj) {
         {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
     ];
 
-    const sql = `SELECT STAGE_DATE, STAGE, HDC_STATUS,
-                    (SELECT REASON
-                     FROM IIS.HDC_REASON r
-                     WHERE r.FK_HDC_HISTORY = h.PKTS_HDC_HISTORY
+    const sql = `SELECT 
+                    STAGE_DATE,
+                    STAGE, 
+                    HDC_STATUS,
+                    (
+                        SELECT
+                            REASON
+                        FROM
+                            IIS.HDC_REASON r
+                        WHERE
+                            r.FK_HDC_HISTORY = h.PKTS_HDC_HISTORY
                     ) HDC_REASON
-               FROM IIS.HDC_HISTORY h
-               WHERE FK_PRISON_NUMBER = @FK_PRISON_NUMBER
-               ORDER BY STAGE_DATE DESC;`;
+                FROM 
+                    IIS.HDC_HISTORY h
+                WHERE
+                    FK_PRISON_NUMBER = @FK_PRISON_NUMBER
+                ORDER BY
+                    STAGE_DATE DESC;`;
 
     return new Promise((resolve, reject) => {
         db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'hdcInfo'), reject);
@@ -193,10 +248,16 @@ exports.getHDCRecall = function(obj) {
         {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
     ];
 
-    const sql = `SELECT RECALL_DATE_CREATED, RECALL_OUTCOME, RECALL_OUTCOME_DATE
-               FROM IIS.HDC_RECALL
-               WHERE FK_PRISON_NUMBER = @FK_PRISON_NUMBER
-               ORDER BY HDC_RECALL_NUMBER ASC;`;
+    const sql = `SELECT
+                    RECALL_DATE_CREATED, 
+                    RECALL_OUTCOME, 
+                    RECALL_OUTCOME_DATE
+                FROM 
+                    IIS.HDC_RECALL
+                WHERE 
+                    FK_PRISON_NUMBER = @FK_PRISON_NUMBER
+                ORDER BY 
+                    HDC_RECALL_NUMBER ASC;`;
 
     return new Promise((resolve, reject) => {
         db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'hdcRecall'), reject);

@@ -255,9 +255,17 @@ module.exports = {
         let sql = `SELECT 
                             STAGE_DATE,
                             STAGE,
-                            HDC_STATUS
-                    FROM 
-                            IIS.HDC_HISTORY
+                            HDC_STATUS,
+                            (
+                                SELECT
+                                    REASON
+                                FROM
+                                    IIS.HDC_REASON r
+                                WHERE
+                                    r.FK_HDC_HISTORY = h.PKTS_HDC_HISTORY
+                            ) HDC_REASON
+                    FROM
+                            IIS.HDC_HISTORY h
                     WHERE 
                             FK_PRISON_NUMBER = @FK_PRISON_NUMBER
                     ORDER BY 
@@ -377,7 +385,8 @@ function formatHdcInfoRows(dbRow) {
     return {
         date: dbRow.STAGE_DATE.value ? utils.getFormattedDateFromString(dbRow.STAGE_DATE.value.trim()) : 'Date unknown',
         stage: dbRow.STAGE.value ? formatHdcStageCode(dbRow.STAGE.value) : 'Stage unknown',
-        status: dbRow.HDC_STATUS.value ? formatHdcStatusCode(dbRow.HDC_STATUS.value) : 'Status unknown'
+        status: dbRow.HDC_STATUS.value ? formatHdcStatusCode(dbRow.HDC_STATUS.value) : 'Status unknown',
+        reason: dbRow.HDC_REASON.value ? formatHdcReasonCode(dbRow.HDC_REASON.value) : '',
     };
 }
 
@@ -387,6 +396,10 @@ function formatHdcStageCode(code) {
 
 function formatHdcStatusCode(code) {
     return utils.acronymsToUpperCase(changeCase.sentenceCase(describeCode('HDC_STATUS', code)));
+}
+
+function formatHdcReasonCode(code) {
+    return utils.acronymsToUpperCase(changeCase.sentenceCase(describeCode('HDC_REASON', code)));
 }
 
 function formatHdcRecallRows(dbRow) {

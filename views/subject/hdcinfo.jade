@@ -6,8 +6,9 @@ block subject-details
             div.grid-row.list-row
                 div.column-full
                     div.left-border
-                        span.quiet.block #{val.stage} 
+                        span.quiet.block #{val.stage}
                         span #{val.status}, #{val.date}
-            
+                        div #{val.reason}
+
         if (!data.details)
             span= data.noResultsText

@@ -8,6 +8,7 @@ const movementDischargeCodesJson = require('./codes/movementDischargeCodes.json'
 const movementReturnCodesJson = require('./codes/movementReturnCodes.json');
 const hdcStageCodesJson = require('./codes/hdcStageCodes.json');
 const hdcStatusCodesJson = require('./codes/hdcStatusCodes.json');
+const hdcReasonCodesJson = require('./codes/hdcReasonCodes.json');
 const addressCodesJson = require('./codes/addressCodes.json');
 
 const codeSets = {
@@ -19,6 +20,7 @@ const codeSets = {
     MOVEMENT_RETURN: movementReturnCodesJson,
     HDC_STAGE: hdcStageCodesJson,
     HDC_STATUS: hdcStatusCodesJson,
+    HDC_REASON: hdcReasonCodesJson,
     ADDRESS: addressCodesJson
 };
 

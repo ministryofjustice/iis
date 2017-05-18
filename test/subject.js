@@ -101,4 +101,33 @@ describe('Subject data', function() {
             done();
         });
     });
+
+    it("should return expected HDC history object", function(done) {
+
+        let historyResponse = {
+            STAGE_DATE: {value: '19990101'},
+            STAGE: {value: '2'},
+            HDC_STATUS: {value: '8'},
+            HDC_REASON: {value: '1'}
+        };
+
+        prepareFakeDB((req) => {
+            req.callback(null, 1, [historyResponse]);
+        });
+
+        let expectedHdcHistory = [{
+            date: '01/01/1999',
+            stage: 'HDC eligibility',
+            status: 'Eligible',
+            reason: 'HDC granted enhanced board'
+        }];
+
+        subject.hdcinfo({prisonNumber: 'AA112233'}, function(err, data) {
+
+            expect(err).to.be.null;
+            expect(data).to.deep.equal(expectedHdcHistory);
+
+            done();
+        });
+    });
 });

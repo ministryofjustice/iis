@@ -384,22 +384,18 @@ function formatOffenceRows(dbRow) {
 function formatHdcInfoRows(dbRow) {
     return {
         date: dbRow.STAGE_DATE.value ? utils.getFormattedDateFromString(dbRow.STAGE_DATE.value.trim()) : 'Date unknown',
-        stage: dbRow.STAGE.value ? formatHdcStageCode(dbRow.STAGE.value) : 'Stage unknown',
-        status: dbRow.HDC_STATUS.value ? formatHdcStatusCode(dbRow.HDC_STATUS.value) : 'Status unknown',
-        reason: dbRow.HDC_REASON.value ? formatHdcReasonCode(dbRow.HDC_REASON.value) : '',
+        stage: dbRow.STAGE.value ? sentenceCaseWithAcronyms('HDC_STAGE', dbRow.STAGE.value) : 'Stage unknown',
+        status: dbRow.HDC_STATUS.value ? sentenceCaseWithAcronyms('HDC_STATUS', dbRow.HDC_STATUS.value) : 'Status unknown',
+        reason: dbRow.HDC_REASON.value ? sentenceCaseWithAcronyms('HDC_REASON', dbRow.HDC_REASON.value) : '',
     };
 }
 
-function formatHdcStageCode(code) {
-    return utils.acronymsToUpperCase(changeCase.sentenceCase(describeCode('HDC_STAGE', code)));
+function sentenceCaseWithAcronyms(codeset, code){
+    return utils.acronymsToUpperCase(changeCase.sentenceCase(describeCode(codeset, code)));
 }
 
-function formatHdcStatusCode(code) {
-    return utils.acronymsToUpperCase(changeCase.sentenceCase(describeCode('HDC_STATUS', code)));
-}
-
-function formatHdcReasonCode(code) {
-    return utils.acronymsToUpperCase(changeCase.sentenceCase(describeCode('HDC_REASON', code)));
+function titleCaseWithAcronyms(codeset, code){
+    return utils.acronymsToUpperCase(changeCase.titleCase(describeCode(codeset, code)));
 }
 
 function formatHdcRecallRows(dbRow) {

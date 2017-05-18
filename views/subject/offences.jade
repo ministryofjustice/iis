@@ -7,13 +7,12 @@ block subject-details
                     div.column-full
                         div.left-border
                             span.quiet.block #{val.caseDate}
-                            span Offence code #{val.offenceCode} 
+                            span Offence code #{val.offenceCode}
 
 
                         div.left-border
-                            span (#{val.establishment_code})
-                            | 
-                            span #{val.establishment.trim()} 
-            
-        if (!data.details)
+                            span (#{val.establishment_code})&nbsp;
+                            span #{val.establishment.trim()}
+
+        if (data.details.length === 0)
             span= data.noResultsText

@@ -1,29 +1,35 @@
-'use strict';
+process.env.NODE_ENV = 'test';
 
-let expect = require('chai').expect;
-let db = require('../server/db');
-let subject = require("../data/subject");
+const proxyquire = require('proxyquire');
+proxyquire.noCallThru();
 
-let EventEmitter = require("events").EventEmitter;
-
-function prepareFakeDB(onRequest) {
-    db.setFakeFactory(function fakeDBFactory() {
-        let fake = new EventEmitter();
-        process.nextTick(function() {
-            fake.emit("connect");
-        });
-        fake.execSql = function(req) {
-            onRequest(req);
-        };
-        return fake;
-    });
-}
+const chai = require('chai');
+const expect = chai.expect;
+const sinon = require('sinon');
+const sinonChai = require('sinon-chai');
+chai.use(sinonChai);
+const sandbox = sinon.sandbox.create();
 
 describe('Subject data', function() {
 
+    let getCollectionStub = sandbox.stub().returns(null);
+    let getTupleStub = sandbox.stub().returns(null);
 
-    it("should return expected info object", function(done) {
+    const subjectProxy = (getCollection = getCollectionStub,
+                         getTuple = getTupleStub) => {
+        return proxyquire('../data/subject', {
+            '../server/db': {
+                'getCollection': getCollection,
+                'getTuple': getTuple
+            }
+        });
+    };
 
+    afterEach(() => {
+        sandbox.reset();
+    });
+
+    it('should return expected info object', () => {
         let infoResponse = {
             PK_PRISON_NUMBER: {value: 'AA112233'},
             INMATE_SURNAME: {value: 'SURNAME'},
@@ -33,10 +39,6 @@ describe('Subject data', function() {
             CRO: {value: 'XYZ/11Z'},
             PAROLE_REF_LIST: {value: 'AAA1,BB2'}
         };
-
-        prepareFakeDB((req) => {
-            req.callback(null, 1, [infoResponse]);
-        });
 
         let expectedInfo = {
             prisonNumber: 'AA112233',
@@ -48,16 +50,14 @@ describe('Subject data', function() {
             paroleRefList: 'AAA1,BB2'
         };
 
-        subject.info('AA112233', function(err, data) {
-
-            expect(err).to.be.null;
+        getTupleStub = sandbox.stub().callsArgWith(2, infoResponse);
+        const result = subjectProxy(getCollectionStub, getTupleStub).getInfo('AA112233');
+        return result.then((data) => {
             expect(data).to.deep.equal(expectedInfo);
-
-            done();
         });
     });
 
-    it("should return array of expected addresses objects", function(done) {
+    it("should return array of expected addresses objects", () => {
 
         let address1 = {
             INMATE_ADDRESS_1: {value: '1 STREET'},
@@ -75,10 +75,6 @@ describe('Subject data', function() {
             PERSON_DETS: {value: ''}
         };
 
-        prepareFakeDB((req) => {
-            req.callback(null, 1, [address1, address2]);
-        });
-
         let expectedAddresses = [{
             addressLine1: '1 Street',
             addressLine2: 'A Town',
@@ -93,16 +89,14 @@ describe('Subject data', function() {
             name: ''
         }];
 
-        subject.addresses({prisonNumber: 'AA112233'}, function(err, data) {
-
-            expect(err).to.be.null;
+        getCollectionStub = sandbox.stub().callsArgWith(2, [address1, address2]);
+        const result = subjectProxy(getCollectionStub, getTupleStub).getAddresses('AA112233');
+        return result.then((data) => {
             expect(data).to.deep.equal(expectedAddresses);
-
-            done();
         });
     });
 
-    it("should return expected HDC history object", function(done) {
+    it("should return expected HDC history object", function() {
 
         let historyResponse = {
             STAGE_DATE: {value: '19990101'},
@@ -111,10 +105,6 @@ describe('Subject data', function() {
             HDC_REASON: {value: '1'}
         };
 
-        prepareFakeDB((req) => {
-            req.callback(null, 1, [historyResponse]);
-        });
-
         let expectedHdcHistory = [{
             date: '01/01/1999',
             stage: 'HDC eligibility',
@@ -122,12 +112,10 @@ describe('Subject data', function() {
             reason: 'HDC granted enhanced board'
         }];
 
-        subject.hdcinfo({prisonNumber: 'AA112233'}, function(err, data) {
-
-            expect(err).to.be.null;
+        getCollectionStub = sandbox.stub().callsArgWith(2, [historyResponse]);
+        const result = subjectProxy(getCollectionStub, getTupleStub).getHDCInfo('AA112233');
+        return result.then((data) => {
             expect(data).to.deep.equal(expectedHdcHistory);
-
-            done();
         });
     });
 });

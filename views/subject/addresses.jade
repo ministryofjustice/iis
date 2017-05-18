@@ -13,5 +13,5 @@ block subject-details
                             div(id="address#{index}-line2")= val.addressLine2
                             div(id="address#{index}-line4")= val.addressLine4
 
-        if (!data.details)
+        if (data.details.length === 0)
             span= data.noResultsText

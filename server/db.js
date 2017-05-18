@@ -3,9 +3,6 @@
 const util = require('util');
 const logger = require('../log.js');
 
-let fakeDBFactory;
-
-
 function addParams(params, request) {
     params.forEach(function(param) {
         let paramValue = param.value;
@@ -23,16 +20,7 @@ function addParams(params, request) {
 
 module.exports = {
 
-    setFakeFactory: function(fakeFactory) {
-        fakeDBFactory = fakeFactory;
-    },
-
     connect: function() {
-        if (fakeDBFactory) {
-            logger.info('Using fake DB');
-            return fakeDBFactory();
-        }
-
         const config = require('./config');
         const Connection = require('tedious').Connection;
 
@@ -50,7 +38,6 @@ module.exports = {
     },
 
     getTuple: function(sql, params, successCallback, errorCallback) {
-        const promise = arguments.length === 4;
         let connected = false;
         const connection = this.connect();
 
@@ -93,19 +80,13 @@ module.exports = {
 
             if (err) {
                 logger.error('Error during tuple query: ' + err);
-                if (promise) {
-                    return errorCallback(err);
-                }
+                return errorCallback(err);
             }
-            if (promise) {
-                return successCallback(result.totalRows.value);
-            }
-            successCallback(err, result);
+            return successCallback(result);
         }
     },
 
     getCollection: function(sql, params, successCallback, errorCallback) {
-        const promise = arguments.length === 4;
         let connected = false;
         const connection = this.connect();
 
@@ -146,24 +127,13 @@ module.exports = {
 
             if (err) {
                 logger.error('Error during collection query: ' + err);
-                if (promise) {
-                    return errorCallback(err);
-                }
-
+                return errorCallback(err);
             }
-            if (promise) {
-                return successCallback(result);
-            }
-            successCallback(err, result);
+            return successCallback(result);
         }
     },
 
     disconnect: function(connection) {
-
-        if (fakeDBFactory) {
-            return;
-        }
-
         connection.close();
     }
 };

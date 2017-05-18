@@ -220,7 +220,7 @@ describe('searchController', () => {
         let auditStub;
 
         beforeEach(() => {
-            getRowsStub = sandbox.stub().returnsPromise().resolves(20);
+            getRowsStub = sandbox.stub().returnsPromise().resolves({totalRows: {value: 20}});
             getInmatesStub = sandbox.stub().returnsPromise().resolves({forename: 'Matt'});
             auditStub = sandbox.spy();
 
@@ -271,14 +271,14 @@ describe('searchController', () => {
 
         context('rowcounts = 0', () => {
             it('should not call getInmates', () => {
-                getRowsStub = sinon.stub().returnsPromise().resolves(0);
+                getRowsStub = sinon.stub().returnsPromise().resolves({totalRows: {value: 0}});
                 getResultsProxy(getRowsStub)(reqMock, resMock);
 
                 expect(getInmatesStub).to.have.callCount(0);
             });
 
             it('should render results page', () => {
-                getRowsStub = sinon.stub().returnsPromise().resolves(0);
+                getRowsStub = sinon.stub().returnsPromise().resolves({totalRows: {value: 0}});
 
                 getResultsProxy(getRowsStub)(reqMock, resMock);
                 expect(resMock.render).to.have.callCount(1);

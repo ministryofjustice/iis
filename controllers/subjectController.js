@@ -1,9 +1,26 @@
 const logger = require('../log');
 const utils = require('../data/utils');
-const subject = require('../data/subject');
+const {
+    getInfo,
+    getSummary,
+    getMovements,
+    getAliases,
+    getAddresses,
+    getOffences,
+    getHDCInfo,
+    getHDCRecall
+} = require('../data/subject');
 const content = require('../data/content');
 const audit = require('../data/audit');
-
+const dataRequestFunction = {
+    summary: getSummary,
+    movements: getMovements,
+    aliases: getAliases,
+    addresses: getAddresses,
+    offences: getOffences,
+    hdcinfo: getHDCInfo,
+    hdcrecall: getHDCRecall
+};
 
 exports.getSubject = function(req, res) {
     let page = req.params.page;
@@ -12,37 +29,28 @@ exports.getSubject = function(req, res) {
 
     audit.record('VIEW', req.user.email, {page: page, prisonNumber: prisonNumber});
 
-    subject.info(prisonNumber, function(err, data) {
-        if (err) {
-            logger.error('Error during get subject info', err);
-            renderErrorPage(res, err);
-            return;
-        }
+    getInfo(prisonNumber)
+        .then((info) => {
+            const summary = info;
+            dataRequestFunction[page]({prisonNumber, personIdentifier: summary.personIdentifier})
+                .then((details) => {
+                    if (details.dob !== 'Unknown') {
+                        details.age = utils.getAgeFromDOB(details.dob);
+                    }
+                    const data = {
+                        subject: summary,
+                        details,
+                        noResultsText: content.view.subject[page]
+                    };
+                    renderPage(res, {page, data, lastPageNum: req.session.lastPage || 1});
+                }).catch((error) => {
+                    renderErrorPage(res, error);
+                });
 
-        let summary = data;
-        let ids = {
-            prisonNumber: prisonNumber,
-            personIdentifier: data.personIdentifier
-        };
-
-        subject[page](ids, function(err, details) {
-            if (err) {
-                renderErrorPage(res, err);
-                return;
-            }
-
-            if (details.dob) {
-                details.age = utils.getAgeFromDOB(details.dob);
-            }
-
-            let data = {
-                subject: summary,
-                details: details,
-                noResultsText: content.view.subject[page]
-            };
-            renderPage(res, {page: page, data: data, lastPageNum: req.session.lastPage || 1});
+        }).catch((error) => {
+            logger.error('Error during get subject info', error);
+            renderErrorPage(res, error);
         });
-    });
 };
 
 function renderPage(res, obj) {

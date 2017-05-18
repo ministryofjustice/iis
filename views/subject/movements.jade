@@ -8,14 +8,11 @@ block subject-details
                     div.left-border
                         span.quiet #{val.date}
                     div.left-border
-                        span.type.bold-small #{val.type == 'D' ? 'OUT' : 'IN'}
-                        |  
-                        | -
-                        | 
+                        span.type.bold-small #{val.type == 'D' ? 'OUT' : 'IN'} -&nbsp;
                         span #{val.status}
-                        
+
                     div.left-border
                         span #{val.establishment}
-                        
-        if (!data.details)
+
+        if (data.details.length === 0)
             span= data.noResultsText

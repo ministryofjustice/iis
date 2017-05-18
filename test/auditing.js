@@ -11,21 +11,6 @@ let db = require('../server/db');
 let subject = require("../data/subject");
 let search = require("../data/search");
 
-let EventEmitter = require("events").EventEmitter;
-
-function prepareFakeDB(onRequest) {
-    db.setFakeFactory(function fakeDBFactory() {
-        let fake = new EventEmitter();
-        process.nextTick(function() {
-            fake.emit("connect");
-        });
-        fake.execSql = function(req) {
-            onRequest(req);
-        };
-        return fake;
-    });
-}
-
 describe('Auditing', function() {
 
     it('should record login event', function() {
@@ -82,10 +67,10 @@ describe('Auditing', function() {
     it('should record view event with prison id and page type', function() {
 
         const fakeSubject = {prisonNumber: 'AA123456', forename: 'Name'};
-        common.sinon.stub(subject, "info").yields(null, fakeSubject);
+        common.sinon.stub(subject, "getInfo").yields(null, fakeSubject);
 
         const fakeSummary = {};
-        common.sinon.stub(subject, "summary").yields(null, fakeSummary);
+        common.sinon.stub(subject, "getSummary").yields(null, fakeSummary);
 
         let browser;
         return common.logInAs()

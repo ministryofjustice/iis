@@ -10,5 +10,5 @@ block subject-details
                         span #{val.status}, #{val.date}
                         div #{val.reason}
 
-        if (!data.details)
+        if (data.details.length === 0)
             span= data.noResultsText

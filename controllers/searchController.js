@@ -112,7 +112,8 @@ exports.getResults = function(req, res) {
 
     audit.record('SEARCH', req.user.email, userInput);
     search.totalRowsForUserInput(userInput)
-        .then((rowCount) => {
+        .then((data) => {
+            const rowCount = data.totalRows.value;
             if (rowCount === 0) {
                 return renderResultsPage(req, res, rowCount);
             }

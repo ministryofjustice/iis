@@ -8,7 +8,11 @@ module.exports = {
 
         let err = {
             title: content.errMsg.CANNOT_SUBMIT,
-            items: [{prisonNumber: 'Enter prison number'}, {pncNumber: 'Enter PNC number'}, {croNumber: 'Enter CRO number'}],
+            items: [
+                {prisonNumber: 'Enter prison number'},
+                {pncNumber: 'Enter PNC number'},
+                {croNumber: 'Enter CRO number'}
+            ],
             desc: content.errMsg.ATLEAST_ONE_REQUIRED
         };
 

@@ -75,11 +75,27 @@ exports.getSearchForm = function(req, res) {
     }
 
     const hints = flatten(searchItems.map((item) => availableSearchOptions[item].hints));
+
+    res.locals.nameQuery = req.session.nameQuery;
+    req.session.nameQuery = null;
+
     res.render('search/full-search', {
         content: content.view.search,
         searchItems,
         hints
     });
+};
+
+exports.getAliasSearch = function(req, res) {
+
+    // send to name search form with inputs
+    // req.session.nameQuery = req.query;
+    // const redirectUrl = url.format({'pathname': '/search/form', 'query': ['names']});
+    // return res.redirect(redirectUrl);
+
+    // or just execute the search immediately
+    req.body = req.query;
+    exports.postSearchForm(req,res);
 };
 
 exports.postSearchForm = function(req, res) {
@@ -96,6 +112,7 @@ exports.postSearchForm = function(req, res) {
 
     // /search/results to be addressed when audit table is included
     req.session.visited = [];
+    req.session.nameQuery = null;
     req.session.userInput = userInput;
     res.redirect('/search/results');
 };
@@ -155,6 +172,7 @@ exports.getResults = function(req, res) {
 const objectKeysInArray = (object, array) => Object.keys(object).filter((objectKey) => array.includes(objectKey));
 
 const itemsInQueryString = (queryString) => Object.keys(queryString).map((key) => queryString[key]);
+
 
 const userInputFromSearchForm = (requestBody) => {
     const getReturnedFields = composeFieldsForOptionReducer(requestBody);

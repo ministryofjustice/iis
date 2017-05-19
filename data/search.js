@@ -8,12 +8,28 @@ const db = require('../server/db');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 
 const TYPES = require('tedious').TYPES;
-const SELECT = `PK_PRISON_NUMBER, 
-                INMATE_SURNAME, 
-                INMATE_FORENAME_1, 
-                INMATE_FORENAME_2,
-                INMATE_BIRTH_DATE DOB,
-                DATE_1ST_RECEP`;
+const SELECT = `l.PK_PRISON_NUMBER, 
+                l.INMATE_SURNAME, 
+                l.INMATE_FORENAME_1, 
+                l.INMATE_FORENAME_2,
+                l.INMATE_BIRTH_DATE DOB,
+                l.DATE_1ST_RECEP,
+                SUBSTRING( 
+                    (SELECT DISTINCT ', ' + k.PERSON_FORENAME_1 + k.PERSON_SURNAME  
+                     FROM IIS.KNOWN_AS k  
+                     WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER
+                     AND (
+                        NOT
+                                l.INMATE_SURNAME = k.PERSON_SURNAME
+                        OR NOT
+                                l.INMATE_FORENAME_1 = k.PERSON_FORENAME_1
+                        OR NOT
+                                l.INMATE_FORENAME_2 = k.PERSON_FORENAME_2
+                    )
+                     FOR XML PATH('')),2,200000 
+                )  
+                ALIAS
+                `;
 const TABLE = 'IIS.LOSS_OF_LIBERTY l';
 const ORDER_BY = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC';
 
@@ -215,12 +231,21 @@ function prepareSqlStatement(fields, from, where, orderBy, limit ) {
 
 function formatRow(dbRow) {
 
+
+    console.error(changeCase.titleCase(dbRow.ALIAS.value))
+    console.error((dbRow.ALIAS.value))
+
     return {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
         surname: dbRow.INMATE_SURNAME.value ? Case.upper(dbRow.INMATE_SURNAME.value) : '',
         forename: dbRow.INMATE_FORENAME_1.value ? Case.title(dbRow.INMATE_FORENAME_1.value) : '',
         forename2: dbRow.INMATE_FORENAME_2.value ? Case.capital(dbRow.INMATE_FORENAME_2.value) : '',
         dob: utils.getFormattedDateFromString(dbRow.DOB.value),
-        firstReceptionDate: utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value)
+        firstReceptionDate: utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value),
+        alias: dbRow.ALIAS.value ? changeCase.titleCase(dbRow.ALIAS.value): ''
     };
 }
+
+
+
+

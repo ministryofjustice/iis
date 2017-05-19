@@ -3,13 +3,12 @@ extends ../subject
 block subject-details
     div.column-two-thirds
         each val,index in data.details
-            div.grid-row.list-row
-                div.column-full
-                    ul.capitalise-text
-                        div.left-border #{val.forename.toLowerCase()}
-                            | #{val.forename2 ? val.forename2.toLowerCase() : ''} 
-                            | #{val.surname.toLowerCase().trim()}
-                            span.block Born on #{val.dob} 
-                            
+                div(id="aliass#{index}").grid-row.list-row.alias
+                    div.column-full
+                        div.left-border
+                            div(id="alias#{index}-name") #{val.forename + ' ' + val.forename2 + ' ' + val.surname}
+                            if (val.dob)
+                                div(id="alias#{index}-dob") Born on: #{val.dob}
+
         if (!data.details)
             span= data.noResultsText

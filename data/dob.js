@@ -60,6 +60,7 @@ function validateAge(v) {
 
 
 function isAgeOrAgeRange(v) {
+    // eslint-disable-next-line
     if (!/^[1-9][0-9]$|^[1][0-9][0-9]$|^[1-9][0-9]-[1-9][0-9]|^[1-9][0-9]-[1][0-9][0-9]|^[1][0-9][0-9]-[1][0-9][0-9]$/.test(v)) {
         return false;
     }

@@ -9,7 +9,7 @@ proxyquire.noCallThru();
 const sinonStubPromise = require('sinon-stub-promise');
 sinonStubPromise(sinon);
 
-describe('searchController', () => {
+describe('subjectController', () => {
     let reqMock;
     let resMock;
     let infoStub;
@@ -137,6 +137,7 @@ describe('searchController', () => {
                 lastPageNum: 1,
                 nav: {
                     addresses: {title: 'Addresses'},
+                    aliases: {title: 'Aliases'},
                     hdcinfo: {title: 'HDC history'},
                     movements: {title: 'Movements'},
                     offences: {active: true, title: 'Offences'},

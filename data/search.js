@@ -71,7 +71,11 @@ function getPrisonNumberSqlWithParams(obj) {
 }
 
 function getPncNumberSqlWithParams(obj) {
-    let sql = "FK_PERSON_IDENTIFIER IN (SELECT FK_PERSON_IDENTIFIER FROM iis.IIS_IDENTIFIER WHERE iis.IIS_IDENTIFIER.PERSON_IDENT_TYPE_CODE = 'PNC' AND iis.IIS_IDENTIFIER.PERSON_IDENTIFIER_VALUE = @PNC)";
+    let sql = `FK_PERSON_IDENTIFIER IN 
+                (SELECT FK_PERSON_IDENTIFIER 
+                FROM iis.IIS_IDENTIFIER
+                WHERE iis.IIS_IDENTIFIER.PERSON_IDENT_TYPE_CODE = 'PNC' 
+                AND iis.IIS_IDENTIFIER.PERSON_IDENTIFIER_VALUE = @PNC)`;
 
     return {
         sql: sql,
@@ -82,7 +86,11 @@ function getPncNumberSqlWithParams(obj) {
 }
 
 function getCroNumberSqlWithParams(obj) {
-    let sql = "FK_PERSON_IDENTIFIER IN (SELECT FK_PERSON_IDENTIFIER FROM iis.IIS_IDENTIFIER WHERE iis.IIS_IDENTIFIER.PERSON_IDENT_TYPE_CODE = 'CRO' AND iis.IIS_IDENTIFIER.PERSON_IDENTIFIER_VALUE = @CRO)";
+    let sql = `FK_PERSON_IDENTIFIER IN 
+                (SELECT FK_PERSON_IDENTIFIER 
+                FROM iis.IIS_IDENTIFIER 
+                WHERE iis.IIS_IDENTIFIER.PERSON_IDENT_TYPE_CODE = 'CRO' 
+                AND iis.IIS_IDENTIFIER.PERSON_IDENTIFIER_VALUE = @CRO)`;
 
     return {
         sql: sql,

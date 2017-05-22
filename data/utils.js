@@ -1,7 +1,8 @@
 'use strict';
-let moment = require('moment');
-let url = require('url');
-let changeCase = require('change-case');
+const moment = require('moment');
+const url = require('url');
+const changeCase = require('change-case');
+const resultsPerPage = require('../server/config').searchResultsPerPage;
 
 const acronyms = [
 'ARD',
@@ -59,12 +60,10 @@ module.exports = {
         return [startDate, endDate];
     },
 
-    resultsPerPage: 5,
-
     pagination: function(rowCount, currPage) {
         currPage = (currPage) ? currPage : 1;
 
-        let totalPages = Math.ceil(rowCount / this.resultsPerPage);
+        let totalPages = Math.ceil(rowCount / resultsPerPage);
         let showPrev = (currPage - 1) == 0 ? false : true;
         let showNext = currPage == totalPages ? false : true;
 

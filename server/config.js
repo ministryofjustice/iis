@@ -37,5 +37,7 @@ module.exports = {
         AUTHORIZE_PATH: get('AUTHORIZE_PATH', '/oauth/authorize'),
         TOKEN_PATH: get('TOKEN_PATH', '/oauth/token'),
         USER_DETAILS_PATH: get('USER_DETAILS_PATH', '/api/user_details')
-    }
+    },
+
+    searchResultsPerPage: get('SEARCH_RESULTS_PER_PAGE', 10)
 };

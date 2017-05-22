@@ -3,6 +3,7 @@
 const db = require('../server/db');
 const utils = require('./utils');
 const moment = require('moment');
+const resultsPerPage = require('../server/config').searchResultsPerPage;
 
 const TYPES = require('tedious').TYPES;
 const SELECT = `PK_PRISON_NUMBER, 
@@ -149,7 +150,6 @@ function getType(v) {
 }
 
 function getPaginationLimits(pageOn) {
-    let resultsPerPage = utils.resultsPerPage;
     return {
         start: (resultsPerPage * pageOn) - resultsPerPage,
         resultsPerPage

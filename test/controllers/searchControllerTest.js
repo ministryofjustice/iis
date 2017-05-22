@@ -327,7 +327,7 @@ describe('searchController', () => {
                     },
                     view: 'not sure what this is for',
                     pagination: {
-                        'totalPages': 4,
+                        'totalPages': 2,
                         'currPage': 1,
                         'showPrev': false,
                         'showNext': true
@@ -356,7 +356,7 @@ describe('searchController', () => {
                     },
                     view: 'not sure what this is for',
                     pagination: {
-                        'totalPages': 4,
+                        'totalPages': 2,
                         'currPage': 1,
                         'showPrev': false,
                         'showNext': true

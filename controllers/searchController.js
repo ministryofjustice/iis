@@ -7,6 +7,7 @@ const names = require('../data/names');
 const search = require('../data/search');
 const utils = require('../data/utils');
 const audit = require('../data/audit');
+const resultsPerPage = require('../server/config').searchResultsPerPage;
 
 const availableSearchOptions = exports.availableSearchOptions = {
     identifier: {
@@ -198,7 +199,7 @@ function redirectToReferer(req, res, attemptedPage) {
 const isNumeric = (value) => /^\d+$/.test(value);
 
 function isValidPage(page, rowCount) {
-    return isNumeric(page) && page > 0 && !(rowCount > 0 && page > Math.ceil(rowCount / utils.resultsPerPage));
+    return isNumeric(page) && page > 0 && !(rowCount > 0 && page > Math.ceil(rowCount / resultsPerPage));
 }
 
 function renderResultsPage(req, res, rowcount, data, page, error = null) {
@@ -207,7 +208,7 @@ function renderResultsPage(req, res, rowcount, data, page, error = null) {
             title: getPageTitle(rowcount)
         },
         view: req.params.v,
-        pagination: (rowcount > utils.resultsPerPage ) ? utils.pagination(rowcount, page) : null,
+        pagination: (rowcount > resultsPerPage ) ? utils.pagination(rowcount, page) : null,
         data,
         err: error
     });

@@ -1,6 +1,7 @@
 'use strict';
 
 let winston = require('winston');
+const {flattenMeta} = require('./server/misc');
 
 const logger = new (winston.Logger);
 
@@ -68,31 +69,6 @@ if (appInsights) {
     logger.rewriters.push(function(level, msg, meta) {
         return flattenMeta(meta);
     });
-}
-
-function flattenObject(source, target, prefix) {
-    Object.keys(source).forEach(function(key) {
-        let sourceVal = source[key];
-        let fullKey = prefix + '_' + key;
-        if (sourceVal && typeof sourceVal === "object") {
-            flattenObject(sourceVal, target, fullKey)
-        } else {
-            target[fullKey] = sourceVal;
-        }
-    });
-}
-
-function flattenMeta(meta) {
-    let flat = {};
-    Object.keys(meta).forEach(function(key) {
-        let val = meta[key];
-        if (val && typeof val === "object") {
-            flattenObject(val, flat, key);
-        } else {
-            flat[key] = val;
-        }
-    });
-    return flat;
 }
 
 module.exports = logger;

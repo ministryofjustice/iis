@@ -2,6 +2,7 @@
 
 const util = require('util');
 const logger = require('../log.js');
+const Request = require('tedious').Request;
 
 function addParams(params, request) {
     params.forEach(function(param) {
@@ -135,5 +136,28 @@ module.exports = {
 
     disconnect: function(connection) {
         connection.close();
+    },
+
+    addRow: function(sql, params, successCallback, errorCallback) {
+        const connection = this.connect();
+        connection.on('connect', (err) => {
+            if (err) {
+                errorCallback(err);
+            }
+
+            const request = new Request(sql, (err, rows, searchId) => {
+                if(err) {
+                    return errorCallback(err);
+                }
+                return successCallback(searchId[0].id.value);
+                connection.close();
+            });
+
+            if (params) {
+                addParams(params, request);
+            }
+
+            connection.execSql(request);
+        });
     }
 };

@@ -1,23 +1,28 @@
 'use strict';
-require('./azure-appinsights');
 
+const appInsights = require('./azure-appinsights');
 const logger = require('./log');
 const config = require('./server/config');
 const app = require('./server/app');
 const healthcheck = require('./server/healthcheck');
+const {flattenMeta} = require('./server/misc');
 
 if (config.healthcheckInterval) {
     reportHealthcheck();
     setInterval(reportHealthcheck, config.healthcheckInterval * 60 * 1000);
 
     function reportHealthcheck() {
-        healthcheck((err, results) => {
-            if (err) {
-                logger.error('healthcheck failed', err);
-            } else {
-                logger.info('healthcheck', results);
-            }
-        });
+        healthcheck(recordHealthResult);
+    }
+    function recordHealthResult(err, results) {
+        if (err) {
+            logger.error('healthcheck failed', err);
+            return;
+        }
+        logger.info('healthcheck', results);
+        if (results.healthy && appInsights) {
+            appInsights.client.trackEvent('healthy', flattenMeta(results));
+        }
     }
 }
 

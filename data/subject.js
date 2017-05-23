@@ -3,7 +3,7 @@
 const changeCase = require('change-case');
 const TYPES = require('tedious').TYPES;
 
-const db = require('../server/db');
+const db = require('../server/iisData');
 const {describeCode} = require('../data/codes');
 const utils = require('../data/utils');
 const logger = require('../log');

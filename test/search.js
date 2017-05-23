@@ -28,7 +28,7 @@ describe('Search', () => {
     const inmateProxy = (getCollection = getCollectionStub,
                          getTuple = getTupleStub) => {
         return proxyquire('../data/search', {
-            '../server/db': {
+            '../server/iisData': {
                 'getCollection': getCollection,
                 'getTuple': getTuple
             }

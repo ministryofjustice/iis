@@ -1,6 +1,6 @@
 'use strict';
 
-const db = require('../server/db');
+const db = require('../server/iisData');
 const utils = require('./utils');
 const moment = require('moment');
 const resultsPerPage = require('../server/config').searchResultsPerPage;

@@ -169,18 +169,18 @@ describe('Search', () => {
 
         });
 
-        it.skip('should combine where statements', () => {
+        it.only('should combine where statements', () => {
             const result = inmateProxy()({prisonNumber: 7, forename: 'Dave'});
 
             return result.then((data) => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER AND ' +
-                    'INMATE_FORENAME_1 LIKE @INMATE_FORENAME_1');
+                expect(sql).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER');
+                expect(sql).to.contain('WHERE PERSON_FORENAME_1 LIKE @FORENAME');
                 expect(params[0].column).to.eql('PK_PRISON_NUMBER');
                 expect(params[0].value).to.eql(7);
-                expect(params[1].column).to.eql('INMATE_FORENAME_1');
+                expect(params[1].column).to.eql('FORENAME');
                 expect(params[1].value).to.eql('Dave');
             });
         });

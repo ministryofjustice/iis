@@ -1,10 +1,10 @@
-'use strict';
+
 
 const Case = require('case');
-const moment = require('moment');
 
-const utils = require('./utils');
 const db = require('../server/db');
+const utils = require('./utils');
+const moment = require('moment');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 
 const TYPES = require('tedious').TYPES;
@@ -74,12 +74,12 @@ function getSurnameSqlWithParams(obj) {
     let sql = `FK_PERSON_IDENTIFIER IN 
                 (SELECT FK_PERSON_IDENTIFIER 
                 FROM iis.KNOWN_AS
-                WHERE PERSON_SURNAME like @surname)`;
+                WHERE PERSON_SURNAME LIKE @SURNAME)`;
 
     return {
         sql: sql,
         params: [
-            {column: 'surname', type: getType('string'), value: obj.userInput.surname}
+            {column: 'SURNAME', type: getType('string'), value: obj.userInput.surname}
         ]
     };
 }
@@ -88,12 +88,12 @@ function getForenameSqlWithParams(obj) {
     let sql = `FK_PERSON_IDENTIFIER IN 
                 (SELECT FK_PERSON_IDENTIFIER 
                 FROM iis.KNOWN_AS
-                WHERE PERSON_FORENAME_1 like @forename)`;
+                WHERE PERSON_FORENAME_1 LIKE @FORENAME)`;
 
     return {
         sql: sql,
         params: [
-            {column: 'forename', type: getType('string'), value: obj.userInput.forename}
+            {column: 'FORENAME', type: getType('string'), value: obj.userInput.forename}
         ]
     };
 }
@@ -102,17 +102,15 @@ function getForename2SqlWithParams(obj) {
     let sql = `FK_PERSON_IDENTIFIER IN 
                 (SELECT FK_PERSON_IDENTIFIER 
                 FROM iis.KNOWN_AS
-                WHERE PERSON_FORENAME_2 like @forename2)`;
+                WHERE PERSON_FORENAME_2 LIKE @FORENAME2)`;
 
     return {
         sql: sql,
         params: [
-            {column: 'forename2', type: getType('string'), value: obj.userInput.forename2}
+            {column: 'FORENAME2', type: getType('string'), value: obj.userInput.forename2}
         ]
     };
 }
-
-
 
 function getPncNumberSqlWithParams(obj) {
     let sql = `FK_PERSON_IDENTIFIER IN 
@@ -231,10 +229,6 @@ function prepareSqlStatement(fields, from, where, orderBy, limit ) {
 
 function formatRow(dbRow) {
 
-
-    console.error(changeCase.titleCase(dbRow.ALIAS.value))
-    console.error((dbRow.ALIAS.value))
-
     return {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
         surname: dbRow.INMATE_SURNAME.value ? Case.upper(dbRow.INMATE_SURNAME.value) : '',
@@ -242,10 +236,6 @@ function formatRow(dbRow) {
         forename2: dbRow.INMATE_FORENAME_2.value ? Case.capital(dbRow.INMATE_FORENAME_2.value) : '',
         dob: utils.getFormattedDateFromString(dbRow.DOB.value),
         firstReceptionDate: utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value),
-        alias: dbRow.ALIAS.value ? changeCase.titleCase(dbRow.ALIAS.value): ''
+        alias: dbRow.ALIAS.value ? Case.title(dbRow.ALIAS.value): ''
     };
 }
-
-
-
-

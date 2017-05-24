@@ -66,7 +66,8 @@ describe('Search', () => {
                     'firstReceptionDate': 'Invalid date',
                     'forename': undefined,
                     'forename2': undefined,
-                    'prisonNumber': undefined
+                    'prisonNumber': undefined,
+                    'alias': ''
                 }
             ];
 
@@ -119,31 +120,31 @@ describe('Search', () => {
             });
         });
 
-        it.skip('should populate name if passed in', () => {
+        it.only('should populate name if passed in', () => {
             const result = inmateProxy()({forename: 'Dave'});
 
             return result.then((data) => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE INMATE_FORENAME_1 LIKE @INMATE_FORENAME_1');
-                expect(params[0].column).to.eql('INMATE_FORENAME_1');
+                expect(sql).to.contain('WHERE PERSON_FORENAME_1 LIKE @FORENAME');
+                expect(params[0].column).to.eql('FORENAME');
                 expect(params[0].value).to.eql('Dave');
             });
         });
 
-        it.skip('should populate full name if passed in', () => {
+        it('should populate full name if passed in', () => {
             const result = inmateProxy()({forename: 'Dave', forename2: 'James', surname: 'Jones'});
 
             return result.then((data) => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE INMATE_FORENAME_1 LIKE @INMATE_FORENAME_1 AND ' +
-                    'INMATE_FORENAME_2 LIKE @INMATE_FORENAME_2 AND ' +
-                    'INMATE_SURNAME LIKE @INMATE_SURNAME');
+                expect(sql).to.contain('WHERE PERSON_FORENAME_1 LIKE @FORENAME AND ' +
+                    'PERSON_FORENAME_2 LIKE @FORENAME2 AND ' +
+                    'PERSON_SURNAME LIKE @SURNAME');
 
-                expect(params[0].column).to.eql('INMATE_FORENAME_1');
+                expect(params[0].column).to.eql('FORENAME');
                 expect(params[0].value).to.eql('Dave');
 
                 expect(params[1].column).to.eql('INMATE_FORENAME_2');
@@ -168,7 +169,7 @@ describe('Search', () => {
 
         });
 
-        it.skip('should combine where statements', () => {
+        it('should combine where statements', () => {
             const result = inmateProxy()({prisonNumber: 7, forename: 'Dave'});
 
             return result.then((data) => {

@@ -1,7 +1,7 @@
 'use strict';
 const moment = require('moment');
 const url = require('url');
-const changeCase = require('change-case');
+const Case = require('case');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 
 const acronyms = [
@@ -89,7 +89,7 @@ module.exports = {
         return acronyms.map(function(acronym) {
             let pattern = '\\b('+acronym+')\\b';
             let regex = new RegExp(pattern, 'gi');
-            text = text.replace(regex, changeCase.upperCase(acronym));
+            text = text.replace(regex, Case.upper(acronym));
             return text;
         }).pop();
     }

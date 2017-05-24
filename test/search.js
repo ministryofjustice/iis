@@ -61,13 +61,13 @@ describe('Search', () => {
             const result = inmateProxy()({prisonNumber: 7});
             const expectedResult = [
                 {
-                    'surname': 'David',
+                    'surname': 'DAVID',
                     'dob': 'Invalid date',
                     'sentencingCourt': null,
                     'sentencingDate': null,
                     'firstReceptionDate': 'Invalid date',
-                    'forename': undefined,
-                    'forename2': undefined,
+                    'forename': "",
+                    'forename2': "",
                     'prisonNumber': undefined,
                     'alias': undefined
                 }

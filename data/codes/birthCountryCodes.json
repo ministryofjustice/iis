@@ -1,5 +1,4 @@
 {
-    "0": "UNAVAILABLE",
     "1": "ENGLAND",
     "2": "SCOTLAND",
     "3": "WALES",
@@ -7,7 +6,5 @@
     "5": "JERSEY",
     "6": "GUERNSEY AND DEPENDENCIES",
     "7": "ISLE OF MAN",
-    "8": "IRISH REPUBLIC",
-    "98": "OTHER",
-    "99": "UNKNOWN"
+    "8": "IRISH REPUBLIC"
 }

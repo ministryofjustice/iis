@@ -73,9 +73,29 @@ div#print-header,
     display: block;
     border-left: 4px solid $govuk-blue
 }
-.inmateDetails.visited a .inmateContainer{
+.inmateDetails.visited a .inmateContainer {
     border-left: none;
     padding-left: 19px;
+}
+
+#prisonerInfoSummary {
+    overflow: auto;
+    padding-bottom: 20px;
+}
+
+#prisonerInfoSummary .dot {
+    overflow: auto;
+    margin: 0 10px;
+}
+
+#prisonerInfoSummary li {
+    float: left;
+
+}
+
+#prisonerInfoSummary li:first-child {
+    list-style-type: none;
+    margin-left: 0px;
 }
 
 // Add extra styles here, or re-organise the Sass files in whichever way makes most sense to you

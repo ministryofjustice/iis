@@ -38,7 +38,7 @@
     "babel-preset-es3": "^1.0.1",
     "bcryptjs": "^2.4.0",
     "body-parser": "^1.16.0",
-    "change-case": "^3.0.1",
+    "case": "^1.5.2",
     "compression": "^1.6.2",
     "config": "^1.24.0",
     "cookie-session": "^2.0.0-alpha.2",

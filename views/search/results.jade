@@ -27,8 +27,8 @@ block content
             if data && data != 0
                 div#searchResults
                     each item in data
-                       +inmate(item.forename.toLowerCase()
-                                + (item.forename2 ? item.forename2.toLowerCase() : '')
+                       +inmate(item.forename
+                                + (item.forename2)
                                 + item.surname,
                                item.prisonNumber, item.dob, item.firstReceptionDate, item.visited)
 

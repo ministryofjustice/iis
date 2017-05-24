@@ -4,7 +4,6 @@ const Case = require('case');
 
 const db = require('../server/db');
 const utils = require('./utils');
-const moment = require('moment');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 
 const TYPES = require('tedious').TYPES;

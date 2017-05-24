@@ -2,10 +2,11 @@ require('jsdom-global/register');
 const chai = require('chai');
 const $ = require('jquery');
 const sinon = require('sinon');
-const sinonChai =  require('sinon-chai');
+const sinonChai = require('sinon-chai');
 const expect = chai.expect;
-const proxyquire  = require('proxyquire');
+const proxyquire = require('proxyquire');
 chai.use(sinonChai);
+const content = require('../../data/content');
 
 proxyquire.noCallThru();
 const sandbox = sinon.sandbox.create();
@@ -13,6 +14,7 @@ const sandbox = sinon.sandbox.create();
 let searchForm;
 
 const initialPage = '<html>' +
+    '<h1 id="formTitle">Form title</h1>' +
     '<div class="back-link-container"><a href="">Back</a></div>' +
     '<form name="search-prisoner-form" method="post">' +
     '<div class="searchPrisonerItem"><input id="prisonNumber" type="text" name="prisonNumber"></div>' +
@@ -27,7 +29,7 @@ describe('Client side search form', () => {
     let submitSpy, $continueBtn;
 
     afterEach(() => {
-        sandbox.reset()
+        sandbox.reset();
     });
 
     context('passing validation', () => {
@@ -53,15 +55,19 @@ describe('Client side search form', () => {
 
             $.each($('.searchPrisonerItem'), (key, value) => {
                 if(key === 0) {
-                    expect($(value).hasClass('js-hidden')).to.equal(false)
+                    expect($(value).hasClass('js-hidden')).to.equal(false);
                 } else {
-                    expect($(value).hasClass('js-hidden')).to.equal(true)
+                    expect($(value).hasClass('js-hidden')).to.equal(true);
                 }
-            })
+            });
         });
 
         it('should initially hide hint', () => {
-            expect($('#namehint').hasClass('js-hidden')).to.equal(true)
+            expect($('#namehint').hasClass('js-hidden')).to.equal(true);
+        });
+
+        it('should show first title', () => {
+            expect($('#formTitle').text()).to.equal(content.view.identifier.title);
         });
 
         it('should call validator for the item being submitted each item', () => {
@@ -88,10 +94,15 @@ describe('Client side search form', () => {
             })
         });
 
+        it('should update the title', () => {
+            $continueBtn.click();
+            expect($('#formTitle').text()).to.equal(content.view.names.title);
+        });
+
         it('should reveal hint when on names page', () => {
             $continueBtn.click();
 
-            expect($('#namehint').hasClass('js-hidden')).to.equal(false)
+            expect($('#namehint').hasClass('js-hidden')).to.equal(false);
         });
 
         it('should hide all but third after second click of continue button', () => {
@@ -101,11 +112,17 @@ describe('Client side search form', () => {
 
             $.each($('.searchPrisonerItem'), (key, value) => {
                 if(key === 2) {
-                    expect($(value).hasClass('js-hidden')).to.equal(false)
+                    expect($(value).hasClass('js-hidden')).to.equal(false);
                 } else {
-                    expect($(value).hasClass('js-hidden')).to.equal(true)
+                    expect($(value).hasClass('js-hidden')).to.equal(true);
                 }
             })
+        });
+
+        it('should update title after second click', () => {
+            $continueBtn.click();
+            $continueBtn.click();
+            expect($('#formTitle').text()).to.equal(content.view.dob.title);
         });
 
         it('should hide hint when not on names page', () => {

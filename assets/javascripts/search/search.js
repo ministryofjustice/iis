@@ -2,6 +2,7 @@ require('core-js');
 const $ = require('jquery');
 const validator = require('./searchValidators');
 const {searchError} = require('./searchError');
+const content = require('../../../data/content');
 
 const state = exports.state = {
     position: 0,
@@ -9,7 +10,9 @@ const state = exports.state = {
     searchItems: {},
     form: {},
     hints: {},
+    title: {},
     currentUserInputs: {},
+    currentFormItem: {}
 };
 
 (() => {
@@ -18,7 +21,8 @@ const state = exports.state = {
         totalPositions: searchItems.length - 1,
         searchItems: searchItems,
         form: $('form[name="search-prisoner-form"]'),
-        hints: $('.hint')
+        hints: $('.hint'),
+        title: $('#formTitle')
     });
 
     $('.initial').removeClass('initial');
@@ -31,6 +35,7 @@ function setState(newState) {
         state[key] = newState[key];
     });
     state.currentUserInputs = $(state.searchItems[state.position]).find('input');
+    state.currentFormItem = getFormItem(state.currentUserInputs);
     render();
 }
 
@@ -42,19 +47,23 @@ function render() {
             hideItem(item);
         }
     });
-
+    updateTitle();
     showHideHints();
 }
 
 function showHideHints() {
-    const formItem = getFormItem(state.currentUserInputs);
     $(state.hints).each((index, hint) => {
-        if($(hint).hasClass(`${formItem}Hint`)) {
+        if($(hint).hasClass(`${state.currentFormItem}Hint`)) {
             revealItem(hint);
         } else {
             hideItem(hint);
         }
     })
+}
+
+function updateTitle() {
+    const currentTitleText = getFormTitle(state.currentFormItem);
+    $(state.title).html(currentTitleText)
 }
 
 function revealItem(item) {
@@ -109,7 +118,7 @@ function getValidationError() {
 
     if (formItem === 'dob') return validator.isValidDob(currentUserInputs);
     if (formItem === 'names') return validator.isValidName(currentUserInputs);
-    if (formItem === 'prisonNumber') return validator.isValidPrisonNumber(currentUserInputs);
+    if (formItem === 'identifier') return validator.isValidPrisonNumber(currentUserInputs);
 
     return null
 }
@@ -117,9 +126,13 @@ function getValidationError() {
 function getFormItem ($userInputs) {
     if ($($userInputs, 0).attr('id').toLowerCase().indexOf('dob') > -1) return 'dob';
     if ($($userInputs, 0).attr('id').toLowerCase().indexOf('forename') > -1) return 'names';
-    if ($($userInputs, 0).attr('id').toLowerCase().indexOf('prisonnumber') > -1) return 'prisonNumber';
+    if ($($userInputs, 0).attr('id').toLowerCase().indexOf('prisonnumber') > -1) return 'identifier';
 
     return null
+}
+
+function getFormTitle(formItem) {
+    return content.view[formItem] ? content.view[formItem].title : content.view.search.title;
 }
 
 function showError(errorObject) {

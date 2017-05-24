@@ -94,7 +94,6 @@ div#print-header,
 }
 
 #prisonerInfoSummary li:first-child {
-    list-style-type: none;
     margin-left: 0px;
 }
 
@@ -102,6 +101,7 @@ div#print-header,
     display: none;
     visibility: hidden;
 }
+
 
 // Add extra styles here, or re-organise the Sass files in whichever way makes most sense to you
 /*

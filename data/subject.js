@@ -341,7 +341,7 @@ function formatAliasRows(dbRow) {
 
 function formatAddressRows(dbRow) {
     return {
-        addressLine1: dbRow.INMATE_ADDRESS_1.value ? Case.title(dbRow.INMATE_ADDRESS_1.value) : '',
+        addressLine1: dbRow.INMATE_ADDRESS_1.value ? Case.title(dbRow.INMATE_ADDRESS_1.value.trim()) : '',
         addressLine2: dbRow.INMATE_ADDRESS_2.value ? Case.title(dbRow.INMATE_ADDRESS_2.value) : '',
         addressLine4: dbRow.INMATE_ADDRESS_4.value ? Case.title(dbRow.INMATE_ADDRESS_4.value) : '',
         type: dbRow.ADDRESS_TYPE.value ? Case.title(describeCode('ADDRESS', dbRow.ADDRESS_TYPE.value)) :

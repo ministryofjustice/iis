@@ -29,31 +29,31 @@ block content
                     | #{data.subject.forename}
                     | #{data.subject.forename2}
                     | #{data.subject.surname}
-                    span.heading-secondary#ageDetails #{data.subject.dob} (#{data.subject.age} years)
+                    span.heading-secondary#ageDetails #{data.details.dob} (#{data.details.age} years)
 
                 ul#prisonerInfoSummary.font-medium
-                    if data.subject.ethnicity
-                        li #{data.subject.ethnicity}
+                    if data.details.ethnicity
+                        li #{data.details.ethnicity}
 
-                    if data.subject.sex
+                    if data.details.sex
                         li
                             span.dot &middot;
-                            | #{data.subject.sex}
+                            | #{data.details.sex}
 
-                    if data.subject.countryOfBirth
+                    if data.details.countryOfBirth
                         li
                             span.dot &middot;
-                            | Born in #{data.subject.countryOfBirth}
+                            | Born in #{data.details.countryOfBirth}
 
-                    if data.subject.maritalStatus
+                    if data.details.maritalStatus
                         li
                             span.dot &middot;
-                            | #{data.subject.maritalStatus}
+                            | #{data.details.maritalStatus}
 
-                    if data.subject.nationality
+                    if data.details.nationality
                         li
                             span.dot &middot;
-                            | National of #{data.subject.nationality}
+                            | National of #{data.details.nationality}
 
 
                 div.form-group

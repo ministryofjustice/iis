@@ -29,13 +29,41 @@ block content
                     | #{data.subject.forename}
                     | #{data.subject.forename2}
                     | #{data.subject.surname}
-                    span.heading-secondary#subjectId PRISON NO. #{data.subject.prisonNumber}
+                    span.heading-secondary#ageDetails #{data.details.dob} (#{data.details.age} years)
+
+                ul#prisonerInfoSummary.font-medium
+                    if data.details.ethnicity
+                        li #{data.details.ethnicity}
+
+                    if data.details.sex
+                        li
+                            span.dot &middot;
+                            | #{data.details.sex}
+
+                    if data.details.countryOfBirth
+                        li
+                            span.dot &middot;
+                            | Born in #{data.details.countryOfBirth}
+
+                    if data.details.maritalStatus
+                        li
+                            span.dot &middot;
+                            | #{data.details.maritalStatus}
+
+                    if data.details.nationality
+                        li
+                            span.dot &middot;
+                            | National of #{data.details.nationality}
+
 
                 div.form-group
                     button.button(onclick="window.print();") Print
             div.column-one-third
                 if data.subject.paroleRefList || data.subject.pnc || data.subject.cro
                     ul.list.well.refs-box
+                        if data.subject.prisonNumber
+                            li#subjectId= data.subject.prisonNumber
+                                span.form-hint Prison number
                         if data.subject.paroleRefList
                             li#parole-refs= data.subject.paroleRefList
                                 span.form-hint Parole ref.

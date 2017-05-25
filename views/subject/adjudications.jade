@@ -6,13 +6,11 @@ block subject-details
             div.grid-row.list-row
                 div.column-full(class="movement-type-#{val.type}")
                     div.left-border
-                        span #{val.establishment}
-                    div.left-border
                         span.quiet #{val.date}
                     div.left-border
                         span #{val.charge}
                     div.left-border
-                        span #{val.outcome}
+                        span #{val.outcome}, #{val.establishment}
 
         if (data.details.length === 0)
             span= data.noResultsText

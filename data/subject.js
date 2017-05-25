@@ -416,11 +416,11 @@ function formatAdjudicationRows(dbRow) {
         establishment: dbRow.ESTABLISHMENT.value ?
             Case.title(dbRow.ESTABLISHMENT.value) :'Establishment unknown',
 
-        charge: dbRow.ADJ_CHARGE.value ?
-            Case.title(describeCode('ADJUDICATION_CHARGE', dbRow.ADJ_CHARGE.value)) : 'Unknown',
+        charge: dbRow.ADJ_CHARGE.value ? utils.acronymsToUpperCase(
+                Case.sentence(describeCode('ADJUDICATION_CHARGE', dbRow.ADJ_CHARGE.value))) : 'Unknown',
 
         outcome: dbRow.OUTCOME_OF_HEARING.value ?
-            Case.title(describeCode('ADJUDICATION_OUTCOME', dbRow.OUTCOME_OF_HEARING.value)) :'Unknown',
+            Case.sentence(describeCode('ADJUDICATION_OUTCOME', dbRow.OUTCOME_OF_HEARING.value)) :'Unknown',
 
         date: utils.getFormattedDateFromString(dbRow.DATE_OF_FINDING.value)
     };

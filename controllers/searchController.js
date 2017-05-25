@@ -245,5 +245,3 @@ function addVisitedData(data, session) {
         return inmate;
     });
 }
-
-

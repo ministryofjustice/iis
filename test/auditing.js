@@ -114,7 +114,7 @@ describe('Audit', () => {
 
     const record = (addRow = addRowStub) => {
         return proxyquire('../data/audit', {
-            '../server/db': {
+            '../server/auditData': {
                 'addRow': addRow,
             }
         }).record;
@@ -130,7 +130,7 @@ describe('Audit', () => {
 
         });
 
-        it('should call db.addRow', () => {
+        it('should call auditData.addRow', () => {
             const result = record()('SEARCH', 'a@y.com', {data: 'data'});
 
             return result.then((data) => {

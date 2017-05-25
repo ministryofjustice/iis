@@ -18,7 +18,7 @@ describe('Subject data', function() {
     const subjectProxy = (getCollection = getCollectionStub,
                          getTuple = getTupleStub) => {
         return proxyquire('../data/subject', {
-            '../server/db': {
+            '../server/iisData': {
                 'getCollection': getCollection,
                 'getTuple': getTuple
             }

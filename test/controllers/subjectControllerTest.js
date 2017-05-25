@@ -132,7 +132,9 @@ describe('subjectController', () => {
                     'hdcinfo': 'Subject has no HDC history',
                     'hdcrecall': 'Subject has no HDC recall history',
                     'offences': 'Subject has no offences',
-                    'addresses': 'Subject has no addresses'
+                    'addresses': 'Subject has no addresses',
+                    'adjudications': 'Subject has no adjudications',
+
                 },
                 lastPageNum: 1,
                 nav: {
@@ -141,7 +143,8 @@ describe('subjectController', () => {
                     hdcinfo: {title: 'HDC history'},
                     movements: {title: 'Movements'},
                     offences: {active: true, title: 'Offences'},
-                    summary: {title: 'Summary'}
+                    summary: {title: 'Summary'},
+                    adjudications: { title: "Adjudications" },
                 }
             });
         });

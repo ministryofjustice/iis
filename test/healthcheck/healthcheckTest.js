@@ -25,7 +25,7 @@ describe('searchController', () => {
 
         const healthcheckProxy = (getTuple = getTupleStub) => {
             return proxyquire('../../server/healthcheck', {
-                './db': {
+                './iisData': {
                     'getTuple': getTuple
                 }
             });

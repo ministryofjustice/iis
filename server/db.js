@@ -4,21 +4,6 @@ const util = require('util');
 const logger = require('../log.js');
 const Request = require('tedious').Request;
 
-function addParams(params, request) {
-    params.forEach(function(param) {
-        let paramValue = param.value;
-
-        if (isNaN(paramValue)) {
-            paramValue = paramValue.toUpperCase();
-        }
-
-        request.addParameter(
-            param.column,
-            param.type,
-            paramValue);
-    });
-}
-
 module.exports = {
 
     connect: function() {
@@ -38,126 +23,22 @@ module.exports = {
         });
     },
 
-    getTuple: function(sql, params, successCallback, errorCallback) {
-        let connected = false;
-        const connection = this.connect();
+    addParams: function(params, request) {
+        params.forEach(function(param) {
+            let paramValue = param.value;
 
-        connection.on('debug', function(err) {
-            logger.debug('debug:', err);
+            if (isNaN(paramValue)) {
+                paramValue = paramValue.toUpperCase();
+            }
+
+            request.addParameter(
+                param.column,
+                param.type,
+                paramValue);
         });
-
-        connection.on('connect', function(err) {
-            if (err) {
-                return finish(err);
-            }
-
-            connected = true;
-
-            const Request = require('tedious').Request;
-            let request = new Request(sql, function(err, rowCount, rows) {
-                if (err) {
-                    return finish(err);
-                }
-                if (rowCount === 0) {
-                    return finish(null, rowCount);
-                }
-                return finish(null, rows[0]);
-            });
-
-            if (params) {
-                addParams(params, request);
-            }
-
-            logger.debug('Executing tuple request: ' + util.inspect(request));
-            connection.execSql(request);
-        });
-
-        const that = this;
-
-        function finish(err, result) {
-            if (connected) {
-                that.disconnect(connection);
-            }
-
-            if (err) {
-                logger.error('Error during tuple query: ' + err);
-                return errorCallback(err);
-            }
-            return successCallback(result);
-        }
-    },
-
-    getCollection: function(sql, params, successCallback, errorCallback) {
-        let connected = false;
-        const connection = this.connect();
-
-        connection.on('connect', function(err) {
-            if (err) {
-                return finish(err);
-            }
-
-            connected = true;
-
-            const Request = require('tedious').Request;
-            const request = new Request(sql, function(err, rowCount, rows) {
-
-                if (err) {
-                    return finish(err);
-                }
-                if (rowCount === 0) {
-                    return finish(null, rowCount);
-                }
-
-                return finish(null, rows);
-            });
-
-            if (params) {
-                addParams(params, request);
-            }
-
-            logger.debug('Executing collection request: ' + util.inspect(request));
-            connection.execSql(request);
-        });
-
-        const that = this;
-
-        function finish(err, result) {
-            if (connected) {
-                that.disconnect(connection);
-            }
-
-            if (err) {
-                logger.error('Error during collection query: ' + err);
-                return errorCallback(err);
-            }
-            return successCallback(result);
-        }
     },
 
     disconnect: function(connection) {
         connection.close();
-    },
-
-    addRow: function(sql, params, successCallback, errorCallback) {
-        const connection = this.connect();
-        connection.on('connect', (err) => {
-            if (err) {
-                errorCallback(err);
-            }
-
-            const request = new Request(sql, (err, rows, searchId) => {
-                if(err) {
-                    return errorCallback(err);
-                }
-                return successCallback(searchId[0].id.value);
-                connection.close();
-            });
-
-            if (params) {
-                addParams(params, request);
-            }
-
-            connection.execSql(request);
-        });
     }
 };

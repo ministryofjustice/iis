@@ -1,5 +1,5 @@
-const logger = require('../log.js');
-const db = require('../server/db');
+const logger = require('../log');
+const db = require('../server/auditData');
 const TYPES = require('tedious').TYPES;
 
 const keys = ['LOG_IN', 'DISCLAIMER_ACCEPTED', 'SEARCH', 'VIEW'];

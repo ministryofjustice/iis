@@ -163,16 +163,14 @@ describe('Subject data', function() {
             ESTABLISHMENT: {value: 'PORTSMOUTH'},
             ADJ_CHARGE: {value: '11'},
             DATE_OF_FINDING: {value: '19990101'},
-            OUTCOME_OF_HEARING: {value: '5'},
-            ADJ_PLEA: {value: '1'}
+            OUTCOME_OF_HEARING: {value: '1'}
         };
 
         let expectedAdjudications = [{
             establishment: 'Portsmouth',
             charge: 'Assault on prison officer',
             date: '01/01/1999',
-            outcome: 'Caution',
-            decision: 'Proved'
+            outcome: 'Proved'
         }];
 
         getCollectionStub = sandbox.stub().callsArgWith(2, [adjudicationsResponse]);

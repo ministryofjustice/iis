@@ -1,6 +1,6 @@
 'use strict';
 
-const changeCase = require('change-case');
+const Case = require('case');
 const TYPES = require('tedious').TYPES;
 
 const db = require('../server/iisData');
@@ -289,9 +289,9 @@ function formatInfoRow(dbRow) {
     const info = {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
         personIdentifier: dbRow.FK_PERSON_IDENTIFIER.value,
-        surname: dbRow.INMATE_SURNAME.value,
-        forename: dbRow.INMATE_FORENAME_1.value,
-        forename2: dbRow.INMATE_FORENAME_2.value,
+        surname: dbRow.INMATE_SURNAME.value ? Case.upper(dbRow.INMATE_SURNAME.value) : '',
+        forename: dbRow.INMATE_FORENAME_1.value ? Case.title(dbRow.INMATE_FORENAME_1.value) : '',
+        forename2: dbRow.INMATE_FORENAME_2.value ? Case.capital(dbRow.INMATE_FORENAME_2.value) : '',
         pnc: dbRow.PNC.value,
         cro: dbRow.CRO.value,
         paroleRefList: dbRow.PAROLE_REF_LIST.value
@@ -303,17 +303,17 @@ function formatInfoRow(dbRow) {
 function formatSummaryRow(dbRow) {
     return {
         dob: dbRow.DOB.value ? utils.getFormattedDateFromString(dbRow.DOB.value) : 'Unknown',
-        countryOfBirth: changeCase.titleCase(describeCode('BIRTH_COUNTRY', dbRow.BIRTH_COUNTRY_CODE.value)),
-        maritalStatus: changeCase.titleCase(describeCode('MARITAL_STATUS', dbRow.MARITAL_STATUS_CODE.value)),
-        ethnicity: changeCase.titleCase(describeCode('ETHNIC_GROUP', dbRow.ETHNIC_GROUP_CODE.value)),
-        nationality: changeCase.titleCase(describeCode('NATIONALITY', dbRow.NATIONALITY_CODE.value)),
-        sex: dbRow.INMATE_SEX.value ? changeCase.sentenceCase(dbRow.INMATE_SEX.value) : 'Unknown'
+        countryOfBirth: Case.title(describeCode('BIRTH_COUNTRY', dbRow.BIRTH_COUNTRY_CODE.value)),
+        maritalStatus: Case.title(describeCode('MARITAL_STATUS', dbRow.MARITAL_STATUS_CODE.value)),
+        ethnicity: Case.title(describeCode('ETHNIC_GROUP', dbRow.ETHNIC_GROUP_CODE.value)),
+        nationality: Case.title(describeCode('NATIONALITY', dbRow.NATIONALITY_CODE.value)),
+        sex: dbRow.INMATE_SEX.value ? Case.sentence(dbRow.INMATE_SEX.value) : 'Unknown'
     };
 }
 
 function formatMovementRows(dbRow) {
     return {
-        establishment: dbRow.ESTAB_COMP_OF_MOVE.value ? changeCase.titleCase(dbRow.ESTAB_COMP_OF_MOVE.value) :
+        establishment: dbRow.ESTAB_COMP_OF_MOVE.value ? Case.title(dbRow.ESTAB_COMP_OF_MOVE.value) :
          'Establishment unknown',
         date: utils.getFormattedDateFromString(dbRow.DATE_OF_MOVE.value),
         type: dbRow.TYPE_OF_MOVE.value,
@@ -327,26 +327,26 @@ function formatMovementCode(dbRow) {
         describeCode('MOVEMENT_RETURN', dbRow.MOVEMENT_CODE.value.trim())
         : describeCode('MOVEMENT_DISCHARGE', dbRow.MOVEMENT_CODE.value.trim());
 
-    return utils.acronymsToUpperCase(changeCase.sentenceCase(status));
+    return utils.acronymsToUpperCase(Case.sentence(status));
 }
 
 function formatAliasRows(dbRow) {
     return {
-        surname: dbRow.PERSON_SURNAME.value ? changeCase.titleCase(dbRow.PERSON_SURNAME.value) : '',
-        forename: dbRow.PERSON_FORENAME_1.value ? changeCase.titleCase(dbRow.PERSON_FORENAME_1.value) : '',
-        forename2: dbRow.PERSON_FORENAME_2.value ? changeCase.titleCase(dbRow.PERSON_FORENAME_2.value) : '',
+        surname: dbRow.PERSON_SURNAME.value ? Case.title(dbRow.PERSON_SURNAME.value) : '',
+        forename: dbRow.PERSON_FORENAME_1.value ? Case.title(dbRow.PERSON_FORENAME_1.value) : '',
+        forename2: dbRow.PERSON_FORENAME_2.value ? Case.title(dbRow.PERSON_FORENAME_2.value) : '',
         dob: dbRow.PERSON_BIRTH_DATE.value ? utils.getFormattedDateFromString(dbRow.PERSON_BIRTH_DATE.value) : 'Unknown'
     };
 }
 
 function formatAddressRows(dbRow) {
     return {
-        addressLine1: dbRow.INMATE_ADDRESS_1.value ? changeCase.titleCase(dbRow.INMATE_ADDRESS_1.value) : '',
-        addressLine2: dbRow.INMATE_ADDRESS_2.value ? changeCase.titleCase(dbRow.INMATE_ADDRESS_2.value) : '',
-        addressLine4: dbRow.INMATE_ADDRESS_4.value ? changeCase.titleCase(dbRow.INMATE_ADDRESS_4.value) : '',
-        type: dbRow.ADDRESS_TYPE.value ? changeCase.titleCase(describeCode('ADDRESS', dbRow.ADDRESS_TYPE.value)) :
+        addressLine1: dbRow.INMATE_ADDRESS_1.value ? Case.title(dbRow.INMATE_ADDRESS_1.value.trim()) : '',
+        addressLine2: dbRow.INMATE_ADDRESS_2.value ? Case.title(dbRow.INMATE_ADDRESS_2.value) : '',
+        addressLine4: dbRow.INMATE_ADDRESS_4.value ? Case.title(dbRow.INMATE_ADDRESS_4.value) : '',
+        type: dbRow.ADDRESS_TYPE.value ? Case.title(describeCode('ADDRESS', dbRow.ADDRESS_TYPE.value)) :
         'Unknown',
-        name: dbRow.PERSON_DETS.value ? changeCase.titleCase(dbRow.PERSON_DETS.value) : ''
+        name: dbRow.PERSON_DETS.value ? Case.title(dbRow.PERSON_DETS.value) : ''
     };
 }
 
@@ -354,9 +354,9 @@ function formatOffenceRows(dbRow) {
     return {
         offenceCode: dbRow.IIS_OFFENCE_CODE.value ? dbRow.IIS_OFFENCE_CODE.value : 'Unknown offence code',
         caseDate: dbRow.CASE_DATE.value ? utils.getFormattedDateFromString(dbRow.CASE_DATE.value) : 'Unknown case date',
-        establishment_code: dbRow.CASE_ESTAB_COMP_CODE.value ? changeCase.upperCase(dbRow.CASE_ESTAB_COMP_CODE.value)
+        establishment_code: dbRow.CASE_ESTAB_COMP_CODE.value ? Case.upper(dbRow.CASE_ESTAB_COMP_CODE.value)
         : 'Unknown establishment',
-        establishment: dbRow.ESTABLISHMENT.value ? changeCase.titleCase(dbRow.ESTABLISHMENT.value) :
+        establishment: dbRow.ESTABLISHMENT.value ? Case.title(dbRow.ESTABLISHMENT.value) :
         'Unknown establishment'
     };
 }
@@ -372,12 +372,8 @@ function formatHdcInfoRows(dbRow) {
 }
 
 function sentenceCaseWithAcronyms(codeset, code) {
-    return utils.acronymsToUpperCase(changeCase.sentenceCase(describeCode(codeset, code)));
+    return utils.acronymsToUpperCase(Case.sentence(describeCode(codeset, code)));
 }
-
-// function titleCaseWithAcronyms(codeset, code) {
-//     return utils.acronymsToUpperCase(changeCase.titleCase(describeCode(codeset, code)));
-// }
 
 function formatHdcRecallRows(dbRow) {
     return {

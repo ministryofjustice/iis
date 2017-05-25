@@ -10,5 +10,5 @@ block subject-details
                             if (val.dob)
                                 div(id="alias#{index}-dob") Born on: #{val.dob}
 
-        if (!data.details)
+        if (data.details.length === 0)
             span= data.noResultsText

@@ -78,6 +78,11 @@ div#print-header,
     padding-left: 19px;
 }
 
+.js-enabled .initial{
+    display: none;
+    visibility: hidden;
+}
+
 // Add extra styles here, or re-organise the Sass files in whichever way makes most sense to you
 /*
 .u-case { text-transform: uppercase; }

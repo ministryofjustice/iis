@@ -45,8 +45,8 @@ describe('Subject data', function() {
             prisonNumber: 'AA112233',
             personIdentifier: '123456789',
             surname: 'SURNAME',
-            forename: 'FORENAMEA',
-            forename2: 'FORENAME2',
+            forename: 'Forenamea',
+            forename2: 'Forename2',
             pnc: 'ABC/99A',
             cro: 'XYZ/11Z',
             paroleRefList: 'AAA1,BB2'
@@ -111,7 +111,7 @@ describe('Subject data', function() {
             date: '01/01/1999',
             stage: 'HDC eligibility',
             status: 'Eligible',
-            reason: 'HDC granted enhanced board'
+            reason: 'HDC granted - enhanced board'
         }];
 
         getCollectionStub = sandbox.stub().callsArgWith(2, [historyResponse]);

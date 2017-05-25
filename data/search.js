@@ -2,7 +2,11 @@
 
 const db = require('../server/iisData');
 const utils = require('./utils');
+const Case = require('case');
 const moment = require('moment');
+
+const utils = require('./utils');
+const db = require('../server/db');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 
 const TYPES = require('tedious').TYPES;
@@ -199,9 +203,9 @@ function formatRow(dbRow) {
 
     return {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
-        surname: dbRow.INMATE_SURNAME.value,
-        forename: dbRow.INMATE_FORENAME_1.value,
-        forename2: dbRow.INMATE_FORENAME_2.value,
+        surname: dbRow.INMATE_SURNAME.value ? Case.upper(dbRow.INMATE_SURNAME.value) : '',
+        forename: dbRow.INMATE_FORENAME_1.value ? Case.title(dbRow.INMATE_FORENAME_1.value) : '',
+        forename2: dbRow.INMATE_FORENAME_2.value ? Case.capital(dbRow.INMATE_FORENAME_2.value) : '',
         dob: utils.getFormattedDateFromString(dbRow.DOB.value),
         alias: dbRow.ALIAS.value,
         sentencingCourt: sentencingCourt,

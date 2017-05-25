@@ -73,12 +73,31 @@ div#print-header,
     display: block;
     border-left: 4px solid $govuk-blue
 }
-.inmateDetails.visited a .inmateContainer{
+.inmateDetails.visited a .inmateContainer {
     border-left: none;
     padding-left: 19px;
 }
 
-.js-enabled .initial{
+#prisonerInfoSummary {
+    overflow: auto;
+    padding-bottom: 20px;
+}
+
+#prisonerInfoSummary .dot {
+    overflow: auto;
+    margin: 0 10px;
+}
+
+#prisonerInfoSummary li {
+    float: left;
+
+}
+
+#prisonerInfoSummary li:first-child {
+    margin-left: 0px;
+}
+
+.js-enabled .initial {
     display: none;
     visibility: hidden;
 }

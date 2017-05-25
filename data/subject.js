@@ -280,7 +280,8 @@ exports.getAdjudications = function(obj) {
                                 IIS.ESTABLISHMENT
                             WHERE
                                 PK_ESTABLISHMENT_CODE = SUBSTRING(o.OFFENCE_ESTAB_COMP_CODE,1,2)
-                        ) ESTABLISHMENT                    
+                        ) ESTABLISHMENT,
+                        ADJ_PLEA                            
                  FROM
                     IIS.ADJ_OFFENCE o
                  WHERE 
@@ -422,6 +423,9 @@ function formatAdjudicationRows(dbRow) {
         outcome: dbRow.OUTCOME_OF_HEARING.value ?
             Case.sentence(describeCode('ADJUDICATION_OUTCOME', dbRow.OUTCOME_OF_HEARING.value)) :'Unknown',
 
-        date: utils.getFormattedDateFromString(dbRow.DATE_OF_FINDING.value)
+        date: utils.getFormattedDateFromString(dbRow.DATE_OF_FINDING.value),
+
+        decision: dbRow.ADJ_PLEA.value ?
+            Case.sentence(describeCode('ADJUDICATION_PLEA', dbRow.ADJ_PLEA.value)) :'Unknown'
     };
 }

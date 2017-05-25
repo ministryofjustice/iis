@@ -143,8 +143,8 @@ describe('subjectController', () => {
                     hdcinfo: {title: 'HDC history'},
                     movements: {title: 'Movements'},
                     offences: {active: true, title: 'Offences'},
-                    summary: {title: 'Summary'},
-                    adjudications: { title: "Adjudications" },
+                    adjudications: { title: "Offences in custody" },
+                    summary: {title: 'Summary'}
                 }
             });
         });

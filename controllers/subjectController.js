@@ -8,7 +8,8 @@ const {
     getAddresses,
     getOffences,
     getHDCInfo,
-    getHDCRecall
+    getHDCRecall,
+    getAdjudications
 } = require('../data/subject');
 const content = require('../data/content');
 const audit = require('../data/audit');
@@ -19,7 +20,8 @@ const dataRequestFunction = {
     addresses: getAddresses,
     offences: getOffences,
     hdcinfo: getHDCInfo,
-    hdcrecall: getHDCRecall
+    hdcrecall: getHDCRecall,
+    adjudications: getAdjudications
 };
 
 exports.getSubject = function(req, res) {

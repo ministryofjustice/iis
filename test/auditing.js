@@ -75,10 +75,7 @@ describe('Auditing', function() {
 
     it('should record view event with prison id and page type', function() {
 
-        const fakeSubject = {prisonNumber: 'AA123456', forename: 'Name'};
-        common.sinon.stub(subject, "getInfo").yields(null, fakeSubject);
-
-        const fakeSummary = {};
+        const fakeSummary = {prisonNumber: 'AA123456', forename: 'Name'};
         common.sinon.stub(subject, "getSummary").yields(null, fakeSummary);
 
         let browser;

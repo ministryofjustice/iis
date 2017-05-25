@@ -7,7 +7,8 @@ const {
     getSearchForm,
     postSearchForm,
     getResults,
-    postPagination
+    postPagination,
+    getAliasSearch
 } = require('../controllers/searchController');
 
 // eslint-disable-next-line
@@ -26,5 +27,6 @@ router.get('/form', getSearchForm);
 router.post('/form', postSearchForm);
 router.get('/results', getResults);
 router.post('/results', postPagination);
+router.get('/alias', getAliasSearch);
 
 module.exports = router;

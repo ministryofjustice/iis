@@ -6,7 +6,9 @@ block subject-details
                 div(id="aliass#{index}").grid-row.list-row.alias
                     div.column-full
                         div.left-border
-                            div(id="alias#{index}-name") #{val.forename + ' ' + val.forename2 + ' ' + val.surname}
+                            div(id="alias#{index}-name")
+                                a(href="/search/alias?forename=#{val.forename}&forename2=#{val.forename2}&surname=#{val.surname}")
+                                    | #{val.forename + ' ' + val.forename2 + ' ' + val.surname}
                             if (val.dob)
                                 div(id="alias#{index}-dob") Born on: #{val.dob}
 

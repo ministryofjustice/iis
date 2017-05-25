@@ -63,13 +63,11 @@ describe('Search', () => {
                 {
                     'surname': 'DAVID',
                     'dob': 'Invalid date',
-                    'sentencingCourt': null,
-                    'sentencingDate': null,
                     'firstReceptionDate': 'Invalid date',
                     'forename': "",
                     'forename2': "",
                     'prisonNumber': undefined,
-                    'alias': undefined
+                    'alias': ''
                 }
             ];
 
@@ -129,8 +127,8 @@ describe('Search', () => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE INMATE_FORENAME_1 LIKE @INMATE_FORENAME_1');
-                expect(params[0].column).to.eql('INMATE_FORENAME_1');
+                expect(sql).to.contain('WHERE PERSON_FORENAME_1 LIKE @FORENAME');
+                expect(params[0].column).to.eql('FORENAME');
                 expect(params[0].value).to.eql('Dave');
             });
         });
@@ -142,17 +140,17 @@ describe('Search', () => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE INMATE_FORENAME_1 LIKE @INMATE_FORENAME_1 AND ' +
-                    'INMATE_FORENAME_2 LIKE @INMATE_FORENAME_2 AND ' +
-                    'INMATE_SURNAME LIKE @INMATE_SURNAME');
+                expect(sql).to.contain('WHERE PERSON_FORENAME_1 LIKE @FORENAME');
+                expect(sql).to.contain('WHERE PERSON_FORENAME_2 LIKE @FORENAME2');
+                expect(sql).to.contain('WHERE PERSON_SURNAME LIKE @SURNAME');
 
-                expect(params[0].column).to.eql('INMATE_FORENAME_1');
+                expect(params[0].column).to.eql('FORENAME');
                 expect(params[0].value).to.eql('Dave');
 
-                expect(params[1].column).to.eql('INMATE_FORENAME_2');
+                expect(params[1].column).to.eql('FORENAME2');
                 expect(params[1].value).to.eql('James');
 
-                expect(params[2].column).to.eql('INMATE_SURNAME');
+                expect(params[2].column).to.eql('SURNAME');
                 expect(params[2].value).to.eql('Jones');
             });
         });
@@ -171,18 +169,18 @@ describe('Search', () => {
 
         });
 
-        it('should combine where statements', () => {
+        it.only('should combine where statements', () => {
             const result = inmateProxy()({prisonNumber: 7, forename: 'Dave'});
 
             return result.then((data) => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER AND ' +
-                    'INMATE_FORENAME_1 LIKE @INMATE_FORENAME_1');
+                expect(sql).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER');
+                expect(sql).to.contain('WHERE PERSON_FORENAME_1 LIKE @FORENAME');
                 expect(params[0].column).to.eql('PK_PRISON_NUMBER');
                 expect(params[0].value).to.eql(7);
-                expect(params[1].column).to.eql('INMATE_FORENAME_1');
+                expect(params[1].column).to.eql('FORENAME');
                 expect(params[1].value).to.eql('Dave');
             });
         });

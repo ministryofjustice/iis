@@ -1,38 +1,34 @@
-'use strict';
+
 
 const Case = require('case');
-const moment = require('moment');
 
-const utils = require('./utils');
 const db = require('../server/db');
+const utils = require('./utils');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 
 const TYPES = require('tedious').TYPES;
-const SELECT = `PK_PRISON_NUMBER, 
-                INMATE_SURNAME, 
-                INMATE_FORENAME_1, 
-                INMATE_FORENAME_2,
-                INMATE_BIRTH_DATE DOB,
-                DATE_1ST_RECEP,
-                SUBSTRING(
-                    (SELECT ', ' + k.PERSON_FORENAME_1 + ' ' + PERSON_FORENAME_2 + ' ' + k.PERSON_SURNAME 
-                     FROM IIS.KNOWN_AS k 
-                     WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER FOR XML PATH('')),2,200000
-                ) 
-                ALIAS,
-                (SELECT TOP 1 CONCAT('{\"court\":\"',(SELECT TMPU_COURT_NAME 
-                                                      FROM IIS.TMPU_COURT 
-                                                      WHERE PK_TMPU_COURT_CODE = c.IIS_COURT_CODE), 
-                                                      '\", \"date\":\"', HEARING_DATE, '\"}')
-                             
-                    FROM IIS.COURT_HEARING c 
-                    WHERE c.COURT_TYPE_CODE='SC' 
-                    AND c.FK_CASE IN (SELECT PKTS_INMATE_CASE 
-                                      FROM IIS.INMATE_CASE 
-                                      WHERE CASE_STATUS_CODE 
-                                      LIKE 'SENT%' 
-                                      AND FK_PRISON_NUMBER=l.PK_PRISON_NUMBER) 
-                                      ORDER BY HEARING_DATE DESC) SENTENCING_COURT`;
+const SELECT = `l.PK_PRISON_NUMBER, 
+                l.INMATE_SURNAME, 
+                l.INMATE_FORENAME_1, 
+                l.INMATE_FORENAME_2,
+                l.INMATE_BIRTH_DATE DOB,
+                l.DATE_1ST_RECEP,
+                SUBSTRING( 
+                    (SELECT DISTINCT ', ' + k.PERSON_FORENAME_1 + k.PERSON_SURNAME  
+                     FROM IIS.KNOWN_AS k  
+                     WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER
+                     AND (
+                        NOT
+                                l.INMATE_SURNAME = k.PERSON_SURNAME
+                        OR NOT
+                                l.INMATE_FORENAME_1 = k.PERSON_FORENAME_1
+                        OR NOT
+                                l.INMATE_FORENAME_2 = k.PERSON_FORENAME_2
+                    )
+                     FOR XML PATH('')),2,200000 
+                )  
+                ALIAS
+                `;
 const TABLE = 'IIS.LOSS_OF_LIBERTY l';
 const ORDER_BY = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC';
 
@@ -40,9 +36,9 @@ const getSearchOperatorSql = {
     prisonNumber: getPrisonNumberSqlWithParams,
     pncNumber: getPncNumberSqlWithParams,
     croNumber: getCroNumberSqlWithParams,
-    forename: getStringSqlWithParams('INMATE_FORENAME_1', {wildcardEnabled: true}),
-    forename2: getStringSqlWithParams('INMATE_FORENAME_2', {wildcardEnabled: true}),
-    surname: getStringSqlWithParams('INMATE_SURNAME', {wildcardEnabled: true}),
+    forename: getForenameSqlWithParams,
+    forename2: getForename2SqlWithParams,
+    surname: getSurnameSqlWithParams,
     dobDay: getDobSqlWithParams,
     age: getAgeSqlWithParams
 };
@@ -71,6 +67,48 @@ exports.totalRowsForUserInput = function(userInput) {
 function getPrisonNumberSqlWithParams(obj) {
     obj.val = utils.padPrisonNumber(obj.val);
     return getStringSqlWithParams('PK_PRISON_NUMBER')(obj);
+}
+
+function getSurnameSqlWithParams(obj) {
+    let sql = `FK_PERSON_IDENTIFIER IN 
+                (SELECT FK_PERSON_IDENTIFIER 
+                FROM iis.KNOWN_AS
+                WHERE PERSON_SURNAME LIKE @SURNAME)`;
+
+    return {
+        sql: sql,
+        params: [
+            {column: 'SURNAME', type: getType('string'), value: obj.userInput.surname}
+        ]
+    };
+}
+
+function getForenameSqlWithParams(obj) {
+    let sql = `FK_PERSON_IDENTIFIER IN 
+                (SELECT FK_PERSON_IDENTIFIER 
+                FROM iis.KNOWN_AS
+                WHERE PERSON_FORENAME_1 LIKE @FORENAME)`;
+
+    return {
+        sql: sql,
+        params: [
+            {column: 'FORENAME', type: getType('string'), value: obj.userInput.forename}
+        ]
+    };
+}
+
+function getForename2SqlWithParams(obj) {
+    let sql = `FK_PERSON_IDENTIFIER IN 
+                (SELECT FK_PERSON_IDENTIFIER 
+                FROM iis.KNOWN_AS
+                WHERE PERSON_FORENAME_2 LIKE @FORENAME2)`;
+
+    return {
+        sql: sql,
+        params: [
+            {column: 'FORENAME2', type: getType('string'), value: obj.userInput.forename2}
+        ]
+    };
 }
 
 function getPncNumberSqlWithParams(obj) {
@@ -190,24 +228,13 @@ function prepareSqlStatement(fields, from, where, orderBy, limit ) {
 
 function formatRow(dbRow) {
 
-    let sentencingCourt = null;
-    let sentencingDate = null;
-
-    if(dbRow.SENTENCING_COURT.value) {
-        let sentencing = JSON.parse(dbRow.SENTENCING_COURT.value);
-        sentencingCourt = sentencing.court;
-        sentencingDate = moment(sentencing.date, 'YYYYMMDD').format('MMM YYYY');
-    }
-
     return {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
         surname: dbRow.INMATE_SURNAME.value ? Case.upper(dbRow.INMATE_SURNAME.value) : '',
         forename: dbRow.INMATE_FORENAME_1.value ? Case.title(dbRow.INMATE_FORENAME_1.value) : '',
         forename2: dbRow.INMATE_FORENAME_2.value ? Case.capital(dbRow.INMATE_FORENAME_2.value) : '',
         dob: utils.getFormattedDateFromString(dbRow.DOB.value),
-        alias: dbRow.ALIAS.value,
-        sentencingCourt: sentencingCourt,
-        sentencingDate: sentencingDate,
-        firstReceptionDate: utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value)
+        firstReceptionDate: utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value),
+        alias: dbRow.ALIAS.value ? Case.title(dbRow.ALIAS.value): ''
     };
 }

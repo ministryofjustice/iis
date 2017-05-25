@@ -21,9 +21,11 @@ describe('searchController', () => {
     let resMock;
 
     beforeEach(() => {
-        reqMock = {user: {
-            email: 'x@y.com'
-        }};
+        reqMock = {
+            user: {
+                email: 'x@y.com'
+            }
+        };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
     });
 
@@ -68,15 +70,29 @@ describe('searchController', () => {
 
             postIndex(reqMock, resMock);
             expect(resMock.render).to.have.callCount(1);
-            expect(resMock.render).to.have.been.calledWith('search', {err: expectedError,
-                content: content.view.search});
+            expect(resMock.render).to.have.been.calledWith('search', {
+                err: expectedError,
+                content: content.view.search
+            });
         });
     });
 
     describe('getSearchForm', () => {
         it('should render the full search and pass in search items from query string', () => {
             reqMock = {
-                query: {0: 'names', 1: 'dob'}
+                query: {0: 'names', 1: 'dob'},
+                session: {
+                    nameQuery: {}
+                }
+            };
+
+            resMock = {
+                render: sandbox.spy(),
+                redirect: sandbox.spy(),
+                status: sandbox.spy(),
+                locals: {
+                    nameQuery: {}
+                }
             };
 
             getSearchForm(reqMock, resMock);
@@ -298,11 +314,13 @@ describe('searchController', () => {
 
             it('should pass the appropriate data to audit', () => {
                 getResultsProxy()(reqMock, resMock);
-                expect(auditStub).to.be.calledWith('SEARCH', 'x@y.com', {forename: 'Matthew',
-                                                                         forename2: 'James',
-                                                                         page: 1,
-                                                                         prisonNumber: '666',
-                                                                         surname: 'Whitfield'});
+                expect(auditStub).to.be.calledWith('SEARCH', 'x@y.com', {
+                    forename: 'Matthew',
+                    forename2: 'James',
+                    page: 1,
+                    prisonNumber: '666',
+                    surname: 'Whitfield'
+                });
             });
 
             it('should redirectToReferer if the page is not valid', () => {

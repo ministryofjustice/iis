@@ -332,9 +332,9 @@ function formatMovementCode(dbRow) {
 
 function formatAliasRows(dbRow) {
     return {
-        surname: dbRow.PERSON_SURNAME.value ? Case.title(dbRow.PERSON_SURNAME.value) : '',
-        forename: dbRow.PERSON_FORENAME_1.value ? Case.title(dbRow.PERSON_FORENAME_1.value) : '',
-        forename2: dbRow.PERSON_FORENAME_2.value ? Case.title(dbRow.PERSON_FORENAME_2.value) : '',
+        surname: dbRow.PERSON_SURNAME.value ? Case.title(dbRow.PERSON_SURNAME.value.trim()) : '',
+        forename: dbRow.PERSON_FORENAME_1.value ? Case.title(dbRow.PERSON_FORENAME_1.value.trim()) : '',
+        forename2: dbRow.PERSON_FORENAME_2.value ? Case.title(dbRow.PERSON_FORENAME_2.value.trim()) : '',
         dob: dbRow.PERSON_BIRTH_DATE.value ? utils.getFormattedDateFromString(dbRow.PERSON_BIRTH_DATE.value) : 'Unknown'
     };
 }

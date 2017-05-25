@@ -8,7 +8,7 @@ const {describeCode} = require('../data/codes');
 const utils = require('../data/utils');
 const logger = require('../log');
 
-exports.getInfo = function(prisonNumber) {
+exports.getSubject = function(prisonNumber) {
 
         logger.debug('Subject info search');
         const params = [
@@ -20,7 +20,19 @@ exports.getInfo = function(prisonNumber) {
                         INMATE_SURNAME, 
                         INMATE_FORENAME_1, 
                         INMATE_FORENAME_2,
+                        INMATE_BIRTH_DATE DOB, 
                         FK_PERSON_IDENTIFIER,
+                        BIRTH_COUNTRY_CODE,
+                        MARITAL_STATUS_CODE,
+                        ETHNIC_GROUP_CODE,
+                        NATIONALITY_CODE,
+                        (
+                            CASE INMATE_SEX 
+                                WHEN 'M' THEN 'Male' 
+                                WHEN 'F' THEN 'FEMALE' 
+                                ELSE '' 
+                            END
+                        ) INMATE_SEX,
                         (
                             SELECT
                                 TOP 1 PERSON_IDENTIFIER_VALUE
@@ -63,43 +75,8 @@ exports.getInfo = function(prisonNumber) {
         logger.debug('Subject info search', sql);
 
         return new Promise((resolve, reject) => {
-            db.getTuple(sql, params, resolveWithFormattedRow(resolve, 'info'), reject);
+            db.getTuple(sql, params, resolveWithFormattedRow(resolve, 'summary'), reject);
         });
-};
-
-exports.getSummary = function(obj) {
-    logger.debug('Subject summary search');
-
-    const params = [
-        {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
-    ];
-
-    const sql = `SELECT
-                        PK_PRISON_NUMBER, 
-                        INMATE_SURNAME, 
-                        INMATE_FORENAME_1, 
-                        INMATE_FORENAME_2,
-                        INMATE_BIRTH_DATE DOB, 
-                        FK_PERSON_IDENTIFIER,
-                        BIRTH_COUNTRY_CODE,
-                        MARITAL_STATUS_CODE,
-                        ETHNIC_GROUP_CODE,
-                        NATIONALITY_CODE,                            
-                        (
-                            CASE INMATE_SEX 
-                                WHEN 'M' THEN 'Male' 
-                                WHEN 'F' THEN 'FEMALE' 
-                                ELSE '' 
-                            END
-                        ) INMATE_SEX
-                 FROM 
-                    IIS.LOSS_OF_LIBERTY 
-                 WHERE
-                    PK_PRISON_NUMBER = @PK_PRISON_NUMBER;`;
-
-    return new Promise((resolve, reject) => {
-        db.getTuple(sql, params, resolveWithFormattedRow(resolve, 'summary'), reject);
-    });
 };
 
 exports.getMovements = function(obj) {
@@ -266,7 +243,6 @@ exports.getHDCRecall = function(obj) {
 
 const resolveWithFormattedRow = (resolve, type) => (rows) => {
     const formatType = {
-        info: formatInfoRow,
         summary: formatSummaryRow,
         movement: formatMovementRows,
         alias: formatAliasRows,
@@ -285,7 +261,7 @@ const resolveWithFormattedRow = (resolve, type) => (rows) => {
     return resolve(formatType[type](rows));
 };
 
-function formatInfoRow(dbRow) {
+function formatSummaryRow(dbRow) {
     const info = {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
         personIdentifier: dbRow.FK_PERSON_IDENTIFIER.value,
@@ -294,14 +270,7 @@ function formatInfoRow(dbRow) {
         forename2: dbRow.INMATE_FORENAME_2.value ? Case.capital(dbRow.INMATE_FORENAME_2.value) : '',
         pnc: dbRow.PNC.value,
         cro: dbRow.CRO.value,
-        paroleRefList: dbRow.PAROLE_REF_LIST.value
-    };
-    logger.debug('Subject info result', info);
-    return info;
-}
-
-function formatSummaryRow(dbRow) {
-    return {
+        paroleRefList: dbRow.PAROLE_REF_LIST.value,
         dob: dbRow.DOB.value ? utils.getFormattedDateFromString(dbRow.DOB.value) : 'Unknown',
         countryOfBirth: Case.title(describeCode('BIRTH_COUNTRY', dbRow.BIRTH_COUNTRY_CODE.value)),
         maritalStatus: Case.title(describeCode('MARITAL_STATUS', dbRow.MARITAL_STATUS_CODE.value)),
@@ -309,6 +278,11 @@ function formatSummaryRow(dbRow) {
         nationality: Case.title(describeCode('NATIONALITY', dbRow.NATIONALITY_CODE.value)),
         sex: dbRow.INMATE_SEX.value ? Case.sentence(dbRow.INMATE_SEX.value) : 'Unknown'
     };
+    if(info.dob && info.dob !== 'Unknown') {
+        info.age = utils.getAgeFromDOB(info.dob);
+    }
+    logger.debug('Subject info result', info);
+    return info;
 }
 
 function formatMovementRows(dbRow) {

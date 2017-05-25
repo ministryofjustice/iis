@@ -1,8 +1,7 @@
 const logger = require('../log');
 const utils = require('../data/utils');
 const {
-    getInfo,
-    getSummary,
+    getSubject,
     getMovements,
     getAliases,
     getAddresses,
@@ -13,7 +12,6 @@ const {
 const content = require('../data/content');
 const audit = require('../data/audit');
 const dataRequestFunction = {
-    summary: getSummary,
     movements: getMovements,
     aliases: getAliases,
     addresses: getAddresses,
@@ -23,42 +21,61 @@ const dataRequestFunction = {
 };
 
 exports.getSubject = function(req, res) {
-    let page = req.params.page;
-    let prisonNumber = utils.padPrisonNumber(req.params.id);
-    saveVisited(req.session, req.params.id);
-
+    const {page, id} = req.params;
+    const prisonNumber = utils.padPrisonNumber(id);
+    saveVisited(req.session, id);
     audit.record('VIEW', req.user.email, {page: page, prisonNumber: prisonNumber});
 
-    getInfo(prisonNumber)
-        .then((info) => {
-            const summary = info;
-            dataRequestFunction[page]({prisonNumber, personIdentifier: summary.personIdentifier})
-                .then((details) => {
-                    if (details.dob !== 'Unknown') {
-                        details.age = utils.getAgeFromDOB(details.dob);
-                    }
-                    const data = {
-                        subject: summary,
-                        details,
-                        noResultsText: content.view.subject[page]
-                    };
-                    renderPage(res, {page, data, lastPageNum: req.session.lastPage || 1});
-                }).catch((error) => {
-                    renderErrorPage(res, error);
-                });
+    const pageObject = {
+        res,
+        page,
+        subjectData: {},
+        pageData: {},
+        noResultsText: content.view.subject[page],
+        lastPageNum: req.session.lastPage || 1
+    };
 
-        }).catch((error) => {
-            logger.error('Error during get subject info', error);
-            renderErrorPage(res, error);
-        });
+    getSubject(prisonNumber).then((subjectData) => {
+
+        pageObject.subjectData = subjectData;
+        if(page === 'summary') {
+            return renderPage(pageObject);
+        }
+
+        getPageSpecificDataAndRender(pageObject);
+
+    }).catch((error) => {
+        logger.error('Error during get subject request: ', error.message);
+        renderErrorPage(res, error);
+    });
 };
 
-function renderPage(res, obj) {
-    res.render('subject/' + obj.page, {
-        data: obj.data,
+function getPageSpecificDataAndRender(pageObject) {
+
+    const {res, page, subjectData} = pageObject;
+    const {prisonNumber, personIdentifier} = subjectData;
+
+    dataRequestFunction[page]({prisonNumber, personIdentifier})
+        .then((pageSpecificData) => {
+
+            pageObject.pageData = pageSpecificData;
+            return renderPage(pageObject);
+
+        }).catch((error) => {
+
+            logger.error('Error during get details request: ', error.message);
+            renderErrorPage(res, error);
+    });
+}
+
+function renderPage(data) {
+    const {res, page, pageData, subjectData, lastPageNum, noResultsText} = data;
+
+    res.render('subject/' + page, {
+        data: {details: pageData, subject: subjectData, noResultsText},
         content: content.view.subject,
-        lastPageNum: obj.lastPageNum,
-        nav: getNavigation(obj.page)
+        lastPageNum: lastPageNum,
+        nav: getNavigation(page)
     });
 }
 

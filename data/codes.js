@@ -29,10 +29,10 @@ exports.describeCode = function(codeType, codeValue) {
     const codeSet = codeSets[codeType];
 
     if (!codeSet || !codeValue) {
-        return 'Unknown';
+        return null;
     }
 
     let desc = codeSet[codeValue];
 
-    return desc ? desc : 'Unknown';
+    return desc ? desc : null;
 };

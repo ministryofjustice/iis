@@ -80,7 +80,8 @@ function getNavigation(page) {
         hdcinfo: {title: 'HDC history'},
         offences: {title: 'Offences'},
         aliases: {title: 'Aliases'},
-        addresses: {title: 'Addresses'}
+        addresses: {title: 'Addresses'},
+        adjudications: {title: 'Adjudications'}
     };
 
     nav[page].active = true;

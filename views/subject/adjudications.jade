@@ -2,4 +2,17 @@ extends ../subject
 
 block subject-details
     div.column-two-thirds
-        div.grid-row Adjudications
+        each val,index in data.details
+            div.grid-row.list-row
+                div.column-full(class="movement-type-#{val.type}")
+                    div.left-border
+                        span #{val.establishment}
+                    div.left-border
+                        span.quiet #{val.date}
+                    div.left-border
+                        span #{val.charge}
+                    div.left-border
+                        span #{val.outcome}
+
+        if (data.details.length === 0)
+            span= data.noResultsText

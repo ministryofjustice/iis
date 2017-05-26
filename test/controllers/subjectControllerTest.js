@@ -31,9 +31,11 @@ describe('subjectController', () => {
         subjectStub = sandbox.stub().returnsPromise().resolves({
             prisonNumber: '     id1',
             personIdentifier: '1',
-            dob: '1'});
+            dob: '1'
+        });
         movementsStub = sandbox.stub().returns(null);
-        aliasesStub = sandbox.stub().returnsPromise().resolves({dob: '1'});;
+        aliasesStub = sandbox.stub().returnsPromise().resolves({dob: '1'});
+        ;
         addressesStub = sandbox.stub().returns(null);
         offencesStub = sandbox.stub().returnsPromise().resolves({dob: '1'});
         hdcinfoStub = sandbox.stub().returnsPromise().resolves();
@@ -44,13 +46,15 @@ describe('subjectController', () => {
         sandbox.reset();
     });
 
-    const getSubject = ({subject = subjectStub,
-                         movements = movementsStub,
-                         aliases = aliasesStub,
-                         addresses = addressesStub,
-                         offences = offencesStub,
-                         hdcinfo = hdcinfoStub,
-                         hdcrecall = hdcrecallStub} = {}) => {
+    const getSubject = ({
+                            subject = subjectStub,
+                            movements = movementsStub,
+                            aliases = aliasesStub,
+                            addresses = addressesStub,
+                            offences = offencesStub,
+                            hdcinfo = hdcinfoStub,
+                            hdcrecall = hdcrecallStub
+                        } = {}) => {
         return proxyquire('../../controllers/subjectController', {
             '../data/subject': {
                 'getSubject': subject,
@@ -65,7 +69,7 @@ describe('subjectController', () => {
         }).getSubject;
     };
 
-    describe ('getSubject', () => {
+    describe('getSubject', () => {
         it('should assign the page visited to the session', () => {
             getSubject()(reqMock, resMock);
             expect(reqMock.session.visited).to.eql(['id1']);
@@ -119,29 +123,29 @@ describe('subjectController', () => {
             reqMock.params.page = 'offences';
             getSubject()(reqMock, resMock);
             expect(resMock.render).to.be.calledWith('subject/offences', {
-                data: {
-                    subject: {personIdentifier: '1'},
-                    details: {dob: '1', age: 0},
-                    noResultsText: 'Subject has no offences'
-                },
                 content: {
-                    'title': 'Subject details',
+                    'addresses': 'Subject has no addresses',
+                    'adjudications': 'Subject has no adjudications',
                     'aliases': 'Subject has no aliases',
-                    'movements': 'Subject has no movements',
                     'hdcinfo': 'Subject has no HDC history',
                     'hdcrecall': 'Subject has no HDC recall history',
+                    'movements': 'Subject has no movements',
                     'offences': 'Subject has no offences',
-                    'addresses': 'Subject has no addresses',
-                    'adjudications': 'Subject has no adjudications'
+                    'title': 'Subject details'
+                },
+                data: {
+                    details: {dob: "1"},
+                    noResultsText: "Subject has no offences",
+                    subject: {dob: "1", personIdentifier: "1", prisonNumber: "     id1"}
                 },
                 lastPageNum: 1,
                 nav: {
                     addresses: {title: 'Addresses'},
+                    adjudications: {title: "Offences in custody"},
                     aliases: {title: 'Aliases'},
                     hdcinfo: {title: 'HDC history'},
                     movements: {title: 'Movements'},
                     offences: {active: true, title: 'Offences'},
-                    adjudications: { title: "Offences in custody" },
                     summary: {title: 'Summary'}
                 }
             });

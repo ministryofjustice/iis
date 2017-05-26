@@ -26,7 +26,7 @@ exports.getSubject = function(req, res) {
     const {page, id} = req.params;
     const prisonNumber = utils.padPrisonNumber(id);
     saveVisited(req.session, id);
-    audit.record('VIEW', req.user.email, {page: page, prisonNumber: prisonNumber});
+    audit.record('VIEW', req.user.email, {page, prisonNumber});
 
     const pageObject = {
         res,

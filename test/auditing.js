@@ -9,7 +9,6 @@ const audit = require('../data/audit');
 let app = require("../server/app");
 
 let db = require('../server/db');
-let subject = require("../data/subject");
 let search = require("../data/search");
 
 const proxyquire = require('proxyquire');
@@ -70,38 +69,6 @@ describe('Auditing', function() {
             .then(function() {
                 common.sinon.assert.calledOnce(audit.record);
                 common.sinon.assert.calledWithExactly(audit.record, "SEARCH", "test@test.com", {prisonNumber: 'AA123456'});
-            });
-    });
-
-    it.skip('should record view event with prison id and page type', function() {
-
-        const fakeSummary = {prisonNumber: 'AA123456', forename: 'Name'};
-        common.sinon.stub(subject, "getSubject").yields(null, fakeSummary);
-
-        let browser;
-        return common.logInAs()
-            .then(function(_browser) {
-                browser = _browser;
-            })
-            .then(function() {
-                common.sinon.stub(audit, "record");
-                return browser
-                    .get('/subject/AA123456/summary')
-                    .set('Referer', 'somewhere')
-            })
-            .then(function() {
-                return browser
-                    .get('/subject/AA123456/movements')
-                    .set('Referer', 'somewhere')
-            })
-            .then(function() {
-                common.sinon.assert.calledTwice(audit.record);
-                common.sinon.assert.calledWith(
-                    audit.record, "VIEW", "test@test.com", {page: 'summary', prisonNumber: 'AA123456'}
-                );
-                common.sinon.assert.calledWith(
-                    audit.record, "VIEW", "test@test.com", {page: 'movements', prisonNumber: 'AA123456'}
-                );
             });
     });
 });

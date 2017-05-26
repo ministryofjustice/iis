@@ -19,6 +19,7 @@ describe('subjectController', () => {
     let offencesStub;
     let hdcinfoStub;
     let hdcrecallStub;
+    let auditSpy;
 
     beforeEach(() => {
         reqMock = {
@@ -40,6 +41,7 @@ describe('subjectController', () => {
         offencesStub = sandbox.stub().returnsPromise().resolves({dob: '1'});
         hdcinfoStub = sandbox.stub().returnsPromise().resolves();
         hdcrecallStub = sandbox.stub().returns(null);
+        auditSpy = sandbox.spy();
     });
 
     afterEach(() => {
@@ -65,6 +67,9 @@ describe('subjectController', () => {
                 'getHDCInfo': hdcinfo,
                 'getHDCRecall': hdcrecall
 
+            },
+            '../data/audit': {
+                'record': auditSpy
             }
         }).getSubject;
     };
@@ -79,6 +84,12 @@ describe('subjectController', () => {
             reqMock.session.visited = ['idexisting'];
             getSubject()(reqMock, resMock);
             expect(reqMock.session.visited).to.eql(['idexisting', 'id1']);
+        });
+
+        it('should audit that the page has been viewed', () => {
+            getSubject()(reqMock, resMock);
+            expect(auditSpy).to.have.callCount(1);
+            expect(auditSpy).to.be.calledWith('VIEW', 'x@y.com', {page: 'aliases', prisonNumber: '     id1'});
         });
 
         it('should call getSummary and pass in prison number', () => {

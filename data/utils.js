@@ -9,6 +9,7 @@ const acronyms = [
 'CJA',
 'DTO',
 'EPP',
+'GOAD',
 'HDC',
 'IPP',
 'YO',

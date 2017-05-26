@@ -241,6 +241,33 @@ exports.getHDCRecall = function(obj) {
     });
 };
 
+exports.getAdjudications = function(obj) {
+    const params = [
+        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+    ];
+
+    const sql = `SELECT
+                        ADJ_CHARGE,
+                        DATE_OF_FINDING,
+                        OUTCOME_OF_HEARING,
+                        (
+                            SELECT
+                                ESTABLISHMENT_NAME 
+                            FROM
+                                IIS.ESTABLISHMENT
+                            WHERE
+                                PK_ESTABLISHMENT_CODE = SUBSTRING(o.OFFENCE_ESTAB_COMP_CODE,1,2)
+                        ) ESTABLISHMENT                   
+                 FROM
+                    IIS.ADJ_OFFENCE o
+                 WHERE 
+                    FK_PRISON_NUMBER = @FK_PRISON_NUMBER;`;
+
+    return new Promise((resolve, reject) => {
+        db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'adjudications'), reject);
+    });
+};
+
 const resolveWithFormattedRow = (resolve, type) => (rows) => {
     const formatType = {
         summary: formatSummaryRow,
@@ -249,7 +276,8 @@ const resolveWithFormattedRow = (resolve, type) => (rows) => {
         address: formatAddressRows,
         offences: formatOffenceRows,
         hdcInfo: formatHdcInfoRows,
-        hdcRecall: formatHdcRecallRows
+        hdcRecall: formatHdcRecallRows,
+        adjudications: formatAdjudicationRows
     };
 
     if(Array.isArray(rows)) {
@@ -354,5 +382,20 @@ function formatHdcRecallRows(dbRow) {
         date: utils.getFormattedDateFromString(dbRow.RECALL_DATE_CREATED.value),
         outcome: dbRow.RECALL_OUTCOME.value,
         outcomeDate: utils.getFormattedDateFromString(dbRow.RECALL_OUTCOME_DATE.value)
+    };
+}
+
+function formatAdjudicationRows(dbRow) {
+    return {
+        establishment: dbRow.ESTABLISHMENT.value ?
+            Case.title(dbRow.ESTABLISHMENT.value) :'Establishment unknown',
+
+        charge: dbRow.ADJ_CHARGE.value ? utils.acronymsToUpperCase(
+                Case.sentence(describeCode('ADJUDICATION_CHARGE', dbRow.ADJ_CHARGE.value))) : 'Unknown',
+
+        outcome: dbRow.OUTCOME_OF_HEARING.value ?
+            Case.sentence(describeCode('ADJUDICATION_OUTCOME', dbRow.OUTCOME_OF_HEARING.value)) :'Unknown',
+
+        date: utils.getFormattedDateFromString(dbRow.DATE_OF_FINDING.value)
     };
 }

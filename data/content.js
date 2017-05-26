@@ -49,6 +49,7 @@ module.exports = {
 
         subject: {title: 'Subject details',
                   aliases: 'Subject has no aliases',
+                  adjudications: 'Subject has no adjudications',
                   movements: 'Subject has no movements',
                   hdcinfo: 'Subject has no HDC history',
                   hdcrecall: 'Subject has no HDC recall history',

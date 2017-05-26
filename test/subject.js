@@ -16,7 +16,7 @@ describe('Subject data', function() {
     let getTupleStub = sandbox.stub().returns(null);
 
     const subjectProxy = (getCollection = getCollectionStub,
-                         getTuple = getTupleStub) => {
+                          getTuple = getTupleStub) => {
         return proxyquire('../data/subject', {
             '../server/iisData': {
                 'getCollection': getCollection,
@@ -166,6 +166,30 @@ describe('Subject data', function() {
         const result = subjectProxy(getCollectionStub, getTupleStub).getAliases({prisonNumber: 'AA112233'});
         return result.then((data) => {
             expect(data).to.deep.equal(expectedAliases);
+        });
+    });
+
+
+    it("should return expected adjudications object", function() {
+
+        let adjudicationsResponse = {
+            ESTABLISHMENT: {value: 'PORTSMOUTH'},
+            ADJ_CHARGE: {value: '11'},
+            DATE_OF_FINDING: {value: '19990101'},
+            OUTCOME_OF_HEARING: {value: '1'}
+        };
+
+        let expectedAdjudications = [{
+            establishment: 'Portsmouth',
+            charge: 'Assault on prison officer',
+            date: '01/01/1999',
+            outcome: 'Proved'
+        }];
+
+        getCollectionStub = sandbox.stub().callsArgWith(2, [adjudicationsResponse]);
+        const result = subjectProxy(getCollectionStub, getTupleStub).getAdjudications({prisonNumber: 'AA112233'});
+        return result.then((data) => {
+            expect(data).to.deep.equal(expectedAdjudications);
         });
     });
 });

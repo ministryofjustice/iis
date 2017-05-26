@@ -10,6 +10,8 @@ const hdcStageCodesJson = require('./codes/hdcStageCodes.json');
 const hdcStatusCodesJson = require('./codes/hdcStatusCodes.json');
 const hdcReasonCodesJson = require('./codes/hdcReasonCodes.json');
 const addressCodesJson = require('./codes/addressCodes.json');
+const adjudicationChargeCodesJson = require('./codes/adjudicationChargeCodes.json');
+const adjudicationOutcomeCodesJson = require('./codes/adjudicationOutcomeCodes.json');
 
 const codeSets = {
     BIRTH_COUNTRY: birthCountryCodesJson,
@@ -21,7 +23,9 @@ const codeSets = {
     HDC_STAGE: hdcStageCodesJson,
     HDC_STATUS: hdcStatusCodesJson,
     HDC_REASON: hdcReasonCodesJson,
-    ADDRESS: addressCodesJson
+    ADDRESS: addressCodesJson,
+    ADJUDICATION_CHARGE: adjudicationChargeCodesJson,
+    ADJUDICATION_OUTCOME: adjudicationOutcomeCodesJson
 };
 
 exports.describeCode = function(codeType, codeValue) {

@@ -1,0 +1,13 @@
+{
+    " ": "Unknown",
+    "0": "Unknown",
+    "23": "23 - Unknown",
+    "1":"PROVED",
+    "2":"NOT PROVEN",
+    "3":"NOT COMPLETED",
+    "4":"RESULT PENDING",
+    "5":"QUASHED",
+    "6":"DISMISSED",
+    "7":"PROSECUTED",
+    "8":"NOT PROCEEDED WITH"
+}

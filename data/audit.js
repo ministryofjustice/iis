@@ -10,6 +10,8 @@ exports.record = function record(key, user, data) {
         throw new Error(`Unknown audit key: ${key}`);
     }
 
+    logger.audit('AUDIT', {key});
+
     return addItem(key, user, data)
         .then((id) => {
             logger.info('Audit item inserted', id);

@@ -12,8 +12,7 @@ sinonStubPromise(sinon);
 describe('subjectController', () => {
     let reqMock;
     let resMock;
-    let infoStub;
-    let summaryStub;
+    let subjectStub;
     let movementsStub;
     let aliasesStub;
     let addressesStub;
@@ -24,15 +23,17 @@ describe('subjectController', () => {
     beforeEach(() => {
         reqMock = {
             user: {email: 'x@y.com'},
-            params: {id: 'id1', page: 'summary'},
+            params: {id: 'id1', page: 'aliases'},
             session: {}
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
 
-        infoStub = sandbox.stub().returnsPromise().resolves({personIdentifier: '1'});
-        summaryStub = sandbox.stub().returnsPromise().resolves({dob: '1'});
+        subjectStub = sandbox.stub().returnsPromise().resolves({
+            prisonNumber: '     id1',
+            personIdentifier: '1',
+            dob: '1'});
         movementsStub = sandbox.stub().returns(null);
-        aliasesStub = sandbox.stub().returns(null);
+        aliasesStub = sandbox.stub().returnsPromise().resolves({dob: '1'});;
         addressesStub = sandbox.stub().returns(null);
         offencesStub = sandbox.stub().returnsPromise().resolves({dob: '1'});
         hdcinfoStub = sandbox.stub().returnsPromise().resolves();
@@ -43,8 +44,7 @@ describe('subjectController', () => {
         sandbox.reset();
     });
 
-    const getSubject = ({info = infoStub,
-                         summary = summaryStub,
+    const getSubject = ({subject = subjectStub,
                          movements = movementsStub,
                          aliases = aliasesStub,
                          addresses = addressesStub,
@@ -53,8 +53,7 @@ describe('subjectController', () => {
                          hdcrecall = hdcrecallStub} = {}) => {
         return proxyquire('../../controllers/subjectController', {
             '../data/subject': {
-                'getInfo': info,
-                'getSummary': summary,
+                'getSubject': subject,
                 'getMovements': movements,
                 'getAliases': aliases,
                 'getAddresses': addresses,
@@ -78,16 +77,16 @@ describe('subjectController', () => {
             expect(reqMock.session.visited).to.eql(['idexisting', 'id1']);
         });
 
-        it('should call getInfo and pass in prison number', () => {
+        it('should call getSummary and pass in prison number', () => {
             getSubject()(reqMock, resMock);
-            expect(infoStub).to.have.callCount(1);
-            expect(infoStub).to.be.calledWith('     id1');
+            expect(subjectStub).to.have.callCount(1);
+            expect(subjectStub).to.be.calledWith('     id1');
         });
 
         it('should get data for the appropriate page', () => {
             getSubject()(reqMock, resMock);
-            expect(summaryStub).to.have.callCount(1);
-            expect(summaryStub).to.be.calledWith({
+            expect(aliasesStub).to.have.callCount(1);
+            expect(aliasesStub).to.be.calledWith({
                 prisonNumber: '     id1',
                 personIdentifier: '1'
             });
@@ -106,7 +105,7 @@ describe('subjectController', () => {
         it('should render the appropriate subject page', () => {
             getSubject()(reqMock, resMock);
             expect(resMock.render).to.have.callCount(1);
-            expect(resMock.render).to.be.calledWith('subject/summary');
+            expect(resMock.render).to.be.calledWith('subject/aliases');
         });
 
         it('should render the appropriate subject page if not summary', () => {
@@ -133,8 +132,7 @@ describe('subjectController', () => {
                     'hdcrecall': 'Subject has no HDC recall history',
                     'offences': 'Subject has no offences',
                     'addresses': 'Subject has no addresses',
-                    'adjudications': 'Subject has no adjudications',
-
+                    'adjudications': 'Subject has no adjudications'
                 },
                 lastPageNum: 1,
                 nav: {
@@ -150,17 +148,17 @@ describe('subjectController', () => {
         });
 
         context('Promise rejection', () => {
-            it('should render error page if getInfo rejects', () => {
-                infoStub = sandbox.stub().returnsPromise().rejects('error');
-                getSubject({info: infoStub})(reqMock, resMock);
+            it('should render error page if getSummary rejects', () => {
+                subjectStub = sandbox.stub().returnsPromise().rejects('error');
+                getSubject({summary: subjectStub})(reqMock, resMock);
 
                 expect(resMock.render).to.have.callCount(1);
                 expect(resMock.render).to.be.calledWith('subject/error');
             });
 
             it('should render error page if get[page] rejects', () => {
-                summaryStub = sandbox.stub().returnsPromise().rejects('error');
-                getSubject({summary: summaryStub})(reqMock, resMock);
+                subjectStub = sandbox.stub().returnsPromise().rejects('error');
+                getSubject({summary: subjectStub})(reqMock, resMock);
 
                 expect(resMock.render).to.have.callCount(1);
                 expect(resMock.render).to.be.calledWith('subject/error');

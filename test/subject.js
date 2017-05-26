@@ -18,7 +18,7 @@ describe('Subject data', function() {
     const subjectProxy = (getCollection = getCollectionStub,
                           getTuple = getTupleStub) => {
         return proxyquire('../data/subject', {
-            '../server/db': {
+            '../server/iisData': {
                 'getCollection': getCollection,
                 'getTuple': getTuple
             }
@@ -38,7 +38,13 @@ describe('Subject data', function() {
             INMATE_FORENAME_2: {value: 'FORENAME2'},
             PNC: {value: 'ABC/99A'},
             CRO: {value: 'XYZ/11Z'},
-            PAROLE_REF_LIST: {value: 'AAA1,BB2'}
+            PAROLE_REF_LIST: {value: 'AAA1,BB2'},
+            DOB: {value: '19800101'},
+            BIRTH_COUNTRY_CODE: {value: '1'},
+            MARITAL_STATUS_CODE: {value: 'S'},
+            ETHNIC_GROUP_CODE: {value: 'W1'},
+            NATIONALITY_CODE: {value: 'UK'},
+            INMATE_SEX: {value: 'Male'}
         };
 
         let expectedInfo = {
@@ -49,11 +55,18 @@ describe('Subject data', function() {
             forename2: 'Forename2',
             pnc: 'ABC/99A',
             cro: 'XYZ/11Z',
-            paroleRefList: 'AAA1,BB2'
+            paroleRefList: 'AAA1,BB2',
+            dob: '01/01/1980',
+            countryOfBirth: 'England',
+            maritalStatus: 'Single',
+            ethnicity: 'White British',
+            nationality: 'United Kingdom',
+            sex: 'Male',
+            age: 37
         };
 
         getTupleStub = sandbox.stub().callsArgWith(2, infoResponse);
-        const result = subjectProxy(getCollectionStub, getTupleStub).getInfo('AA112233');
+        const result = subjectProxy(getCollectionStub, getTupleStub).getSubject('AA112233');
         return result.then((data) => {
             expect(data).to.deep.equal(expectedInfo);
         });

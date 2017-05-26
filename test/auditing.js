@@ -75,11 +75,8 @@ describe('Auditing', function() {
 
     it('should record view event with prison id and page type', function() {
 
-        const fakeSubject = {prisonNumber: 'AA123456', forename: 'Name'};
-        common.sinon.stub(subject, "getInfo").yields(null, fakeSubject);
-
-        const fakeSummary = {};
-        common.sinon.stub(subject, "getSummary").yields(null, fakeSummary);
+        const fakeSummary = {prisonNumber: 'AA123456', forename: 'Name'};
+        common.sinon.stub(subject, "getSubject").yields(null, fakeSummary);
 
         let browser;
         return common.logInAs()
@@ -114,7 +111,7 @@ describe('Audit', () => {
 
     const record = (addRow = addRowStub) => {
         return proxyquire('../data/audit', {
-            '../server/db': {
+            '../server/auditData': {
                 'addRow': addRow,
             }
         }).record;
@@ -130,7 +127,7 @@ describe('Audit', () => {
 
         });
 
-        it('should call db.addRow', () => {
+        it('should call auditData.addRow', () => {
             const result = record()('SEARCH', 'a@y.com', {data: 'data'});
 
             return result.then((data) => {

@@ -269,6 +269,36 @@ exports.getAdjudications = function(obj) {
     });
 };
 
+exports.getSentencing = function(obj) {
+    const params = [
+        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+    ];
+
+    let sql = `SELECT  
+                    HEARING_DATE,  
+                    (  
+                        SELECT CODE_DESCRIPTION  
+                        FROM IIS.IIS_CODE  
+                        WHERE PK_CODE_TYPE = 42  
+                        AND PK_CODE_REF_NUM = IIS_COURT_CODE  
+                    ) COURT_NAME  
+               FROM  
+                    IIS.COURT_HEARING 
+               WHERE  
+                    FK_CASE IN  
+                    (  
+                        SELECT PKTS_INMATE_CASE  
+                        FROM IIS.INMATE_CASE  
+                        WHERE FK_PRISON_NUMBER = @FK_PRISON_NUMBER  
+                    )  
+               AND COURT_TYPE_CODE = 'SC';`;
+
+    return new Promise((resolve, reject) => {
+        db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'sentencing'), reject);
+    });
+}
+
+
 const resolveWithFormattedRow = (resolve, type) => (rows) => {
     const formatType = {
         summary: formatSummaryRow,

@@ -8,6 +8,10 @@ const search = require('../data/search');
 const utils = require('../data/utils');
 const audit = require('../data/audit');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
+const {
+    objectKeysInArray,
+    itemsInQueryString
+} = require('./helpers/formHelpers');
 
 const availableSearchOptions = exports.availableSearchOptions = {
     identifier: {
@@ -152,9 +156,6 @@ exports.getResults = function(req, res) {
 };
 
 
-const objectKeysInArray = (object, array) => Object.keys(object).filter((objectKey) => array.includes(objectKey));
-
-const itemsInQueryString = (queryString) => Object.keys(queryString).map((key) => queryString[key]);
 
 const userInputFromSearchForm = (requestBody) => {
     const getReturnedFields = composeFieldsForOptionReducer(requestBody);

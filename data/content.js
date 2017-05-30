@@ -54,7 +54,12 @@ module.exports = {
                   hdcinfo: 'Subject has no HDC history',
                   hdcrecall: 'Subject has no HDC recall history',
                   offences: 'Subject has no offences',
-                  addresses: 'Subject has no addresses'}
+                  addresses: 'Subject has no addresses'},
+
+         print: {
+             title: 'Which details do you want to save?',
+             body: 'Select all that apply'
+         }
     }
 
 };

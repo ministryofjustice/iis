@@ -1,0 +1,52 @@
+extends layout
+
+block content
+
+    div.grid-row
+        div.column-two-thirds
+            h1.heading-xlarge= content.title
+
+    div.grid-row
+        div.column-full
+            p.bold-small= content.body
+
+            form(method="post", name="formPrint")
+                div.form-group
+                    fieldset
+                        legend.visually-hidden= content.heading
+
+                        input(type="hidden" name="_csrf" value="#{csrfToken}")
+
+                        div.multiple-choice
+                            input#summary(name="printOption", type="checkbox", value="summary")
+                            label(for="summary")
+                                | Summary
+
+                        div.multiple-choice
+                            input#movements(name="printOption", type="checkbox", value="movements")
+                            label(for="movements")
+                                | Movements
+
+                        div.multiple-choice
+                            input#hdc(name="printOption", type="checkbox", value="hdc")
+                            label(for="hdc")
+                                | HDC history
+
+                        div.multiple-choice
+                            input#offences(name="printOption", type="checkbox", value="offences")
+                            label(for="offences")
+                                | Offences
+
+                        div.multiple-choice
+                            input#custodyOffences(name="printOption", type="checkbox", value="custodyOffences")
+                            label(for="custodyOffences")
+                                | Offences in custody
+
+                        div.multiple-choice
+                            input#addresses(name="printOption", type="checkbox", value="addresses")
+                            label(for="hdc")
+                                | Addresses
+
+
+                div.form-group
+                    button.button#saveAsPdf Save as PDF

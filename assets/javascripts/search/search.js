@@ -25,7 +25,7 @@ const state = exports.state = {
         title: $('#formTitle')
     });
 
-    $('.initial').removeClass('initial');
+    $('.initiallyHidden').removeClass('initiallyHidden');
     $('#continue').on('click', continueBtnHandler);
     $('.back-link-container a').on('click', backBtnHandler);
 })();

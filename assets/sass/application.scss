@@ -97,9 +97,16 @@ div#print-header,
     margin-left: 0px;
 }
 
-.js-enabled .initial {
+.js-enabled .initiallyHidden {
     display: none;
     visibility: hidden;
+}
+
+#moreless {
+    padding-left: 7px;
+    padding-top: 7px;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 // Add extra styles here, or re-organise the Sass files in whichever way makes most sense to you

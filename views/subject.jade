@@ -32,13 +32,13 @@ block content
                     span.heading-secondary#ageDetails #{data.subject.dob} (#{data.subject.age} years)
 
                 ul#prisonerInfoSummary.font-medium
-                    if data.subject.ethnicity
-                        li #{data.subject.ethnicity}
-
                     if data.subject.sex
+                        li #{data.subject.sex}
+
+                    if data.subject.ethnicity
                         li
                             span.dot &middot;
-                            | #{data.subject.sex}
+                            | #{data.subject.ethnicity}
 
                     if data.subject.countryOfBirth
                         li

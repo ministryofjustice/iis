@@ -44,6 +44,7 @@ describe('Subject data', function() {
             MARITAL_STATUS_CODE: {value: 'S'},
             ETHNIC_GROUP_CODE: {value: 'W1'},
             NATIONALITY_CODE: {value: 'UK'},
+            RELIGION_CODE: {value: 'ANG'},
             INMATE_SEX: {value: 'Male'}
         };
 
@@ -61,6 +62,7 @@ describe('Subject data', function() {
             maritalStatus: 'Single',
             ethnicity: 'White British',
             nationality: 'United Kingdom',
+            religion: 'Anglican',
             sex: 'Male',
             age: 37
         };

@@ -10,12 +10,12 @@ const logger = require('../log');
 
 exports.getSubject = function(prisonNumber) {
 
-        logger.debug('Subject info search');
-        const params = [
-            {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
-        ];
+    logger.debug('Subject info search');
+    const params = [
+        {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
+    ];
 
-        let sql = `SELECT 
+    let sql = `SELECT 
                         PK_PRISON_NUMBER, 
                         INMATE_SURNAME, 
                         INMATE_FORENAME_1, 
@@ -72,11 +72,11 @@ exports.getSubject = function(prisonNumber) {
                     WHERE
                         PK_PRISON_NUMBER = @PK_PRISON_NUMBER;`;
 
-        logger.debug('Subject info search', sql);
+    logger.debug('Subject info search', sql);
 
-        return new Promise((resolve, reject) => {
-            db.getTuple(sql, params, resolveWithFormattedRow(resolve, 'summary'), reject);
-        });
+    return new Promise((resolve, reject) => {
+        db.getTuple(sql, params, resolveWithFormattedRow(resolve, 'summary'), reject);
+    });
 };
 
 exports.getMovements = function(obj) {
@@ -202,12 +202,12 @@ exports.getHDCInfo = function(obj) {
                     HDC_STATUS,
                     (
                         SELECT
-                            REASON
+                            REASON AS code
                         FROM
                             IIS.HDC_REASON r
                         WHERE
                             r.FK_HDC_HISTORY = h.PKTS_HDC_HISTORY
-                    ) HDC_REASON
+                    FOR JSON AUTO) HDC_REASON
                 FROM 
                     IIS.HDC_HISTORY h
                 WHERE
@@ -280,10 +280,10 @@ const resolveWithFormattedRow = (resolve, type) => (rows) => {
         adjudications: formatAdjudicationRows
     };
 
-    if(Array.isArray(rows)) {
+    if (Array.isArray(rows)) {
         return resolve(rows.map(formatType[type]));
     }
-    if(rows === 0) {
+    if (rows === 0) {
         return resolve([]);
     }
     return resolve(formatType[type](rows));
@@ -306,7 +306,7 @@ function formatSummaryRow(dbRow) {
         nationality: Case.title(describeCode('NATIONALITY', dbRow.NATIONALITY_CODE.value)),
         sex: dbRow.INMATE_SEX.value ? Case.sentence(dbRow.INMATE_SEX.value) : 'Unknown'
     };
-    if(info.dob && info.dob !== 'Unknown') {
+    if (info.dob && info.dob !== 'Unknown') {
         info.age = utils.getAgeFromDOB(info.dob);
     }
     logger.debug('Subject info result', info);
@@ -316,7 +316,7 @@ function formatSummaryRow(dbRow) {
 function formatMovementRows(dbRow) {
     return {
         establishment: dbRow.ESTAB_COMP_OF_MOVE.value ? Case.title(dbRow.ESTAB_COMP_OF_MOVE.value) :
-         'Establishment unknown',
+            'Establishment unknown',
         date: utils.getFormattedDateFromString(dbRow.DATE_OF_MOVE.value),
         type: dbRow.TYPE_OF_MOVE.value,
         status: dbRow.TYPE_OF_MOVE.value && dbRow.MOVEMENT_CODE.value ? formatMovementCode(dbRow) : 'Status unknown'
@@ -347,7 +347,7 @@ function formatAddressRows(dbRow) {
         addressLine2: dbRow.INMATE_ADDRESS_2.value ? Case.title(dbRow.INMATE_ADDRESS_2.value) : '',
         addressLine4: dbRow.INMATE_ADDRESS_4.value ? Case.title(dbRow.INMATE_ADDRESS_4.value) : '',
         type: dbRow.ADDRESS_TYPE.value ? Case.title(describeCode('ADDRESS', dbRow.ADDRESS_TYPE.value)) :
-        'Unknown',
+            'Unknown',
         name: dbRow.PERSON_DETS.value ? Case.title(dbRow.PERSON_DETS.value) : ''
     };
 }
@@ -357,9 +357,9 @@ function formatOffenceRows(dbRow) {
         offenceCode: dbRow.IIS_OFFENCE_CODE.value ? dbRow.IIS_OFFENCE_CODE.value : 'Unknown offence code',
         caseDate: dbRow.CASE_DATE.value ? utils.getFormattedDateFromString(dbRow.CASE_DATE.value) : 'Unknown case date',
         establishment_code: dbRow.CASE_ESTAB_COMP_CODE.value ? Case.upper(dbRow.CASE_ESTAB_COMP_CODE.value)
-        : 'Unknown establishment',
+            : 'Unknown establishment',
         establishment: dbRow.ESTABLISHMENT.value ? Case.title(dbRow.ESTABLISHMENT.value) :
-        'Unknown establishment'
+            'Unknown establishment'
     };
 }
 
@@ -368,9 +368,21 @@ function formatHdcInfoRows(dbRow) {
         date: dbRow.STAGE_DATE.value ? utils.getFormattedDateFromString(dbRow.STAGE_DATE.value.trim()) : 'Date unknown',
         stage: dbRow.STAGE.value ? sentenceCaseWithAcronyms('HDC_STAGE', dbRow.STAGE.value) : 'Stage unknown',
         status: dbRow.HDC_STATUS.value ? sentenceCaseWithAcronyms('HDC_STATUS', dbRow.HDC_STATUS.value) :
-        'Status unknown',
-        reason: dbRow.HDC_REASON.value ? sentenceCaseWithAcronyms('HDC_REASON', dbRow.HDC_REASON.value) : ''
+            'Status unknown',
+        reason: dbRow.HDC_REASON.value ? formatHdcReasonCodes(dbRow.HDC_REASON.value) : ''
     };
+}
+
+function formatHdcReasonCodes(reasonCodes) {
+
+    let reasonCodesJson = JSON.parse(reasonCodes);
+
+    return reasonCodesJson
+        .map((reasonCode) => {
+            return sentenceCaseWithAcronyms('HDC_REASON', reasonCode.code);
+        }).filter((reasonDescription, index, inputArray) => {
+            return inputArray.indexOf(reasonDescription) === index;
+        }).join(', ');
 }
 
 function sentenceCaseWithAcronyms(codeset, code) {
@@ -388,13 +400,13 @@ function formatHdcRecallRows(dbRow) {
 function formatAdjudicationRows(dbRow) {
     return {
         establishment: dbRow.ESTABLISHMENT.value ?
-            Case.title(dbRow.ESTABLISHMENT.value) :'Establishment unknown',
+            Case.title(dbRow.ESTABLISHMENT.value) : 'Establishment unknown',
 
         charge: dbRow.ADJ_CHARGE.value ? utils.acronymsToUpperCase(
-                Case.sentence(describeCode('ADJUDICATION_CHARGE', dbRow.ADJ_CHARGE.value))) : 'Unknown',
+            Case.sentence(describeCode('ADJUDICATION_CHARGE', dbRow.ADJ_CHARGE.value))) : 'Unknown',
 
         outcome: dbRow.OUTCOME_OF_HEARING.value ?
-            Case.sentence(describeCode('ADJUDICATION_OUTCOME', dbRow.OUTCOME_OF_HEARING.value)) :'Unknown',
+            Case.sentence(describeCode('ADJUDICATION_OUTCOME', dbRow.OUTCOME_OF_HEARING.value)) : 'Unknown',
 
         date: utils.getFormattedDateFromString(dbRow.DATE_OF_FINDING.value)
     };

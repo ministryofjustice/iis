@@ -117,14 +117,14 @@ describe('Subject data', function() {
             STAGE_DATE: {value: '19990101'},
             STAGE: {value: '2'},
             HDC_STATUS: {value: '8'},
-            HDC_REASON: {value: '1'}
+            HDC_REASON: {value: '[{"code":1},{"code":1},{"code":2}]'}
         };
 
         let expectedHdcHistory = [{
             date: '01/01/1999',
             stage: 'HDC eligibility',
             status: 'Eligible',
-            reason: 'HDC granted - enhanced board'
+            reason: 'HDC granted - enhanced board, HDC granted - suit assess'
         }];
 
         getCollectionStub = sandbox.stub().callsArgWith(2, [historyResponse]);

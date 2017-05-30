@@ -6,6 +6,7 @@ const resultsPerPage = require('../server/config').searchResultsPerPage;
 
 const acronyms = [
 'ARD',
+'ARP',
 'CJA',
 'DTO',
 'EPP',

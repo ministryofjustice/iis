@@ -136,12 +136,12 @@ describe('subjectController', () => {
             expect(resMock.render).to.be.calledWith('subject/offences', {
                 content: {
                     'addresses': 'Subject has no addresses',
-                    'adjudications': 'Subject has no adjudications',
                     'aliases': 'Subject has no aliases',
                     'hdcinfo': 'Subject has no HDC history',
                     'hdcrecall': 'Subject has no HDC recall history',
                     'movements': 'Subject has no movements',
                     'offences': 'Subject has no offences',
+                    'offencesincustody': 'Subject has no offences in custody',
                     'title': 'Subject details'
                 },
                 data: {
@@ -152,11 +152,11 @@ describe('subjectController', () => {
                 lastPageNum: 1,
                 nav: {
                     addresses: {title: 'Addresses'},
-                    adjudications: {title: "Offences in custody"},
                     aliases: {title: 'Aliases'},
                     hdcinfo: {title: 'HDC history'},
                     movements: {title: 'Movements'},
                     offences: {active: true, title: 'Offences'},
+                    offencesincustody: {title: "Offences in custody"},
                     summary: {title: 'Summary'}
                 }
             });

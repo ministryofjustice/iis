@@ -19,7 +19,7 @@ const dataRequestFunction = {
     offences: getOffences,
     hdcinfo: getHDCInfo,
     hdcrecall: getHDCRecall,
-    adjudications: getAdjudications
+    offencesincustody: getAdjudications
 };
 
 exports.getSubject = function(req, res) {
@@ -98,7 +98,7 @@ function getNavigation(page) {
         movements: {title: 'Movements'},
         hdcinfo: {title: 'HDC history'},
         offences: {title: 'Offences'},
-        adjudications: {title: 'Offences in custody'},
+        offencesincustody: {title: 'Offences in custody'},
         aliases: {title: 'Aliases'},
         addresses: {title: 'Addresses'}
     };

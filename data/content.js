@@ -49,7 +49,7 @@ module.exports = {
 
         subject: {title: 'Subject details',
                   aliases: 'Subject has no aliases',
-                  adjudications: 'Subject has no adjudications',
+                  offencesincustody: 'Subject has no offences in custody',
                   movements: 'Subject has no movements',
                   hdcinfo: 'Subject has no HDC history',
                   hdcrecall: 'Subject has no HDC recall history',

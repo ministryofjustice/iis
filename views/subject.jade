@@ -46,12 +46,12 @@ block content
                             | Born in #{data.subject.countryOfBirth}
 
                     if data.subject.maritalStatus
-                        li
+                        li.initiallyHidden
                             span.dot &middot;
                             | #{data.subject.maritalStatus}
 
                     if data.subject.nationality
-                        li
+                        li.initiallyHidden
                             span.dot &middot;
                             | National of #{data.subject.nationality}
 
@@ -80,3 +80,6 @@ block content
                     include subject/nav.jade
 
                 block subject-details
+
+block scripts
+    script(src="/public/javascripts/morelessBundle.js?#{version}")

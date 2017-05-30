@@ -10,11 +10,11 @@ block search-page
             include ./identifier.jade
 
     if searchItems.includes('names')
-        div#forenameContainer.searchPrisonerItem(class = searchItems.includes('identifier') ? 'initial' : undefined )
+        div#forenameContainer.searchPrisonerItem(class = searchItems.includes('identifier') ? 'initiallyHidden' : undefined )
             include ./names.jade
 
     if searchItems.includes('dob')
-        div#ageContainer.searchPrisonerItem(class = searchItems.includes('names') || searchItems.includes('identifier') ? 'initial' : undefined)
+        div#ageContainer.searchPrisonerItem(class = searchItems.includes('names') || searchItems.includes('identifier') ? 'initiallyHidden' : undefined)
             include ./dob.jade
 
 block scripts

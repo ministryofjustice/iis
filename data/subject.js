@@ -26,6 +26,7 @@ exports.getSubject = function(prisonNumber) {
                         MARITAL_STATUS_CODE,
                         ETHNIC_GROUP_CODE,
                         NATIONALITY_CODE,
+                        RELIGION_CODE,
                         (
                             CASE INMATE_SEX 
                                 WHEN 'M' THEN 'Male' 
@@ -304,6 +305,7 @@ function formatSummaryRow(dbRow) {
         maritalStatus: Case.title(describeCode('MARITAL_STATUS', dbRow.MARITAL_STATUS_CODE.value)),
         ethnicity: Case.title(describeCode('ETHNIC_GROUP', dbRow.ETHNIC_GROUP_CODE.value)),
         nationality: Case.title(describeCode('NATIONALITY', dbRow.NATIONALITY_CODE.value)),
+        religion: Case.title(describeCode('RELIGION', dbRow.RELIGION_CODE.value)),
         sex: dbRow.INMATE_SEX.value ? Case.sentence(dbRow.INMATE_SEX.value) : 'Unknown'
     };
     if(info.dob && info.dob !== 'Unknown') {

@@ -2,6 +2,7 @@
 
 const birthCountryCodesJson = require('./codes/birthCountryCodes.json');
 const ethnicityCodesJson = require('./codes/ethnicityCodes.json');
+const religionCodesJson = require('./codes/religionCodes.json');
 const maritalStatusCodesJson = require('./codes/maritalStatusCodes.json');
 const nationalityCodesJson = require('./codes/nationalityCodes.json');
 const movementDischargeCodesJson = require('./codes/movementDischargeCodes.json');
@@ -16,6 +17,7 @@ const adjudicationOutcomeCodesJson = require('./codes/adjudicationOutcomeCodes.j
 const codeSets = {
     BIRTH_COUNTRY: birthCountryCodesJson,
     ETHNIC_GROUP: ethnicityCodesJson,
+    RELIGION: religionCodesJson,
     MARITAL_STATUS: maritalStatusCodesJson,
     NATIONALITY: nationalityCodesJson,
     MOVEMENT_DISCHARGE: movementDischargeCodesJson,

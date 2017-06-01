@@ -22,7 +22,7 @@ describe('printController', () => {
             body: {
                 printOption: ['summary', 'custodyOffences']
             },
-            query: {0: 'summary', 1: 'custodyOffences'}
+            query: {prisonNo: '12345678', fields: ['summary', 'custodyOffences']}
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy(), writeHead: sandbox.spy()};
     });
@@ -32,18 +32,32 @@ describe('printController', () => {
     });
 
     describe('getPrintForm', () => {
-        it('should render the print form page', () => {
+        it('should render the print form page if id is passed in with url', () => {
+            reqMock = {
+                query: {prisonNo: '12345678'}
+            };
+
             getPrintForm(reqMock, resMock);
             expect(resMock.render).to.have.callCount(1);
             expect(resMock.render).to.have.been.calledWith('print', {content: content.view.print});
         });
+
+        it('should return to search page if no prison number passed in', () => {
+            reqMock = {
+                query: {}
+            };
+
+            getPrintForm(reqMock, resMock);
+            expect(resMock.redirect).to.have.callCount(1);
+            expect(resMock.redirect).to.have.been.calledWith('/search');
+        });
     });
 
-    describe('postIndex', () => {
+    describe('postPrintForm', () => {
 
         it('should redirect to the search page with the appropriate query string', () => {
 
-            const expectedUrl = '/print/pdf?0=summary&1=custodyOffences';
+            const expectedUrl = '/print/pdf?prisonNo=12345678&fields=summary&fields=custodyOffences';
 
             postPrintForm(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
@@ -54,10 +68,11 @@ describe('printController', () => {
             reqMock = {
                 body: {
                     printOption: ['summary', 'custodyOffences', 'matt']
-                }
+                },
+                query: {prisonNo: '12345678', fields: ['summary', 'custodyOffences']}
             };
 
-            const expectedUrl = '/print/pdf?0=summary&1=custodyOffences';
+            const expectedUrl = '/print/pdf?prisonNo=12345678&fields=summary&fields=custodyOffences';
 
             postPrintForm(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
@@ -67,6 +82,7 @@ describe('printController', () => {
         it('should return to print form if no items are selected', () => {
             reqMock = {
                 body: {printOption: []},
+                query: {prisonNo: '12345678', fields: ['summary', 'custodyOffences']}
             };
 
             postPrintForm(reqMock, resMock);

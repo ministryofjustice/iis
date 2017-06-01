@@ -47,7 +47,7 @@ exports.getSubject = function(req, res) {
 
         return getPageSpecificDataAndRender(pageObject);
 
-    }).catch((error) => {
+    }).catch(error => {
         logger.error('Error during get subject request: ', error.message);
         renderErrorPage(res, error);
     });
@@ -56,12 +56,11 @@ exports.getSubject = function(req, res) {
 function getPageSpecificDataAndRender(pageObject) {
 
     const {res, page, subjectData} = pageObject;
-    const {prisonNumber, personIdentifier} = subjectData;
+    const {prisonNumber} = subjectData;
 
     let dataFunctions = dataRequestFunction[page];
-    let args = ({prisonNumber, personIdentifier});
 
-    return Promise.all(dataFunctions.map(f => f(args)))
+    return Promise.all(dataFunctions.map(f => f(prisonNumber)))
         .then(pageSpecificData => {
 
             if (pageSpecificData.length === 1) {
@@ -71,7 +70,7 @@ function getPageSpecificDataAndRender(pageObject) {
             }
             return renderPage(pageObject);
 
-        }).catch((error) => {
+        }).catch(error => {
 
         logger.error('Error during get details request: ', error.message);
         renderErrorPage(res, error);

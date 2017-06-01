@@ -80,9 +80,9 @@ exports.getSubject = function(prisonNumber) {
     });
 };
 
-exports.getMovements = function(obj) {
+exports.getMovements = function(prisonNumber) {
     const params = [
-        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
     ];
 
     const sql = `SELECT
@@ -109,9 +109,9 @@ exports.getMovements = function(obj) {
     });
 };
 
-exports.getAliases = function(obj) {
+exports.getAliases = function(prisonNumber) {
     const params = [
-        {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+        {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
     ];
 
     const sql = `SELECT DISTINCT
@@ -141,9 +141,9 @@ exports.getAliases = function(obj) {
     });
 };
 
-exports.getAddresses = function(obj) {
+exports.getAddresses = function(prisonNumber) {
     const params = [
-        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
     ];
 
     const sql = `SELECT
@@ -163,9 +163,9 @@ exports.getAddresses = function(obj) {
 
 };
 
-exports.getOffences = function(obj) {
+exports.getOffences = function(prisonNumber) {
     const params = [
-        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
     ];
 
     const sql = `SELECT 
@@ -192,9 +192,9 @@ exports.getOffences = function(obj) {
     });
 };
 
-exports.getHDCInfo = function(obj) {
+exports.getHDCInfo = function(prisonNumber) {
     const params = [
-        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
     ];
 
     const sql = `SELECT 
@@ -221,9 +221,9 @@ exports.getHDCInfo = function(obj) {
     });
 };
 
-exports.getHDCRecall = function(obj) {
+exports.getHDCRecall = function(prisonNumber) {
     const params = [
-        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
     ];
 
     const sql = `SELECT
@@ -242,9 +242,9 @@ exports.getHDCRecall = function(obj) {
     });
 };
 
-exports.getAdjudications = function(obj) {
+exports.getAdjudications = function(prisonNumber) {
     const params = [
-        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
     ];
 
     const sql = `SELECT

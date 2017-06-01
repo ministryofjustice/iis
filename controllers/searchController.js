@@ -117,7 +117,7 @@ exports.getResults = function(req, res) {
 
     audit.record('SEARCH', req.user.email, userInput);
     search.totalRowsForUserInput(userInput)
-        .then((data) => {
+        .then(data => {
             const rowCount = data.totalRows.value;
             if (rowCount === 0) {
                 return renderResultsPage(req, res, rowCount);
@@ -128,15 +128,15 @@ exports.getResults = function(req, res) {
             }
 
             userInput.page = page;
-            return search.inmate(userInput).then((data) => {
+            return search.inmate(userInput).then(data => {
                 const dataWithVisited = addVisitedData(data, req.session);
                 return renderResultsPage(req, res, rowCount, dataWithVisited, page, pageError);
-            }).catch((error) => {
+            }).catch(error => {
                 logger.error('Error during inmate search ', {error});
                 return showDbError(res);
             });
         })
-        .catch((error) => {
+        .catch(error => {
             logger.error('Error during number of rows search ', {error});
             return showDbError(res);
     });
@@ -154,8 +154,6 @@ exports.getResults = function(req, res) {
         });
     }
 };
-
-
 
 const userInputFromSearchForm = (requestBody) => {
     const getReturnedFields = composeFieldsForOptionReducer(requestBody);

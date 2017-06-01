@@ -18,7 +18,8 @@ module.exports = {
         "no-trailing-spaces": "off",
         "require-jsdoc": "off",
         "no-undef": "error",
-        "curly": "error"
+        "curly": "error",
+        "arrow-parens": [2, "as-needed"]
     }
 }
 ;

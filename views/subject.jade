@@ -59,7 +59,7 @@ block content
                 div.form-group
                     button.button(onclick="window.print();") Print
             div.column-one-third
-                if data.subject.paroleRefList || data.subject.pnc || data.subject.cro
+                if data.subject.prisonNumber || data.subject.paroleRefList || data.subject.pnc || data.subject.cro
                     ul.list.well.refs-box
                         if data.subject.prisonNumber
                             li#subjectId= data.subject.prisonNumber

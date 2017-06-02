@@ -3,3 +3,27 @@ extends ../subject
 block subject-details
     div.column-two-thirds
 
+        div
+            p.quiet.block Court Hearings
+
+        each val,index in data.details.effective
+            div.grid-row.list-row
+                div.column-full
+                    div.left-border
+                        span #{val.date}
+                    div.left-border
+                        span #{val.court}
+
+        div
+            p.quiet.block Effective Sentence history
+
+        each val,index in data.details.history
+            div.grid-row.list-row
+                div.column-full
+                    div.left-border
+                        span #{val.changeDate}
+                    div.left-border
+                        span #{val.length} days (#{val.lengthYMD})
+                    div.left-border
+                        span.quiet SED
+                        |  #{val.expiry}

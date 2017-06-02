@@ -5,16 +5,16 @@ const Case = require('case');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 
 const acronyms = [
-'ARD',
-'ARP',
-'CJA',
-'DTO',
-'EPP',
-'GOAD',
-'HDC',
-'IPP',
-'YO',
-'YP'
+    'ARD',
+    'ARP',
+    'CJA',
+    'DTO',
+    'EPP',
+    'GOAD',
+    'HDC',
+    'IPP',
+    'YO',
+    'YP'
 ];
 
 module.exports = {
@@ -27,7 +27,7 @@ module.exports = {
         let spaces = '';
         const lenPrisonNumber = 8;
 
-        for(let i=0; i < lenPrisonNumber-v.length; i++) {
+        for (let i = 0; i < lenPrisonNumber - v.length; i++) {
             spaces += ' ';
         }
 
@@ -42,10 +42,10 @@ module.exports = {
     getDateRange: function(age) {
         if (age.indexOf('-') === -1) {
             let startDate = this.getCurrentTime()
-                            .subtract(age, 'years')
-                            .subtract(1, 'years')
-                            .add(1, 'days')
-                            .format('YYYYMMDD');
+                .subtract(age, 'years')
+                .subtract(1, 'years')
+                .add(1, 'days')
+                .format('YYYYMMDD');
 
             let endDate = this.getCurrentTime().subtract(age, 'years').format('YYYYMMDD');
             return [startDate, endDate];
@@ -53,10 +53,10 @@ module.exports = {
 
         let ages = age.split('-');
         let startDate = this.getCurrentTime()
-                        .subtract(ages[1], 'years')
-                        .subtract(1, 'years')
-                        .add(1, 'days')
-                        .format('YYYYMMDD');
+            .subtract(ages[1], 'years')
+            .subtract(1, 'years')
+            .add(1, 'days')
+            .format('YYYYMMDD');
 
         let endDate = this.getCurrentTime().subtract(ages[0], 'years').format('YYYYMMDD');
         return [startDate, endDate];
@@ -69,10 +69,12 @@ module.exports = {
         let showPrev = (currPage - 1) == 0 ? false : true;
         let showNext = currPage == totalPages ? false : true;
 
-        return {totalPages: totalPages,
-                currPage: currPage,
-                showPrev: showPrev,
-                showNext: showNext};
+        return {
+            totalPages: totalPages,
+            currPage: currPage,
+            showPrev: showPrev,
+            showNext: showNext
+        };
     },
 
     getCurrentTime: function() {
@@ -89,10 +91,25 @@ module.exports = {
 
     acronymsToUpperCase: function(text) {
         return acronyms.map(function(acronym) {
-            let pattern = '\\b('+acronym+')\\b';
+            let pattern = '\\b(' + acronym + ')\\b';
             let regex = new RegExp(pattern, 'gi');
             text = text.replace(regex, Case.upper(acronym));
             return text;
         }).pop();
+    },
+
+    daysToYMD: function(days) {
+        let now = moment();
+        let end = moment(now).add(days, 'days');
+        let intervals = ['years', 'months', 'days'];
+        let elements = {};
+
+        for (let i = 0; i < intervals.length; i++) {
+            let diff = end.diff(now, intervals[i]);
+            now.add(diff, intervals[i]);
+            elements[intervals[i]] = diff;
+        }
+
+        return elements.years + 'y ' + elements.months + 'm ' + elements.days + 'd';
     }
 };

@@ -2,6 +2,7 @@
 
 const Case = require('case');
 const TYPES = require('tedious').TYPES;
+const moment = require('moment');
 
 const db = require('../server/iisData');
 const {describeCode} = require('../data/codes');
@@ -76,7 +77,7 @@ exports.getSubject = function(prisonNumber) {
     logger.debug('Subject info search', sql);
 
     return new Promise((resolve, reject) => {
-        db.getTuple(sql, params, resolveWithFormattedRow(resolve, 'summary'), reject);
+        db.getTuple(sql, params, resolveWithFormattedRow(resolve, 'subject'), reject);
     });
 };
 
@@ -269,46 +270,112 @@ exports.getAdjudications = function(obj) {
     });
 };
 
-exports.getSentencing = function(obj) {
+exports.getSentenceSummary = function(obj) {
+
+    // Promise.all([getEffectiveSentence(obj), getSentenceHistory(obj)])
+    //     .then(values => {
+    //         return {
+    //             effective: values[0],
+    //             history: values[1]
+    //         };
+    //     }).catch((error) => reject(error));
+
+    return new Promise((resolve, reject) => {
+        getCourtHearings(obj)
+            .then((effectiveSentenceData) => {
+                getSentenceHistory(obj)
+                    .then((sentenceHistoryData) => {
+                        return resolve({
+                            effective: effectiveSentenceData,
+                            history: sentenceHistoryData
+                        });
+                    });
+            }).catch((error) => {
+            reject(error);
+        });
+    });
+};
+
+
+function getCourtHearings(obj) {
     const params = [
         {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
     ];
 
-    let sql = `SELECT  
-                    HEARING_DATE,  
-                    (  
-                        SELECT CODE_DESCRIPTION  
-                        FROM IIS.IIS_CODE  
-                        WHERE PK_CODE_TYPE = 42  
-                        AND PK_CODE_REF_NUM = IIS_COURT_CODE  
-                    ) COURT_NAME  
-               FROM  
-                    IIS.COURT_HEARING 
-               WHERE  
-                    FK_CASE IN  
-                    (  
-                        SELECT PKTS_INMATE_CASE  
-                        FROM IIS.INMATE_CASE  
-                        WHERE FK_PRISON_NUMBER = @FK_PRISON_NUMBER  
-                    )  
-               AND COURT_TYPE_CODE = 'SC';`;
+    let sql = `SELECT DISTINCT
+                    HEARING_DATE,
+                    (
+                        SELECT 
+                            CODE_DESCRIPTION
+                        FROM 
+                            IIS.IIS_CODE
+                        WHERE 
+                            PK_CODE_TYPE=42
+                        AND 
+                            PK_CODE_REF_NUM=IIS_COURT_CODE
+                    ) COURT_NAME                    
+                FROM 
+                    IIS.COURT_HEARING
+                WHERE
+                    FK_CASE IN
+                    (
+                        SELECT 
+                            PKTS_INMATE_CASE
+                        FROM
+                            IIS.INMATE_CASE
+                        WHERE
+                            FK_PRISON_NUMBER = @FK_PRISON_NUMBER
+                    )
+                AND
+                    COURT_TYPE_CODE = 'SC'
+                ORDER BY
+                    HEARING_DATE DESC`;
 
     return new Promise((resolve, reject) => {
-        db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'sentencing'), reject);
+        db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'courtHearing'), reject);
     });
-}
+};
 
+function getSentenceHistory(obj) {
+    const params = [
+        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+    ];
+
+    let sql = ` SELECT *
+                FROM 
+                    IIS.EFF_SEN_HIST
+                WHERE 
+                    FK_STATE_CHANGE IN
+                    (
+                        SELECT 
+                            PKTS_STATE_CHANGE
+                        FROM
+                            IIS.STATE_CHANGE
+                        WHERE 
+                            FK_PRISON_NUMBER = @FK_PRISON_NUMBER
+                        AND 
+                            (STATE_VALUE = '03' OR STATE_VALUE = '06')
+                    )
+                ORDER BY
+                    SENTENCE_CHANGE_DATE DESC`;
+
+    return new Promise((resolve, reject) => {
+        db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'sentenceHistory'), reject);
+    });
+};
 
 const resolveWithFormattedRow = (resolve, type) => (rows) => {
     const formatType = {
-        summary: formatSummaryRow,
-        movement: formatMovementRows,
-        alias: formatAliasRows,
-        address: formatAddressRows,
-        offences: formatOffenceRows,
-        hdcInfo: formatHdcInfoRows,
-        hdcRecall: formatHdcRecallRows,
-        adjudications: formatAdjudicationRows
+        subject: formatSubjectRow,
+        courtHearing: formatCourtHearingRow,
+        sentenceHistory: formatSentenceHistoryRow,
+        movement: formatMovementRow,
+        alias: formatAliasRow,
+        address: formatAddressRow,
+        offences: formatOffenceRow,
+        hdcInfo: formatHdcInfoRow,
+        hdcRecall: formatHdcRecallRow,
+        adjudications: formatAdjudicationRow
     };
 
     if (Array.isArray(rows)) {
@@ -320,7 +387,7 @@ const resolveWithFormattedRow = (resolve, type) => (rows) => {
     return resolve(formatType[type](rows));
 };
 
-function formatSummaryRow(dbRow) {
+function formatSubjectRow(dbRow) {
     const info = {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
         personIdentifier: dbRow.FK_PERSON_IDENTIFIER.value,
@@ -345,7 +412,7 @@ function formatSummaryRow(dbRow) {
     return info;
 }
 
-function formatMovementRows(dbRow) {
+function formatMovementRow(dbRow) {
     return {
         establishment: dbRow.ESTAB_COMP_OF_MOVE.value ? Case.title(dbRow.ESTAB_COMP_OF_MOVE.value) :
             'Establishment unknown',
@@ -364,7 +431,7 @@ function formatMovementCode(dbRow) {
     return utils.acronymsToUpperCase(Case.sentence(status));
 }
 
-function formatAliasRows(dbRow) {
+function formatAliasRow(dbRow) {
     return {
         surname: dbRow.PERSON_SURNAME.value ? Case.title(dbRow.PERSON_SURNAME.value) : '',
         forename: dbRow.PERSON_FORENAME_1.value ? Case.title(dbRow.PERSON_FORENAME_1.value) : '',
@@ -373,7 +440,7 @@ function formatAliasRows(dbRow) {
     };
 }
 
-function formatAddressRows(dbRow) {
+function formatAddressRow(dbRow) {
     return {
         addressLine1: dbRow.INMATE_ADDRESS_1.value ? Case.title(dbRow.INMATE_ADDRESS_1.value.trim()) : '',
         addressLine2: dbRow.INMATE_ADDRESS_2.value ? Case.title(dbRow.INMATE_ADDRESS_2.value) : '',
@@ -384,7 +451,7 @@ function formatAddressRows(dbRow) {
     };
 }
 
-function formatOffenceRows(dbRow) {
+function formatOffenceRow(dbRow) {
     return {
         offenceCode: dbRow.IIS_OFFENCE_CODE.value ? dbRow.IIS_OFFENCE_CODE.value : 'Unknown offence code',
         caseDate: dbRow.CASE_DATE.value ? utils.getFormattedDateFromString(dbRow.CASE_DATE.value) : 'Unknown case date',
@@ -395,7 +462,7 @@ function formatOffenceRows(dbRow) {
     };
 }
 
-function formatHdcInfoRows(dbRow) {
+function formatHdcInfoRow(dbRow) {
     return {
         date: dbRow.STAGE_DATE.value ? utils.getFormattedDateFromString(dbRow.STAGE_DATE.value.trim()) : 'Date unknown',
         stage: dbRow.STAGE.value ? sentenceCaseWithAcronyms('HDC_STAGE', dbRow.STAGE.value) : 'Stage unknown',
@@ -421,7 +488,7 @@ function sentenceCaseWithAcronyms(codeset, code) {
     return utils.acronymsToUpperCase(Case.sentence(describeCode(codeset, code)));
 }
 
-function formatHdcRecallRows(dbRow) {
+function formatHdcRecallRow(dbRow) {
     return {
         date: utils.getFormattedDateFromString(dbRow.RECALL_DATE_CREATED.value),
         outcome: dbRow.RECALL_OUTCOME.value,
@@ -429,7 +496,7 @@ function formatHdcRecallRows(dbRow) {
     };
 }
 
-function formatAdjudicationRows(dbRow) {
+function formatAdjudicationRow(dbRow) {
     return {
         establishment: dbRow.ESTABLISHMENT.value ?
             Case.title(dbRow.ESTABLISHMENT.value) : 'Establishment unknown',
@@ -443,3 +510,21 @@ function formatAdjudicationRows(dbRow) {
         date: utils.getFormattedDateFromString(dbRow.DATE_OF_FINDING.value)
     };
 }
+
+function formatCourtHearingRow(dbRow) {
+    return {
+        date: utils.getFormattedDateFromString(dbRow.HEARING_DATE.value),
+        court: dbRow.COURT_NAME.value ? Case.title(dbRow.COURT_NAME.value) : ''
+    };
+}
+
+function formatSentenceHistoryRow(dbRow) {
+    return {
+        changeDate: utils.getFormattedDateFromString(dbRow.SENTENCE_CHANGE_DATE.value),
+        expiry: utils.getFormattedDateFromString(dbRow.SENTENCE_EXPIRY_DATE.value),
+        length: dbRow.EFFECTIVE_SENTENCE_LENGTH.value ? dbRow.EFFECTIVE_SENTENCE_LENGTH.value : '',
+        lengthYMD: dbRow.EFFECTIVE_SENTENCE_LENGTH.value ? utils.daysToYMD(dbRow.EFFECTIVE_SENTENCE_LENGTH.value) : ''
+    };
+}
+
+

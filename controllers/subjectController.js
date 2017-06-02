@@ -8,7 +8,8 @@ const {
     getOffences,
     getHDCInfo,
     getHDCRecall,
-    getAdjudications
+    getAdjudications,
+    getSentenceSummary
 } = require('../data/subject');
 const content = require('../data/content');
 const audit = require('../data/audit');
@@ -19,7 +20,8 @@ const dataRequestFunction = {
     offences: getOffences,
     hdcinfo: getHDCInfo,
     hdcrecall: getHDCRecall,
-    offencesincustody: getAdjudications
+    offencesincustody: getAdjudications,
+    summary: getSentenceSummary
 };
 
 exports.getSubject = function(req, res) {
@@ -40,9 +42,6 @@ exports.getSubject = function(req, res) {
     getSubject(prisonNumber).then((subjectData) => {
 
         pageObject.subjectData = subjectData;
-        if(page === 'summary') {
-            return renderPage(pageObject);
-        }
 
         getPageSpecificDataAndRender(pageObject);
 

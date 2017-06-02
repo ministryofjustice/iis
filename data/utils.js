@@ -110,6 +110,14 @@ module.exports = {
             elements[intervals[i]] = diff;
         }
 
-        return elements.years + 'y ' + elements.months + 'm ' + elements.days + 'd';
-    }
+        return ignoringZero(elements.years, 'y ') +
+            ignoringZero(elements.months, 'm ') +
+            ignoringZero(elements.days, 'd');
+    },
+
 };
+
+function ignoringZero(element, label) {
+    return element !== 0 ? element + label : '';
+}
+

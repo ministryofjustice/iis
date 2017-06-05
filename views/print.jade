@@ -2,6 +2,9 @@ extends layout
 
 block content
 
+    div.backLinkContainer
+        a.link-back(href="/subject/#{prisonNumber}") Back to subject details
+
     div.grid-row
         div.column-two-thirds
             h1.heading-xlarge= content.title

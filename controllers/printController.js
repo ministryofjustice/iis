@@ -83,7 +83,9 @@ exports.getPdf = function(req, res) {
     }
 
     const prisonNumber = req.query.prisonNo;
-    const printItems = itemsInQueryString(req.query.fields).filter(item => availablePrintOptions[item]);
+
+    const fieldsInQuery = Array.isArray(req.query.fields) ? req.query.fields : [req.query.fields];
+    const printItems = itemsInQueryString(fieldsInQuery).filter(item => availablePrintOptions[item]);
 
     const dataFunctionsToCall = printItems.map(item => {
         return availablePrintOptions[item].getData;

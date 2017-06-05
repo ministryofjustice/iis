@@ -36,9 +36,9 @@ function createPdf(res, printItems, data, availablePrintOptions, name) {
         doc.text(`${Case.capital(forename)} ${Case.capital(surname)}, ${prisonNumber}`);
         doc.moveTo(doc.x, doc.y).lineTo(540, doc.y).stroke('#ccc');
         doc.fontSize(11);
-        doc.moveDown(1);
+        doc.moveDown();
         doc.text(content.pdf.disclaimer);
-        doc.moveDown(1);
+        doc.moveDown();
         doc.moveTo(doc.x, doc.y).lineTo(540, doc.y).stroke('#ccc');
         doc.moveDown(3);
     });
@@ -58,8 +58,14 @@ function addSection(doc, printOption, items) {
     doc.fontSize(20).text(title);
     doc.fontSize(12);
 
-    addContent(doc, items);
+    if (items.length === 0) return emptySection(doc, title);
 
+    addContent(doc, items);
+}
+
+function emptySection(doc, title) {
+    doc.moveDown();
+    doc.text(`Subject has no ${Case.lower(title)}.`);
 }
 
 function summaryContent(doc, items) {

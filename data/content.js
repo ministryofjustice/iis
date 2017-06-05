@@ -60,6 +60,29 @@ module.exports = {
              title: 'Which details do you want to save?',
              body: 'Select all that apply'
          }
+    },
+    pdf: {
+        disclaimer: 'This information is Official Sensitive and should not be shared with anyone who does not ' +
+            'have a valid reason to use it. The Information in this document which was created using the legacy ' +
+            'application, LIDS, is accurate for that period of time entered and should be used in conjunction with ' +
+            'legislation and codes which applied at the time of entry. Information in this document which was ' +
+            'created using Prison NOMIS may not be accurate and should be discounted. Any information which can be ' +
+            'found on Prison NOMIS should be taken from Prison NOMIS. Please note that MoJ/HMPPS will not accept any ' +
+            'responsibility for errors on the system.',
+        summary: {
+            prisonNumber: 'Prison number',
+            personIdentifier: 'Person identifier',
+            paroleRefList: 'Parole reference list',
+            pnc: 'PNC',
+            cro: 'CRO',
+            dob: 'Date of birth',
+            countryOfBirth: 'Country of birth',
+            maritalStatus: 'Marital status',
+            ethnicity: 'Ehnicity',
+            nationality: 'Nationality',
+            religion: 'Religion',
+            sex: 'Gender',
+            age: 'Age'
+        }
     }
-
 };

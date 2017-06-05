@@ -32,24 +32,25 @@ block subject-details
                                         li
                                             span.quiet #{label}
                                             |  #{date}
-            details.grid-row.column-two-thirds
-                summary
-                    span.summary Show history
-                div.panel.panel-border-narrow
+            if (data.details[1] && data.details[1].length >1)
+                details.grid-row.column-two-thirds
+                    summary
+                        span.summary Show history
+                    div.panel.panel-border-narrow
 
-                    each val,index in data.details[1]
-                        if index !== 0
-                            div.grid-row.list-row
-                                div.column-full
-                                    div #{val.changeDate}
-                                    div #{val.length} days
-                                    if val.keyDates
-                                        ul.prisoner-key-dates
-                                            each date, label in val.keyDates
-                                                if date
-                                                    li
-                                                        span.quiet #{label}
-                                                        |  #{date}
+                        each val,index in data.details[1]
+                            if index !== 0
+                                div.grid-row.list-row
+                                    div.column-full
+                                        div #{val.changeDate}
+                                        div #{val.length} days
+                                        if val.keyDates
+                                            ul.prisoner-key-dates
+                                                each date, label in val.keyDates
+                                                    if date
+                                                        li
+                                                            span.quiet #{label}
+                                                            |  #{date}
         else
             div
                 span Subject has no sentence history

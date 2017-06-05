@@ -36,21 +36,22 @@ block subject-details
                 details.grid-row.column-two-thirds
                     summary
                         span.summary Show history
-                    div.panel.panel-border-narrow
+                    div.panel.panel-border-none
 
                         each val,index in data.details[1]
                             if index !== 0
                                 div.grid-row.list-row
                                     div.column-full
-                                        div #{val.changeDate}
-                                        div #{val.length} days
-                                        if val.keyDates
-                                            ul.prisoner-key-dates
-                                                each date, label in val.keyDates
-                                                    if date
-                                                        li
-                                                            span.quiet #{label}
-                                                            |  #{date}
+                                        div.left-border
+                                            div #{val.changeDate}
+                                            div #{val.length} days
+                                            if val.keyDates
+                                                ul.prisoner-key-dates
+                                                    each date, label in val.keyDates
+                                                        if date
+                                                            li
+                                                                span.quiet #{label}
+                                                                |  #{date}
         else
             div
                 span Subject has no sentence history

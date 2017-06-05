@@ -3,11 +3,11 @@ extends ../subject
 block subject-details
     div.column-two-thirds
         if (data.details[0] && data.details[0].length !== 0)
-            div.left-border
-                p.quiet.block Court Hearings
-                each val,index in data.details[0]
-                    div.grid-row.list-row
-                        div.column-full
+            p.quiet.block Court Hearings
+            each val,index in data.details[0]
+                div.grid-row.list-row
+                    div.column-full
+                        div.left-border
                             div #{val.date}
                             div #{val.court}
         else
@@ -17,11 +17,11 @@ block subject-details
         p
 
         if (data.details[1] && data.details[1].length !== 0)
-            div.left-border
-                p.quiet.block Effective Sentence
-                - var first = data.details[1][0]
-                div.grid-row.list-row
-                    div.column-full
+            p.quiet.block Effective Sentence
+            - var first = data.details[1][0]
+            div.grid-row.list-row
+                div.column-full
+                    div.left-border
                         div #{first.changeDate}
                         div #{first.length} days
                         if first.keyDates

@@ -41,7 +41,10 @@ describe('printController', () => {
 
             getPrintForm(reqMock, resMock);
             expect(resMock.render).to.have.callCount(1);
-            expect(resMock.render).to.have.been.calledWith('print', {content: content.view.print});
+            expect(resMock.render).to.have.been.calledWith('print', {
+                content: content.view.print,
+                prisonNumber: '12345678'
+            });
         });
 
         it('should return to search page if no prison number passed in', () => {
@@ -202,6 +205,26 @@ describe('printController', () => {
 
             const expectedPrintItems = ['offences', 'addresses'];
             const expectedData = [[{offence: '1'}], [{address: '1'}]];
+            const expectedName = {
+                forename: 'Matthew',
+                surname: 'Whitfield',
+                prisonNumber: '     id1'
+            };
+
+            return getPdf()(reqMock, resMock).then(() => {
+                expect(createPdfStub.getCall(0).args[1]).to.eql(expectedPrintItems);
+                expect(createPdfStub.getCall(0).args[2]).to.eql(expectedData);
+                expect(createPdfStub.getCall(0).args[4]).to.eql(expectedName);
+            });
+        });
+
+        it('should work if only 1 item is requested', () => {
+            reqMock = {
+                query: {prisonNo: '12345678', fields: 'addresses'}
+            };
+
+            const expectedPrintItems = ['addresses'];
+            const expectedData = [[{address: '1'}]];
             const expectedName = {
                 forename: 'Matthew',
                 surname: 'Whitfield',

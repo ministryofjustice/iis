@@ -100,20 +100,14 @@ describe('subjectController', () => {
         it('should get data for the appropriate page', () => {
             getSubject()(reqMock, resMock);
             expect(aliasesStub).to.have.callCount(1);
-            expect(aliasesStub).to.be.calledWith({
-                prisonNumber: '     id1',
-                personIdentifier: '1'
-            });
+            expect(aliasesStub).to.be.calledWith('     id1');
         });
 
         it('should get data for the appropriate page if not summary', () => {
             reqMock.params.page = 'hdcinfo';
             getSubject()(reqMock, resMock);
             expect(hdcinfoStub).to.have.callCount(1);
-            expect(hdcinfoStub).to.be.calledWith({
-                prisonNumber: '     id1',
-                personIdentifier: '1'
-            });
+            expect(hdcinfoStub).to.be.calledWith('     id1');
         });
 
         it('should render the appropriate subject page', () => {

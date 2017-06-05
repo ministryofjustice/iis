@@ -56,8 +56,9 @@ block content
                             | National of #{data.subject.nationality}
 
 
-                div.form-group
-                    button.button(onclick="window.print();") Print
+
+                span#saveLink
+                    a(href="/print?prisonNo=#{data.subject.prisonNumber}") Save as PDF
             div.column-one-third
                 if data.subject.prisonNumber || data.subject.paroleRefList || data.subject.pnc || data.subject.cro
                     ul.list.well.refs-box

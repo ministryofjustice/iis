@@ -41,7 +41,7 @@ exports.getSubject = function(req, res) {
         lastPageNum: req.session.lastPage || 1
     };
 
-    return getSubject(prisonNumber).then((subjectData) => {
+    return getSubject(prisonNumber).then(subjectData => {
 
         pageObject.subjectData = subjectData;
 

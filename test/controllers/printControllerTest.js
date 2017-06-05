@@ -12,6 +12,8 @@ const sandbox = sinon.sandbox.create();
 const content = require('../../data/content');
 const proxyquire = require('proxyquire');
 proxyquire.noCallThru();
+const sinonStubPromise = require('sinon-stub-promise');
+sinonStubPromise(sinon);
 
 describe('printController', () => {
     let reqMock;
@@ -55,7 +57,7 @@ describe('printController', () => {
 
     describe('postPrintForm', () => {
 
-        it('should redirect to the search page with the appropriate query string', () => {
+        it('should redirect to the pdf with the appropriate query string', () => {
 
             const expectedUrl = '/print/pdf?prisonNo=12345678&fields=summary&fields=custodyOffences';
 
@@ -69,7 +71,7 @@ describe('printController', () => {
                 body: {
                     printOption: ['summary', 'custodyOffences', 'matt']
                 },
-                query: {prisonNo: '12345678', fields: ['summary', 'custodyOffences']}
+                query: {prisonNo: '12345678'}
             };
 
             const expectedUrl = '/print/pdf?prisonNo=12345678&fields=summary&fields=custodyOffences';
@@ -82,7 +84,7 @@ describe('printController', () => {
         it('should return to print form if no items are selected', () => {
             reqMock = {
                 body: {printOption: []},
-                query: {prisonNo: '12345678', fields: ['summary', 'custodyOffences']}
+                query: {prisonNo: '12345678'}
             };
 
             postPrintForm(reqMock, resMock);
@@ -92,26 +94,52 @@ describe('printController', () => {
 
     describe('getPdf', () => {
 
-        const pipeStub = sandbox.stub();
-        const endStub = sandbox.stub();
+        let subjectStub;
+        let movementsStub;
+        let aliasesStub;
+        let addressesStub;
+        let offencesStub;
+        let hdcinfoStub;
+        let hdcrecallStub;
+        let createPdfStub;
 
-        function pdfReturn() {
-            this.pipe = pipeStub;
-            this.fontSize = sandbox.stub().returns({text: sandbox.stub()});
-            this.text = sandbox.stub();
-            this.moveDown = sandbox.stub();
-            this.end = endStub;
-        }
+        beforeEach(() => {
+            subjectStub = sandbox.stub().returnsPromise().resolves({
+                prisonNumber: '     id1',
+                forename: 'Matthew',
+                forename2: 'James',
+                surname: 'Whitfield',
+            });
+            movementsStub = sandbox.stub().returnsPromise().resolves([{movement: '1'}]);
+            aliasesStub = sandbox.stub().returnsPromise().resolves([{alias: '1'}]);
+            addressesStub = sandbox.stub().returnsPromise().resolves([{address: '1'}]);
+            offencesStub = sandbox.stub().returnsPromise().resolves([{offence: '1'}]);
+            hdcinfoStub = sandbox.stub().returnsPromise().resolves([{hdc: '1'}]);
+            hdcrecallStub = sandbox.stub().returnsPromise().resolves([{recall: '1'}]);
+            createPdfStub = sandbox.stub();
+        });
 
-        function tableReturns() {
-            this.addColumns = sandbox.stub();
-            this.addBody = sandbox.stub();
-        }
-
-        const getPdfProxy = (pdfKit = pdfReturn, pdfTable = tableReturns) => {
+        const getPdf = ({subject = subjectStub,
+                         movements = movementsStub,
+                         aliases = aliasesStub,
+                         addresses = addressesStub,
+                         offences = offencesStub,
+                         hdcinfo = hdcinfoStub,
+                         hdcrecall = hdcrecallStub,
+                         createPdf = createPdfStub} = {}) => {
             return proxyquire('../../controllers/printController', {
-                'pdfkit': pdfKit,
-                'voilab-pdf-table': pdfTable
+                '../data/subject': {
+                    'getSubject': subject,
+                    'getMovements': movements,
+                    'getAliases': aliases,
+                    'getAddresses': addresses,
+                    'getOffences': offences,
+                    'getHDCInfo': hdcinfo,
+                    'getHDCRecall': hdcrecall
+                },
+                './helpers/pdfHelpers': {
+                    'createPdf': createPdf
+                }
             }).getPdf;
         };
 
@@ -119,38 +147,95 @@ describe('printController', () => {
             reqMock = {
                 query: {}
             };
-            getPdf(reqMock, resMock);
+            getPdf()(reqMock, resMock);
             expect(resMock.render).to.have.callCount(1);
             expect(resMock.render).to.have.been.calledWith('print', {content: content.view.print});
         });
 
         it('should get the data for the fields in the query string', () => {
             reqMock = {
-                query: {0: 'names', 1: 'dob'}
+                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
             };
-
-            // use proxyquire to test that appropriate sql is called
+            getPdf()(reqMock, resMock);
+            expect(subjectStub).to.have.callCount(1);
+            expect(addressesStub).to.have.callCount(1);
         });
 
-        it.skip('should set Content-Type to application/pdf and status 200', () => {
-
-            getPdf(reqMock, resMock);
-            expect(resMock.writeHead).to.have.callCount(1);
-            expect(resMock.writeHead).to.have.been.calledWith(200, {
-                'Content-Type': 'application/pdf',
-                'Content-Disposition': 'inline; filename=test.pdf'
+        it('should call createPdf if all data requests resolve successfully', () => {
+            reqMock = {
+                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
+            };
+            return getPdf()(reqMock, resMock).then(() => {
+                expect(createPdfStub).to.have.callCount(1);
             });
         });
 
-        it('should pipe doc to res', () => {
-            getPdfProxy()(reqMock, resMock);
-            expect(pipeStub).to.have.callCount(1);
-            expect(pipeStub).to.have.been.calledWith(resMock);
+        it('should pass in the data to createpdf', () => {
+            reqMock = {
+                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
+            };
+
+            const expectedPrintItems = ['summary', 'addresses'];
+            const expectedData = [{
+                prisonNumber: '     id1',
+                forename: 'Matthew',
+                forename2: 'James',
+                surname: 'Whitfield',
+            }, [{address: '1'}]];
+            const expectedName = {
+                forename: 'Matthew',
+                surname: 'Whitfield',
+                prisonNumber: '     id1'
+            };
+
+            return getPdf()(reqMock, resMock).then(() => {
+                expect(createPdfStub.getCall(0).args[1]).to.eql(expectedPrintItems);
+                expect(createPdfStub.getCall(0).args[2]).to.eql(expectedData);
+                expect(createPdfStub.getCall(0).args[4]).to.eql(expectedName);
+            });
         });
 
-        it('should call end of doc stream', () => {
-            getPdfProxy()(reqMock, resMock);
-            expect(endStub).to.have.callCount(1);
+        it('should get name and id details even if summary is not requested', () => {
+            reqMock = {
+                query: {prisonNo: '12345678', fields: ['offences', 'addresses']}
+            };
+
+            const expectedPrintItems = ['offences', 'addresses'];
+            const expectedData = [[{offence: '1'}], [{address: '1'}]];
+            const expectedName = {
+                forename: 'Matthew',
+                surname: 'Whitfield',
+                prisonNumber: '     id1'
+            };
+
+            return getPdf()(reqMock, resMock).then(() => {
+                expect(createPdfStub.getCall(0).args[1]).to.eql(expectedPrintItems);
+                expect(createPdfStub.getCall(0).args[2]).to.eql(expectedData);
+                expect(createPdfStub.getCall(0).args[4]).to.eql(expectedName);
+            });
+        });
+
+        it('should not call createPdf if any data requests resolve unsuccessfully', () => {
+            reqMock = {
+                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
+            };
+
+            const subjectStub = sandbox.stub().returnsPromise().rejects();
+            return getPdf({subject: subjectStub})(reqMock, resMock).then(() => {
+                expect(createPdfStub).to.have.callCount(0);
+            });
+        });
+
+        it('should redirect to print page if any data requests resolve unsuccessfully', () => {
+            reqMock = {
+                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
+            };
+
+            const subjectStub = sandbox.stub().returnsPromise().rejects();
+            return getPdf({subject: subjectStub})(reqMock, resMock).then(() => {
+                expect(resMock.redirect).to.have.callCount(1);
+                expect(resMock.redirect).to.have.been.calledWith('/print?prisonNo=12345678');
+            });
         });
     });
 

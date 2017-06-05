@@ -49,7 +49,8 @@ exports.getPrintForm = (req, res) => {
     }
 
     return res.render('print', {
-        content: content.view.print
+        content: content.view.print,
+        prisonNumber: req.query.prisonNo
     });
 };
 

@@ -99,25 +99,20 @@ module.exports = {
     },
 
     daysToYMD: function(days) {
-        let now = moment();
-        let end = moment(now).add(days, 'days');
-        let intervals = ['years', 'months', 'days'];
-        let elements = {};
 
-        for (let i = 0; i < intervals.length; i++) {
-            let diff = end.diff(now, intervals[i]);
-            now.add(diff, intervals[i]);
-            elements[intervals[i]] = diff;
+        if (!days || days <= 0) {
+            return '0d';
         }
 
-        return ignoringZero(elements.years, 'y ') +
-            ignoringZero(elements.months, 'm ') +
-            ignoringZero(elements.days, 'd');
-    },
+        let duration = moment.duration(days, 'days');
+
+        let y = duration.years() === 0 ? '' : duration.years() + 'y ';
+        let m = duration.months() === 0 ? '' : duration.months() + 'm ';
+        let d = duration.days() === 0 ? '' : duration.days() + 'd';
+
+        return (y + m + d).trim();
+    }
 
 };
 
-function ignoringZero(element, label) {
-    return element !== 0 ? element + label : '';
-}
 

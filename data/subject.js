@@ -2,7 +2,6 @@
 
 const Case = require('case');
 const TYPES = require('tedious').TYPES;
-const moment = require('moment');
 
 const db = require('../server/iisData');
 const {describeCode} = require('../data/codes');
@@ -527,7 +526,7 @@ function formatSentenceHistoryRow(dbRow) {
     };
 }
 
-function getKeyDates(dbRow){
+function getKeyDates(dbRow) {
 
     let keyDates = {};
 
@@ -553,10 +552,9 @@ function getKeyDates(dbRow){
     return keyDates;
 }
 
-function addNonEmptyDate(keyDates, label, col){
+function addNonEmptyDate(keyDates, label, col) {
     if(col.value && col.value !== '18991231') {
-        let date = utils.getFormattedDateFromString(col.value);
-        keyDates[label] = date;
+        keyDates[label] = utils.getFormattedDateFromString(col.value);
     }
 }
 

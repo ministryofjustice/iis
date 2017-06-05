@@ -2,10 +2,10 @@ extends ../subject
 
 block subject-details
     div.column-two-thirds
-        if (data.details.hearings.length !== 0)
+        if (data.details[0] && data.details[0].length !== 0)
             div.left-border
                 p.quiet.block Court Hearings
-                each val,index in data.details.hearings
+                each val,index in data.details[0]
                     div.grid-row.list-row
                         div.column-full
                             div #{val.date}
@@ -16,10 +16,10 @@ block subject-details
 
         p
 
-        if (data.details.history.length !== 0)
+        if (data.details[1] && data.details[1].length !== 0)
             div.left-border
                 p.quiet.block Effective Sentence
-                - var first = data.details.history[0]
+                - var first = data.details[1][0]
                 div.grid-row.list-row
                     div.column-full
                         div #{first.changeDate}
@@ -37,7 +37,7 @@ block subject-details
                     span.summary Show history
                 div.panel.panel-border-narrow
 
-                    each val,index in data.details.history
+                    each val,index in data.details[1]
                         if index !== 0
                             div.grid-row.list-row
                                 div.column-full

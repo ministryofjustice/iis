@@ -269,34 +269,7 @@ exports.getAdjudications = function(obj) {
     });
 };
 
-exports.getSentenceSummary = function(obj) {
-
-    // Promise.all([getEffectiveSentence(obj), getSentenceHistory(obj)])
-    //     .then(values => {
-    //         return {
-    //             effective: values[0],
-    //             history: values[1]
-    //         };
-    //     }).catch((error) => reject(error));
-
-    return new Promise((resolve, reject) => {
-        getCourtHearings(obj)
-            .then((effectiveSentenceData) => {
-                getSentenceHistory(obj)
-                    .then((sentenceHistoryData) => {
-                        return resolve({
-                            hearings: effectiveSentenceData,
-                            history: sentenceHistoryData
-                        });
-                    });
-            }).catch((error) => {
-            reject(error);
-        });
-    });
-};
-
-
-function getCourtHearings(obj) {
+exports.getCourtHearings = function(obj) {
     const params = [
         {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
     ];
@@ -335,7 +308,7 @@ function getCourtHearings(obj) {
     });
 };
 
-function getSentenceHistory(obj) {
+exports.getSentenceHistory = function(obj) {
     const params = [
         {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
     ];

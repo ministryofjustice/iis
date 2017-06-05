@@ -521,8 +521,7 @@ function formatSentenceHistoryRow(dbRow) {
     return {
         changeDate: utils.getFormattedDateFromString(dbRow.SENTENCE_CHANGE_DATE.value),
         keyDates: getKeyDates(dbRow),
-        length: dbRow.EFFECTIVE_SENTENCE_LENGTH.value ? dbRow.EFFECTIVE_SENTENCE_LENGTH.value : '',
-        lengthYMD: dbRow.EFFECTIVE_SENTENCE_LENGTH.value ? utils.daysToYMD(dbRow.EFFECTIVE_SENTENCE_LENGTH.value) : ''
+        length: dbRow.EFFECTIVE_SENTENCE_LENGTH.value ? dbRow.EFFECTIVE_SENTENCE_LENGTH.value : ''
     };
 }
 

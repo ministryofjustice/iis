@@ -23,7 +23,7 @@ block subject-details
                 div.grid-row.list-row
                     div.column-full
                         div #{first.changeDate}
-                        div #{first.length} days (#{first.lengthYMD})
+                        div #{first.length} days
                         if first.keyDates
                             span
                             ul.prisoner-key-dates
@@ -42,7 +42,7 @@ block subject-details
                             div.grid-row.list-row
                                 div.column-full
                                     div #{val.changeDate}
-                                    div #{val.length} days (#{val.lengthYMD})
+                                    div #{val.length} days
                                     if val.keyDates
                                         ul.prisoner-key-dates
                                             each date, label in val.keyDates

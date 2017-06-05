@@ -96,23 +96,7 @@ module.exports = {
             text = text.replace(regex, Case.upper(acronym));
             return text;
         }).pop();
-    },
-
-    daysToYMD: function(days) {
-
-        if (!days || days <= 0) {
-            return '0d';
-        }
-
-        let duration = moment.duration(days, 'days');
-
-        let y = duration.years() === 0 ? '' : duration.years() + 'y ';
-        let m = duration.months() === 0 ? '' : duration.months() + 'm ';
-        let d = duration.days() === 0 ? '' : duration.days() + 'd';
-
-        return (y + m + d).trim();
     }
-
 };
 
 

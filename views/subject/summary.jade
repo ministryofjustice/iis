@@ -33,9 +33,8 @@ block subject-details
                                             span.quiet #{label}
                                             |  #{date}
             if (data.details[1] && data.details[1].length >1)
-                a more
-
-                div.panel.panel-border-none(style='padding-left:0')
+                a.font-small#reveal more
+                div.panel.panel-border-none(style='padding-left:0').reveal#historyContainer
                     each val,index in data.details[1]
                         if index !== 0
                             div.grid-row.list-row
@@ -54,3 +53,6 @@ block subject-details
         else
             div
                 span Subject has no sentence history
+
+block append scripts
+    script(src="/public/javascripts/revealBundle.js?#{version}")

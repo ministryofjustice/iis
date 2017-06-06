@@ -6,6 +6,7 @@ const gulp = require('gulp');
 gulp.task('webpack', [
     'webpackSearch',
     'webpackMoreless',
+    'webpackReveal'
 ]);
 
 gulp.task('webpackSearch', function() {
@@ -37,6 +38,30 @@ gulp.task('webpackMoreless', function() {
         .pipe(webpackStream({
             output: {
                 filename: 'morelessBundle.js'
+            },
+            module: {
+                rules: [{
+                    loader: 'babel-loader',
+                    exclude: [/node_modules/],
+                    query: {
+                        presets: [['es2015', {'loose': true}]]
+                    }
+                }]
+            },
+            externals: {
+                //  require("jquery") is external and available
+                //  on the global var jQuery
+                jquery: 'jQuery'
+            }
+        }, webpack2))
+        .pipe(gulp.dest('./public/javascripts'));
+});
+
+gulp.task('webpackReveal', function() {
+    return gulp.src('./assets/javascripts/moreless/reveal.js')
+        .pipe(webpackStream({
+            output: {
+                filename: 'revealBundle.js'
             },
             module: {
                 rules: [{

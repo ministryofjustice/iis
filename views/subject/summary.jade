@@ -24,6 +24,7 @@ block subject-details
                         span.quiet Effective Sentence
                         div #{first.changeDate}
                         div #{first.length} days
+                        div #{first.reasonCode}
                         if first.keyDates
                             span
                             ul.prisoner-key-dates
@@ -43,6 +44,7 @@ block subject-details
                                         span.quiet Effective Sentence
                                         div #{val.changeDate}
                                         div #{val.length} days
+                                        div #{first.reasonCode}
                                         if val.keyDates
                                             ul.prisoner-key-dates
                                                 each date, label in val.keyDates

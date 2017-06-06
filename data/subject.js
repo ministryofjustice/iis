@@ -400,7 +400,7 @@ function formatMovementCode(dbRow) {
         describeCode('MOVEMENT_RETURN', dbRow.MOVEMENT_CODE.value.trim())
         : describeCode('MOVEMENT_DISCHARGE', dbRow.MOVEMENT_CODE.value.trim());
 
-    return utils.acronymsToUpperCase(Case.sentence(status));
+    return sentenceCaseWithAcronyms(status);
 }
 
 function formatAliasRow(dbRow) {
@@ -437,8 +437,8 @@ function formatOffenceRow(dbRow) {
 function formatHdcInfoRow(dbRow) {
     return {
         date: dbRow.STAGE_DATE.value ? utils.getFormattedDateFromString(dbRow.STAGE_DATE.value.trim()) : 'Date unknown',
-        stage: dbRow.STAGE.value ? sentenceCaseWithAcronyms('HDC_STAGE', dbRow.STAGE.value) : 'Stage unknown',
-        status: dbRow.HDC_STATUS.value ? sentenceCaseWithAcronyms('HDC_STATUS', dbRow.HDC_STATUS.value) :
+        stage: dbRow.STAGE.value ? sentenceCaseWithAcronymsForCode('HDC_STAGE', dbRow.STAGE.value) : 'Stage unknown',
+        status: dbRow.HDC_STATUS.value ? sentenceCaseWithAcronymsForCode('HDC_STATUS', dbRow.HDC_STATUS.value) :
             'Status unknown',
         reason: dbRow.HDC_REASON.value ? formatHdcReasonCodes(dbRow.HDC_REASON.value) : ''
     };
@@ -450,14 +450,18 @@ function formatHdcReasonCodes(reasonCodes) {
 
     return reasonCodesJson
         .map((reasonCode) => {
-            return sentenceCaseWithAcronyms('HDC_REASON', reasonCode.code);
+            return sentenceCaseWithAcronymsForCode('HDC_REASON', reasonCode.code);
         }).filter((reasonDescription, index, inputArray) => {
             return inputArray.indexOf(reasonDescription) === index;
         }).join(', ');
 }
 
-function sentenceCaseWithAcronyms(codeset, code) {
+function sentenceCaseWithAcronymsForCode(codeset, code) {
     return utils.acronymsToUpperCase(Case.sentence(describeCode(codeset, code)));
+}
+
+function sentenceCaseWithAcronyms(text) {
+    return utils.acronymsToUpperCase(Case.sentence(text));
 }
 
 function formatHdcRecallRow(dbRow) {
@@ -473,8 +477,8 @@ function formatAdjudicationRow(dbRow) {
         establishment: dbRow.ESTABLISHMENT.value ?
             Case.title(dbRow.ESTABLISHMENT.value) : 'Establishment unknown',
 
-        charge: dbRow.ADJ_CHARGE.value ? utils.acronymsToUpperCase(
-            Case.sentence(describeCode('ADJUDICATION_CHARGE', dbRow.ADJ_CHARGE.value))) : 'Unknown',
+        charge: dbRow.ADJ_CHARGE.value ?
+            sentenceCaseWithAcronymsForCode('ADJUDICATION_CHARGE', dbRow.ADJ_CHARGE.value) : 'Unknown',
 
         outcome: dbRow.OUTCOME_OF_HEARING.value ?
             Case.sentence(describeCode('ADJUDICATION_OUTCOME', dbRow.OUTCOME_OF_HEARING.value)) : 'Unknown',
@@ -493,7 +497,7 @@ function formatCourtHearingRow(dbRow) {
 function formatSentenceHistoryRow(dbRow) {
     return {
         changeDate: utils.getFormattedDateFromString(dbRow.SENTENCE_CHANGE_DATE.value),
-        reasonCode: dbRow.REASON_SENT_DET_CHANGE.value ? dbRow.REASON_SENT_DET_CHANGE.value : '',
+        reasonCode: dbRow.REASON_SENT_DET_CHANGE.value ? sentenceCaseWithAcronyms(dbRow.REASON_SENT_DET_CHANGE.value) : '',
         keyDates: getKeyDates(dbRow),
         length: dbRow.EFFECTIVE_SENTENCE_LENGTH.value ? dbRow.EFFECTIVE_SENTENCE_LENGTH.value : ''
     };

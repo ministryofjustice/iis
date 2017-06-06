@@ -3,11 +3,11 @@ extends ../subject
 block subject-details
     div.column-two-thirds
         if (data.details[0] && data.details[0].length !== 0)
-            p.quiet.block Court Hearings
             each val,index in data.details[0]
                 div.grid-row.list-row
                     div.column-full
                         div.left-border
+                            span.quiet Court Hearing
                             div #{val.date}
                             div #{val.court}
         else
@@ -17,11 +17,11 @@ block subject-details
         p
 
         if (data.details[1] && data.details[1].length !== 0)
-            p.quiet.block Effective Sentence
             - var first = data.details[1][0]
             div.grid-row.list-row
                 div.column-full
                     div.left-border
+                        span.quiet Effective Sentence
                         div #{first.changeDate}
                         div #{first.length} days
                         if first.keyDates
@@ -33,25 +33,24 @@ block subject-details
                                             span.quiet #{label}
                                             |  #{date}
             if (data.details[1] && data.details[1].length >1)
-                details.grid-row.column-two-thirds
-                    summary
-                        span.summary Show history
-                    div.panel.panel-border-none
+                a more
 
-                        each val,index in data.details[1]
-                            if index !== 0
-                                div.grid-row.list-row
-                                    div.column-full
-                                        div.left-border
-                                            div #{val.changeDate}
-                                            div #{val.length} days
-                                            if val.keyDates
-                                                ul.prisoner-key-dates
-                                                    each date, label in val.keyDates
-                                                        if date
-                                                            li
-                                                                span.quiet #{label}
-                                                                |  #{date}
+                div.panel.panel-border-none(style='padding-left:0')
+                    each val,index in data.details[1]
+                        if index !== 0
+                            div.grid-row.list-row
+                                div.column-full
+                                    div.left-border
+                                        span.quiet Effective Sentence
+                                        div #{val.changeDate}
+                                        div #{val.length} days
+                                        if val.keyDates
+                                            ul.prisoner-key-dates
+                                                each date, label in val.keyDates
+                                                    if date
+                                                        li
+                                                            span.quiet #{label}
+                                                            |  #{date}
         else
             div
                 span Subject has no sentence history

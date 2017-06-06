@@ -194,4 +194,55 @@ describe('Subject data', function() {
             expect(data).to.deep.equal(expectedAdjudications);
         });
     });
+
+
+    it("should return expected court hearings object", function() {
+
+        let courtHearingResponse = {
+            HEARING_DATE: {value: '19990101'},
+            COURT_NAME: {value: 'SOME COURT'}
+        };
+
+        let expectedCourHearing = [{
+            date: '01/01/1999',
+            court: 'Some Court'
+        }];
+
+        getCollectionStub = sandbox.stub().callsArgWith(2, [courtHearingResponse]);
+        const result = subjectProxy(getCollectionStub, getTupleStub).getCourtHearings({prisonNumber: 'AA112233'});
+        return result.then((data) => {
+            expect(data).to.deep.equal(expectedCourHearing);
+        });
+    });
+
+    it("should return expected sentence history object", function() {
+
+        let sentenceHistoryResponse = {
+            SENTENCE_CHANGE_DATE: {value: '19990101'},
+            REASON_SENT_DET_CHANGE: {value: 'SOME REASON'},
+            EFFECTIVE_SENTENCE_LENGTH: {value: '123'},
+            SENTENCE_EXPIRY_DATE: {value: '19990101'},
+            PED: {value: ''},
+            NPD: {value: ''},
+            LED: {value: ''},
+            CRD: {value: ''},
+            HDCAD: {value: ''},
+            HDCED: {value: ''},
+        };
+
+        let expectedSentenceHistory = [{
+            changeDate: '01/01/1999',
+            reasonCode: 'Some reason',
+            length: '123',
+            keyDates: {
+                'SED':'01/01/1999',
+            }
+        }];
+
+        getCollectionStub = sandbox.stub().callsArgWith(2, [sentenceHistoryResponse]);
+        const result = subjectProxy(getCollectionStub, getTupleStub).getSentenceHistory({prisonNumber: 'AA112233'});
+        return result.then((data) => {
+            expect(data).to.deep.equal(expectedSentenceHistory);
+        });
+    });
 });

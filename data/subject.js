@@ -509,20 +509,9 @@ function getKeyDates(dbRow) {
 
     addNonEmptyDate(keyDates, 'SED', dbRow.SENTENCE_EXPIRY_DATE);
     addNonEmptyDate(keyDates, 'PED', dbRow.PED);
-    // addNonEmptyDate(keyDates, 'EDR', dbRow.EDR);
-    // addNonEmptyDate(keyDates, 'MDR', dbRow.MDR);
-    // addNonEmptyDate(keyDates, 'LDR', dbRow.LDR);
     addNonEmptyDate(keyDates, 'NPD', dbRow.NPD);
     addNonEmptyDate(keyDates, 'LED', dbRow.LED);
     addNonEmptyDate(keyDates, 'CRD', dbRow.CRD);
-    // addNonEmptyDate(keyDates, 'ARD', dbRow.ARD);
-    // addNonEmptyDate(keyDates, 'APD', dbRow.APD);
-    // addNonEmptyDate(keyDates, 'MTD', dbRow.MTD);
-    // addNonEmptyDate(keyDates, 'ETD1', dbRow.ETD1);
-    // addNonEmptyDate(keyDates, 'ETD2', dbRow.ETD2);
-    // addNonEmptyDate(keyDates, 'LTD1', dbRow.LTD1);
-    // addNonEmptyDate(keyDates, 'LTD2', dbRow.LTD2);
-    // addNonEmptyDate(keyDates, 'PPRD', dbRow.PPRD);
     addNonEmptyDate(keyDates, 'HDCAD', dbRow.HDCAD);
     addNonEmptyDate(keyDates, 'HDCED', dbRow.HDCED);
 

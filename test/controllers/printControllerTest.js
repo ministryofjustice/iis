@@ -90,7 +90,38 @@ describe('printController', () => {
             expect(resMock.render).to.have.been.calledWith('print', {
                 content: content.view.print,
                 prisonNumber: '12345678',
-                name: {forename: 'Matthew', surname: 'Whitfield'}
+                name: {forename: 'Matthew', surname: 'Whitfield'},
+                err: null
+            });
+        });
+
+        it('should render with ui error if user error is passed in, with no name', () => {
+            reqMock = {
+                query: {prisonNo: '12345678', err: 'noneSelected'}
+            };
+
+            getController().getPrintForm(reqMock, resMock);
+            expect(resMock.render).to.have.callCount(1);
+            expect(resMock.render).to.have.been.calledWith('print', {
+                content: content.view.print,
+                prisonNumber: '12345678',
+                name: {forename: 'Matthew', surname: 'Whitfield'},
+                err: {title: content.view.print.noneSelected}
+            });
+        });
+
+        it('should render with db error and no name if db error in query', () => {
+            reqMock = {
+                query: {prisonNo: '12345678', err: 'db'}
+            };
+
+            getController().getPrintForm(reqMock, resMock);
+            expect(resMock.render).to.have.callCount(1);
+            expect(resMock.render).to.have.been.calledWith('print', {
+                content: content.view.print,
+                prisonNumber: '12345678',
+                name: null,
+                err: {title: content.pdf.dbError.title, desc: content.pdf.dbError.desc}
             });
         });
 
@@ -137,20 +168,25 @@ describe('printController', () => {
                 query: {prisonNo: '12345678'}
             };
 
-            postPrintForm(reqMock, resMock);
-            expect(resMock.render).to.have.been.calledWith('print', {content: content.view.print});
+            getController().postPrintForm(reqMock, resMock);
+            expect(resMock.render).to.have.been.calledWith('print', {content: content.view.print,
+                prisonNumber: '12345678',
+                name: null,
+                err: {title: 'Please select at least one item to print'},
+                name: {forename: 'Matthew', surname: 'Whitfield' }
+            });
         });
     });
 
     describe('getPdf', () => {
 
-        it('should redirect to print form if nothing in query string', () => {
+        it('should redirect to search form if nothing in query string', () => {
             reqMock = {
                 query: {}
             };
             getController().getPdf(reqMock, resMock);
-            expect(resMock.render).to.have.callCount(1);
-            expect(resMock.render).to.have.been.calledWith('print', {content: content.view.print});
+            expect(resMock.redirect).to.have.callCount(1);
+            expect(resMock.redirect).to.have.been.calledWith('/search');
         });
 
         it('should get the data for the fields in the query string', () => {
@@ -255,7 +291,7 @@ describe('printController', () => {
             const subjectStub = sandbox.stub().returnsPromise().rejects();
             return getController({subject: subjectStub}).getPdf(reqMock, resMock).then(() => {
                 expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/print?prisonNo=12345678');
+                expect(resMock.redirect).to.have.been.calledWith('/print?prisonNo=12345678&err=db');
             });
         });
     });

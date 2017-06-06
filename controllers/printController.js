@@ -43,36 +43,51 @@ const availablePrintOptions = {
 
 exports.getPrintForm = (req, res) => {
     logger.debug('GET /print');
+    const {prisonNo, err} = req.query;
 
-    if(!req.query.prisonNo) {
-        return res.redirect('/search');
-    }
-
-    const prisonNumber = req.query.prisonNo;
-    subjectData.getSubject(prisonNumber)
-        .then(subjectData => {
-            return res.render('print', {
-                content: content.view.print,
-                prisonNumber: prisonNumber,
-                name: {
-                    forename: subjectData.forename.trim(),
-                    surname: subjectData.surname.trim()
-                }
-            });
-        })
-        .catch(error => {
-            // TODO show error
-
-            logger.error('Error during subject collection ', {error});
-            const query = {prisonNo: prisonNumber};
-            const redirectUrl = url.format({'pathname': '/print', query});
-            return res.redirect(redirectUrl);
-        });
+    if(!prisonNo) return res.redirect('/search');
+    renderFormPage(res, prisonNo, err);
 };
+
+function renderFormPage(res, prisonNo, err) {
+    const renderData = {
+        content: content.view.print,
+        prisonNumber: prisonNo,
+        name: null,
+        err: err ? getDisplayError(err) : null
+    };
+
+    if(!err || err !== 'db') return getNameAndRender(res, renderData);
+    renderWithoutName(res, renderData);
+}
+
+function getNameAndRender(res, renderData) {
+    return subjectData.getSubject(renderData.prisonNumber)
+        .then(subjectData => {
+
+            renderData.name = {
+                forename: subjectData.forename.trim(),
+                surname: subjectData.surname.trim()
+            };
+
+            return res.render('print', renderData);
+        })
+        .catch(error => showDbError({error}, renderData.prisonNumber, res));
+}
+
+function renderWithoutName(res, renderData) {
+    return res.render('print', renderData);
+}
 
 exports.postPrintForm = (req, res) => {
     logger.debug('POST /print');
     const userReturnedOptions = req.body.printOption;
+    const prisonNo = req.query.prisonNo;
+
+    if (!userReturnedOptions || userReturnedOptions.length === 0) {
+        logger.warn('No print items selected');
+        return renderFormPage(res, prisonNo, 'noneSelected');
+    }
 
     const selectedOptions = objectKeysInArray(availablePrintOptions, userReturnedOptions);
     const query = {
@@ -80,55 +95,37 @@ exports.postPrintForm = (req, res) => {
         fields: selectedOptions
     };
 
-    if (selectedOptions.length === 0) {
-        logger.warn('No print items selected');
-        return res.render('print', {content: content.view.print});
-    }
-
     const redirectUrl = url.format({'pathname': '/print/pdf', query});
     return res.redirect(redirectUrl);
 };
 
 exports.getPdf = function(req, res) {
 
-    if (!req.query.fields || !req.query.prisonNo) {
-        logger.warn('No print items selected');
-        return res.render('print', {
-            content: content.view.print
-        });
-    }
-
     const prisonNumber = req.query.prisonNo;
+    if (!prisonNumber || !req.query.fields) return res.redirect('/search');
 
     const fieldsInQuery = Array.isArray(req.query.fields) ? req.query.fields : [req.query.fields];
     const printItems = itemsInQueryString(fieldsInQuery).filter(item => availablePrintOptions[item]);
 
-    const dataFunctionsToCall = printItems.map(item => {
-        return availablePrintOptions[item].getData;
-    });
-
-    if(!dataFunctionsToCall.includes(availablePrintOptions.summary.getData)) {
-        dataFunctionsToCall.unshift(availablePrintOptions.summary.getData);
-    }
+    const dataFunctionsToCall = getDataFunctionsToCall(printItems);
 
     return Promise.all(dataFunctionsToCall.map(dataFunction => dataFunction(prisonNumber)))
         .then(data => {
-
             const {subjectData, subjectName} = extractSubjectInfo(data, printItems);
-
             pdf.createPdf(res, printItems, subjectData, availablePrintOptions, subjectName);
-
         })
-        .catch(err => {
-            logger.error('Error during data collection for pdf ', {err});
-
-            // TODO show error
-
-            const query = {prisonNo: prisonNumber};
-            const redirectUrl = url.format({'pathname': '/print', query});
-            return res.redirect(redirectUrl);
-        });
+        .catch(error => showDbError({error}, prisonNumber, res));
 };
+
+function getDataFunctionsToCall(printItems) {
+    const itemsSelected = printItems.map(item => availablePrintOptions[item].getData);
+    // we always need subject call to get name
+    if(!itemsSelected.includes(availablePrintOptions.summary.getData)) {
+        itemsSelected.unshift(availablePrintOptions.summary.getData);
+    }
+
+    return itemsSelected;
+}
 
 function extractSubjectInfo(data, printItems) {
     const subjectName = {
@@ -140,4 +137,24 @@ function extractSubjectInfo(data, printItems) {
     const subjectData = summaryNotSelected ? data.filter((item, index) => index !== 0) : data;
 
     return {subjectData, subjectName};
+}
+
+function showDbError(error, prisonNo, res) {
+    logger.error('Error during data collection for pdf ', error);
+
+    const query = {
+        prisonNo,
+        err: 'db'
+    };
+    const redirectUrl = url.format({'pathname': '/print', query});
+    return res.redirect(redirectUrl);
+}
+
+function getDisplayError(type) {
+    const error = {
+        'db': {title: content.pdf.dbError.title, desc: content.pdf.dbError.desc},
+        'noneSelected': {title: content.view.print.noneSelected}
+    };
+
+    return error[type];
 }

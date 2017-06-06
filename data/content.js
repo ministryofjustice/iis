@@ -57,7 +57,8 @@ module.exports = {
                   addresses: 'Subject has no addresses'},
 
          print: {
-             body: 'Select all that apply'
+             body: 'Select all that apply',
+             noneSelected: 'Please select at least one item to print'
          }
     },
     pdf: {
@@ -82,6 +83,10 @@ module.exports = {
             religion: 'Religion',
             sex: 'Gender',
             age: 'Age'
+        },
+        dbError: {
+            title: 'There was a problem getting the data from the database',
+            desc: 'Please try again'
         }
     }
 };

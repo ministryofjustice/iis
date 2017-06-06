@@ -57,7 +57,6 @@ module.exports = {
                   addresses: 'Subject has no addresses'},
 
          print: {
-             title: 'Which details do you want to save?',
              body: 'Select all that apply'
          }
     },

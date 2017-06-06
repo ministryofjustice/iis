@@ -48,10 +48,26 @@ exports.getPrintForm = (req, res) => {
         return res.redirect('/search');
     }
 
-    return res.render('print', {
-        content: content.view.print,
-        prisonNumber: req.query.prisonNo
-    });
+    const prisonNumber = req.query.prisonNo;
+    subjectData.getSubject(prisonNumber)
+        .then(subjectData => {
+            return res.render('print', {
+                content: content.view.print,
+                prisonNumber: prisonNumber,
+                name: {
+                    forename: subjectData.forename.trim(),
+                    surname: subjectData.surname.trim()
+                }
+            });
+        })
+        .catch(error => {
+            // TODO show error
+
+            logger.error('Error during subject collection ', {error});
+            const query = {prisonNo: prisonNumber};
+            const redirectUrl = url.format({'pathname': '/print', query});
+            return res.redirect(redirectUrl);
+        });
 };
 
 exports.postPrintForm = (req, res) => {
@@ -105,6 +121,8 @@ exports.getPdf = function(req, res) {
         })
         .catch(err => {
             logger.error('Error during data collection for pdf ', {err});
+
+            // TODO show error
 
             const query = {prisonNo: prisonNumber};
             const redirectUrl = url.format({'pathname': '/print', query});

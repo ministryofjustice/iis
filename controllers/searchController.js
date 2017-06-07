@@ -91,7 +91,7 @@ exports.postSearchForm = function(req, res) {
     const userInput = userInputFromSearchForm(req.body);
     const searchItems = itemsInQueryString(req.query).filter((item) => availableSearchOptions[item]);
 
-    if(!inputValidates(searchItems, userInput)) {
+    if (!inputValidates(searchItems, userInput)) {
         // more useful handler to be written if necessary
         // should only occur for those with JS off
         logger.info('Server side input validation used');
@@ -139,7 +139,7 @@ exports.getResults = function(req, res) {
         .catch(error => {
             logger.error('Error during number of rows search ', {error});
             return showDbError(res);
-    });
+        });
 
     function showDbError(res) {
         let _err = {
@@ -244,3 +244,4 @@ function addVisitedData(data, session) {
         return inmate;
     });
 }
+

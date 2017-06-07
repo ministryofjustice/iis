@@ -6,12 +6,12 @@ mixin inmate(name, prisonNumber, dob, firstReceptionDate, alias, visited)
                 span(class=visited ? '' : 'bold-medium').capitalise-text #{name}
                 if dob
                     span(class=visited ? '' : 'bold-medium') &middot; #{dob}
+                if alias
+                    span.block.text-secondary Alias of: #{alias}
                 if prisonNumber
                     span.prisonNumber.block.text-secondary Prison No. #{prisonNumber}
                 if firstReceptionDate
                     span.firstReceptionDate.block.text-secondary First Reception. #{firstReceptionDate}
-                if alias
-                    span.block.text-secondary Also Known As: #{alias}
         block
 
 
@@ -32,7 +32,7 @@ block content
                        +inmate(item.forename
                                 + (item.forename2)
                                 + item.surname,
-                               item.prisonNumber, item.dob, item.firstReceptionDate, item.alias, item.visited)
+                               item.prisonNumber, item.dob, item.firstReceptionDate, item.realName, item.visited)
 
 
             if pagination

@@ -2,7 +2,7 @@ const logger = require('../log');
 const db = require('../server/auditData');
 const TYPES = require('tedious').TYPES;
 
-const keys = ['LOG_IN', 'DISCLAIMER_ACCEPTED', 'SEARCH', 'VIEW'];
+const keys = ['LOG_IN', 'DISCLAIMER_ACCEPTED', 'SEARCH', 'VIEW', 'PRINT'];
 
 exports.record = function record(key, user, data) {
 
@@ -13,10 +13,10 @@ exports.record = function record(key, user, data) {
     logger.audit('AUDIT', {key});
 
     return addItem(key, user, data)
-        .then((id) => {
+        .then(id => {
             logger.info('Audit item inserted', id);
         })
-        .catch((error) => {
+        .catch(error => {
             logger.error('Error during audit insertion ', error);
         });
 };

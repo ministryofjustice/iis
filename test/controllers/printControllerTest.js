@@ -23,6 +23,7 @@ let offencesStub;
 let hdcinfoStub;
 let hdcrecallStub;
 let createPdfStub;
+let auditStub;
 
 const getController = ({subject = subjectStub,
                         movements = movementsStub,
@@ -44,6 +45,9 @@ const getController = ({subject = subjectStub,
         },
         './helpers/pdfHelpers': {
             'createPdf': createPdf
+        },
+        '../data/audit': {
+            'record': auditStub
         }
     });
 };
@@ -65,12 +69,14 @@ describe('printController', () => {
         hdcinfoStub = sandbox.stub().returnsPromise().resolves([{hdc: '1'}]);
         hdcrecallStub = sandbox.stub().returnsPromise().resolves([{recall: '1'}]);
         createPdfStub = sandbox.stub();
+        auditStub = sandbox.spy()
 
         reqMock = {
             body: {
                 printOption: ['summary', 'custodyOffences']
             },
-            query: {prisonNo: '12345678', fields: ['summary', 'custodyOffences']}
+            query: {prisonNo: '12345678', fields: ['summary', 'custodyOffences']},
+            user: {email: 'x@y.com'}
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy(), writeHead: sandbox.spy()};
     });
@@ -147,12 +153,24 @@ describe('printController', () => {
             expect(resMock.redirect).to.have.been.calledWith(expectedUrl);
         });
 
+        it('should audit the search', () => {
+            getController().postPrintForm(reqMock, resMock);
+            expect(auditStub).to.have.callCount(1);
+        });
+
+        it('should pass the appropriate data to audit', () => {
+            getController().postPrintForm(reqMock, resMock);
+            expect(auditStub).to.be.calledWith('PRINT', 'x@y.com', {prisonNo: '12345678',
+                fieldsPrinted: ['summary', 'custodyOffences']});
+        });
+
         it('should remove any unexpected inputs', () => {
             reqMock = {
                 body: {
                     printOption: ['summary', 'custodyOffences', 'matt']
                 },
-                query: {prisonNo: '12345678'}
+                query: {prisonNo: '12345678'},
+                user: {email: 'x@y.com'},
             };
 
             const expectedUrl = '/print/pdf?prisonNo=12345678&fields=summary&fields=custodyOffences';
@@ -165,7 +183,8 @@ describe('printController', () => {
         it('should return to print form if no items are selected', () => {
             reqMock = {
                 body: {printOption: []},
-                query: {prisonNo: '12345678'}
+                query: {prisonNo: '12345678'},
+                user: {email: 'x@y.com'},
             };
 
             getController().postPrintForm(reqMock, resMock);

@@ -7,6 +7,7 @@ const {
 } = require('./helpers/formHelpers');
 const subjectData = require('../data/subject');
 const pdf = require('./helpers/pdfHelpers');
+const audit = require('../data/audit');
 
 const availablePrintOptions = {
     summary: {
@@ -81,8 +82,11 @@ function renderWithoutName(res, renderData) {
 
 exports.postPrintForm = (req, res) => {
     logger.debug('POST /print');
+
     const userReturnedOptions = req.body.printOption;
     const prisonNo = req.query.prisonNo;
+
+    audit.record('PRINT', req.user.email, {prisonNo, fieldsPrinted: userReturnedOptions});
 
     if (!userReturnedOptions || userReturnedOptions.length === 0) {
         logger.warn('No print items selected');

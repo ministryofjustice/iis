@@ -269,9 +269,9 @@ exports.getAdjudications = function(prisonNumber) {
     });
 };
 
-exports.getCourtHearings = function(obj) {
+exports.getCourtHearings = function(prisonNumber) {
     const params = [
-        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
     ];
 
     let sql = `SELECT DISTINCT
@@ -308,9 +308,9 @@ exports.getCourtHearings = function(obj) {
     });
 };
 
-exports.getSentenceHistory = function(obj) {
+exports.getSentenceHistory = function(prisonNumber) {
     const params = [
-        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
     ];
 
     let sql = ` SELECT *

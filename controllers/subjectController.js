@@ -8,21 +8,25 @@ const {
     getOffences,
     getHDCInfo,
     getHDCRecall,
-    getAdjudications
+    getAdjudications,
+    getCourtHearings,
+    getSentenceHistory
 } = require('../data/subject');
 const content = require('../data/content');
 const audit = require('../data/audit');
 const dataRequestFunction = {
-    movements: getMovements,
-    aliases: getAliases,
-    addresses: getAddresses,
-    offences: getOffences,
-    hdcinfo: getHDCInfo,
-    hdcrecall: getHDCRecall,
-    offencesincustody: getAdjudications
+    movements: [getMovements],
+    aliases: [getAliases],
+    addresses: [getAddresses],
+    offences: [getOffences],
+    hdcinfo: [getHDCInfo],
+    hdcrecall: [getHDCRecall],
+    offencesincustody: [getAdjudications],
+    summary: [getCourtHearings, getSentenceHistory]
 };
 
 exports.getSubject = function(req, res) {
+
     const {page, id} = req.params;
     const prisonNumber = utils.padPrisonNumber(id);
     saveVisited(req.session, id);
@@ -37,14 +41,11 @@ exports.getSubject = function(req, res) {
         lastPageNum: req.session.lastPage || 1
     };
 
-    getSubject(prisonNumber).then((subjectData) => {
+    return getSubject(prisonNumber).then((subjectData) => {
 
         pageObject.subjectData = subjectData;
-        if(page === 'summary') {
-            return renderPage(pageObject);
-        }
 
-        getPageSpecificDataAndRender(pageObject);
+        return getPageSpecificDataAndRender(pageObject);
 
     }).catch((error) => {
         logger.error('Error during get subject request: ', error.message);
@@ -57,16 +58,23 @@ function getPageSpecificDataAndRender(pageObject) {
     const {res, page, subjectData} = pageObject;
     const {prisonNumber, personIdentifier} = subjectData;
 
-    dataRequestFunction[page]({prisonNumber, personIdentifier})
-        .then((pageSpecificData) => {
+    let dataFunctions = dataRequestFunction[page];
+    let args = ({prisonNumber, personIdentifier});
 
-            pageObject.pageData = pageSpecificData;
+    return Promise.all(dataFunctions.map(f => f(args)))
+        .then(pageSpecificData => {
+
+            if (pageSpecificData.length === 1) {
+                pageObject.pageData = pageSpecificData[0];
+            } else {
+                pageObject.pageData = pageSpecificData;
+            }
             return renderPage(pageObject);
 
         }).catch((error) => {
 
-            logger.error('Error during get details request: ', error.message);
-            renderErrorPage(res, error);
+        logger.error('Error during get details request: ', error.message);
+        renderErrorPage(res, error);
     });
 }
 

@@ -76,7 +76,7 @@ exports.getSubject = function(prisonNumber) {
     logger.debug('Subject info search', sql);
 
     return new Promise((resolve, reject) => {
-        db.getTuple(sql, params, resolveWithFormattedRow(resolve, 'summary'), reject);
+        db.getTuple(sql, params, resolveWithFormattedRow(resolve, 'subject'), reject);
     });
 };
 
@@ -269,16 +269,85 @@ exports.getAdjudications = function(obj) {
     });
 };
 
+exports.getCourtHearings = function(obj) {
+    const params = [
+        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+    ];
+
+    let sql = `SELECT DISTINCT
+                    HEARING_DATE,
+                    (
+                        SELECT 
+                            CODE_DESCRIPTION
+                        FROM 
+                            IIS.IIS_CODE
+                        WHERE 
+                            PK_CODE_TYPE=42
+                        AND 
+                            PK_CODE_REF_NUM=IIS_COURT_CODE
+                    ) COURT_NAME                    
+                FROM 
+                    IIS.COURT_HEARING
+                WHERE
+                    FK_CASE IN
+                    (
+                        SELECT 
+                            PKTS_INMATE_CASE
+                        FROM
+                            IIS.INMATE_CASE
+                        WHERE
+                            FK_PRISON_NUMBER = @FK_PRISON_NUMBER
+                    )
+                AND
+                    COURT_TYPE_CODE = 'SC'
+                ORDER BY
+                    HEARING_DATE DESC`;
+
+    return new Promise((resolve, reject) => {
+        db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'courtHearing'), reject);
+    });
+};
+
+exports.getSentenceHistory = function(obj) {
+    const params = [
+        {column: 'FK_PRISON_NUMBER', type: TYPES.VarChar, value: obj.prisonNumber}
+    ];
+
+    let sql = ` SELECT *
+                FROM 
+                    IIS.EFF_SEN_HIST
+                WHERE 
+                    FK_STATE_CHANGE IN
+                    (
+                        SELECT 
+                            PKTS_STATE_CHANGE
+                        FROM
+                            IIS.STATE_CHANGE
+                        WHERE 
+                            FK_PRISON_NUMBER = @FK_PRISON_NUMBER
+                        AND 
+                            (STATE_VALUE = '03' OR STATE_VALUE = '06')
+                    )
+                ORDER BY
+                    SENTENCE_CHANGE_DATE DESC`;
+
+    return new Promise((resolve, reject) => {
+        db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'sentenceHistory'), reject);
+    });
+};
+
 const resolveWithFormattedRow = (resolve, type) => (rows) => {
     const formatType = {
-        summary: formatSummaryRow,
-        movement: formatMovementRows,
-        alias: formatAliasRows,
-        address: formatAddressRows,
-        offences: formatOffenceRows,
-        hdcInfo: formatHdcInfoRows,
-        hdcRecall: formatHdcRecallRows,
-        adjudications: formatAdjudicationRows
+        subject: formatSubjectRow,
+        courtHearing: formatCourtHearingRow,
+        sentenceHistory: formatSentenceHistoryRow,
+        movement: formatMovementRow,
+        alias: formatAliasRow,
+        address: formatAddressRow,
+        offences: formatOffenceRow,
+        hdcInfo: formatHdcInfoRow,
+        hdcRecall: formatHdcRecallRow,
+        adjudications: formatAdjudicationRow
     };
 
     if (Array.isArray(rows)) {
@@ -290,7 +359,7 @@ const resolveWithFormattedRow = (resolve, type) => (rows) => {
     return resolve(formatType[type](rows));
 };
 
-function formatSummaryRow(dbRow) {
+function formatSubjectRow(dbRow) {
     const info = {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
         personIdentifier: dbRow.FK_PERSON_IDENTIFIER.value,
@@ -315,7 +384,7 @@ function formatSummaryRow(dbRow) {
     return info;
 }
 
-function formatMovementRows(dbRow) {
+function formatMovementRow(dbRow) {
     return {
         establishment: dbRow.ESTAB_COMP_OF_MOVE.value ? Case.title(dbRow.ESTAB_COMP_OF_MOVE.value) :
             'Establishment unknown',
@@ -331,10 +400,10 @@ function formatMovementCode(dbRow) {
         describeCode('MOVEMENT_RETURN', dbRow.MOVEMENT_CODE.value.trim())
         : describeCode('MOVEMENT_DISCHARGE', dbRow.MOVEMENT_CODE.value.trim());
 
-    return utils.acronymsToUpperCase(Case.sentence(status));
+    return sentenceCaseWithAcronyms(status);
 }
 
-function formatAliasRows(dbRow) {
+function formatAliasRow(dbRow) {
     return {
         surname: dbRow.PERSON_SURNAME.value ? Case.title(dbRow.PERSON_SURNAME.value) : '',
         forename: dbRow.PERSON_FORENAME_1.value ? Case.title(dbRow.PERSON_FORENAME_1.value) : '',
@@ -343,7 +412,7 @@ function formatAliasRows(dbRow) {
     };
 }
 
-function formatAddressRows(dbRow) {
+function formatAddressRow(dbRow) {
     return {
         addressLine1: dbRow.INMATE_ADDRESS_1.value ? Case.title(dbRow.INMATE_ADDRESS_1.value.trim()) : '',
         addressLine2: dbRow.INMATE_ADDRESS_2.value ? Case.title(dbRow.INMATE_ADDRESS_2.value) : '',
@@ -354,7 +423,7 @@ function formatAddressRows(dbRow) {
     };
 }
 
-function formatOffenceRows(dbRow) {
+function formatOffenceRow(dbRow) {
     return {
         offenceCode: dbRow.IIS_OFFENCE_CODE.value ? dbRow.IIS_OFFENCE_CODE.value : 'Unknown offence code',
         caseDate: dbRow.CASE_DATE.value ? utils.getFormattedDateFromString(dbRow.CASE_DATE.value) : 'Unknown case date',
@@ -365,11 +434,11 @@ function formatOffenceRows(dbRow) {
     };
 }
 
-function formatHdcInfoRows(dbRow) {
+function formatHdcInfoRow(dbRow) {
     return {
         date: dbRow.STAGE_DATE.value ? utils.getFormattedDateFromString(dbRow.STAGE_DATE.value.trim()) : 'Date unknown',
-        stage: dbRow.STAGE.value ? sentenceCaseWithAcronyms('HDC_STAGE', dbRow.STAGE.value) : 'Stage unknown',
-        status: dbRow.HDC_STATUS.value ? sentenceCaseWithAcronyms('HDC_STATUS', dbRow.HDC_STATUS.value) :
+        stage: dbRow.STAGE.value ? sentenceCaseWithAcronymsForCode('HDC_STAGE', dbRow.STAGE.value) : 'Stage unknown',
+        status: dbRow.HDC_STATUS.value ? sentenceCaseWithAcronymsForCode('HDC_STATUS', dbRow.HDC_STATUS.value) :
             'Status unknown',
         reason: dbRow.HDC_REASON.value ? formatHdcReasonCodes(dbRow.HDC_REASON.value) : ''
     };
@@ -381,17 +450,21 @@ function formatHdcReasonCodes(reasonCodes) {
 
     return reasonCodesJson
         .map((reasonCode) => {
-            return sentenceCaseWithAcronyms('HDC_REASON', reasonCode.code);
+            return sentenceCaseWithAcronymsForCode('HDC_REASON', reasonCode.code);
         }).filter((reasonDescription, index, inputArray) => {
             return inputArray.indexOf(reasonDescription) === index;
         }).join(', ');
 }
 
-function sentenceCaseWithAcronyms(codeset, code) {
+function sentenceCaseWithAcronymsForCode(codeset, code) {
     return utils.acronymsToUpperCase(Case.sentence(describeCode(codeset, code)));
 }
 
-function formatHdcRecallRows(dbRow) {
+function sentenceCaseWithAcronyms(text) {
+    return utils.acronymsToUpperCase(Case.sentence(text));
+}
+
+function formatHdcRecallRow(dbRow) {
     return {
         date: utils.getFormattedDateFromString(dbRow.RECALL_DATE_CREATED.value),
         outcome: dbRow.RECALL_OUTCOME.value,
@@ -399,13 +472,13 @@ function formatHdcRecallRows(dbRow) {
     };
 }
 
-function formatAdjudicationRows(dbRow) {
+function formatAdjudicationRow(dbRow) {
     return {
         establishment: dbRow.ESTABLISHMENT.value ?
             Case.title(dbRow.ESTABLISHMENT.value) : 'Establishment unknown',
 
-        charge: dbRow.ADJ_CHARGE.value ? utils.acronymsToUpperCase(
-            Case.sentence(describeCode('ADJUDICATION_CHARGE', dbRow.ADJ_CHARGE.value))) : 'Unknown',
+        charge: dbRow.ADJ_CHARGE.value ?
+            sentenceCaseWithAcronymsForCode('ADJUDICATION_CHARGE', dbRow.ADJ_CHARGE.value) : 'Unknown',
 
         outcome: dbRow.OUTCOME_OF_HEARING.value ?
             Case.sentence(describeCode('ADJUDICATION_OUTCOME', dbRow.OUTCOME_OF_HEARING.value)) : 'Unknown',
@@ -413,3 +486,42 @@ function formatAdjudicationRows(dbRow) {
         date: utils.getFormattedDateFromString(dbRow.DATE_OF_FINDING.value)
     };
 }
+
+function formatCourtHearingRow(dbRow) {
+    return {
+        date: utils.getFormattedDateFromString(dbRow.HEARING_DATE.value),
+        court: dbRow.COURT_NAME.value ? Case.title(dbRow.COURT_NAME.value) : ''
+    };
+}
+
+function formatSentenceHistoryRow(dbRow) {
+    return {
+        changeDate: utils.getFormattedDateFromString(dbRow.SENTENCE_CHANGE_DATE.value),
+        reasonCode: dbRow.REASON_SENT_DET_CHANGE.value ? sentenceCaseWithAcronyms(dbRow.REASON_SENT_DET_CHANGE.value) : '',
+        keyDates: getKeyDates(dbRow),
+        length: dbRow.EFFECTIVE_SENTENCE_LENGTH.value ? dbRow.EFFECTIVE_SENTENCE_LENGTH.value : ''
+    };
+}
+
+function getKeyDates(dbRow) {
+
+    let keyDates = {};
+
+    addNonEmptyDate(keyDates, 'SED', dbRow.SENTENCE_EXPIRY_DATE);
+    addNonEmptyDate(keyDates, 'PED', dbRow.PED);
+    addNonEmptyDate(keyDates, 'NPD', dbRow.NPD);
+    addNonEmptyDate(keyDates, 'LED', dbRow.LED);
+    addNonEmptyDate(keyDates, 'CRD', dbRow.CRD);
+    addNonEmptyDate(keyDates, 'HDCAD', dbRow.HDCAD);
+    addNonEmptyDate(keyDates, 'HDCED', dbRow.HDCED);
+
+    return keyDates;
+}
+
+function addNonEmptyDate(keyDates, label, col) {
+    if(col.value && col.value !== '18991231') {
+        keyDates[label] = utils.getFormattedDateFromString(col.value);
+    }
+}
+
+

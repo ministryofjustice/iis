@@ -36,7 +36,6 @@ describe('subjectController', () => {
         });
         movementsStub = sandbox.stub().returns(null);
         aliasesStub = sandbox.stub().returnsPromise().resolves({dob: '1'});
-        ;
         addressesStub = sandbox.stub().returns(null);
         offencesStub = sandbox.stub().returnsPromise().resolves({dob: '1'});
         hdcinfoStub = sandbox.stub().returnsPromise().resolves();
@@ -118,47 +117,50 @@ describe('subjectController', () => {
         });
 
         it('should render the appropriate subject page', () => {
-            getSubject()(reqMock, resMock);
-            expect(resMock.render).to.have.callCount(1);
-            expect(resMock.render).to.be.calledWith('subject/aliases');
+            getSubject()(reqMock, resMock).then(() => {
+                expect(resMock.render).to.have.callCount(1);
+                expect(resMock.render).to.be.calledWith('subject/aliases');
+            })
         });
 
         it('should render the appropriate subject page if not summary', () => {
             reqMock.params.page = 'offences';
-            getSubject()(reqMock, resMock);
-            expect(resMock.render).to.have.callCount(1);
-            expect(resMock.render).to.be.calledWith('subject/offences');
+            getSubject()(reqMock, resMock).then(() => {
+                expect(resMock.render).to.have.callCount(1);
+                expect(resMock.render).to.be.calledWith('subject/offences');
+            });
         });
 
         it('should send appropriate data to page', () => {
             reqMock.params.page = 'offences';
-            getSubject()(reqMock, resMock);
-            expect(resMock.render).to.be.calledWith('subject/offences', {
-                content: {
-                    'addresses': 'Subject has no addresses',
-                    'aliases': 'Subject has no aliases',
-                    'hdcinfo': 'Subject has no HDC history',
-                    'hdcrecall': 'Subject has no HDC recall history',
-                    'movements': 'Subject has no movements',
-                    'offences': 'Subject has no offences',
-                    'offencesincustody': 'Subject has no offences in custody',
-                    'title': 'Subject details'
-                },
-                data: {
-                    details: {dob: "1"},
-                    noResultsText: "Subject has no offences",
-                    subject: {dob: "1", personIdentifier: "1", prisonNumber: "     id1"}
-                },
-                lastPageNum: 1,
-                nav: {
-                    addresses: {title: 'Addresses'},
-                    aliases: {title: 'Aliases'},
-                    hdcinfo: {title: 'HDC history'},
-                    movements: {title: 'Movements'},
-                    offences: {active: true, title: 'Offences'},
-                    offencesincustody: {title: "Offences in custody"},
-                    summary: {title: 'Summary'}
-                }
+            getSubject()(reqMock, resMock).then(() => {
+                expect(resMock.render).to.be.calledWith('subject/offences', {
+                    content: {
+                        'addresses': 'Subject has no addresses',
+                        'aliases': 'Subject has no aliases',
+                        'hdcinfo': 'Subject has no HDC history',
+                        'hdcrecall': 'Subject has no HDC recall history',
+                        'movements': 'Subject has no movements',
+                        'offences': 'Subject has no offences',
+                        'offencesincustody': 'Subject has no offences in custody',
+                        'title': 'Subject details'
+                    },
+                    data: {
+                        details: {dob: "1"},
+                        noResultsText: "Subject has no offences",
+                        subject: {dob: "1", personIdentifier: "1", prisonNumber: "     id1"}
+                    },
+                    lastPageNum: 1,
+                    nav: {
+                        addresses: {title: 'Addresses'},
+                        aliases: {title: 'Aliases'},
+                        hdcinfo: {title: 'HDC history'},
+                        movements: {title: 'Movements'},
+                        offences: {active: true, title: 'Offences'},
+                        offencesincustody: {title: "Offences in custody"},
+                        summary: {title: 'Summary'}
+                    }
+                });
             });
         });
 

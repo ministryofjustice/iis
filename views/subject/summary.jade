@@ -2,4 +2,59 @@ extends ../subject
 
 block subject-details
     div.column-two-thirds
+        if (data.details[0] && data.details[0].length !== 0)
+            each val,index in data.details[0]
+                div.grid-row.list-row
+                    div.column-full
+                        div.left-border
+                            span.quiet Court hearing
+                            div #{val.date}
+                            div #{val.court}
+        else
+            div
+                span Subject has no court hearings
 
+        p
+
+        if (data.details[1] && data.details[1].length !== 0)
+            - var first = data.details[1][0]
+            div.grid-row.list-row
+                div.column-full
+                    div.left-border
+                        span.quiet Effective sentence
+                        div #{first.changeDate}
+                        div #{first.length} days
+                        div #{first.reasonCode}
+                        if first.keyDates
+                            span
+                            ul.prisoner-key-dates
+                                each date, label in first.keyDates
+                                    if date
+                                        li
+                                            span.quiet #{label}
+                                            |  #{date}
+            if (data.details[1] && data.details[1].length >1)
+                a.font-small#reveal more
+                div.panel.panel-border-none(style='padding-left:0').reveal#historyContainer
+                    each val,index in data.details[1]
+                        if index !== 0
+                            div.grid-row.list-row
+                                div.column-full
+                                    div.left-border
+                                        span.quiet Previous effective sentence
+                                        div #{val.changeDate}
+                                        div #{val.length} days
+                                        div #{first.reasonCode}
+                                        if val.keyDates
+                                            ul.prisoner-key-dates
+                                                each date, label in val.keyDates
+                                                    if date
+                                                        li
+                                                            span.quiet #{label}
+                                                            |  #{date}
+        else
+            div
+                span Subject has no sentence history
+
+block append scripts
+    script(src="/public/javascripts/revealBundle.js?#{version}")

@@ -2,7 +2,8 @@ const {
     getIndex,
     postIndex,
     getSearchForm,
-    postPagination
+    postPagination,
+    postFilters
 } = require('../../controllers/searchController');
 const chai = require('chai');
 const sinon = require('sinon');
@@ -333,7 +334,8 @@ describe('searchController', () => {
                         'showNext': true
                     },
                     data: {forename: 'Matt'},
-                    err: null
+                    err: null,
+                    filtersForView: {}
                 };
 
                 expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
@@ -366,7 +368,8 @@ describe('searchController', () => {
                         {forename: 'Alistair', prisonNumber: '2', visited: false},
                         {forename: 'Zed', prisonNumber: '3', visited: true}
                     ],
-                    err: null
+                    err: null,
+                    filtersForView: {}
                 };
 
                 expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
@@ -404,6 +407,115 @@ describe('searchController', () => {
                     expect(resMock.render).to.have.been.calledWith('search');
                 });
             });
+
+            context('When filters are in the query', () => {
+
+                it('should make sure no filters in userinput if none in query string', () => {
+                    reqMock.session.userInput.gender = ['F'];
+
+                    const expectedUserInput = {
+                        forename: 'Matthew',
+                        forename2: 'James',
+                        surname: 'Whitfield',
+                        prisonNumber: '666',
+                        page: 1,
+                    };
+
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+                    expect(reqMock.session.userInput).to.eql(expectedUserInput);
+                });
+
+                it('should add the filters to the user input in an array', () => {
+                    reqMock.query.filters = 'Female';
+
+                    const expectedUserInput = {
+                        forename: 'Matthew',
+                        forename2: 'James',
+                        surname: 'Whitfield',
+                        prisonNumber: '666',
+                        page: 1,
+                        gender: ['F']
+                    };
+
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+                    expect(reqMock.session.userInput).to.eql(expectedUserInput);
+                });
+
+                it('should be able to handle multiple genders', () => {
+                    reqMock.query.filters = ['Female', 'Male'];
+
+                    const expectedUserInput = {
+                        forename: 'Matthew',
+                        forename2: 'James',
+                        surname: 'Whitfield',
+                        prisonNumber: '666',
+                        page: 1,
+                        gender: ['F', 'M']
+                    };
+
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+                    expect(reqMock.session.userInput).to.eql(expectedUserInput);
+                });
+
+
+                it('should replace the filters to the user input', () => {
+                    reqMock.query.filters = 'Male';
+                    reqMock.session.userInput.gender = ['F'];
+
+                    const expectedUserInput = {
+                        forename: 'Matthew',
+                        forename2: 'James',
+                        surname: 'Whitfield',
+                        prisonNumber: '666',
+                        page: 1,
+                        gender: ['M']
+                    };
+
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+                    expect(reqMock.session.userInput).to.eql(expectedUserInput);
+                });
+
+                it('should remove any that are not in query', () => {
+                    reqMock.query.filters = 'Female';
+                    reqMock.session.userInput.gender = ['F', 'M'];
+
+                    const expectedUserInput = {
+                        forename: 'Matthew',
+                        forename2: 'James',
+                        surname: 'Whitfield',
+                        prisonNumber: '666',
+                        page: 1,
+                        gender: ['F']
+                    };
+
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+                    expect(reqMock.session.userInput).to.eql(expectedUserInput);
+                });
+
+                it('should send appropriate data to view', () => {
+                    reqMock.query.filters = 'Female';
+                    getResultsProxy()(reqMock, resMock);
+
+                    const expectedPayload = {
+                        content: {
+                            title: 'Your search returned 20 results'
+                        },
+                        view: 'not sure what this is for',
+                        pagination: {
+                            'totalPages': 2,
+                            'currPage': 1,
+                            'showPrev': false,
+                            'showNext': true
+                        },
+                        data: {forename: 'Matt'},
+                        err: null,
+                        filtersForView: {Female: true}
+                    };
+
+                    expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
+
+                });
+            });
         });
 
         describe('postPagination', () => {
@@ -417,6 +529,48 @@ describe('searchController', () => {
                 expect(resMock.redirect).to.have.callCount(1);
                 expect(resMock.redirect).to.have.been.calledWith('/search/results?page=8');
 
+            });
+        });
+
+        describe('postFilters', () => {
+            it('should redirect to search page appending the filter', () => {
+                reqMock = {
+                    body: {
+                        pageNumber: '8',
+                        filter: 'Male'
+                    },
+                    get: (item) => 'http://something.com/search/results'
+                };
+                postFilters(reqMock, resMock);
+                expect(resMock.redirect).to.have.callCount(1);
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?filters=Male');
+
+            });
+
+            it('should remove the filter if it was already on referrer', () => {
+                reqMock = {
+                    body: {
+                        pageNumber: '8',
+                        filter: 'Male'
+                    },
+                    get: (item) => 'http://something.com/search/results?filters=Male'
+                };
+                postFilters(reqMock, resMock);
+                expect(resMock.redirect).to.have.callCount(1);
+                expect(resMock.redirect).to.have.been.calledWith('/search/results');
+            });
+
+            it('should be able to add more than one filter', () => {
+                reqMock = {
+                    body: {
+                        pageNumber: '8',
+                        filter: 'Female'
+                    },
+                    get: (item) => 'http://something.com/search/results?filters=Male'
+                };
+                postFilters(reqMock, resMock);
+                expect(resMock.redirect).to.have.callCount(1);
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?filters=Male&filters=Female');
             });
         });
     });

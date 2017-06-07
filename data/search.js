@@ -8,22 +8,27 @@ const db = require('../server/iisData');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 
 const TYPES = require('tedious').TYPES;
-const SELECT = `PK_PRISON_NUMBER, 
-                INMATE_SURNAME, 
-                INMATE_FORENAME_1, 
-                INMATE_FORENAME_2,
-                INMATE_BIRTH_DATE DOB,
-                DATE_1ST_RECEP`;
-const TABLE = 'IIS.LOSS_OF_LIBERTY l';
+const SELECT = `DISTINCT 
+                SUBSTRING(l.INMATE_FORENAME_1, 1, 1),
+                l.PK_PRISON_NUMBER, 
+                l.DATE_1ST_RECEP,
+                l.INMATE_SURNAME,
+                l.INMATE_FORENAME_1,
+                l.INMATE_FORENAME_2,
+                l.INMATE_BIRTH_DATE DOB,
+                k.PERSON_FORENAME_1,
+                k.PERSON_FORENAME_2, 
+                k.PERSON_SURNAME,
+                k.PERSON_BIRTH_DATE`;
 const ORDER_BY = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC';
 
 const getSearchOperatorSql = {
     prisonNumber: getPrisonNumberSqlWithParams,
     pncNumber: getPncNumberSqlWithParams,
     croNumber: getCroNumberSqlWithParams,
-    forename: getStringSqlWithParams('INMATE_FORENAME_1', {wildcardEnabled: true}),
-    forename2: getStringSqlWithParams('INMATE_FORENAME_2', {wildcardEnabled: true}),
-    surname: getStringSqlWithParams('INMATE_SURNAME', {wildcardEnabled: true}),
+    forename: getStringSqlWithParams('PERSON_FORENAME_1', {wildcardEnabled: true}),
+    forename2: getStringSqlWithParams('PERSON_FORENAME_2', {wildcardEnabled: true}),
+    surname: getStringSqlWithParams('PERSON_SURNAME', {wildcardEnabled: true}),
     dobDay: getDobSqlWithParams,
     age: getAgeSqlWithParams
 };
@@ -32,7 +37,7 @@ exports.inmate = function(userInput) {
     return new Promise((resolve, reject) => {
         const obj = getParamsForUserInput(userInput);
         const resultLimits = getPaginationLimits(userInput.page);
-        const sql = prepareSqlStatement(SELECT, TABLE, obj.where, ORDER_BY, resultLimits);
+        const sql = prepareSqlStatement(SELECT, obj.where, ORDER_BY, resultLimits);
 
         db.getCollection(sql, obj.params, resolveWithFormattedData(resolve), reject);
     });
@@ -43,7 +48,7 @@ const resolveWithFormattedData = (resolve) => (dbRows) => resolve(dbRows.map(for
 exports.totalRowsForUserInput = function(userInput) {
     return new Promise((resolve, reject) => {
         let obj = getParamsForUserInput(userInput);
-        let sql = prepareSqlStatement('COUNT(*) AS totalRows', 'IIS.LOSS_OF_LIBERTY', obj.where);
+        let sql = prepareSqlStatement('COUNT(*) AS totalRows', obj.where);
 
         db.getTuple(sql, obj.params, resolve, reject);
     });
@@ -107,7 +112,7 @@ function getDobSqlWithParams(obj) {
         utils.pad(obj.userInput.dobMonth) +
         utils.pad(obj.userInput.dobDay);
 
-    return getStringSqlWithParams('INMATE_BIRTH_DATE', false)(obj);
+    return getStringSqlWithParams('PERSON_BIRTH_DATE', false)(obj);
 }
 
 function getAgeSqlWithParams(obj) {
@@ -117,7 +122,7 @@ function getAgeSqlWithParams(obj) {
 
     let dateRange = utils.getDateRange(obj.userInput.age);
 
-    let sql = '(INMATE_BIRTH_DATE >= @from_date AND INMATE_BIRTH_DATE <= @to_date)';
+    let sql = '(PERSON_BIRTH_DATE >= @from_date AND PERSON_BIRTH_DATE <= @to_date)';
     return {
         sql: sql,
         params: [
@@ -158,10 +163,10 @@ function getParamsForUserInput(userInput) {
     }, {where: '', params: []});
 }
 
-function prepareSqlStatement(fields, from, where, orderBy, limit ) {
+function prepareSqlStatement(fields, where, orderBy, limit) {
     let sql = 'SELECT';
     sql += ' ' + fields;
-    sql += ' FROM ' + from;
+    sql += ' FROM IIS.KNOWN_AS k INNER JOIN IIS.LOSS_OF_LIBERTY l ON l.FK_PERSON_IDENTIFIER = K.FK_PERSON_IDENTIFIER';
     sql += where ? ' WHERE ' + where : '';
     sql += orderBy ? ' ORDER BY ' + orderBy : '';
     sql += limit ? ' OFFSET ' + limit.start + ' ROWS FETCH NEXT ' + limit.resultsPerPage + ' ROWS ONLY' : '';
@@ -170,25 +175,35 @@ function prepareSqlStatement(fields, from, where, orderBy, limit ) {
 }
 
 function formatRow(dbRow) {
-
-    let sentencingCourt = null;
-    let sentencingDate = null;
-
-    if(dbRow.SENTENCING_COURT.value) {
-        let sentencing = JSON.parse(dbRow.SENTENCING_COURT.value);
-        sentencingCourt = sentencing.court;
-        sentencingDate = moment(sentencing.date, 'YYYYMMDD').format('MMM YYYY');
-    }
-
     return {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
         surname: dbRow.INMATE_SURNAME.value ? Case.upper(dbRow.INMATE_SURNAME.value) : '',
-        forename: dbRow.INMATE_FORENAME_1.value ? Case.title(dbRow.INMATE_FORENAME_1.value) : '',
+        forename: dbRow.INMATE_FORENAME_1.value ? Case.capital(dbRow.INMATE_FORENAME_1.value) : '',
         forename2: dbRow.INMATE_FORENAME_2.value ? Case.capital(dbRow.INMATE_FORENAME_2.value) : '',
         dob: utils.getFormattedDateFromString(dbRow.DOB.value),
-        alias: dbRow.ALIAS.value,
-        sentencingCourt: sentencingCourt,
-        sentencingDate: sentencingDate,
-        firstReceptionDate: utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value)
+        firstReceptionDate: utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value),
+        alias: aliasFrom(dbRow)
     };
+}
+
+function aliasFrom(dbRow) {
+    let realFirst = dbRow.INMATE_FORENAME_1.value;
+    let realMiddle = dbRow.PERSON_FORENAME_2.value;
+    let realLast = dbRow.INMATE_SURNAME.value;
+    let realDob = dbRow.DOB.value;
+
+    let aliasFirst = dbRow.PERSON_FORENAME_1.value;
+    let aliasMiddle = dbRow.PERSON_FORENAME_2.value;
+    let aliasLast = dbRow.PERSON_SURNAME.value;
+    let aliasDob = dbRow.PERSON_BIRTH_DATE.value;
+
+    if (aliasFirst !== realFirst
+        | aliasMiddle !== realMiddle
+        | aliasLast !== realLast
+        | aliasDob !== realDob) {
+        let alias = [Case.capital(aliasFirst), Case.capital(aliasMiddle), Case.upper(aliasLast)].join(' ').trim();
+        return [alias, utils.getFormattedDateFromString(aliasDob)].join(', ');
+    }
+
+    return '';
 }

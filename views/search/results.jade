@@ -1,5 +1,5 @@
 extends ../layout
-mixin inmate(name, prisonNumber, dob, firstReceptionDate, visited)
+mixin inmate(name, prisonNumber, dob, firstReceptionDate, alias, visited)
     div.inmateDetails(class=visited ? 'visited' : '')
         a(href="/subject/#{prisonNumber}/summary").capitalise-text
             span.inmateContainer
@@ -10,6 +10,8 @@ mixin inmate(name, prisonNumber, dob, firstReceptionDate, visited)
                     span.prisonNumber.block.text-secondary Prison No. #{prisonNumber}
                 if firstReceptionDate
                     span.firstReceptionDate.block.text-secondary First Reception. #{firstReceptionDate}
+                if alias
+                    span.block.text-secondary Also Known As: #{alias}
         block
 
 
@@ -30,7 +32,7 @@ block content
                        +inmate(item.forename
                                 + (item.forename2)
                                 + item.surname,
-                               item.prisonNumber, item.dob, item.firstReceptionDate, item.visited)
+                               item.prisonNumber, item.dob, item.firstReceptionDate, item.alias, item.visited)
 
 
             if pagination

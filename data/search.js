@@ -19,8 +19,9 @@ const SELECT = `DISTINCT
                 k.PERSON_FORENAME_1,
                 k.PERSON_FORENAME_2, 
                 k.PERSON_SURNAME,
-                k.PERSON_BIRTH_DATE`;
-const ORDER_BY = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC';
+                k.PERSON_BIRTH_DATE
+                `;
+const ORDER_BY = 'PK_PRISON_NUMBER, INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB';
 
 const getSearchOperatorSql = {
     prisonNumber: getPrisonNumberSqlWithParams,
@@ -198,25 +199,28 @@ function prepareSqlStatement(fields, where, orderBy, limit) {
     sql += where ? ' WHERE ' + where : '';
     sql += orderBy ? ' ORDER BY ' + orderBy : '';
     sql += limit ? ' OFFSET ' + limit.start + ' ROWS FETCH NEXT ' + limit.resultsPerPage + ' ROWS ONLY' : '';
-
     return sql;
 }
 
 function formatRow(dbRow) {
     return {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
-        surname: dbRow.INMATE_SURNAME.value ? Case.upper(dbRow.INMATE_SURNAME.value) : '',
-        forename: dbRow.INMATE_FORENAME_1.value ? Case.capital(dbRow.INMATE_FORENAME_1.value) : '',
-        forename2: dbRow.INMATE_FORENAME_2.value ? Case.capital(dbRow.INMATE_FORENAME_2.value) : '',
-        dob: utils.getFormattedDateFromString(dbRow.DOB.value),
+        surname: dbRow.PERSON_SURNAME.value ? Case.upper(dbRow.PERSON_SURNAME.value) : '',
+        forename: dbRow.PERSON_FORENAME_1.value ? Case.capital(dbRow.PERSON_FORENAME_1.value) : '',
+        forename2: dbRow.PERSON_FORENAME_2.value ? Case.capital(dbRow.PERSON_FORENAME_2.value) : '',
+        dob: utils.getFormattedDateFromString(dbRow.PERSON_BIRTH_DATE.value),
+        // surname: dbRow.INMATE_SURNAME.value ? Case.upper(dbRow.INMATE_SURNAME.value) : '',
+        // forename: dbRow.INMATE_FORENAME_1.value ? Case.capital(dbRow.INMATE_FORENAME_1.value) : '',
+        // forename2: dbRow.INMATE_FORENAME_2.value ? Case.capital(dbRow.INMATE_FORENAME_2.value) : '',
+        // dob: utils.getFormattedDateFromString(dbRow.DOB.value),
         firstReceptionDate: utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value),
-        alias: aliasFrom(dbRow)
+        realName: realNameOf(dbRow)
     };
 }
 
-function aliasFrom(dbRow) {
+function realNameOf(dbRow) {
     let realFirst = dbRow.INMATE_FORENAME_1.value;
-    let realMiddle = dbRow.PERSON_FORENAME_2.value;
+    let realMiddle = dbRow.INMATE_FORENAME_2.value;
     let realLast = dbRow.INMATE_SURNAME.value;
     let realDob = dbRow.DOB.value;
 
@@ -229,8 +233,14 @@ function aliasFrom(dbRow) {
         | aliasMiddle !== realMiddle
         | aliasLast !== realLast
         | aliasDob !== realDob) {
-        let alias = [Case.capital(aliasFirst), Case.capital(aliasMiddle), Case.upper(aliasLast)].join(' ').trim();
-        return [alias, utils.getFormattedDateFromString(aliasDob)].join(', ');
+
+        let realName = [realFirst, realMiddle, realLast].filter(name => {
+            return name.trim() !== '';
+        }).map(name => {
+            return Case.capital(name.trim());
+        }).join(' ');
+
+        return [realName, utils.getFormattedDateFromString(realDob)].join(', ');
     }
 
     return '';

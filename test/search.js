@@ -186,6 +186,34 @@ describe('Search', () => {
                 expect(params[1].value).to.eql('Dave');
             });
         });
+
+        it('should populate gender if passed in', () => {
+            const result = inmateProxy()({gender: ['M']});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('WHERE (INMATE_SEX = @gender0)');
+                expect(params[0].column).to.eql('gender0');
+                expect(params[0].value).to.eql('M');
+            });
+        });
+
+        it('should be able to populate multiple genders', () => {
+            const result = inmateProxy()({gender: ['M', 'F']});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('WHERE (INMATE_SEX = @gender0 OR INMATE_SEX = @gender1)');
+                expect(params[0].column).to.eql('gender0');
+                expect(params[0].value).to.eql('M');
+                expect(params[1].column).to.eql('gender1');
+                expect(params[1].value).to.eql('F');
+            });
+        });
     });
 
     it('should order the data by surname, first initial, then date of first reception.', () => {

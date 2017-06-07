@@ -109,6 +109,60 @@ div#print-header,
     cursor: pointer;
 }
 
+#filters fieldset {
+    width: inherit;
+    padding: 15px 15px 10px 15px;
+}
+
+input.filtering-option  {
+    color: $text-colour;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 10px;
+    margin-right: 5px;
+    background-color: $grey-4
+}
+
+.filtering-option {
+    padding: 4px 8px;
+    border: 1px solid $border-colour;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    cursor: pointer;
+}
+
+input.filtering-option:hover {
+    border-color: $secondary-text-colour;
+}
+
+input.filtering-option-active {
+    border-color: $govuk-blue;
+    background-color: $govuk-blue;
+}
+
+input.filtering-option-active {
+    color: $page-colour;
+}
+
+input.filtering-option-active:hover {
+    border-color: $link-hover-colour;
+    background-color: $link-hover-colour;
+    color: $page-colour;
+}
+
+legend {
+    background-color: $highlight-colour;
+    padding: 5px 10px 0 10px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+
+    -moz-border-top-left-radius: 4px;
+    -webkit-border-top-right-radius: 4px;
+
+    -moz-border-top-left-radius: 4px;
+    -webkit-border-top-right-radius: 4px;
+}
 
 // Add extra styles here, or re-organise the Sass files in whichever way makes most sense to you
 /*

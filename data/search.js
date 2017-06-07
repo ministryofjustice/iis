@@ -44,7 +44,8 @@ const getSearchOperatorSql = {
     forename2: getStringSqlWithParams('INMATE_FORENAME_2', {wildcardEnabled: true}),
     surname: getStringSqlWithParams('INMATE_SURNAME', {wildcardEnabled: true}),
     dobDay: getDobSqlWithParams,
-    age: getAgeSqlWithParams
+    age: getAgeSqlWithParams,
+    gender: getGenderSqlWithParams
 };
 
 exports.inmate = function(userInput) {
@@ -57,7 +58,7 @@ exports.inmate = function(userInput) {
     });
 };
 
-const resolveWithFormattedData = (resolve) => (dbRows) => resolve(dbRows.map(formatRow));
+const resolveWithFormattedData = resolve => dbRows => resolve(dbRows.map(formatRow));
 
 exports.totalRowsForUserInput = function(userInput) {
     return new Promise((resolve, reject) => {
@@ -105,7 +106,7 @@ function getCroNumberSqlWithParams(obj) {
 
 function getStringSqlWithParams(dbColumn, options) {
     const operator = options && options.wildcardEnabled ? 'LIKE' : '=';
-    return (obj) => {
+    return obj => {
         return {
             sql: `${dbColumn} ${operator} @${dbColumn}`,
             params: [{
@@ -138,12 +139,31 @@ function getAgeSqlWithParams(obj) {
 
     let sql = '(INMATE_BIRTH_DATE >= @from_date AND INMATE_BIRTH_DATE <= @to_date)';
     return {
-        sql: sql,
+        sql,
         params: [
             {column: 'from_date', type: getType('string'), value: dateRange[0]},
             {column: 'to_date', type: getType('string'), value: dateRange[1]}
         ]
     };
+}
+
+function getGenderSqlWithParams(obj) {
+    const genders = obj.userInput.gender;
+    const genderLength = genders.length;
+
+    const g = genders.reduce((obj, gender, index) => {
+        const lastParam = index === genderLength - 1;
+        const newParam = {column: `gender${index}`, type: getType('string'), value: gender};
+        const newSql = index === 0 ? obj.sql : obj.sql.concat(` OR INMATE_SEX = @gender${index}`);
+
+        return {
+            params: [...obj.params, newParam],
+            sql: lastParam ? newSql.concat(')') : newSql
+        };
+
+    }, {params: [], sql: '(INMATE_SEX = @gender0'});
+
+    return g;
 }
 
 function getType(v) {

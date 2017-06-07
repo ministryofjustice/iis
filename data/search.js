@@ -13,26 +13,7 @@ const SELECT = `PK_PRISON_NUMBER,
                 INMATE_FORENAME_1, 
                 INMATE_FORENAME_2,
                 INMATE_BIRTH_DATE DOB,
-                DATE_1ST_RECEP,
-                SUBSTRING(
-                    (SELECT ', ' + k.PERSON_FORENAME_1 + ' ' + PERSON_FORENAME_2 + ' ' + k.PERSON_SURNAME 
-                     FROM IIS.KNOWN_AS k 
-                     WHERE k.FK_PERSON_IDENTIFIER=l.FK_PERSON_IDENTIFIER FOR XML PATH('')),2,200000
-                ) 
-                ALIAS,
-                (SELECT TOP 1 CONCAT('{\"court\":\"',(SELECT TMPU_COURT_NAME 
-                                                      FROM IIS.TMPU_COURT 
-                                                      WHERE PK_TMPU_COURT_CODE = c.IIS_COURT_CODE), 
-                                                      '\", \"date\":\"', HEARING_DATE, '\"}')
-                             
-                    FROM IIS.COURT_HEARING c 
-                    WHERE c.COURT_TYPE_CODE='SC' 
-                    AND c.FK_CASE IN (SELECT PKTS_INMATE_CASE 
-                                      FROM IIS.INMATE_CASE 
-                                      WHERE CASE_STATUS_CODE 
-                                      LIKE 'SENT%' 
-                                      AND FK_PRISON_NUMBER=l.PK_PRISON_NUMBER) 
-                                      ORDER BY HEARING_DATE DESC) SENTENCING_COURT`;
+                DATE_1ST_RECEP`;
 const TABLE = 'IIS.LOSS_OF_LIBERTY l';
 const ORDER_BY = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC';
 

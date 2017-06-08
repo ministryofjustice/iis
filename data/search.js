@@ -50,7 +50,10 @@ const resolveWithFormattedData = resolve => dbRows => resolve(dbRows.map(formatR
 exports.totalRowsForUserInput = function(userInput) {
     return new Promise((resolve, reject) => {
         let obj = getParamsForUserInput(userInput);
-        let sql = prepareSqlStatement('COUNT(*) AS totalRows', obj.where);
+
+        let fields = `DISTINCT k.PERSON_FORENAME_1, k.PERSON_FORENAME_2, k.PERSON_SURNAME, k.PERSON_BIRTH_DATE, l.PK_PRISON_NUMBER, l.DATE_1ST_RECEP, l.INMATE_SURNAME, l.INMATE_FORENAME_1, l.INMATE_FORENAME_2, l.INMATE_BIRTH_DATE`;
+
+        let sql = 'SELECT COUNT(*) AS totalRows FROM (' + prepareSqlStatement(fields, obj.where) + ') AS search';
 
         db.getTuple(sql, obj.params, resolve, reject);
     });

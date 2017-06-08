@@ -109,13 +109,13 @@ const cacheControl = {maxAge: config.staticResourceCacheDuration * 1000};
 ['../public',
     '../govuk_modules/govuk_template/assets',
     '../govuk_modules/govuk_frontend_toolkit'
-].forEach((dir) => {
+].forEach(dir => {
     app.use('/public', express.static(path.join(__dirname, dir), cacheControl));
 });
 
 [
     '../govuk_modules/govuk_frontend_toolkit/images'
-].forEach((dir) => {
+].forEach(dir => {
     app.use('/public/images/icons', express.static(path.join(__dirname, dir), cacheControl));
 });
 

@@ -8,7 +8,7 @@ module.exports = {
 
     addRow: function(sql, params, successCallback, errorCallback) {
         const connection = connect();
-        connection.on('connect', (err) => {
+        connection.on('connect', err => {
             if (err) {
                 errorCallback(err);
             }

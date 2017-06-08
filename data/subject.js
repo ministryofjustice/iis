@@ -336,7 +336,7 @@ exports.getSentenceHistory = function(prisonNumber) {
     });
 };
 
-const resolveWithFormattedRow = (resolve, type) => (rows) => {
+const resolveWithFormattedRow = (resolve, type) => rows => {
     const formatType = {
         subject: formatSubjectRow,
         courtHearing: formatCourtHearingRow,
@@ -405,9 +405,9 @@ function formatMovementCode(dbRow) {
 
 function formatAliasRow(dbRow) {
     return {
-        surname: dbRow.PERSON_SURNAME.value ? Case.title(dbRow.PERSON_SURNAME.value) : '',
-        forename: dbRow.PERSON_FORENAME_1.value ? Case.title(dbRow.PERSON_FORENAME_1.value) : '',
-        forename2: dbRow.PERSON_FORENAME_2.value ? Case.title(dbRow.PERSON_FORENAME_2.value) : '',
+        surname: dbRow.PERSON_SURNAME.value ? Case.title(dbRow.PERSON_SURNAME.value).trim() : '',
+        forename: dbRow.PERSON_FORENAME_1.value ? Case.title(dbRow.PERSON_FORENAME_1.value).trim() : '',
+        forename2: dbRow.PERSON_FORENAME_2.value ? Case.title(dbRow.PERSON_FORENAME_2.value).trim() : '',
         dob: dbRow.PERSON_BIRTH_DATE.value ? utils.getFormattedDateFromString(dbRow.PERSON_BIRTH_DATE.value) : 'Unknown'
     };
 }
@@ -449,7 +449,7 @@ function formatHdcReasonCodes(reasonCodes) {
     let reasonCodesJson = JSON.parse(reasonCodes);
 
     return reasonCodesJson
-        .map((reasonCode) => {
+        .map(reasonCode => {
             return sentenceCaseWithAcronymsForCode('HDC_REASON', reasonCode.code);
         }).filter((reasonDescription, index, inputArray) => {
             return inputArray.indexOf(reasonDescription) === index;
@@ -497,7 +497,8 @@ function formatCourtHearingRow(dbRow) {
 function formatSentenceHistoryRow(dbRow) {
     return {
         changeDate: utils.getFormattedDateFromString(dbRow.SENTENCE_CHANGE_DATE.value),
-        reasonCode: dbRow.REASON_SENT_DET_CHANGE.value ? sentenceCaseWithAcronyms(dbRow.REASON_SENT_DET_CHANGE.value) : '',
+        reasonCode: dbRow.REASON_SENT_DET_CHANGE.value ?
+            sentenceCaseWithAcronyms(dbRow.REASON_SENT_DET_CHANGE.value) : '',
         keyDates: getKeyDates(dbRow),
         length: dbRow.EFFECTIVE_SENTENCE_LENGTH.value ? dbRow.EFFECTIVE_SENTENCE_LENGTH.value : ''
     };

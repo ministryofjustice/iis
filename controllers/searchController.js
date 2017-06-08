@@ -86,6 +86,11 @@ exports.getSearchForm = function(req, res) {
     });
 };
 
+exports.getAliasSearch = function(req, res) {
+    req.body = req.query;
+    exports.postSearchForm(req,res);
+};
+
 exports.postSearchForm = function(req, res) {
 
     const userInput = userInputFromSearchForm(req.body);

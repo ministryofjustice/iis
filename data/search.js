@@ -1,7 +1,6 @@
 'use strict';
 
 const Case = require('case');
-const moment = require('moment');
 
 const utils = require('./utils');
 const db = require('../server/iisData');
@@ -44,7 +43,7 @@ exports.inmate = function(userInput) {
     });
 };
 
-const resolveWithFormattedData = (resolve) => (dbRows) => resolve(dbRows.map(formatRow));
+const resolveWithFormattedData = resolve => dbRows => resolve(dbRows.map(formatRow));
 
 exports.totalRowsForUserInput = function(userInput) {
     return new Promise((resolve, reject) => {
@@ -92,7 +91,7 @@ function getCroNumberSqlWithParams(obj) {
 
 function getStringSqlWithParams(dbColumn, options) {
     const operator = options && options.wildcardEnabled ? 'LIKE' : '=';
-    return (obj) => {
+    return obj => {
         return {
             sql: `${dbColumn} ${operator} @${dbColumn}`,
             params: [{
@@ -207,7 +206,7 @@ function realNameOf(dbRow) {
         | aliasDob !== realDob) {
 
         let realName = [realFirst, realMiddle, realLast].filter(name => {
-            return name.trim() !== '';
+            return name && name.trim() !== '';
         }).map(name => {
             return Case.capital(name.trim());
         }).join(' ');

@@ -6,7 +6,11 @@ block subject-details
                 div(id="aliass#{index}").grid-row.list-row.alias
                     div.column-full
                         div.left-border
-                            div(id="alias#{index}-name") #{val.forename + ' ' + val.forename2 + ' ' + val.surname}
+                            div(id="alias#{index}-name")
+                                - var ages = val.dob.split('/');
+                                a(href="/search/alias?forename=#{val.forename}&forename2=#{val.forename2}&surname=#{val.surname}"+
+                                    "&dobOrAge=dob&dobDay=#{ages[0]}&dobMonth=#{ages[1]}&dobYear=#{ages[2]}")
+                                    | #{val.forename + ' ' + val.forename2 + ' ' + val.surname}
                             if (val.dob)
                                 div(id="alias#{index}-dob") Born on: #{val.dob}
 

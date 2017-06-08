@@ -1,7 +1,6 @@
 'use strict';
 
 const Case = require('case');
-const moment = require('moment');
 
 const utils = require('./utils');
 const db = require('../server/iisData');
@@ -235,7 +234,7 @@ function realNameOf(dbRow) {
         | aliasDob !== realDob) {
 
         let realName = [realFirst, realMiddle, realLast].filter(name => {
-            return name.trim() !== '';
+            return name && name.trim() !== '';
         }).map(name => {
             return Case.capital(name.trim());
         }).join(' ');

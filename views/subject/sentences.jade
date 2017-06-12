@@ -6,7 +6,7 @@ block subject-details
             each val,index in data.details
                 div.grid-row.list-row
                     div.column-full
-                        div.left-border
+                        div(id="sentence#{index}").left-border.sentence
                             span.quiet Effective sentence
                             div #{val.changeDate}
                             div #{val.length} days

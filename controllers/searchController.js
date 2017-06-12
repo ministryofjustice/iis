@@ -191,7 +191,7 @@ exports.postPagination = function(req, res) {
 
 exports.postFilters = function(req, res) {
     const query = url.parse(req.get('referrer'), true).query;
-    const acceptableFilters = ['Male', 'Female'];
+    const acceptableFilters = ['Male', 'Female', 'HDC'];
     const [filterPressed] = acceptableFilters.filter(filter => filter === req.body.filter);
 
     query.filters = addOrRemoveFromQuery(query, 'filters', filterPressed);

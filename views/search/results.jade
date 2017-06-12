@@ -32,6 +32,7 @@ block content
                             input(type="hidden" name="_csrf" value="#{csrfToken}")
                             input#male.filtering-option.font-xsmall(name="filter", type="submit", value="Male" class=filtersForView.Male ? "filtering-option-active" : "")
                             input#female.filtering-option.font-xsmall(name="filter", type="submit", value="Female" class=filtersForView.Female ? "filtering-option-active" : "")
+                            input#hasDdc.filtering-option.font-xsmall(name="filter", type="submit", value="HDC" class=filtersForView.HDC ? "filtering-option-active" : "")
 
             if data && data != 0
                 div#searchResults

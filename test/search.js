@@ -214,6 +214,16 @@ describe('Search', () => {
                 expect(params[1].value).to.eql('F');
             });
         });
+
+        it('should populate hasHDC if passed in', () => {
+            const result = inmateProxy()({hasHDC: true});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+
+                expect(sql).to.contain('exists (select 1 from IIS.HDC_HISTORY WHERE FK_PRISON_NUMBER = PK_PRISON_NUMBER)');
+            });
+        });
     });
 
     it('should order the data by surname, first initial, then date of first reception.', () => {

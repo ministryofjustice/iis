@@ -457,6 +457,21 @@ describe('searchController', () => {
                     expect(reqMock.session.userInput).to.eql(expectedUserInput);
                 });
 
+                it('should be able to handle HDC', () => {
+                    reqMock.query.filters = ['HDC'];
+
+                    const expectedUserInput = {
+                        forename: 'Matthew',
+                        forename2: 'James',
+                        surname: 'Whitfield',
+                        prisonNumber: '666',
+                        page: 1,
+                        hasHDC: [true]
+                    };
+
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+                    expect(reqMock.session.userInput).to.eql(expectedUserInput);
+                });
 
                 it('should replace the filters to the user input', () => {
                     reqMock.query.filters = 'Male';
@@ -493,7 +508,7 @@ describe('searchController', () => {
                 });
 
                 it('should send appropriate data to view', () => {
-                    reqMock.query.filters = 'Female';
+                    reqMock.query.filters = ['Female', 'HDC'];
                     getResultsProxy()(reqMock, resMock);
 
                     const expectedPayload = {
@@ -509,7 +524,7 @@ describe('searchController', () => {
                         },
                         data: {forename: 'Matt'},
                         err: null,
-                        filtersForView: {Female: true}
+                        filtersForView: {Female: true, HDC: true}
                     };
 
                     expect(resMock.render).to.be.calledWith('search/results', expectedPayload);

@@ -9,6 +9,9 @@ const filterValues = {
     },
     Male: {
         parameter: 'gender', value: 'M'
+    },
+    HDC: {
+        parameter: 'hasHDC', value: true
     }
 };
 
@@ -19,8 +22,8 @@ function getInputtedFilters(query) {
     const filters = typeof query.filters === 'string' ? [query.filters] : query.filters;
 
     const filtersForQuery = filters.map(filter => filterValues[filter].parameter)
-        .filter((key, index, array) => array.indexOf(key) === index)
-        .reduce(createParamatersFromFilters(filterValues, filters), {});
+                                   .filter((key, index, array) => array.indexOf(key) === index)
+                                   .reduce(createParamatersFromFilters(filterValues, filters), {});
 
     const filtersForView = filters.reduce((concat, filter) => Object.assign({}, concat, {[filter]: true}), {});
 

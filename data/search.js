@@ -45,7 +45,8 @@ const getSearchOperatorSql = {
     surname: getStringSqlWithParams('INMATE_SURNAME', {wildcardEnabled: true}),
     dobDay: getDobSqlWithParams,
     age: getAgeSqlWithParams,
-    gender: getGenderSqlWithParams
+    gender: getGenderSqlWithParams,
+    hasHDC: getHDCHistory
 };
 
 exports.inmate = function(userInput) {
@@ -151,7 +152,7 @@ function getGenderSqlWithParams(obj) {
     const genders = obj.userInput.gender;
     const genderLength = genders.length;
 
-    const g = genders.reduce((obj, gender, index) => {
+    return genders.reduce((obj, gender, index) => {
         const lastParam = index === genderLength - 1;
         const newParam = {column: `gender${index}`, type: getType('string'), value: gender};
         const newSql = index === 0 ? obj.sql : obj.sql.concat(` OR INMATE_SEX = @gender${index}`);
@@ -162,8 +163,15 @@ function getGenderSqlWithParams(obj) {
         };
 
     }, {params: [], sql: '(INMATE_SEX = @gender0'});
+}
 
-    return g;
+function getHDCHistory(obj) {
+    const sql = 'exists (select 1 from IIS.HDC_HISTORY WHERE FK_PRISON_NUMBER = PK_PRISON_NUMBER)';
+
+    return {
+        sql,
+        params: []
+    };
 }
 
 function getType(v) {

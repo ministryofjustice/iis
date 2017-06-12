@@ -22,7 +22,8 @@ const dataRequestFunction = {
     hdcinfo: [getHDCInfo],
     hdcrecall: [getHDCRecall],
     offencesincustody: [getAdjudications],
-    summary: [getCourtHearings, getSentenceHistory]
+    summary: [getCourtHearings, getSentenceHistory],
+    sentences: [getSentenceHistory]
 };
 
 exports.getSubject = function(req, res) {
@@ -101,7 +102,8 @@ function renderErrorPage(res, err) {
 
 function getNavigation(page) {
     let nav = {
-        summary: {title: 'Summary'},
+        summary: {title: 'Sentence Summary'},
+        sentences: {title: 'Sentence History'},
         movements: {title: 'Movements'},
         hdcinfo: {title: 'HDC history'},
         offences: {title: 'Offences'},

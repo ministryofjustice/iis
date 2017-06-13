@@ -34,15 +34,21 @@ function createPdf(res, printItems, data, availablePrintOptions, name) {
     const {forename, surname, prisonNumber} = name;
 
     doc.on('pageAdded', () => {
-        doc.fontSize(24);
-        doc.text(`${Case.capital(forename)} ${Case.capital(surname)}, ${prisonNumber}`);
-        doc.moveTo(doc.x, doc.y).lineTo(540, doc.y).stroke('#ccc');
+        doc.moveTo(doc.x, doc.y).lineTo(545, doc.y).stroke('#ccc');
+        doc.moveDown(2);
+        doc.image('assets/images/HMPPS_logo_crop.png', {width: 160});
+        doc.image('assets/images/icon-important-2x.png', doc.x+200, doc.y-80, {width: 10});
+        doc.fontSize(13);
+        doc.text('Notice', doc.x+220, doc.y-80, {align: 'justify'});
+        doc.fontSize(10);
+        doc.text(content.pdf.disclaimer, doc.x-20, doc.y, {align: 'justify'});
         doc.fontSize(11);
         doc.moveDown();
-        doc.text(content.pdf.disclaimer);
+        doc.moveTo(doc.x-200, doc.y).lineTo(545, doc.y).stroke('#ccc');
+        doc.moveDown(2);
+        doc.fontSize(24);
+        doc.text(`${Case.capital(forename)} ${Case.capital(surname)}, ${prisonNumber}`, doc.x-200, doc.y);
         doc.moveDown();
-        doc.moveTo(doc.x, doc.y).lineTo(540, doc.y).stroke('#ccc');
-        doc.moveDown(3);
     });
 
     printItems.forEach((item, index) => addSection(doc, availablePrintOptions[item], data[index]));

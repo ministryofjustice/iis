@@ -6,7 +6,9 @@ const Case = require('case');
 module.exports = {
     createPdf,
     addSection,
-    summaryContent,
+    subjectContent,
+    sentenceHistoryContent,
+    courtHearingsContent,
     movementContent,
     hdcContent,
     offenceContent,
@@ -68,7 +70,7 @@ function emptySection(doc, title) {
     doc.text(`Subject has no ${Case.lower(title)}.`);
 }
 
-function summaryContent(doc, items) {
+function subjectContent(doc, items) {
 
     const excludedItems = ['forename', 'forename2', 'surname'];
 
@@ -80,9 +82,48 @@ function summaryContent(doc, items) {
 
     const tableBody = Object.keys(items).map(key => {
         if (items[key] && !excludedItems.includes(key)) {
-            return {key: `${content.pdf.summary[key] || key}: `, value: items[key]};
+            return {key: `${content.pdf.subject[key] || key}: `, value: items[key]};
         }
     }).filter(n => n);
+
+    table.addBody(tableBody);
+}
+
+function sentenceHistoryContent(doc, items) {
+
+    const table = new PDFTable(doc, {bottomMargin: 30});
+    table.addColumns([
+        {id: 'changeDate', width: 100},
+        {id: 'length', width: 100},
+        {id: 'reasonCode', width: 100},
+        {id: 'dates', width: 130, align: 'right'}
+    ]);
+
+    const tableBody = items.map(item => {
+        const {changeDate, length, reasonCode, keyDates} = item;
+
+        const dateString = Object.keys(keyDates).map(key => {
+            return `${key} ${keyDates[key]}`;
+        }).join('\n');
+
+        return {changeDate, length: `${length} days`, reasonCode, dates: dateString};
+    });
+
+    table.addBody(tableBody);
+}
+
+function courtHearingsContent(doc, items) {
+
+    const table = new PDFTable(doc, {bottomMargin: 30});
+    table.addColumns([
+        {id: 'date', width: 130},
+        {id: 'court', width: 300}
+    ]);
+
+    const tableBody = items.map(item => {
+        const {date, court} = item;
+        return {date, court};
+    });
 
     table.addBody(tableBody);
 }

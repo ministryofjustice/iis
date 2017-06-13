@@ -71,7 +71,7 @@ module.exports = {
             'created using Prison NOMIS may not be accurate and should be discounted. Any information which can be ' +
             'found on Prison NOMIS should be taken from Prison NOMIS. Please note that MoJ/HMPPS will not accept any ' +
             'responsibility for errors on the system.',
-        summary: {
+        subject: {
             prisonNumber: 'Prison number',
             personIdentifier: 'Person identifier',
             paroleRefList: 'Parole reference list',

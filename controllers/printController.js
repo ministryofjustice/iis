@@ -10,10 +10,20 @@ const pdf = require('./helpers/pdfHelpers');
 const audit = require('../data/audit');
 
 const availablePrintOptions = {
-    summary: {
-        title: 'Summary',
-        addContent: pdf.summaryContent,
+    subject: {
+        title: 'Subject',
+        addContent: pdf.subjectContent,
         getData: subjectData.getSubject
+    },
+    sentenceHistory: {
+        title: 'Sentence History',
+        addContent: pdf.sentenceHistoryContent,
+        getData: subjectData.getSentenceHistory
+    },
+    courtHearings: {
+        title: 'Court Hearings',
+        addContent: pdf.courtHearingsContent,
+        getData: subjectData.getCourtHearings
     },
     movements: {
         title: 'Movements',
@@ -124,8 +134,8 @@ exports.getPdf = function(req, res) {
 function getDataFunctionsToCall(printItems) {
     const itemsSelected = printItems.map(item => availablePrintOptions[item].getData);
     // we always need subject call to get name
-    if(!itemsSelected.includes(availablePrintOptions.summary.getData)) {
-        itemsSelected.unshift(availablePrintOptions.summary.getData);
+    if(!itemsSelected.includes(availablePrintOptions.subject.getData)) {
+        itemsSelected.unshift(availablePrintOptions.subject.getData);
     }
 
     return itemsSelected;
@@ -137,8 +147,8 @@ function extractSubjectInfo(data, printItems) {
         surname: data[0].surname.trim(),
         prisonNumber: data[0].prisonNumber
     };
-    const summaryNotSelected = data.length === printItems.length + 1;
-    const subjectData = summaryNotSelected ? data.filter((item, index) => index !== 0) : data;
+    const subjectNotSelected = data.length === printItems.length + 1;
+    const subjectData = subjectNotSelected ? data.filter((item, index) => index !== 0) : data;
 
     return {subjectData, subjectName};
 }

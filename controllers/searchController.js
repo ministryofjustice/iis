@@ -196,6 +196,9 @@ exports.postFilters = function(req, res) {
 
     query.filters = addOrRemoveFromQuery(query, 'filters', filterPressed);
 
+    // Reset to page 1 because the filters may leave the current page number invalid
+    query.page = '1';
+
     const redirectUrl = url.format({pathname: '/search/results', query});
     res.redirect(redirectUrl);
 };

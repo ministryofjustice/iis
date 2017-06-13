@@ -548,7 +548,7 @@ describe('searchController', () => {
         });
 
         describe('postFilters', () => {
-            it('should redirect to search page appending the filter', () => {
+            it('should redirect to first results page appending the filter', () => {
                 reqMock = {
                     body: {
                         pageNumber: '8',
@@ -558,7 +558,7 @@ describe('searchController', () => {
                 };
                 postFilters(reqMock, resMock);
                 expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/search/results?filters=Male');
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?filters=Male&page=1');
 
             });
 
@@ -572,7 +572,7 @@ describe('searchController', () => {
                 };
                 postFilters(reqMock, resMock);
                 expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/search/results');
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?page=1');
             });
 
             it('should be able to add more than one filter', () => {
@@ -585,7 +585,7 @@ describe('searchController', () => {
                 };
                 postFilters(reqMock, resMock);
                 expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/search/results?filters=Male&filters=Female');
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?filters=Male&filters=Female&page=1');
             });
         });
     });

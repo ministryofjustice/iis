@@ -21,6 +21,7 @@ exports.getSubject = function(prisonNumber) {
                         INMATE_FORENAME_1, 
                         INMATE_FORENAME_2,
                         INMATE_BIRTH_DATE DOB, 
+                        DATE_1ST_RECEP,
                         FK_PERSON_IDENTIFIER,
                         BIRTH_COUNTRY_CODE,
                         MARITAL_STATUS_CODE,
@@ -375,7 +376,8 @@ function formatSubjectRow(dbRow) {
         ethnicity: Case.title(describeCode('ETHNIC_GROUP', dbRow.ETHNIC_GROUP_CODE.value)),
         nationality: Case.title(describeCode('NATIONALITY', dbRow.NATIONALITY_CODE.value)),
         religion: Case.title(describeCode('RELIGION', dbRow.RELIGION_CODE.value)),
-        sex: dbRow.INMATE_SEX.value ? Case.sentence(dbRow.INMATE_SEX.value) : 'Unknown'
+        sex: dbRow.INMATE_SEX.value ? Case.sentence(dbRow.INMATE_SEX.value) : 'Unknown',
+        dateOfFirstReception: dbRow.DATE_1ST_RECEP.value ? utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value) : 'Unknown'
     };
     if (info.dob && info.dob !== 'Unknown') {
         info.age = utils.getAgeFromDOB(info.dob);

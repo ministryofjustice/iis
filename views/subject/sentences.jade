@@ -1,0 +1,26 @@
+extends ../subject
+
+block subject-details
+    div.column-two-thirds
+        if (data.details && data.details.length !== 0)
+            each val,index in data.details
+                div.grid-row.list-row
+                    div.column-full
+                        div(id="sentence#{index}").left-border.sentence
+                            span.quiet Effective sentence
+                            div #{val.changeDate}
+                            div #{val.length} days
+                            div #{val.reasonCode}
+                            if val.keyDates
+                                ul.prisoner-key-dates
+                                    each date, label in val.keyDates
+                                        if date
+                                            li
+                                                span.quiet #{label}
+                                                |  #{date}
+        else
+            div
+                span Subject has no sentence history
+
+block append scripts
+    script(src="/public/javascripts/revealBundle.js?#{version}")

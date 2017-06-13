@@ -36,6 +36,7 @@ describe('Subject data', function() {
             INMATE_SURNAME: {value: 'SURNAME'},
             INMATE_FORENAME_1: {value: 'FORENAMEA'},
             INMATE_FORENAME_2: {value: 'FORENAME2'},
+            DATE_1ST_RECEP: {value: '20131211'},
             PNC: {value: 'ABC/99A'},
             CRO: {value: 'XYZ/11Z'},
             PAROLE_REF_LIST: {value: 'AAA1,BB2'},
@@ -64,7 +65,8 @@ describe('Subject data', function() {
             nationality: 'United Kingdom',
             religion: 'Anglican',
             sex: 'Male',
-            age: 37
+            age: 37,
+            dateOfFirstReception: '11/12/2013'
         };
 
         getTupleStub = sandbox.stub().callsArgWith(2, infoResponse);

@@ -16,6 +16,8 @@ sinonStubPromise(sinon);
 let reqMock;
 let resMock;
 let subjectStub;
+let sentenceHistoryStub;
+let courtHearingsStub;
 let movementsStub;
 let aliasesStub;
 let addressesStub;
@@ -26,6 +28,8 @@ let createPdfStub;
 let auditStub;
 
 const getController = ({subject = subjectStub,
+                        sentenceHistory = sentenceHistoryStub,
+                        courtHearings = courtHearingsStub,
                         movements = movementsStub,
                         aliases = aliasesStub,
                         addresses = addressesStub,
@@ -36,6 +40,8 @@ const getController = ({subject = subjectStub,
     return proxyquire('../../controllers/printController', {
         '../data/subject': {
             'getSubject': subject,
+            'getSentenceHistory': sentenceHistory,
+            'getCourtHearings': courtHearings,
             'getMovements': movements,
             'getAliases': aliases,
             'getAddresses': addresses,
@@ -62,6 +68,8 @@ describe('printController', () => {
             forename2: 'James',
             surname: 'Whitfield',
         });
+        sentenceHistoryStub = sandbox.stub().returnsPromise().resolves([{sentence: '1'}]);
+        courtHearingsStub = sandbox.stub().returnsPromise().resolves([{courtHearing: '1'}]);
         movementsStub = sandbox.stub().returnsPromise().resolves([{movement: '1'}]);
         aliasesStub = sandbox.stub().returnsPromise().resolves([{alias: '1'}]);
         addressesStub = sandbox.stub().returnsPromise().resolves([{address: '1'}]);
@@ -73,9 +81,9 @@ describe('printController', () => {
 
         reqMock = {
             body: {
-                printOption: ['summary', 'custodyOffences']
+                printOption: ['subject', 'custodyOffences']
             },
-            query: {prisonNo: '12345678', fields: ['summary', 'custodyOffences']},
+            query: {prisonNo: '12345678', fields: ['subject', 'custodyOffences']},
             user: {email: 'x@y.com'}
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy(), writeHead: sandbox.spy()};
@@ -146,7 +154,7 @@ describe('printController', () => {
 
         it('should redirect to the pdf with the appropriate query string', () => {
 
-            const expectedUrl = '/print/pdf?prisonNo=12345678&fields=summary&fields=custodyOffences';
+            const expectedUrl = '/print/pdf?prisonNo=12345678&fields=subject&fields=custodyOffences';
 
             postPrintForm(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
@@ -161,19 +169,19 @@ describe('printController', () => {
         it('should pass the appropriate data to audit', () => {
             getController().postPrintForm(reqMock, resMock);
             expect(auditStub).to.be.calledWith('PRINT', 'x@y.com', {prisonNo: '12345678',
-                fieldsPrinted: ['summary', 'custodyOffences']});
+                fieldsPrinted: ['subject', 'custodyOffences']});
         });
 
         it('should remove any unexpected inputs', () => {
             reqMock = {
                 body: {
-                    printOption: ['summary', 'custodyOffences', 'matt']
+                    printOption: ['subject', 'custodyOffences', 'matt']
                 },
                 query: {prisonNo: '12345678'},
                 user: {email: 'x@y.com'},
             };
 
-            const expectedUrl = '/print/pdf?prisonNo=12345678&fields=summary&fields=custodyOffences';
+            const expectedUrl = '/print/pdf?prisonNo=12345678&fields=subject&fields=custodyOffences';
 
             postPrintForm(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
@@ -210,7 +218,7 @@ describe('printController', () => {
 
         it('should get the data for the fields in the query string', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
+                query: {prisonNo: '12345678', fields: ['subject', 'addresses']}
             };
             getController().getPdf(reqMock, resMock);
             expect(subjectStub).to.have.callCount(1);
@@ -219,7 +227,7 @@ describe('printController', () => {
 
         it('should call createPdf if all data requests resolve successfully', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
+                query: {prisonNo: '12345678', fields: ['subject', 'addresses']}
             };
             return getController().getPdf(reqMock, resMock).then(() => {
                 expect(createPdfStub).to.have.callCount(1);
@@ -228,10 +236,10 @@ describe('printController', () => {
 
         it('should pass in the data to createpdf', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
+                query: {prisonNo: '12345678', fields: ['subject', 'addresses']}
             };
 
-            const expectedPrintItems = ['summary', 'addresses'];
+            const expectedPrintItems = ['subject', 'addresses'];
             const expectedData = [{
                 prisonNumber: '     id1',
                 forename: 'Matthew',
@@ -251,7 +259,7 @@ describe('printController', () => {
             });
         });
 
-        it('should get name and id details even if summary is not requested', () => {
+        it('should get name and id details even if subject is not requested', () => {
             reqMock = {
                 query: {prisonNo: '12345678', fields: ['offences', 'addresses']}
             };
@@ -293,7 +301,7 @@ describe('printController', () => {
 
         it('should not call createPdf if any data requests resolve unsuccessfully', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
+                query: {prisonNo: '12345678', fields: ['subject', 'addresses']}
             };
 
             const subjectStub = sandbox.stub().returnsPromise().rejects();
@@ -304,7 +312,7 @@ describe('printController', () => {
 
         it('should redirect to print page if any data requests resolve unsuccessfully', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
+                query: {prisonNo: '12345678', fields: ['subject', 'addresses']}
             };
 
             const subjectStub = sandbox.stub().returnsPromise().rejects();

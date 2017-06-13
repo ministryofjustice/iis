@@ -26,9 +26,19 @@ block content
                         input(type="hidden" name="_csrf" value="#{csrfToken}")
 
                         div.multiple-choice
-                            input#summary(name="printOption", type="checkbox", value="summary")
-                            label(for="summary")
-                                | Summary
+                            input#subject(name="printOption", type="checkbox", value="subject")
+                            label(for="subject")
+                                | Subject
+
+                        div.multiple-choice
+                            input#sentenceHistory(name="printOption", type="checkbox", value="sentenceHistory")
+                            label(for="sentenceHistory")
+                                | Sentence History
+
+                        div.multiple-choice
+                            input#courtHearings(name="printOption", type="checkbox", value="courtHearings")
+                            label(for="courtHearings")
+                                | Court Hearings
 
                         div.multiple-choice
                             input#movements(name="printOption", type="checkbox", value="movements")

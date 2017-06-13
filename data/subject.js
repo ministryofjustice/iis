@@ -337,7 +337,7 @@ exports.getSentenceHistory = function(prisonNumber) {
     });
 };
 
-const resolveWithFormattedRow = (resolve, type) => (rows) => {
+const resolveWithFormattedRow = (resolve, type) => rows => {
     const formatType = {
         subject: formatSubjectRow,
         courtHearing: formatCourtHearingRow,
@@ -377,7 +377,8 @@ function formatSubjectRow(dbRow) {
         nationality: Case.title(describeCode('NATIONALITY', dbRow.NATIONALITY_CODE.value)),
         religion: Case.title(describeCode('RELIGION', dbRow.RELIGION_CODE.value)),
         sex: dbRow.INMATE_SEX.value ? Case.sentence(dbRow.INMATE_SEX.value) : 'Unknown',
-        dateOfFirstReception: dbRow.DATE_1ST_RECEP.value ? utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value) : 'Unknown'
+        dateOfFirstReception: dbRow.DATE_1ST_RECEP.value ?
+            utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value) : 'Unknown'
     };
     if (info.dob && info.dob !== 'Unknown') {
         info.age = utils.getAgeFromDOB(info.dob);
@@ -451,7 +452,7 @@ function formatHdcReasonCodes(reasonCodes) {
     let reasonCodesJson = JSON.parse(reasonCodes);
 
     return reasonCodesJson
-        .map((reasonCode) => {
+        .map(reasonCode => {
             return sentenceCaseWithAcronymsForCode('HDC_REASON', reasonCode.code);
         }).filter((reasonDescription, index, inputArray) => {
             return inputArray.indexOf(reasonDescription) === index;
@@ -499,7 +500,8 @@ function formatCourtHearingRow(dbRow) {
 function formatSentenceHistoryRow(dbRow) {
     return {
         changeDate: utils.getFormattedDateFromString(dbRow.SENTENCE_CHANGE_DATE.value),
-        reasonCode: dbRow.REASON_SENT_DET_CHANGE.value ? sentenceCaseWithAcronyms(dbRow.REASON_SENT_DET_CHANGE.value) : '',
+        reasonCode: dbRow.REASON_SENT_DET_CHANGE.value ?
+            sentenceCaseWithAcronyms(dbRow.REASON_SENT_DET_CHANGE.value) : '',
         keyDates: getKeyDates(dbRow),
         length: dbRow.EFFECTIVE_SENTENCE_LENGTH.value ? dbRow.EFFECTIVE_SENTENCE_LENGTH.value : ''
     };
@@ -521,7 +523,7 @@ function getKeyDates(dbRow) {
 }
 
 function addNonEmptyDate(keyDates, label, col) {
-    if(col.value && col.value !== '18991231') {
+    if (col.value && col.value !== '18991231') {
         keyDates[label] = utils.getFormattedDateFromString(col.value);
     }
 }

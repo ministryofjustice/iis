@@ -5,7 +5,6 @@ const {
 } = require('./db');
 const util = require('util');
 const logger = require('../log.js');
-const Request = require('tedious').Request;
 
 module.exports = {
 

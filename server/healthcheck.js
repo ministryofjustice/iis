@@ -14,14 +14,14 @@ module.exports = function healthcheck(callback) {
         healthy: true,
         checks: {}
     };
-    Object.keys(checks).forEach((checkName) => {
+    Object.keys(checks).forEach(checkName => {
         pending += 1;
         checks[checkName]()
             .then(() => {
                 results.checks[checkName] = 'ok';
                 pending -= 1;
                 finalize();
-            }).catch((error) => {
+            }).catch(error => {
                 results.healthy = false;
                 results.checks[checkName] = error.message;
                 pending -= 1;

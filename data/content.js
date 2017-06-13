@@ -44,34 +44,36 @@ module.exports = {
 
         dob: {title: 'Enter inmate\'s date of birth or age/range'},
 
-        results: {title: 'Your search returned _x_ result',
-                  title_no_results: 'Your search did not return any results'},
+        results: {
+            title: 'Your search returned _x_ result',
+            title_no_results: 'Your search did not return any results'
+        },
 
-        subject: {title: 'Subject details',
-                  aliases: 'Subject has no aliases',
-                  offencesincustody: 'Subject has no offences in custody',
-                  movements: 'Subject has no movements',
-                  hdcinfo: 'Subject has no HDC history',
-                  hdcrecall: 'Subject has no HDC recall history',
-                  offences: 'Subject has no offences',
-                  addresses: 'Subject has no addresses',
-                  sentences: 'Subject has no sentence history'
-                  },
+        subject: {
+            title: 'Subject details',
+            aliases: 'Subject has no aliases',
+            offencesincustody: 'Subject has no offences in custody',
+            movements: 'Subject has no movements',
+            hdcinfo: 'Subject has no HDC history',
+            hdcrecall: 'Subject has no HDC recall history',
+            offences: 'Subject has no offences',
+            addresses: 'Subject has no addresses',
+            sentences: 'Subject has no sentence history'
+        },
 
-         print: {
-             body: 'Select all that apply',
-             noneSelected: 'Please select at least one item to print'
-         }
+        print: {
+            body: 'Select all that apply',
+            noneSelected: 'Please select at least one item to print'
+        }
     },
     pdf: {
-        disclaimer: 'This information is Official Sensitive and should not be shared with anyone who does not ' +
-            'have a valid reason to use it. The Information in this document which was created using the legacy ' +
-            'application, LIDS, is accurate for that period of time entered and should be used in conjunction with ' +
-            'legislation and codes which applied at the time of entry. Information in this document which was ' +
-            'created using Prison NOMIS may not be accurate and should be discounted. Any information which can be ' +
-            'found on Prison NOMIS should be taken from Prison NOMIS. Please note that MoJ/HMPPS will not accept any ' +
-            'responsibility for errors on the system.',
-        summary: {
+        disclaimer: 'The information in this document is official sensitive and should not be shared with anyone ' +
+        'who does not have a valid reason to see it. Inappropriate use of the data may lead to disciplinary action ' +
+        'and/or legal proceedings. The information has been produced from the Historic Prisoner Application ' +
+        'database (formerly IIS) and the data should be used in conjunction with policy, legislation and codes ' +
+        'which applied at the time of entry. Please note that HMPPS/MoJ will not accept responsibility for errors ' +
+        'in the system.',
+        subject: {
             prisonNumber: 'Prison number',
             personIdentifier: 'Person identifier',
             paroleRefList: 'Parole reference list',

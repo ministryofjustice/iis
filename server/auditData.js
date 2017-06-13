@@ -2,6 +2,9 @@ const {
     connect,
     addParams
 } = require('./db');
+
+const logger = require('../log');
+
 const Request = require('tedious').Request;
 
 module.exports = {
@@ -17,8 +20,11 @@ module.exports = {
                 if(error) {
                     return errorCallback(error);
                 }
-                return successCallback(searchId[0].id.value);
+
+                logger.debug('Closing audit DB connection');
                 connection.close();
+
+                return successCallback(searchId[0].id.value);
             });
 
             if (params) {

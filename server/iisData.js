@@ -45,7 +45,10 @@ module.exports = {
 
         function finish(err, result) {
             if (connected) {
+                logger.debug('DB tuple connection finish - disconnecting');
                 disconnect(connection);
+            } else {
+                logger.debug('DB tuple connection finish - not connected');
             }
 
             if (err) {
@@ -90,7 +93,10 @@ module.exports = {
 
         function finish(err, result) {
             if (connected) {
+                logger.debug('DB collection connection finish - disconnecting');
                 disconnect(connection);
+            } else {
+                logger.debug('DB collection connection finish - not connected');
             }
 
             if (err) {

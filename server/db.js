@@ -1,12 +1,14 @@
 'use strict';
 
+const logger = require('../log');
+
 module.exports = {
 
     connect: function() {
         const config = require('./config');
         const Connection = require('tedious').Connection;
 
-        return new Connection({
+        let connection = new Connection({
             userName: config.db.username,
             password: config.db.password,
             server: config.db.server,
@@ -17,6 +19,16 @@ module.exports = {
                 rowCollectionOnRequestCompletion: true
             }
         });
+
+        connection.on('error',function(err) {
+            if(err.message === 'Connection lost - read ECONNRESET') {
+                logger.warn('Connection lost - read ECONNRESET');
+                logger.info('Azure loadbalancer timeout error - see https://github.com/tediousjs/tedious/issues/300');
+            }
+        });
+
+        logger.debug('Created new DB connection');
+        return connection;
     },
 
     addParams: function(params, request) {
@@ -35,6 +47,7 @@ module.exports = {
     },
 
     disconnect: function(connection) {
+        logger.debug('Closing DB connection on disconnect');
         connection.close();
     }
 };

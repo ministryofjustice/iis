@@ -8,14 +8,14 @@ module.exports = {
 
     addRow: function(sql, params, successCallback, errorCallback) {
         const connection = connect();
-        connection.on('connect', (err) => {
-            if (err) {
-                errorCallback(err);
+        connection.on('connect', error => {
+            if (error) {
+                errorCallback(error);
             }
 
-            const request = new Request(sql, (err, rows, searchId) => {
-                if(err) {
-                    return errorCallback(err);
+            const request = new Request(sql, (error, rows, searchId) => {
+                if(error) {
+                    return errorCallback(error);
                 }
                 return successCallback(searchId[0].id.value);
                 connection.close();

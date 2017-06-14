@@ -89,7 +89,8 @@ function subjectContent(doc, items) {
 
     const tableBody = Object.keys(items).map(key => {
         if (items[key] && !excludedItems.includes(key)) {
-            return {key: `${content.pdf.subject[key] || key}: `, value: items[key]};
+            const value = typeof items[key] === 'string' ? items[key].trim() : items[key];
+            return {key: `${content.pdf.subject[key] || key}: `, value};
         }
     }).filter(n => n);
     table.setNewPageFn(table => table.pdf.addPage());

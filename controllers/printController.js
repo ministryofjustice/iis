@@ -154,6 +154,9 @@ function extractSubjectInfo(data, printItems) {
 }
 
 function showDbError(error, prisonNo, res) {
+
+    console.error(error)
+
     logger.error('Error during data collection for pdf ', error);
 
     const query = {

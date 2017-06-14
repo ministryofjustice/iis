@@ -369,7 +369,7 @@ function formatSubjectRow(dbRow) {
         forename2: dbRow.INMATE_FORENAME_2.value ? Case.capital(dbRow.INMATE_FORENAME_2.value) : '',
         pnc: dbRow.PNC.value ? dbRow.PNC.value.trim() : '',
         cro: dbRow.CRO.value ? dbRow.CRO.value.trim() : '',
-        paroleRefList: dbRow.PAROLE_REF_LIST ? dbRow.PAROLE_REF_LIST.value.trim() : '',
+        paroleRefList: dbRow.PAROLE_REF_LIST.value ? dbRow.PAROLE_REF_LIST.value.trim() : '',
         dob: dbRow.DOB.value ? utils.getFormattedDateFromString(dbRow.DOB.value) : 'Unknown',
         countryOfBirth: Case.title(describeCode('BIRTH_COUNTRY', dbRow.BIRTH_COUNTRY_CODE.value)),
         maritalStatus: Case.title(describeCode('MARITAL_STATUS', dbRow.MARITAL_STATUS_CODE.value)),

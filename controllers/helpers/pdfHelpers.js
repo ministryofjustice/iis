@@ -193,14 +193,14 @@ function custodyOffenceContent(doc, items) {
 
     const table = new PDFTable(doc, {bottomMargin: 30});
     table.addColumns([
-        {id: 'date', width: 130},
-        {id: 'outcome', width: 200},
-        {id: 'establishment', width: 200}
+        {id: 'date', width: 100},
+        {id: 'detail', width: 250},
+        {id: 'establishment', width: 150}
     ]);
 
     const tableBody = items.map(item => {
-        const {date, outcome, establishment} = item;
-        return {date, outcome, establishment};
+        const {date, outcome, charge, establishment} = item;
+        return {date, detail: `${outcome} - ${charge}` , establishment};
     });
 
     table.addBody(tableBody);

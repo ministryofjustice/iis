@@ -92,7 +92,7 @@ function subjectContent(doc, items) {
             return {key: `${content.pdf.subject[key] || key}: `, value: items[key]};
         }
     }).filter(n => n);
-
+    table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
 }
 
@@ -115,7 +115,7 @@ function sentenceHistoryContent(doc, items) {
 
         return {changeDate, length: `${length} days`, reasonCode, dates: dateString};
     });
-
+    table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
 }
 
@@ -131,7 +131,7 @@ function courtHearingsContent(doc, items) {
         const {date, court} = item;
         return {date, court};
     });
-
+    table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
 }
 
@@ -148,7 +148,7 @@ function movementContent(doc, items) {
         const {date, establishment, type, status} = item;
         return {date, establishment, detail: `${type === 'D' ? 'OUT' : 'IN'} - ${status}`};
     });
-
+    table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
 }
 
@@ -165,7 +165,7 @@ function hdcContent(doc, items) {
         const {stage, date, status, reason} = item;
         return {stage, detail: `${status}, ${date}`, reason};
     });
-
+    table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
 }
 
@@ -185,7 +185,7 @@ function offenceContent(doc, items) {
             offenceCode: `Offence code ${offenceCode}`,
             establishment: `(${establishment_code}) ${establishment}`};
     });
-
+    table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
 }
 
@@ -202,7 +202,7 @@ function custodyOffenceContent(doc, items) {
         const {date, outcome, charge, establishment} = item;
         return {date, detail: `${outcome} - ${charge}` , establishment};
     });
-
+    table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
 }
 

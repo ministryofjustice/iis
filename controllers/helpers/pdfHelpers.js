@@ -49,6 +49,7 @@ function createPdf(res, printItems, data, availablePrintOptions, name) {
         doc.fontSize(24);
         doc.text(`${Case.capital(forename)} ${Case.capital(surname)}, ${prisonNumber}`, doc.x-200, doc.y);
         doc.moveDown();
+        doc.fontSize(12);
     });
 
     printItems.forEach((item, index) => addSection(doc, availablePrintOptions[item], data[index]));
@@ -209,13 +210,12 @@ function addressContent(doc, items) {
 
     items.forEach(item => {
         doc.moveDown();
-        const {type, name, addressLine1, addressLine2, addressLine3, addressLine4} = item;
+        const {type, name, addressLine1, addressLine2, addressLine4} = item;
         if(addressLine1) {
             if(type) doc.text(type);
             if(name) doc.text(name);
             if(addressLine1) doc.text(addressLine1);
             if(addressLine2) doc.text(addressLine2);
-            if(addressLine3) doc.text(addressLine3);
             if(addressLine4) doc.text(addressLine4);
         }
     });

@@ -418,11 +418,11 @@ function formatAliasRow(dbRow) {
 function formatAddressRow(dbRow) {
     return {
         addressLine1: dbRow.INMATE_ADDRESS_1.value ? Case.title(dbRow.INMATE_ADDRESS_1.value.trim()) : '',
-        addressLine2: dbRow.INMATE_ADDRESS_2.value ? Case.title(dbRow.INMATE_ADDRESS_2.value) : '',
-        addressLine4: dbRow.INMATE_ADDRESS_4.value ? Case.title(dbRow.INMATE_ADDRESS_4.value) : '',
+        addressLine2: dbRow.INMATE_ADDRESS_2.value ? Case.title(dbRow.INMATE_ADDRESS_2.value.trim()) : '',
+        addressLine4: dbRow.INMATE_ADDRESS_4.value ? Case.title(dbRow.INMATE_ADDRESS_4.value.trim()) : '',
         type: dbRow.ADDRESS_TYPE.value ? Case.title(describeCode('ADDRESS', dbRow.ADDRESS_TYPE.value)) :
             'Unknown',
-        name: dbRow.PERSON_DETS.value ? Case.title(dbRow.PERSON_DETS.value) : ''
+        name: dbRow.PERSON_DETS.value ? Case.title(dbRow.PERSON_DETS.value.trim()) : ''
     };
 }
 

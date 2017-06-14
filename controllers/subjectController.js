@@ -39,14 +39,15 @@ exports.getSubject = function(req, res) {
         subjectData: {},
         pageData: {},
         noResultsText: content.view.subject[page],
-        lastPageNum: req.session.lastPage || 1
+        returnURL: req.get('referer')
     };
 
-    return getSubject(prisonNumber).then(subjectData => {
+    return getSubject(prisonNumber)
+        .then(subjectData => {
 
-        pageObject.subjectData = subjectData;
+            pageObject.subjectData = subjectData;
 
-        return getPageSpecificDataAndRender(pageObject);
+            return getPageSpecificDataAndRender(pageObject);
 
     }).catch(error => {
         logger.error('Error during get subject request: ', error.message);
@@ -79,12 +80,12 @@ function getPageSpecificDataAndRender(pageObject) {
 }
 
 function renderPage(data) {
-    const {res, page, pageData, subjectData, lastPageNum, noResultsText} = data;
+    const {res, page, pageData, subjectData, noResultsText, returnURL} = data;
 
     res.render('subject/' + page, {
         data: {details: pageData, subject: subjectData, noResultsText},
         content: content.view.subject,
-        lastPageNum: lastPageNum,
+        returnURL,
         nav: getNavigation(page)
     });
 }

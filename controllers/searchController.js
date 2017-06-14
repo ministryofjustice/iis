@@ -185,7 +185,9 @@ const flatten = arr => Array.prototype.concat(...arr);
 const deleteFromArray = (array, index) => array.slice(0, index).concat(array.slice(index+1));
 
 exports.postPagination = function(req, res) {
-    const redirectUrl = url.format({pathname: '/search/results', query: {page: req.body.pageNumber}});
+    const query = Object.assign({}, req.query, {page: req.body.pageNumber});
+
+    const redirectUrl = url.format({pathname: '/search/results', query});
     res.redirect(redirectUrl);
 };
 

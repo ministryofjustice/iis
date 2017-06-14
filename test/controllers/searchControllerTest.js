@@ -545,6 +545,20 @@ describe('searchController', () => {
                 expect(resMock.redirect).to.have.been.calledWith('/search/results?page=8');
 
             });
+
+            it('should not alter the rest of the query string', () => {
+                reqMock = {
+                    body: {
+                        pageNumber: '8'
+                    },
+                    query: {
+                        filters: 'HDC'
+                    }
+                };
+                postPagination(reqMock, resMock);
+                expect(resMock.redirect).to.have.callCount(1);
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?filters=HDC&page=8');
+            });
         });
 
         describe('postFilters', () => {

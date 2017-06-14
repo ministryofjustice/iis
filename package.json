@@ -1,6 +1,6 @@
 {
   "name": "hpa-ui",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Historical Prisoner Application",
   "main": "server.js",
   "engines": {

@@ -8,8 +8,7 @@ const {
     postSearchForm,
     getResults,
     postPagination,
-    postFilters
-    postPagination,
+    postFilters,
     getAliasSearch
 } = require('../controllers/searchController');
 

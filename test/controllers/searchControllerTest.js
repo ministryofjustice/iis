@@ -337,7 +337,40 @@ describe('searchController', () => {
                     data: {forename: 'Matt'},
                     err: null,
                     filtersForView: {},
-                    queryString: "?page=2&filters=Female"
+                    queryStrings: {
+                        prevPage: "?page=1&filters=Female",
+                        thisPage: "?page=2&filters=Female",
+                        nextPage: "?page=3&filters=Female"
+                    }
+                };
+
+                expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
+            });
+
+            it('should handle when no page passed in', () => {
+                reqMock.url= 'http://something.com/search/results',
+
+                getResultsProxy()(reqMock, resMock);
+
+                const expectedPayload = {
+                    content: {
+                        title: 'Your search returned 20 results'
+                    },
+                    view: 'not sure what this is for',
+                    pagination: {
+                        'totalPages': 2,
+                        'currPage': 1,
+                        'showPrev': false,
+                        'showNext': true
+                    },
+                    data: {forename: 'Matt'},
+                    err: null,
+                    filtersForView: {},
+                    queryStrings: {
+                        prevPage: "?page=0",
+                        thisPage: "",
+                        nextPage: "?page=2"
+                    }
                 };
 
                 expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
@@ -372,7 +405,11 @@ describe('searchController', () => {
                     ],
                     err: null,
                     filtersForView: {},
-                    queryString: "?page=2&filters=Female"
+                    queryStrings: {
+                        prevPage: "?page=1&filters=Female",
+                        thisPage: "?page=2&filters=Female",
+                        nextPage: "?page=3&filters=Female"
+                    }
                 };
 
                 expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
@@ -546,7 +583,11 @@ describe('searchController', () => {
                         data: {forename: 'Matt'},
                         err: null,
                         filtersForView: {Female: true, HDC: true},
-                        queryString: "?page=2&filters=Female"
+                        queryStrings: {
+                            prevPage: "?page=1&filters=Female",
+                            thisPage: "?page=2&filters=Female",
+                            nextPage: "?page=3&filters=Female"
+                        }
                     };
 
                     expect(resMock.render).to.be.calledWith('search/results', expectedPayload);

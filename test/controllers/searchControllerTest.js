@@ -240,6 +240,7 @@ describe('searchController', () => {
                 query: {page: 1},
                 user: {email: 'x@y.com'},
                 params: {v: 'not sure what this is for'},
+                url: 'http://something.com/search/results?page=2&filters=Female',
                 get: (item) => 'http://something.com/search/results?page=2'
             };
         });
@@ -335,7 +336,8 @@ describe('searchController', () => {
                     },
                     data: {forename: 'Matt'},
                     err: null,
-                    filtersForView: {}
+                    filtersForView: {},
+                    queryString: "?page=2&filters=Female"
                 };
 
                 expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
@@ -369,7 +371,8 @@ describe('searchController', () => {
                         {forename: 'Zed', prisonNumber: '3', visited: true}
                     ],
                     err: null,
-                    filtersForView: {}
+                    filtersForView: {},
+                    queryString: "?page=2&filters=Female"
                 };
 
                 expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
@@ -524,7 +527,8 @@ describe('searchController', () => {
                         },
                         data: {forename: 'Matt'},
                         err: null,
-                        filtersForView: {Female: true, HDC: true}
+                        filtersForView: {Female: true, HDC: true},
+                        queryString: "?page=2&filters=Female"
                     };
 
                     expect(resMock.render).to.be.calledWith('search/results', expectedPayload);

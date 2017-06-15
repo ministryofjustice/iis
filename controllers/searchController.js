@@ -123,6 +123,7 @@ exports.getResults = function(req, res) {
     let page = getCurrentPage(req.query);
     req.session.lastPage = page;
     const pageError = getPaginationErrors(req.query);
+    const queryString = url.parse(req.url).search;
 
     audit.record('SEARCH', req.user.email, req.session.userInput);
     search.totalRowsForUserInput(req.session.userInput)
@@ -139,7 +140,14 @@ exports.getResults = function(req, res) {
             req.session.userInput.page = page;
             return search.inmate(req.session.userInput).then(data => {
                 const dataWithVisited = addVisitedData(data, req.session);
-                return renderResultsPage(req, res, rowCount, dataWithVisited, page, pageError, filtersForView);
+                return renderResultsPage(req,
+                                         res,
+                                         rowCount,
+                                         dataWithVisited,
+                                         page,
+                                         pageError,
+                                         filtersForView,
+                                         queryString);
             }).catch(error => {
                 logger.error('Error during inmate search ', {error});
                 return showDbError(res);
@@ -241,7 +249,7 @@ function isValidPage(page, rowCount) {
     return isNumeric(page) && page > 0 && !(rowCount > 0 && page > Math.ceil(rowCount / resultsPerPage));
 }
 
-function renderResultsPage(req, res, rowcount, data, page, error = null, filtersForView) {
+function renderResultsPage(req, res, rowcount, data, page, error = null, filtersForView, queryString) {
     res.render('search/results', {
         content: {
             title: getPageTitle(rowcount)
@@ -250,7 +258,8 @@ function renderResultsPage(req, res, rowcount, data, page, error = null, filters
         pagination: (rowcount > resultsPerPage ) ? utils.pagination(rowcount, page) : null,
         data,
         err: error,
-        filtersForView
+        filtersForView,
+        queryString
     });
 }
 

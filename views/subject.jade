@@ -1,9 +1,9 @@
 extends layout
 
 block content
-    if returnURL
-        div.back-link-container
-            a.link-back(href="#{returnURL}") Back to results
+
+    div.back-link-container
+        a.link-back(href="/search/results#{returnQuery}") Back to results
 
     if err
         div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")

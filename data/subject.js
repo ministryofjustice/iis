@@ -417,7 +417,7 @@ function formatAliasRow(dbRow) {
 
 function formatAddressRow(dbRow) {
     return {
-        addressLine1: dbRow.INMATE_ADDRESS_1.value ? Case.title(dbRow.INMATE_ADDRESS_1.value.trim()) : '',
+        addressLine1: dbRow.INMATE_ADDRESS_1.value ? titleCaseWithAcronyms(dbRow.INMATE_ADDRESS_1.value.trim()) : '',
         addressLine2: dbRow.INMATE_ADDRESS_2.value ? Case.title(dbRow.INMATE_ADDRESS_2.value.trim()) : '',
         addressLine4: dbRow.INMATE_ADDRESS_4.value ? Case.title(dbRow.INMATE_ADDRESS_4.value.trim()) : '',
         type: dbRow.ADDRESS_TYPE.value ? Case.title(describeCode('ADDRESS', dbRow.ADDRESS_TYPE.value)) :
@@ -465,6 +465,10 @@ function sentenceCaseWithAcronymsForCode(codeset, code) {
 
 function sentenceCaseWithAcronyms(text) {
     return utils.acronymsToUpperCase(Case.sentence(text));
+}
+
+function titleCaseWithAcronyms(text) {
+    return utils.acronymsToUpperCase(Case.title(text));
 }
 
 function formatHdcRecallRow(dbRow) {

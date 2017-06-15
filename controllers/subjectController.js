@@ -1,5 +1,6 @@
 const logger = require('../log');
 const utils = require('../data/utils');
+const url = require('url');
 const {
     getSubject,
     getMovements,
@@ -39,7 +40,7 @@ exports.getSubject = function(req, res) {
         subjectData: {},
         pageData: {},
         noResultsText: content.view.subject[page],
-        returnURL: req.get('referer')
+        returnQuery: url.parse(req.url).search ? url.parse(req.url).search : ''
     };
 
     return getSubject(prisonNumber)
@@ -80,12 +81,12 @@ function getPageSpecificDataAndRender(pageObject) {
 }
 
 function renderPage(data) {
-    const {res, page, pageData, subjectData, noResultsText, returnURL} = data;
+    const {res, page, pageData, subjectData, noResultsText, returnQuery} = data;
 
     res.render('subject/' + page, {
         data: {details: pageData, subject: subjectData, noResultsText},
         content: content.view.subject,
-        returnURL,
+        returnQuery,
         nav: getNavigation(page)
     });
 }

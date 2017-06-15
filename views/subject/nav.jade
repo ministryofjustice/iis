@@ -4,4 +4,4 @@ ul.list#inmate-nav
             if(val.active)
                 span.bold-small #{val.title}
             else
-                a(id="#{index}", href="/subject/#{data.subject.prisonNumber}/#{index}")= val.title
+                a(id="#{index}", href="/subject/#{data.subject.prisonNumber}/#{index}#{returnQuery}")= val.title

@@ -26,7 +26,7 @@ describe('subjectController', () => {
             user: {email: 'x@y.com'},
             params: {id: 'id1', page: 'aliases'},
             session: {},
-            get: (item) => 'http://something.com/search/results?page=2&filters=Female'
+            url: 'http://something.com/search/results?page=2&filters=Female'
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
 
@@ -156,7 +156,7 @@ describe('subjectController', () => {
                         sentences: {title: "Sentence History"},
                         summary: {title: "Sentence Summary"}
                     },
-                    returnURL: "http://something.com/search/results?page=2&filters=Female"
+                    returnQuery: "?page=2&filters=Female"
                 });
             });
         });

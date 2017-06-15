@@ -20,7 +20,7 @@ const SELECT = `DISTINCT
                 k.PERSON_SURNAME,
                 k.PERSON_BIRTH_DATE
                 `;
-const ORDER_BY = 'PK_PRISON_NUMBER, INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB';
+const ORDER_BY = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC';
 
 const getSearchOperatorSql = {
     prisonNumber: getPrisonNumberSqlWithParams,

@@ -493,7 +493,7 @@ describe('searchController', () => {
                     expect(reqMock.session.userInput).to.eql(expectedUserInput);
                 });
 
-                it('should remove any that are not in query', () => {
+                it('should remove any gender that is not in query', () => {
                     reqMock.query.filters = 'Female';
                     reqMock.session.userInput.gender = ['F', 'M'];
 
@@ -504,6 +504,24 @@ describe('searchController', () => {
                         prisonNumber: '666',
                         page: 1,
                         gender: ['F']
+                    };
+
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+                    expect(reqMock.session.userInput).to.eql(expectedUserInput);
+                });
+
+                it('should remove any other filter that is not in query', () => {
+                    reqMock.query.filters = 'HDC';
+                    reqMock.session.userInput.gender = ['F'];
+                    reqMock.session.userInput.hasHDC = [true];
+
+                    const expectedUserInput = {
+                        forename: 'Matthew',
+                        forename2: 'James',
+                        surname: 'Whitfield',
+                        prisonNumber: '666',
+                        page: 1,
+                        hasHDC: [true]
                     };
 
                     getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);

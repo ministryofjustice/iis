@@ -46,11 +46,13 @@ const createParamatersFromFilters = (filterValues, filters) => (combinedFilters,
 function removeAllFilters(userInput) {
     const filterParameters = new Set(Object.keys(filterValues).map(filter => filterValues[filter].parameter));
 
-    Object.keys(userInput).forEach(input => {
+    const newUserInput = Object.assign({}, userInput)
+
+    Object.keys(newUserInput).forEach(input => {
         if (filterParameters.has(input)){
-            delete userInput[input];
+            delete newUserInput[input];
         }
     });
 
-    return userInput;
+    return newUserInput;
 }

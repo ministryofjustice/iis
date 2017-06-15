@@ -9,10 +9,11 @@ block subject-details
                             span.quiet.block #{val.caseDate}
                             span Offence code #{val.offenceCode}
 
-
                         div.left-border
-                            span (#{val.establishment_code})&nbsp;
-                            span #{val.establishment.trim()}
+                            if val.establishment
+                                span #{val.establishment.trim()}
+                            else
+                                span #{val.establishment_code}
 
         if (data.details.length === 0)
             span= data.noResultsText

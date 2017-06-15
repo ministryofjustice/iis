@@ -45,7 +45,7 @@ describe('Subject data', function() {
             MARITAL_STATUS_CODE: {value: 'S'},
             ETHNIC_GROUP_CODE: {value: 'W1'},
             NATIONALITY_CODE: {value: 'UK'},
-            RELIGION_CODE: {value: 'ANG'},
+            RELIGION_CODE: {value: 'ANG '},
             INMATE_SEX: {value: 'Male'}
         };
 

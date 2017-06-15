@@ -51,7 +51,10 @@ exports.totalRowsForUserInput = function(userInput) {
     return new Promise((resolve, reject) => {
         let obj = getParamsForUserInput(userInput);
 
-        let fields = `DISTINCT k.PERSON_FORENAME_1, k.PERSON_FORENAME_2, k.PERSON_SURNAME, k.PERSON_BIRTH_DATE, l.PK_PRISON_NUMBER, l.DATE_1ST_RECEP, l.INMATE_SURNAME, l.INMATE_FORENAME_1, l.INMATE_FORENAME_2, l.INMATE_BIRTH_DATE`;
+        let fields = `
+            DISTINCT k.PERSON_FORENAME_1, k.PERSON_FORENAME_2, k.PERSON_SURNAME, k.PERSON_BIRTH_DATE, 
+            l.PK_PRISON_NUMBER, l.DATE_1ST_RECEP, 
+            l.INMATE_SURNAME, l.INMATE_FORENAME_1, l.INMATE_FORENAME_2, l.INMATE_BIRTH_DATE`;
 
         let sql = 'SELECT COUNT(*) AS totalRows FROM (' + prepareSqlStatement(fields, obj.where) + ') AS search';
 
@@ -144,14 +147,14 @@ function getGenderSqlWithParams(obj) {
     return genders.reduce((obj, gender, index) => {
         const lastParam = index === genderLength - 1;
         const newParam = {column: `gender${index}`, type: getType('string'), value: gender};
-        const newSql = index === 0 ? obj.sql : obj.sql.concat(` OR INMATE_SEX = @gender${index}`);
+        const newSql = index === 0 ? obj.sql : obj.sql.concat(` OR PERSON_SEX = @gender${index}`);
 
         return {
             params: [...obj.params, newParam],
             sql: lastParam ? newSql.concat(')') : newSql
         };
 
-    }, {params: [], sql: '(INMATE_SEX = @gender0'});
+    }, {params: [], sql: '(PERSON_SEX = @gender0'});
 }
 
 function getHDCHistory(obj) {

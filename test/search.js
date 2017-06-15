@@ -194,7 +194,7 @@ describe('Search', () => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE (INMATE_SEX = @gender0)');
+                expect(sql).to.contain('WHERE (PERSON_SEX = @gender0)');
                 expect(params[0].column).to.eql('gender0');
                 expect(params[0].value).to.eql('M');
             });
@@ -207,7 +207,7 @@ describe('Search', () => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE (INMATE_SEX = @gender0 OR INMATE_SEX = @gender1)');
+                expect(sql).to.contain('WHERE (PERSON_SEX = @gender0 OR PERSON_SEX = @gender1)');
                 expect(params[0].column).to.eql('gender0');
                 expect(params[0].value).to.eql('M');
                 expect(params[1].column).to.eql('gender1');
@@ -226,16 +226,14 @@ describe('Search', () => {
         });
     });
 
-    // it('should order the data by surname, first initial, then date of first reception.', () => {
-    it('should order the data by prison number, surname, first initial, to keep related aliases close by', () => {
+    it('should order the data by surname, first initial, then date of first reception.', () => {
         const result = inmateProxy()({prisonNumber: 7});
 
         return result.then((data) => {
             const sql = getCollectionStub.getCalls()[0].args[0];
             const params = getCollectionStub.getCalls()[0].args[1];
 
-            //expect(sql).to.contain('INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC');
-            expect(sql).to.contain('PK_PRISON_NUMBER, INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB');
+            expect(sql).to.contain('INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC');
         });
     });
 });

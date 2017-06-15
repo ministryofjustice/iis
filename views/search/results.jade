@@ -24,7 +24,7 @@ block content
         div.column-two-thirds
             h1.heading-xlarge#contentTitle= content.title
 
-            if filtersForView
+            if filtersForView && (data.length > 1 || (filtersForView.Male || filtersForView.Female || filtersForView.HDC))
                 div#filters
                     fieldset.well
                         legend.font-xsmall Search filters

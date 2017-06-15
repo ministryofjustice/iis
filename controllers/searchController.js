@@ -116,9 +116,10 @@ exports.getResults = function(req, res) {
 
     const {filtersForQuery, filtersForView} = getInputtedFilters(req.query);
 
+    req.session.userInput = removeAllFilters(req.session.userInput);
     req.session.userInput = filtersForQuery ?
         Object.assign({}, req.session.userInput, filtersForQuery) :
-        removeAllFilters(req.session.userInput);
+        Object.assign({}, req.session.userInput);
 
     let page = getCurrentPage(req.query);
     req.session.lastPage = page;

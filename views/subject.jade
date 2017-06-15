@@ -56,6 +56,11 @@ block content
                             span.dot &middot;
                             | National of #{data.subject.nationality}
 
+                    if data.subject.religion
+                        li.initiallyHidden
+                            span.dot &middot;
+                            | #{data.subject.religion}
+
 
 
                 span#saveLink

@@ -124,7 +124,6 @@ exports.getResults = function(req, res) {
     let page = getCurrentPage(req.query);
     req.session.lastPage = page;
     const pageError = getPaginationErrors(req.query);
-    const queryString = url.parse(req.url).search;
 
     audit.record('SEARCH', req.user.email, req.session.userInput);
     search.totalRowsForUserInput(req.session.userInput)
@@ -147,15 +146,14 @@ exports.getResults = function(req, res) {
                                          dataWithVisited,
                                          page,
                                          pageError,
-                                         filtersForView,
-                                         queryString);
+                                         filtersForView);
             }).catch(error => {
-                logger.error('Error during inmate search ', {error});
+                logger.error('Error during inmate search ', error.message);
                 return showDbError(res);
             });
         })
         .catch(error => {
-            logger.error('Error during number of rows search ', {error});
+            logger.error('Error during number of rows search ', error.message);
             return showDbError(res);
     });
 
@@ -250,7 +248,8 @@ function isValidPage(page, rowCount) {
     return isNumeric(page) && page > 0 && !(rowCount > 0 && page > Math.ceil(rowCount / resultsPerPage));
 }
 
-function renderResultsPage(req, res, rowcount, data, page, error = null, filtersForView, queryString) {
+function renderResultsPage(req, res, rowcount, data, page, error = null, filtersForView) {
+
     res.render('search/results', {
         content: {
             title: getPageTitle(rowcount)
@@ -260,8 +259,19 @@ function renderResultsPage(req, res, rowcount, data, page, error = null, filters
         data,
         err: error,
         filtersForView,
-        queryString
+        queryStrings: getQueryStrings(req.url)
     });
+}
+
+function getQueryStrings(currentUrl) {
+    const query = url.parse(currentUrl, true).query;
+    const currentPage = query.page ? query.page : 1;
+
+    return {
+        nextPage: url.format({query: Object.assign({}, query, {page: Number(currentPage) + 1})}),
+        thisPage: url.format({query}),
+        prevPage: url.format({query: Object.assign({}, query, {page: Number(currentPage) - 1})})
+    };
 }
 
 function getCurrentPage(query) {

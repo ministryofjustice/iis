@@ -1,6 +1,5 @@
 const content = require('../data/content');
 const logger = require('../log');
-const url = require('url');
 const dob = require('../data/dob');
 const identifier = require('../data/identifier');
 const names = require('../data/names');
@@ -16,6 +15,13 @@ const {
     getInputtedFilters,
     removeAllFilters
 } = require('./helpers/filterHelpers');
+const {
+    getQueryStringsForSearch,
+    mergeIntoQuery,
+    toggleFromQueryItem,
+    getUrlAsObject,
+    createUrl
+} = require('./helpers/urlHelpers');
 
 const availableSearchOptions = exports.availableSearchOptions = {
     identifier: {
@@ -69,8 +75,7 @@ exports.postIndex = function(req, res) {
 
     const selectedOptions = objectKeysInArray(availableSearchOptions, userReturnedOptions);
 
-    const redirectUrl = url.format({'pathname': '/search/form', 'query': selectedOptions});
-    return res.redirect(redirectUrl);
+    return res.redirect(createUrl('/search/form', selectedOptions));
 };
 
 exports.getSearchForm = function(req, res) {
@@ -189,41 +194,23 @@ const inputValidates = (searchItems, userInput) => {
 
 const flatten = arr => Array.prototype.concat(...arr);
 
-const deleteFromArray = (array, index) => array.slice(0, index).concat(array.slice(index+1));
-
 exports.postPagination = function(req, res) {
-    const query = Object.assign({}, req.query, {page: req.body.pageNumber});
+    const query = mergeIntoQuery(req.query, {page: req.body.pageNumber});
 
-    const redirectUrl = url.format({pathname: '/search/results', query});
-    res.redirect(redirectUrl);
+    res.redirect(createUrl('/search/results', query));
 };
 
 exports.postFilters = function(req, res) {
-    const query = url.parse(req.get('referrer'), true).query;
     const acceptableFilters = ['Male', 'Female', 'HDC'];
     const [filterPressed] = acceptableFilters.filter(filter => filter === req.body.filter);
 
-    query.filters = addOrRemoveFromQuery(query, 'filters', filterPressed);
+    const newQueryObject = toggleFromQueryItem(req, 'filters', filterPressed, 'referrer');
 
     // Reset to page 1 because the filters may leave the current page number invalid
-    query.page = '1';
+    newQueryObject.page = '1';
 
-    const redirectUrl = url.format({pathname: '/search/results', query});
-    res.redirect(redirectUrl);
+    res.redirect(createUrl('/search/results', newQueryObject));
 };
-
-function addOrRemoveFromQuery(query, section, item) {
-    if(!query[section]) return [item];
-
-    if(typeof query[section] === 'string') query[section] = [query[section]];
-
-    if(query[section].includes(item)) {
-        const index = query[section].indexOf(item);
-        return deleteFromArray(query[section], index);
-    }
-
-    return [...query[section], item];
-}
 
 const getPaginationErrors = query => {
     if (query.invalidPage) {
@@ -236,10 +223,10 @@ const getPaginationErrors = query => {
 };
 
 function redirectToReferer(req, res, attemptedPage) {
-    const urlObj = url.parse(req.get('referrer'), true);
+    const urlObj = getUrlAsObject(req.get('referrer'));
     urlObj.query.invalidPage = attemptedPage;
 
-    return res.redirect(url.format({pathname: urlObj.pathname, query: urlObj.query}));
+    return res.redirect(createUrl(urlObj.pathname, urlObj.query));
 }
 
 const isNumeric = value => /^\d+$/.test(value);
@@ -259,19 +246,8 @@ function renderResultsPage(req, res, rowcount, data, page, error = null, filters
         data,
         err: error,
         filtersForView,
-        queryStrings: getQueryStrings(req.url)
+        queryStrings: getQueryStringsForSearch(req.url)
     });
-}
-
-function getQueryStrings(currentUrl) {
-    const query = url.parse(currentUrl, true).query;
-    const currentPage = query.page ? query.page : 1;
-
-    return {
-        nextPage: url.format({query: Object.assign({}, query, {page: Number(currentPage) + 1})}),
-        thisPage: url.format({query}),
-        prevPage: url.format({query: Object.assign({}, query, {page: Number(currentPage) - 1})})
-    };
 }
 
 function getCurrentPage(query) {

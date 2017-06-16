@@ -7,13 +7,21 @@ const resultsPerPage = require('../server/config').searchResultsPerPage;
 const acronyms = [
     'ARD',
     'ARP',
+    'CRC',
     'CJA',
     'DTO',
     'EPP',
     'GOAD',
     'HDC',
+    'HMP',
+    'HMYOI',
     'IPP',
+    'NFA',
+    'NPS',
+    'OMU',
+    'YMCA',
     'YO',
+    'YOI',
     'YP'
 ];
 

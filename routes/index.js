@@ -41,7 +41,8 @@ router.get('/logout', function(req, res) {
 
 router.get('/feedback', function(req, res, next) {
     return res.render('feedback', {
-        content: content.view.feedback
+        content: content.view.feedback,
+        returnURL: req.get('referer')
     });
 });
 

@@ -180,11 +180,11 @@ function offenceContent(doc, items) {
     ]);
 
     const tableBody = items.map(item => {
-        const {caseDate, offenceCode, establishment_code, establishment} = item;
+        const {caseDate, offenceCode, establishment, establishment_code} = item;
         return {
             caseDate,
             offenceCode: `Offence code ${offenceCode}`,
-            establishment: `(${establishment_code}) ${establishment}`};
+            establishment: establishment ? `${establishment}` : `${establishment_code}`};
     });
     table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);

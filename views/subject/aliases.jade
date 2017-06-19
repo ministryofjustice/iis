@@ -16,12 +16,12 @@ block subject-details
                                 input#dobDay(type="hidden", name="dobDay", value="#{ages[0]}")
                                 input#dobMonth(type="hidden", name="dobMonth", value="#{ages[1]}")
                                 input#dobYear(type="hidden", name="dobYear", value="#{ages[2]}")
-                                button.aliasSearch(type="submit")
+                                button.aliasSearch(type="submit", id="aliasSearch#{index}")
                                     div.aliasSearch
                                         div(id="alias#{index}-name")
                                             | #{val.forename + ' ' + val.forename2 + ' ' + val.surname}
-                                            if (val.dob)
-                                                div(id="alias#{index}-dob") Born on: #{val.dob}
+                                        if (val.dob)
+                                            div(id="alias#{index}-dob") Born on: #{val.dob}
 
             if (data.details.length === 0)
                 span= data.noResultsText

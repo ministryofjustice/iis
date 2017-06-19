@@ -239,7 +239,6 @@ describe('searchController', () => {
                 },
                 query: {page: 1},
                 user: {email: 'x@y.com'},
-                params: {v: 'not sure what this is for'},
                 url: 'http://something.com/search/results?page=2&filters=Female',
                 get: (item) => 'http://something.com/search/results?page=2'
             };
@@ -287,7 +286,6 @@ describe('searchController', () => {
 
                 const expectedPayload = {
                     content: {title: 'Your search did not return any results'},
-                    view: 'not sure what this is for',
                     pagination: null,
                     data: [],
                     err: null,
@@ -344,7 +342,6 @@ describe('searchController', () => {
                     content: {
                         title: 'Your search returned 20 results'
                     },
-                    view: 'not sure what this is for',
                     pagination: {
                         'totalPages': 2,
                         'currPage': 1,
@@ -373,7 +370,6 @@ describe('searchController', () => {
                     content: {
                         title: 'Your search returned 20 results'
                     },
-                    view: 'not sure what this is for',
                     pagination: {
                         'totalPages': 2,
                         'currPage': 1,
@@ -408,7 +404,6 @@ describe('searchController', () => {
                     content: {
                         title: 'Your search returned 20 results'
                     },
-                    view: 'not sure what this is for',
                     pagination: {
                         'totalPages': 2,
                         'currPage': 1,
@@ -590,7 +585,6 @@ describe('searchController', () => {
                         content: {
                             title: 'Your search returned 20 results'
                         },
-                        view: 'not sure what this is for',
                         pagination: {
                             'totalPages': 2,
                             'currPage': 1,

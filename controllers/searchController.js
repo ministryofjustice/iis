@@ -27,19 +27,16 @@ const availableSearchOptions = exports.availableSearchOptions = {
     identifier: {
         fields: ['prisonNumber', 'pncNumber', 'croNumber'],
         validator: identifier.validate,
-        nextView: 'names',
         hints: []
     },
     names: {
         fields: ['forename', 'forename2', 'surname'],
         validator: names.validate,
-        nextView: 'dob',
         hints: ['wildcard']
     },
     dob: {
         fields: ['dobOrAge', 'dobDay', 'dobMonth', 'dobYear', 'age'],
         validator: dob.validate,
-        nextView: 'results',
         hints: []
     }
 };
@@ -160,7 +157,6 @@ function parseResultsPageData(req, rowcount, data, page) {
         content: {
             title: getPageTitle(rowcount)
         },
-        view: req.params.v,
         pagination: (rowcount > resultsPerPage ) ? utils.pagination(rowcount, page) : null,
         data: addSelectionVisitedData(data, req.session) || [],
         err: getPaginationErrors(req.query),

@@ -1,6 +1,5 @@
 const content = require('../data/content');
 const logger = require('../log');
-const url = require('url');
 const dob = require('../data/dob');
 const identifier = require('../data/identifier');
 const names = require('../data/names');
@@ -16,24 +15,28 @@ const {
     getInputtedFilters,
     removeAllFilters
 } = require('./helpers/filterHelpers');
+const {
+    getQueryStringsForSearch,
+    mergeIntoQuery,
+    toggleFromQueryItem,
+    getUrlAsObject,
+    createUrl
+} = require('./helpers/urlHelpers');
 
 const availableSearchOptions = exports.availableSearchOptions = {
     identifier: {
         fields: ['prisonNumber', 'pncNumber', 'croNumber'],
         validator: identifier.validate,
-        nextView: 'names',
         hints: []
     },
     names: {
         fields: ['forename', 'forename2', 'surname'],
         validator: names.validate,
-        nextView: 'dob',
         hints: ['wildcard']
     },
     dob: {
         fields: ['dobOrAge', 'dobDay', 'dobMonth', 'dobYear', 'age'],
         validator: dob.validate,
-        nextView: 'results',
         hints: []
     }
 };
@@ -69,8 +72,7 @@ exports.postIndex = function(req, res) {
 
     const selectedOptions = objectKeysInArray(availableSearchOptions, userReturnedOptions);
 
-    const redirectUrl = url.format({'pathname': '/search/form', 'query': selectedOptions});
-    return res.redirect(redirectUrl);
+    return res.redirect(createUrl('/search/form', selectedOptions));
 };
 
 exports.getSearchForm = function(req, res) {
@@ -114,62 +116,61 @@ exports.getResults = function(req, res) {
         return res.redirect('/search');
     }
 
-    const {filtersForQuery, filtersForView} = getInputtedFilters(req.query);
-
-    req.session.userInput = removeAllFilters(req.session.userInput);
-    req.session.userInput = filtersForQuery ?
-        Object.assign({}, req.session.userInput, filtersForQuery) :
-        Object.assign({}, req.session.userInput);
-
-    let page = getCurrentPage(req.query);
-    req.session.lastPage = page;
-    const pageError = getPaginationErrors(req.query);
+    req.session.userInput = addFiltersToUserInput(req.session.userInput, req.query);
 
     audit.record('SEARCH', req.user.email, req.session.userInput);
+
     search.totalRowsForUserInput(req.session.userInput)
-        .then(data => {
-            const rowCount = data.totalRows.value;
-            if (rowCount === 0) {
-                return renderResultsPage(req, res, rowCount);
-            }
-
-            if (!isValidPage(page, rowCount)) {
-                return redirectToReferer(req, res, page);
-            }
-
-            req.session.userInput.page = page;
-            return search.inmate(req.session.userInput).then(data => {
-                const dataWithVisited = addVisitedData(data, req.session);
-                return renderResultsPage(req,
-                                         res,
-                                         rowCount,
-                                         dataWithVisited,
-                                         page,
-                                         pageError,
-                                         filtersForView);
-            }).catch(error => {
-                logger.error('Error during inmate search ', error.message);
-                return showDbError(res);
-            });
-        })
+        .then(returnedRows => getSearchResultsAndRender(req, res)(returnedRows))
         .catch(error => {
             logger.error('Error during number of rows search ', error.message);
-            return showDbError(res);
+            return res.render('search', getDbErrorData());
         });
-
-    function showDbError(res) {
-        let _err = {
-            title: content.errMsg.DB_ERROR,
-            desc: content.errMsg.DB_ERROR_DESC
-        };
-
-        res.status(500);
-        res.render('search', {
-            err: _err,
-            content: content.view.search
-        });
-    }
 };
+
+function getSearchResultsAndRender(req, res) {
+
+    const currentPage = getCurrentPage(req.query);
+    req.session.userInput.page = currentPage;
+
+    return function(rowCountData) {
+        const rowCount = rowCountData.totalRows.value;
+        if (rowCount === 0) {
+            return res.render('search/results', parseResultsPageData(req, rowCount));
+        }
+
+        if (!isValidPage(currentPage, rowCount)) {
+            return res.redirect(getReferrerUrlWithInvalidPage(req, currentPage));
+        }
+
+        return search.inmate(req.session.userInput).then(searchResult => {
+            return res.render('search/results', parseResultsPageData(req, rowCount, searchResult, currentPage));
+        }).catch(error => {
+            logger.error('Error during inmate search ', error.message);
+            return res.render('search', getDbErrorData());
+        });
+    };
+}
+
+function parseResultsPageData(req, rowcount, data, page) {
+    return {
+        content: {
+            title: getPageTitle(rowcount)
+        },
+        pagination: (rowcount > resultsPerPage ) ? utils.pagination(rowcount, page) : null,
+        data: addSelectionVisitedData(data, req.session) || [],
+        err: getPaginationErrors(req.query),
+        filtersForView: getInputtedFilters(req.query, 'VIEW'),
+        queryStrings: getQueryStringsForSearch(req.url)
+    };
+}
+
+function getDbErrorData() {
+    return {
+        title: content.errMsg.DB_ERROR,
+        desc: content.errMsg.DB_ERROR_DESC
+    };
+}
 
 const userInputFromSearchForm = requestBody => {
     const getReturnedFields = composeFieldsForOptionReducer(requestBody);
@@ -189,41 +190,23 @@ const inputValidates = (searchItems, userInput) => {
 
 const flatten = arr => Array.prototype.concat(...arr);
 
-const deleteFromArray = (array, index) => array.slice(0, index).concat(array.slice(index+1));
-
 exports.postPagination = function(req, res) {
-    const query = Object.assign({}, req.query, {page: req.body.pageNumber});
+    const query = mergeIntoQuery(req.query, {page: req.body.pageNumber});
 
-    const redirectUrl = url.format({pathname: '/search/results', query});
-    res.redirect(redirectUrl);
+    res.redirect(createUrl('/search/results', query));
 };
 
 exports.postFilters = function(req, res) {
-    const query = url.parse(req.get('referrer'), true).query;
     const acceptableFilters = ['Male', 'Female', 'HDC'];
     const [filterPressed] = acceptableFilters.filter(filter => filter === req.body.filter);
 
-    query.filters = addOrRemoveFromQuery(query, 'filters', filterPressed);
+    const newQueryObject = toggleFromQueryItem(req, 'filters', filterPressed, 'referrer');
 
     // Reset to page 1 because the filters may leave the current page number invalid
-    query.page = '1';
+    newQueryObject.page = '1';
 
-    const redirectUrl = url.format({pathname: '/search/results', query});
-    res.redirect(redirectUrl);
+    res.redirect(createUrl('/search/results', newQueryObject));
 };
-
-function addOrRemoveFromQuery(query, section, item) {
-    if(!query[section]) return [item];
-
-    if(typeof query[section] === 'string') query[section] = [query[section]];
-
-    if(query[section].includes(item)) {
-        const index = query[section].indexOf(item);
-        return deleteFromArray(query[section], index);
-    }
-
-    return [...query[section], item];
-}
 
 const getPaginationErrors = query => {
     if (query.invalidPage) {
@@ -235,43 +218,17 @@ const getPaginationErrors = query => {
     return null;
 };
 
-function redirectToReferer(req, res, attemptedPage) {
-    const urlObj = url.parse(req.get('referrer'), true);
+function getReferrerUrlWithInvalidPage(req, attemptedPage) {
+    const urlObj = getUrlAsObject(req.get('referrer'));
     urlObj.query.invalidPage = attemptedPage;
 
-    return res.redirect(url.format({pathname: urlObj.pathname, query: urlObj.query}));
+    return createUrl(urlObj.pathname, urlObj.query);
 }
 
 const isNumeric = value => /^\d+$/.test(value);
 
 function isValidPage(page, rowCount) {
     return isNumeric(page) && page > 0 && !(rowCount > 0 && page > Math.ceil(rowCount / resultsPerPage));
-}
-
-function renderResultsPage(req, res, rowcount, data, page, error = null, filtersForView) {
-
-    res.render('search/results', {
-        content: {
-            title: getPageTitle(rowcount)
-        },
-        view: req.params.v,
-        pagination: (rowcount > resultsPerPage ) ? utils.pagination(rowcount, page) : null,
-        data,
-        err: error,
-        filtersForView,
-        queryStrings: getQueryStrings(req.url)
-    });
-}
-
-function getQueryStrings(currentUrl) {
-    const query = url.parse(currentUrl, true).query;
-    const currentPage = query.page ? query.page : 1;
-
-    return {
-        nextPage: url.format({query: Object.assign({}, query, {page: Number(currentPage) + 1})}),
-        thisPage: url.format({query}),
-        prevPage: url.format({query: Object.assign({}, query, {page: Number(currentPage) - 1})})
-    };
 }
 
 function getCurrentPage(query) {
@@ -295,7 +252,7 @@ function getPageTitle(rowcount) {
     return title.replace('_x_', rowcount);
 }
 
-function addVisitedData(data, session) {
+function addSelectionVisitedData(data, session) {
     if (!session.visited || session.visited.length === 0) {
         return data;
     }

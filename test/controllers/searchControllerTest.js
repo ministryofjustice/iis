@@ -239,7 +239,6 @@ describe('searchController', () => {
                 },
                 query: {page: 1},
                 user: {email: 'x@y.com'},
-                params: {v: 'not sure what this is for'},
                 url: 'http://something.com/search/results?page=2&filters=Female',
                 get: (item) => 'http://something.com/search/results?page=2'
             };
@@ -266,11 +265,6 @@ describe('searchController', () => {
             expect(resMock.redirect).to.have.been.calledWith('/search');
         });
 
-        it('should set session.lastPage as current pagination position', () => {
-            getResultsProxy()(reqMock, resMock);
-            expect(reqMock.session.lastPage).to.eql(1);
-        });
-
         context('rowcounts = 0', () => {
             it('should not call getInmates', () => {
                 getRowsStub = sinon.stub().returnsPromise().resolves({totalRows: {value: 0}});
@@ -285,6 +279,27 @@ describe('searchController', () => {
                 getResultsProxy(getRowsStub)(reqMock, resMock);
                 expect(resMock.render).to.have.callCount(1);
             });
+
+            it('should pass appropriate data to view', () => {
+                getRowsStub = sinon.stub().returnsPromise().resolves({totalRows: {value: 0}});
+                getResultsProxy(getRowsStub)(reqMock, resMock);
+
+                const expectedPayload = {
+                    content: {title: 'Your search did not return any results'},
+                    pagination: null,
+                    data: [],
+                    err: null,
+                    filtersForView: {},
+                    queryStrings: {
+                        prevPage: "?page=1&filters=Female",
+                        thisPage: "?page=2&filters=Female",
+                        nextPage: "?page=3&filters=Female"
+                    }
+                };
+
+                expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
+            });
+
         });
 
         context('rowcounts > 0', () => {
@@ -327,7 +342,6 @@ describe('searchController', () => {
                     content: {
                         title: 'Your search returned 20 results'
                     },
-                    view: 'not sure what this is for',
                     pagination: {
                         'totalPages': 2,
                         'currPage': 1,
@@ -356,7 +370,6 @@ describe('searchController', () => {
                     content: {
                         title: 'Your search returned 20 results'
                     },
-                    view: 'not sure what this is for',
                     pagination: {
                         'totalPages': 2,
                         'currPage': 1,
@@ -391,7 +404,6 @@ describe('searchController', () => {
                     content: {
                         title: 'Your search returned 20 results'
                     },
-                    view: 'not sure what this is for',
                     pagination: {
                         'totalPages': 2,
                         'currPage': 1,
@@ -573,7 +585,6 @@ describe('searchController', () => {
                         content: {
                             title: 'Your search returned 20 results'
                         },
-                        view: 'not sure what this is for',
                         pagination: {
                             'totalPages': 2,
                             'currPage': 1,

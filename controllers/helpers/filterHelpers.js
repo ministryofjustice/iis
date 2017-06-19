@@ -15,19 +15,19 @@ const filterValues = {
     }
 };
 
-function getInputtedFilters(query) {
+function getInputtedFilters(query, type) {
 
-    if (!query.filters) return {filtersForQuery: null, filtersForView: {}};
+    if (!query.filters) return {};
 
     const filters = typeof query.filters === 'string' ? [query.filters] : query.filters;
 
-    const filtersForQuery = filters.map(filter => filterValues[filter].parameter)
-                                   .filter((key, index, array) => array.indexOf(key) === index)
-                                   .reduce(createParamatersFromFilters(filterValues, filters), {});
+    if(type === 'QUERY') {
+        return filters.map(filter => filterValues[filter].parameter)
+                      .filter((key, index, array) => array.indexOf(key) === index)
+                      .reduce(createParamatersFromFilters(filterValues, filters), {});
+    }
 
-    const filtersForView = filters.reduce((concat, filter) => Object.assign({}, concat, {[filter]: true}), {});
-
-    return {filtersForQuery, filtersForView};
+    return filters.reduce((concat, filter) => Object.assign({}, concat, {[filter]: true}), {});
 }
 
 const createParamatersFromFilters = (filterValues, filters) => (combinedFilters, key) => {

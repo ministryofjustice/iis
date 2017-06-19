@@ -1,11 +1,13 @@
 extends ../layout
-mixin inmate(name, prisonNumber, dob, firstReceptionDate, visited)
+mixin inmate(name, prisonNumber, dob, firstReceptionDate, alias, visited)
     div.inmateDetails(class=visited ? 'visited' : '')
         a(href="/subject/#{prisonNumber}/summary#{queryStrings.thisPage}").capitalise-text
             span.inmateContainer
                 span(class=visited ? '' : 'bold-medium').capitalise-text #{name}
                 if dob
                     span(class=visited ? '' : 'bold-medium') &middot; #{dob}
+                if alias
+                    span.block.text-secondary Alias of: #{alias}
                 if prisonNumber
                     span.prisonNumber.block.text-secondary Prison no. #{prisonNumber}
                 if firstReceptionDate
@@ -41,7 +43,7 @@ block content
                        +inmate(item.forename
                                 + (item.forename2)
                                 + item.surname,
-                               item.prisonNumber, item.dob, item.firstReceptionDate, item.visited)
+                               item.prisonNumber, item.dob, item.firstReceptionDate, item.realName, item.visited)
 
 
             if pagination

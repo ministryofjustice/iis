@@ -25,6 +25,7 @@ module.exports = {
 
             const Request = require('tedious').Request;
             let request = new Request(sql, function(err, rowCount, rows) {
+
                 if (err) {
                     return finish(err);
                 }

@@ -164,6 +164,26 @@ legend {
     -webkit-border-top-right-radius: 4px;
 }
 
+button.aliasSearch{
+    background:none;
+    border:none;
+    font-size: 19px;
+    line-height: 1.31579;
+    font-family: "nta", Arial, sans-serif;
+    text-align: left;
+}
+
+div.aliasSearch{
+    cursor: pointer;
+    padding-bottom: 7px;
+    padding-top: 7px;
+}
+
+div.aliasSearch:hover {
+    background-color: #efefef;
+}
+
+
 // Add extra styles here, or re-organise the Sass files in whichever way makes most sense to you
 /*
 .u-case { text-transform: uppercase; }

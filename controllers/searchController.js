@@ -263,3 +263,12 @@ function addSelectionVisitedData(data, session) {
     });
 }
 
+function addFiltersToUserInput(userInput, query) {
+    const filtersForQuery = getInputtedFilters(query, 'QUERY');
+    const cleanInput = removeAllFilters(userInput);
+
+    if(!filtersForQuery) {
+        return Object.assign({}, cleanInput);
+    }
+    return Object.assign({}, cleanInput, filtersForQuery);
+}

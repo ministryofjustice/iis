@@ -119,62 +119,62 @@ exports.getResults = function(req, res) {
         return res.redirect('/search');
     }
 
-    const {filtersForQuery, filtersForView} = getInputtedFilters(req.query);
-
-    req.session.userInput = removeAllFilters(req.session.userInput);
-    req.session.userInput = filtersForQuery ?
-        Object.assign({}, req.session.userInput, filtersForQuery) :
-        Object.assign({}, req.session.userInput);
-
-    let page = getCurrentPage(req.query);
-    req.session.lastPage = page;
-    const pageError = getPaginationErrors(req.query);
+    req.session.userInput = addFiltersToUserInput(req.session.userInput, req.query);
 
     audit.record('SEARCH', req.user.email, req.session.userInput);
+
     search.totalRowsForUserInput(req.session.userInput)
-        .then(data => {
-            const rowCount = data.totalRows.value;
-            if (rowCount === 0) {
-                return renderResultsPage(req, res, rowCount);
-            }
-
-            if (!isValidPage(page, rowCount)) {
-                return redirectToReferer(req, res, page);
-            }
-
-            req.session.userInput.page = page;
-            return search.inmate(req.session.userInput).then(data => {
-                const dataWithVisited = addVisitedData(data, req.session);
-                return renderResultsPage(req,
-                                         res,
-                                         rowCount,
-                                         dataWithVisited,
-                                         page,
-                                         pageError,
-                                         filtersForView);
-            }).catch(error => {
-                logger.error('Error during inmate search ', error.message);
-                return showDbError(res);
-            });
-        })
+        .then(returnedRows => getSearchResultsAndRender(req, res)(returnedRows))
         .catch(error => {
             logger.error('Error during number of rows search ', error.message);
-            return showDbError(res);
-    });
-
-    function showDbError(res) {
-        let _err = {
-            title: content.errMsg.DB_ERROR,
-            desc: content.errMsg.DB_ERROR_DESC
-        };
-
-        res.status(500);
-        res.render('search', {
-            err: _err,
-            content: content.view.search
+            return res.render('search', getDbErrorData());
         });
-    }
 };
+
+function getSearchResultsAndRender(req, res) {
+
+    const currentPage = getCurrentPage(req.query);
+    req.session.userInput.page = currentPage;
+
+    return function(rowCountData) {
+        const rowCount = rowCountData.totalRows.value;
+        if (rowCount === 0) {
+            return res.render('search/results', parseResultsPageData(req, rowCount));
+        }
+
+        if (!isValidPage(currentPage, rowCount)) {
+            return res.redirect(getReferrerUrlWithInvalidPage(req, currentPage));
+        }
+
+        return search.inmate(req.session.userInput).then(searchResult => {
+            return res.render('search/results', parseResultsPageData(req, rowCount, searchResult, currentPage));
+        }).catch(error => {
+            logger.error('Error during inmate search ', error.message);
+            return res.render('search', getDbErrorData());
+        });
+    };
+}
+
+function parseResultsPageData(req, rowcount, data, page) {
+    return {
+        content: {
+            title: getPageTitle(rowcount)
+        },
+        view: req.params.v,
+        pagination: (rowcount > resultsPerPage ) ? utils.pagination(rowcount, page) : null,
+        data: addSelectionVisitedData(data, req.session) || [],
+        err: getPaginationErrors(req.query),
+        filtersForView: getInputtedFilters(req.query, 'VIEW'),
+        queryStrings: getQueryStringsForSearch(req.url)
+    };
+}
+
+function getDbErrorData() {
+    return {
+        title: content.errMsg.DB_ERROR,
+        desc: content.errMsg.DB_ERROR_DESC
+    };
+}
 
 const userInputFromSearchForm = requestBody => {
     const getReturnedFields = composeFieldsForOptionReducer(requestBody);
@@ -222,32 +222,17 @@ const getPaginationErrors = query => {
     return null;
 };
 
-function redirectToReferer(req, res, attemptedPage) {
+function getReferrerUrlWithInvalidPage(req, attemptedPage) {
     const urlObj = getUrlAsObject(req.get('referrer'));
     urlObj.query.invalidPage = attemptedPage;
 
-    return res.redirect(createUrl(urlObj.pathname, urlObj.query));
+    return createUrl(urlObj.pathname, urlObj.query);
 }
 
 const isNumeric = value => /^\d+$/.test(value);
 
 function isValidPage(page, rowCount) {
     return isNumeric(page) && page > 0 && !(rowCount > 0 && page > Math.ceil(rowCount / resultsPerPage));
-}
-
-function renderResultsPage(req, res, rowcount, data, page, error = null, filtersForView) {
-
-    res.render('search/results', {
-        content: {
-            title: getPageTitle(rowcount)
-        },
-        view: req.params.v,
-        pagination: (rowcount > resultsPerPage ) ? utils.pagination(rowcount, page) : null,
-        data,
-        err: error,
-        filtersForView,
-        queryStrings: getQueryStringsForSearch(req.url)
-    });
 }
 
 function getCurrentPage(query) {
@@ -271,7 +256,7 @@ function getPageTitle(rowcount) {
     return title.replace('_x_', rowcount);
 }
 
-function addVisitedData(data, session) {
+function addSelectionVisitedData(data, session) {
     if (!session.visited || session.visited.length === 0) {
         return data;
     }
@@ -280,4 +265,14 @@ function addVisitedData(data, session) {
         inmate.visited = session.visited.includes(inmate.prisonNumber);
         return inmate;
     });
+}
+
+function addFiltersToUserInput(userInput, query) {
+    const filtersForQuery = getInputtedFilters(query, 'QUERY');
+    const cleanInput = removeAllFilters(userInput);
+
+    if(!filtersForQuery) {
+        return Object.assign({}, cleanInput);
+    }
+    return Object.assign({}, cleanInput, filtersForQuery);
 }

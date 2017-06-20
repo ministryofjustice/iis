@@ -29,7 +29,7 @@ module.exports = {
         feedback: {title: 'Feedback'},
 
         search: {
-            title: 'What information do you have on the inmate?',
+            title: 'What information do you have on the subject?',
             body: 'Select all that apply'
         },
 
@@ -42,23 +42,23 @@ module.exports = {
 
         names: {title: 'Enter at least one name'},
 
-        dob: {title: 'Enter inmate\'s date of birth or age/range'},
+        dob: {title: 'Enter subject\'s date of birth or age/range'},
 
         results: {
-            title: 'Your search returned _x_ result',
+            title: 'Your search returned _x_ prisoner',
             title_no_results: 'Your search did not return any results'
         },
 
         subject: {
-            title: 'Subject details',
-            aliases: 'Subject has no aliases',
-            offencesincustody: 'Subject has no offences in custody',
-            movements: 'Subject has no movements',
-            hdcinfo: 'Subject has no HDC history',
-            hdcrecall: 'Subject has no HDC recall history',
-            offences: 'Subject has no offences',
-            addresses: 'Subject has no addresses',
-            sentences: 'Subject has no sentence history'
+            title: 'Prisoner details',
+            aliases: 'Prisoner has no aliases',
+            offencesincustody: 'Prisoner has no offences in custody',
+            movements: 'Prisoner has no movements',
+            hdcinfo: 'Prisoner has no HDC history',
+            hdcrecall: 'Prisoner has no HDC recall history',
+            offences: 'Prisoner has no offences',
+            addresses: 'Prisoner has no addresses',
+            sentences: 'Prisoner has no sentence history'
         },
 
         print: {

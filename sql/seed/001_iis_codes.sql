@@ -14,6 +14,7 @@ VALUES
     (25, 'GM      ', 1, null, null, null, 'Gambia                      ', null, 1, null, null),
     (25, 'ZW      ', 1, null, null, null, 'Zimbabwe                    ', null, 1, null, null),
     (25, '',         1, null, null, null, 'Not Known                   ', null, 1, null, null),
+    (25, 'US',       1, null, null, null, 'United States of America    ', null, 1, null, null),
     -- Religion
     (27, 'CE      ', 1, null, null, null, 'Church of England           ', null, 1, null, null),
     (27, 'MOS     ', 1, null, null, null, 'Muslim                      ', null, 1, null, null),
@@ -26,6 +27,7 @@ VALUES
     (42, '1',        1, null, null, null, 'ULVERSTON COUNTY COURT      ', null, 1, null, null),
     (42, '2',        2, null, null, null, 'LISKEARD COUNTY COURT       ', null, 1, null, null),
     (42, '3',        3, null, null, null, 'THORNBURY COUNTY COURT      ', null, 1, null, null),
-    (42, '4',        4, null, null, null, 'WELLS COUNTY COURT          ', null, 1, null, null)
+    (42, '4',        4, null, null, null, 'WELLS COUNTY COURT          ', null, 1, null, null),
+    (42, '5',        4, null, null, null, 'HILL VALLEY COURTHOUSE      ', null, 1, null, null)
 ;
 GO

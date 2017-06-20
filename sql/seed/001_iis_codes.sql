@@ -28,6 +28,6 @@ VALUES
     (42, '2',        2, null, null, null, 'LISKEARD COUNTY COURT       ', null, 1, null, null),
     (42, '3',        3, null, null, null, 'THORNBURY COUNTY COURT      ', null, 1, null, null),
     (42, '4',        4, null, null, null, 'WELLS COUNTY COURT          ', null, 1, null, null),
-    (42, '5',        4, null, null, null, 'HILL VALLEY COURTHOUSE      ', null, 1, null, null)
+    (42, '5',        5, null, null, null, 'HILL VALLEY COURTHOUSE      ', null, 1, null, null)
 ;
 GO

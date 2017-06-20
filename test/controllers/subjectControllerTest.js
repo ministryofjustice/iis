@@ -131,19 +131,19 @@ describe('subjectController', () => {
             return getSubject()(reqMock, resMock).then(() => {
                 expect(resMock.render).to.be.calledWith('subject/offences', {
                     content: {
-                        addresses: "Subject has no addresses",
-                        aliases: "Subject has no aliases",
-                        hdcinfo: "Subject has no HDC history",
-                        hdcrecall: "Subject has no HDC recall history",
-                        movements: "Subject has no movements",
-                        offences: "Subject has no offences",
-                        offencesincustody: "Subject has no offences in custody",
-                        sentences: "Subject has no sentence history",
-                        title: "Subject details"
+                        addresses: "Prisoner has no addresses",
+                        aliases: "Prisoner has no aliases",
+                        hdcinfo: "Prisoner has no HDC history",
+                        hdcrecall: "Prisoner has no HDC recall history",
+                        movements: "Prisoner has no movements",
+                        offences: "Prisoner has no offences",
+                        offencesincustody: "Prisoner has no offences in custody",
+                        sentences: "Prisoner has no sentence history",
+                        title: "Prisoner details"
                     },
                     data: {
                         details: {dob: "1"},
-                        noResultsText: "Subject has no offences",
+                        noResultsText: "Prisoner has no offences",
                         subject: {dob: "1", personIdentifier: "1", prisonNumber: "     id1"}
                     },
                     nav: {

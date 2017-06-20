@@ -85,7 +85,7 @@ describe('searchController', () => {
             expect(resMock.render).to.have.been.calledWith('search/full-search', {
                 content: {
                     body: 'Select all that apply',
-                    title: 'What information do you have on the inmate?'
+                    title: 'What information do you have on the subject?'
                 },
                 searchItems: ['names', 'dob'],
                 hints: ['wildcard']
@@ -340,7 +340,7 @@ describe('searchController', () => {
 
                 const expectedPayload = {
                     content: {
-                        title: 'Your search returned 20 results'
+                        title: 'Your search returned 20 prisoners'
                     },
                     pagination: {
                         'totalPages': 2,
@@ -368,7 +368,7 @@ describe('searchController', () => {
 
                 const expectedPayload = {
                     content: {
-                        title: 'Your search returned 20 results'
+                        title: 'Your search returned 20 prisoners'
                     },
                     pagination: {
                         'totalPages': 2,
@@ -402,7 +402,7 @@ describe('searchController', () => {
 
                 const expectedPayload = {
                     content: {
-                        title: 'Your search returned 20 results'
+                        title: 'Your search returned 20 prisoners'
                     },
                     pagination: {
                         'totalPages': 2,
@@ -583,7 +583,7 @@ describe('searchController', () => {
 
                     const expectedPayload = {
                         content: {
-                            title: 'Your search returned 20 results'
+                            title: 'Your search returned 20 prisoners'
                         },
                         pagination: {
                             'totalPages': 2,

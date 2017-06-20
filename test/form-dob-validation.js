@@ -58,12 +58,12 @@ describe('Date/Age/Age-range validation tests', function() {
             });
     });
 
-    it('should redirect if the age range is more than 5 years', function() {
+    it('should redirect if the age range is more than 10 years', function() {
         return common.logInAs('someone')
             .then(function(authedReq) {
                 return authedReq.post('/search/form?0=dob')
                     .set('referer', '/search/ ')
-                    .send({dobOrAge: 'age', age: '33-40'})
+                    .send({dobOrAge: 'age', age: '33-44'})
                     .expect(302)
                     .expect('Location', '/search');
             });

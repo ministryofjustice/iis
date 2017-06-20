@@ -11,11 +11,11 @@ module.exports = {
         CANNOT_SUBMIT: 'There was a problem submitting the form',
         NO_OPTION_SELECTED: 'Invalid selection',
         INVALID_ID: 'The identifier you\'ve entered doesn\'t look right',
-        ATLEAST_ONE_REQUIRED: 'All the fields cannot be empty',
+        ATLEAST_ONE_REQUIRED: 'Please enter a value for at least one field',
         LETTERS_ONLY: 'A name mustn\'t contain space, numbers or special characters',
         INVALID_DOB: 'Invalid date of birth',
         INVALID_AGE: 'Age must be a whole number',
-        INVALID_AGE_RANGE: 'Invalid age range or age range too big',
+        INVALID_AGE_RANGE: 'Invalid age range. Age ranges should be be no larger than 10 years.',
         TRY_AGAIN: 'Try again',
         INVALID_PAGE: 'The page you requested does not exist'
     },

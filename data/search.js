@@ -202,6 +202,9 @@ function prepareSqlStatement(fields, where, orderBy, limit) {
     sql += ' ' + fields;
     sql += ' FROM IIS.KNOWN_AS k INNER JOIN IIS.LOSS_OF_LIBERTY l ON l.FK_PERSON_IDENTIFIER = K.FK_PERSON_IDENTIFIER';
     sql += where ? ' WHERE ' + where : '';
+    sql += where ? ' AND ' : ' WHERE';
+    sql += "NOT EXISTS (SELECT 1 FROM IIS.IIS_IDENTIFIER i WHERE i.FK_PERSON_IDENTIFIER = l.FK_PERSON_IDENTIFIER " +
+     "AND PERSON_IDENT_TYPE_CODE = 'NOM')";
     sql += orderBy ? ' ORDER BY ' + orderBy : '';
     sql += limit ? ' OFFSET ' + limit.start + ' ROWS FETCH NEXT ' + limit.resultsPerPage + ' ROWS ONLY' : '';
     return sql;
@@ -214,10 +217,6 @@ function formatRow(dbRow) {
         forename: dbRow.PERSON_FORENAME_1.value ? Case.capital(dbRow.PERSON_FORENAME_1.value) : '',
         forename2: dbRow.PERSON_FORENAME_2.value ? Case.capital(dbRow.PERSON_FORENAME_2.value) : '',
         dob: utils.getFormattedDateFromString(dbRow.PERSON_BIRTH_DATE.value),
-        // surname: dbRow.INMATE_SURNAME.value ? Case.upper(dbRow.INMATE_SURNAME.value) : '',
-        // forename: dbRow.INMATE_FORENAME_1.value ? Case.capital(dbRow.INMATE_FORENAME_1.value) : '',
-        // forename2: dbRow.INMATE_FORENAME_2.value ? Case.capital(dbRow.INMATE_FORENAME_2.value) : '',
-        // dob: utils.getFormattedDateFromString(dbRow.DOB.value),
         firstReceptionDate: utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value),
         realName: realNameOf(dbRow)
     };

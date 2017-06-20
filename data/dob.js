@@ -1,6 +1,7 @@
 'use strict';
 
 let content = require('./content.js');
+const MAX_AGE_RANGE = 10;
 
 module.exports = {
 
@@ -75,5 +76,5 @@ function isAgeOrAgeRange(v) {
         return false;
     }
 
-    return ((v[1] - v[0]) < 6);
+    return ((v[1] - v[0]) <= MAX_AGE_RANGE);
 }

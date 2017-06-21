@@ -20,6 +20,10 @@ module.exports = {
         INVALID_PAGE: 'The page you requested does not exist'
     },
 
+    dbErrorCodeMessages: {
+        ETIMEOUT: 'The search timed out. Try a more specific query'
+    },
+
     view: {
         error: {title: 'Error'},
         notfound: {title: 'Not found'},

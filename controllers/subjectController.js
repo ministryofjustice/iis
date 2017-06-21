@@ -97,7 +97,8 @@ function renderErrorPage(res, err) {
         content: content.view.subject,
         title: content.errMsg.DB_ERROR,
         err: {
-            title: content.errMsg.DB_ERROR_DESC
+            title: content.errMsg.DB_ERROR,
+            desc: content.errMsg.DB_ERROR_DESC
         }
     });
 }

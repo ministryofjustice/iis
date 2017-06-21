@@ -14,11 +14,7 @@ const SELECT = `DISTINCT
                 l.INMATE_SURNAME,
                 l.INMATE_FORENAME_1,
                 l.INMATE_FORENAME_2,
-                l.INMATE_BIRTH_DATE DOB,
-                k.PERSON_FORENAME_1,
-                k.PERSON_FORENAME_2, 
-                k.PERSON_SURNAME,
-                k.PERSON_BIRTH_DATE
+                l.INMATE_BIRTH_DATE DOB
                 `;
 const ORDER_BY = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC';
 
@@ -52,9 +48,8 @@ exports.totalRowsForUserInput = function(userInput) {
         let obj = getParamsForUserInput(userInput);
 
         let fields = `
-            DISTINCT k.PERSON_FORENAME_1, k.PERSON_FORENAME_2, k.PERSON_SURNAME, k.PERSON_BIRTH_DATE, 
-            l.PK_PRISON_NUMBER, l.DATE_1ST_RECEP, 
-            l.INMATE_SURNAME, l.INMATE_FORENAME_1, l.INMATE_FORENAME_2, l.INMATE_BIRTH_DATE`;
+            DISTINCT l.INMATE_FORENAME_1, l.INMATE_FORENAME_2, l.INMATE_SURNAME, l.INMATE_BIRTH_DATE, 
+            l.PK_PRISON_NUMBER, l.DATE_1ST_RECEP`;
 
         let sql = 'SELECT COUNT(*) AS totalRows FROM (' + prepareSqlStatement(fields, obj.where) + ') AS search';
 
@@ -200,25 +195,25 @@ function getParamsForUserInput(userInput) {
 function prepareSqlStatement(fields, where, orderBy, limit) {
     let sql = 'SELECT';
     sql += ' ' + fields;
-    sql += ' FROM IIS.KNOWN_AS k INNER JOIN IIS.LOSS_OF_LIBERTY l ON l.FK_PERSON_IDENTIFIER = K.FK_PERSON_IDENTIFIER';
-    sql += where ? ' WHERE ' + where : '';
-    sql += where ? ' AND ' : ' WHERE';
+    sql += ' FROM IIS.LOSS_OF_LIBERTY l WHERE l.FK_PERSON_IDENTIFIER IN (SELECT FK_PERSON_IDENTIFIER FROM IIS.KNOWN_AS';
+    sql += where ? ' WHERE ' + where + ')' : '';
+    sql += where ? ' AND ' : ') WHERE';
     sql += "NOT EXISTS (SELECT 1 FROM IIS.IIS_IDENTIFIER i WHERE i.FK_PERSON_IDENTIFIER = l.FK_PERSON_IDENTIFIER " +
      "AND PERSON_IDENT_TYPE_CODE = 'NOM')";
     sql += orderBy ? ' ORDER BY ' + orderBy : '';
     sql += limit ? ' OFFSET ' + limit.start + ' ROWS FETCH NEXT ' + limit.resultsPerPage + ' ROWS ONLY' : '';
+
     return sql;
 }
 
 function formatRow(dbRow) {
     return {
         prisonNumber: dbRow.PK_PRISON_NUMBER.value,
-        surname: dbRow.PERSON_SURNAME.value ? Case.upper(dbRow.PERSON_SURNAME.value) : '',
-        forename: dbRow.PERSON_FORENAME_1.value ? Case.capital(dbRow.PERSON_FORENAME_1.value) : '',
-        forename2: dbRow.PERSON_FORENAME_2.value ? Case.capital(dbRow.PERSON_FORENAME_2.value) : '',
-        dob: utils.getFormattedDateFromString(dbRow.PERSON_BIRTH_DATE.value),
-        firstReceptionDate: utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value),
-        realName: realNameOf(dbRow)
+        surname: dbRow.INMATE_SURNAME.value ? Case.upper(dbRow.INMATE_SURNAME.value) : '',
+        forename: dbRow.INMATE_FORENAME_1.value ? Case.capital(dbRow.INMATE_FORENAME_1.value) : '',
+        forename2: dbRow.INMATE_FORENAME_2.value ? Case.capital(dbRow.INMATE_FORENAME_2.value) : '',
+        dob: utils.getFormattedDateFromString(dbRow.DOB.value),
+        firstReceptionDate: utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value)
     };
 }
 

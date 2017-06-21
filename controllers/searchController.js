@@ -123,8 +123,8 @@ exports.getResults = function(req, res) {
     search.totalRowsForUserInput(req.session.userInput)
         .then(returnedRows => getSearchResultsAndRender(req, res)(returnedRows))
         .catch(error => {
-            logger.error('Error during number of rows search ', error.message);
-            return res.render('search', getDbErrorData());
+            logger.error('Error during number of rows search ', {error: error});
+            return renderErrorPage(res, error);
         });
 };
 
@@ -146,8 +146,8 @@ function getSearchResultsAndRender(req, res) {
         return search.inmate(req.session.userInput).then(searchResult => {
             return res.render('search/results', parseResultsPageData(req, rowCount, searchResult, currentPage));
         }).catch(error => {
-            logger.error('Error during inmate search ', error.message);
-            return res.render('search', getDbErrorData());
+            logger.error('Error during inmate search ', {error: error});
+            return renderErrorPage(res, error);
         });
     };
 }
@@ -165,11 +165,27 @@ function parseResultsPageData(req, rowcount, data, page) {
     };
 }
 
-function getDbErrorData() {
+function renderErrorPage(res, error) {
+    return res.render('search', {
+        err: getDbErrorData(error),
+        content: content.view.search
+    });
+}
+
+function getDbErrorData(sourceError) {
     return {
-        title: content.errMsg.DB_ERROR,
+        title: getMessageToDisplayFor(sourceError),
         desc: content.errMsg.DB_ERROR_DESC
     };
+}
+
+function getMessageToDisplayFor(sourceError) {
+
+    let message = content.dbErrorCodeMessages[sourceError.code];
+    if (message) return message;
+
+    logger.error('content.dbErrorCodeMessages has no message for', {error: sourceError});
+    return content.errMsg.DB_ERROR;
 }
 
 const userInputFromSearchForm = requestBody => {
@@ -267,7 +283,7 @@ function addFiltersToUserInput(userInput, query) {
     const filtersForQuery = getInputtedFilters(query, 'QUERY');
     const cleanInput = removeAllFilters(userInput);
 
-    if(!filtersForQuery) {
+    if (!filtersForQuery) {
         return Object.assign({}, cleanInput);
     }
     return Object.assign({}, cleanInput, filtersForQuery);

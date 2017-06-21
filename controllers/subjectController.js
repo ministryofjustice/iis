@@ -95,9 +95,9 @@ function renderErrorPage(res, err) {
     logger.error('Error getting subject details', {error: err});
     res.render('subject/error', {
         content: content.view.subject,
-        title: content.errMsg.INVALID_ID,
+        title: content.errMsg.DB_ERROR,
         err: {
-            title: content.errMsg.INVALID_ID
+            title: content.errMsg.DB_ERROR_DESC
         }
     });
 }

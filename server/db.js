@@ -24,6 +24,8 @@ module.exports = {
             if(err.message === 'Connection lost - read ECONNRESET') {
                 logger.warn('Connection lost - read ECONNRESET');
                 logger.info('Azure loadbalancer timeout error - see https://github.com/tediousjs/tedious/issues/300');
+            } else {
+                logger.error('DB error: ' + err.message);
             }
         });
 

@@ -49,10 +49,6 @@ exports.totalRowsForUserInput = function(userInput) {
     return new Promise((resolve, reject) => {
         let obj = getParamsForUserInput(userInput);
 
-        // let fields = `
-        //     DISTINCT l.INMATE_FORENAME_1, l.INMATE_FORENAME_2, l.INMATE_SURNAME, l.INMATE_BIRTH_DATE,
-        //     l.PK_PRISON_NUMBER, l.DATE_1ST_RECEP`;
-
         let sql = 'SELECT COUNT(*) AS totalRows FROM (' + prepareSqlStatement(SELECT, obj.where) + ') AS search';
 
         db.getTuple(sql, obj.params, resolve, reject);

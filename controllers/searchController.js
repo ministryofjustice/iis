@@ -7,6 +7,8 @@ const search = require('../data/search');
 const utils = require('../data/utils');
 const audit = require('../data/audit');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
+const Case = require('case');
+
 const {
     objectKeysInArray,
     itemsInQueryString
@@ -161,7 +163,8 @@ function parseResultsPageData(req, rowcount, data, page) {
         data: addSelectionVisitedData(data, req.session) || [],
         err: getPaginationErrors(req.query),
         filtersForView: getInputtedFilters(req.query, 'VIEW'),
-        queryStrings: getQueryStringsForSearch(req.url)
+        queryStrings: getQueryStringsForSearch(req.url),
+        searchTerms: getSearchTerms(req.session.userInput)
     };
 }
 
@@ -287,4 +290,33 @@ function addFiltersToUserInput(userInput, query) {
         return Object.assign({}, cleanInput);
     }
     return Object.assign({}, cleanInput, filtersForQuery);
+}
+
+
+function getSearchTerms(userInput) {
+
+    console.error(userInput);
+
+    const termDisplayNames = {
+        'prisonNumber': 'Prison number',
+        'pncNumber': 'PNC number',
+        'croNumber': 'CRO number',
+        'forename': 'First name',
+        'forename2': 'Middle name',
+        'surname': 'Last name',
+        'age': 'Age'
+    };
+
+    let searchTerms = {};
+
+    Object.keys(termDisplayNames).forEach(term => {
+        if (userInput[term]) searchTerms[termDisplayNames[term]] = userInput[term];
+    });
+
+    if(userInput['dobOrAge'] === 'dob'){
+        let dobParts = [userInput['dobDay'], userInput['dobMonth'], userInput['dobYear']];
+        searchTerms['DOB'] = dobParts.join('/');
+    }
+
+    return searchTerms;
 }

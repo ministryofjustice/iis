@@ -25,6 +25,9 @@ block content
         div.column-two-thirds
             h1.heading-xlarge#contentTitle= content.title
 
+    div.grid-row
+        div.column-two-thirds
+
             if filtersForView && (data.length > 1 || (filtersForView.Male || filtersForView.Female || filtersForView.HDC))
                 div#filters
                     fieldset.well
@@ -67,4 +70,14 @@ block content
                                 a(href="/search/results#{queryStrings.nextPage}") Next
             div.form-group
                 a(href="/search") New search
+
+        div.column-one-third
+            div.well.search-terms-container
+                h3 Results are based on the following search terms
+                div.search-terms
+                    each value, term  in searchTerms
+                        div.capitalise-text
+                            span.hint.font-xsmall #{term}
+                            |  #{value}
+
 

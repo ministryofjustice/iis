@@ -22,9 +22,12 @@ describe('searchController', () => {
     let resMock;
 
     beforeEach(() => {
-        reqMock = {user: {
-            email: 'x@y.com'
-        }};
+        reqMock = {
+            user: {
+                email: 'x@y.com',
+            },
+            query: {}
+        };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
     });
 
@@ -36,7 +39,20 @@ describe('searchController', () => {
         it('should render the search page', () => {
             getIndex(reqMock, resMock);
             expect(resMock.render).to.have.callCount(1);
-            expect(resMock.render).to.have.been.calledWith('search', {content: content.view.search});
+            expect(resMock.render).to.have.been.calledWith('search', {content: content.view.search, err: null});
+        });
+
+        it('should pass in error object if in query', () => {
+            reqMock.query.error = 'ETIMEOUT';
+            const expectedError = {
+                title: 'The search timed out. Try a more specific query',
+                desc: content.errMsg.DB_ERROR_DESC
+            };
+
+
+            getIndex(reqMock, resMock);
+            expect(resMock.render).to.have.callCount(1);
+            expect(resMock.render).to.have.been.calledWith('search', {content: content.view.search, err: expectedError});
         });
     });
 
@@ -442,21 +458,21 @@ describe('searchController', () => {
 
             context('Rejected getRows promise', () => {
                 it('should redirect to search page', () => {
-                    getRowsStub = sinon.stub().returnsPromise().rejects('rejection');
+                    getRowsStub = sinon.stub().returnsPromise().rejects({code: 'ETIMEOUT'});
                     getResultsProxy(getRowsStub)(reqMock, resMock);
 
-                    expect(resMock.render).to.have.callCount(1);
-                    expect(resMock.render).to.have.been.calledWith('search');
+                    expect(resMock.redirect).to.have.callCount(1);
+                    expect(resMock.redirect).to.have.been.calledWith('/search?error=ETIMEOUT');
                 });
             });
 
             context('Rejected getInmates promise', () => {
                 it('should redirect to search page', () => {
-                    getInmatesStub = sinon.stub().returnsPromise().rejects('rejection');
+                    getInmatesStub = sinon.stub().returnsPromise().rejects({code: 'ETIMEOUT'});
                     getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
 
-                    expect(resMock.render).to.have.callCount(1);
-                    expect(resMock.render).to.have.been.calledWith('search');
+                    expect(resMock.redirect).to.have.callCount(1);
+                    expect(resMock.redirect).to.have.been.calledWith('/search?error=ETIMEOUT');
                 });
             });
 

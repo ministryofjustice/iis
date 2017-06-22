@@ -44,8 +44,11 @@ const availableSearchOptions = exports.availableSearchOptions = {
 exports.getIndex = function(req, res) {
     logger.debug('GET /search');
 
+    const error = req.query.error ? getDbErrorData(req.query.error) : null;
+
     return res.render('search', {
-        content: content.view.search
+        content: content.view.search,
+        err: error
     });
 };
 
@@ -124,7 +127,8 @@ exports.getResults = function(req, res) {
         .then(returnedRows => getSearchResultsAndRender(req, res)(returnedRows))
         .catch(error => {
             logger.error('Error during number of rows search ', {error: error});
-            return renderErrorPage(res, error);
+            const query = {error: error.code};
+            return res.redirect(createUrl('/search', query));
         });
 };
 
@@ -147,7 +151,8 @@ function getSearchResultsAndRender(req, res) {
             return res.render('search/results', parseResultsPageData(req, rowCount, searchResult, currentPage));
         }).catch(error => {
             logger.error('Error during inmate search ', {error: error});
-            return renderErrorPage(res, error);
+            const query = {error: error.code};
+            return res.redirect(createUrl('/search', query));
         });
     };
 }
@@ -165,26 +170,19 @@ function parseResultsPageData(req, rowcount, data, page) {
     };
 }
 
-function renderErrorPage(res, error) {
-    return res.render('search', {
-        err: getDbErrorData(error),
-        content: content.view.search
-    });
-}
-
-function getDbErrorData(sourceError) {
+function getDbErrorData(errorCode) {
     return {
-        title: getMessageToDisplayFor(sourceError),
+        title: getMessageToDisplayFor(errorCode),
         desc: content.errMsg.DB_ERROR_DESC
     };
 }
 
-function getMessageToDisplayFor(sourceError) {
+function getMessageToDisplayFor(errorCode) {
 
-    let message = content.dbErrorCodeMessages[sourceError.code];
+    let message = content.dbErrorCodeMessages[errorCode];
     if (message) return message;
 
-    logger.error('content.dbErrorCodeMessages has no message for', {error: sourceError});
+    logger.error('content.dbErrorCodeMessages has no message for', {error: errorCode});
     return content.errMsg.DB_ERROR;
 }
 

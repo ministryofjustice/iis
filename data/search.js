@@ -239,7 +239,7 @@ function aliasFor(dbRow) {
             return Case.capital(name.trim());
         }).join(' ');
 
-        return [aliasName, utils.getFormattedDateFromString(aliasDob)].join(', ');
+        return [aliasName].join(', ');
     }
 
     return '';

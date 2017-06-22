@@ -315,7 +315,7 @@ function getSearchTerms(userInput) {
 
     if(userInput['dobOrAge'] === 'dob'){
         let dobParts = [userInput['dobDay'], userInput['dobMonth'], userInput['dobYear']];
-        searchTerms['DOB'] = dobParts.join('/');
+        searchTerms['Date of birth'] = dobParts.join('/');
     }
 
     return searchTerms;

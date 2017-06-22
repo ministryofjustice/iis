@@ -7,7 +7,7 @@ mixin inmate(name, prisonNumber, dob, firstReceptionDate, alias, visited)
                 if dob
                     span(class=visited ? '' : 'bold-medium') &middot; #{dob}
                 if alias
-                    span.block.text-secondary Matched on alias: #{alias}
+                    span.block Matched on alias: #{alias}
                 if prisonNumber
                     span.prisonNumber.block.text-secondary Prison no. #{prisonNumber}
                 if firstReceptionDate
@@ -25,8 +25,7 @@ block content
         div.column-two-thirds
             h1.heading-xlarge#contentTitle= content.title
 
-    div.grid-row
-        div.column-two-thirds
+
 
             if filtersForView && (data.length > 1 || (filtersForView.Male || filtersForView.Female || filtersForView.HDC))
                 div#filters

@@ -68,7 +68,8 @@ describe('Search', () => {
                     'firstReceptionDate': 'Invalid date',
                     'forename': "",
                     'forename2': "",
-                    'prisonNumber': undefined
+                    'prisonNumber': undefined,
+                    'alias' : 'Alias, 02/02/1999'
                 }
             ];
 

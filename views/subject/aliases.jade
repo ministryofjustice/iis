@@ -6,22 +6,24 @@ block subject-details
             each val,index in data.details
                     div(id="alias#{index}").grid-row.list-row.alias.aliasSearch
                         div.column-full.left-border
-                            - var ages = val.dob.split('/');
-                            form(name="search-prisoner-form", method="post", action="/search/form")
-                                input(type="hidden" name="_csrf" value="#{csrfToken}")
-                                input#forename(type="hidden", name="forename", value="#{val.forename}")
-                                input#forename2(type="hidden", name="forename2", value="#{val.forename2}")
-                                input#surname(type="hidden", name="surname", value="#{val.surname}")
-                                input#dobOrAge(type="hidden", name="dobOrAge", value="dob")
-                                input#dobDay(type="hidden", name="dobDay", value="#{ages[0]}")
-                                input#dobMonth(type="hidden", name="dobMonth", value="#{ages[1]}")
-                                input#dobYear(type="hidden", name="dobYear", value="#{ages[2]}")
-                                button.aliasSearch(type="submit", id="aliasSearch#{index}")
-                                    div.aliasSearch
-                                        div(id="alias#{index}-name")
-                                            | #{val.forename + ' ' + val.forename2 + ' ' + val.surname}
-                                        if (val.dob)
-                                            div(id="alias#{index}-dob") Born on: #{val.dob}
+                            //- var ages = val.dob.split('/');
+                            //form(name="search-prisoner-form", method="post", action="/search/form")
+                            //    input(type="hidden" name="_csrf" value="#{csrfToken}")
+                            //    input#forename(type="hidden", name="forename", value="#{val.forename}")
+                            //    input#forename2(type="hidden", name="forename2", value="#{val.forename2}")
+                            //    input#surname(type="hidden", name="surname", value="#{val.surname}")
+                            //    input#dobOrAge(type="hidden", name="dobOrAge", value="dob")
+                            //    input#dobDay(type="hidden", name="dobDay", value="#{ages[0]}")
+                            //    input#dobMonth(type="hidden", name="dobMonth", value="#{ages[1]}")
+                            //    input#dobYear(type="hidden", name="dobYear", value="#{ages[2]}")
+                            //    input#fromAlias(type="hidden", name="fromAlias", value=true)
+                            //    button.aliasSearch(type="submit", id="aliasSearch#{index}")
+
+                            div.aliasSearch
+                                div(id="alias#{index}-name")
+                                    | #{val.forename + ' ' + val.forename2 + ' ' + val.surname}
+                                if (val.dob)
+                                    div(id="alias#{index}-dob") Born on: #{val.dob}
 
             if (data.details.length === 0)
                 span= data.noResultsText

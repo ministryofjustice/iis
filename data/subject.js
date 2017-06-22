@@ -228,15 +228,15 @@ exports.getHDCRecall = function(prisonNumber) {
     ];
 
     const sql = `SELECT
-                    RECALL_DATE_CREATED, 
-                    RECALL_OUTCOME, 
-                    RECALL_OUTCOME_DATE
-                FROM 
-                    IIS.HDC_RECALL
-                WHERE 
-                    FK_PRISON_NUMBER = @FK_PRISON_NUMBER
-                ORDER BY 
-                    HDC_RECALL_NUMBER ASC;`;
+                    IIS.HDC_RECALL.RECALL_DATE_CREATED,
+                    IIS.HDC_RECALL.ORIGINAL_CURFEW_END_DATE,
+                    IIS.HDC_RECALL.RECALL_OUTCOME,
+                    IIS.HDC_RECALL.RECALL_OUTCOME_DATE,
+                    IIS.REASON_RECALL.REASON_ID
+                 FROM IIS.HDC_RECALL
+                    LEFT JOIN IIS.REASON_RECALL ON IIS.HDC_RECALL.PKTS_HDC_RECALL = IIS.REASON_RECALL.FK_HDC_RECALL
+                 WHERE FK_PRISON_NUMBER = @FK_PRISON_NUMBER
+                 ORDER BY RECALL_DATE_CREATED DESC`;
 
     return new Promise((resolve, reject) => {
         db.getCollection(sql, params, resolveWithFormattedRow(resolve, 'hdcRecall'), reject);
@@ -452,11 +452,9 @@ function formatHdcReasonCodes(reasonCodes) {
     let reasonCodesJson = JSON.parse(reasonCodes);
 
     return reasonCodesJson
-        .map(reasonCode => {
-            return sentenceCaseWithAcronymsForCode('HDC_REASON', reasonCode.code);
-        }).filter((reasonDescription, index, inputArray) => {
-            return inputArray.indexOf(reasonDescription) === index;
-        }).join(', ');
+        .map(reasonCode => sentenceCaseWithAcronymsForCode('HDC_REASON', reasonCode.code))
+        .filter((reasonDescription, index, inputArray) => inputArray.indexOf(reasonDescription) === index)
+        .join(', ');
 }
 
 function sentenceCaseWithAcronymsForCode(codeset, code) {
@@ -473,9 +471,11 @@ function titleCaseWithAcronyms(text) {
 
 function formatHdcRecallRow(dbRow) {
     return {
-        date: utils.getFormattedDateFromString(dbRow.RECALL_DATE_CREATED.value),
-        outcome: dbRow.RECALL_OUTCOME.value,
-        outcomeDate: utils.getFormattedDateFromString(dbRow.RECALL_OUTCOME_DATE.value)
+        dateCreated: dbRow.RECALL_DATE_CREATED.value ? utils.getFormattedDateFromString(dbRow.RECALL_DATE_CREATED.value) : 'Date unknown',
+        originalCurfewEndDate: dbRow.ORIGINAL_CURFEW_END_DATE.value ? utils.getFormattedDateFromString(dbRow.ORIGINAL_CURFEW_END_DATE.value) : 'Date unknown',
+        outcome: dbRow.RECALL_OUTCOME.value ? Case.sentence(describeCode('RECALL_OUTCOME', dbRow.RECALL_OUTCOME.value)) : 'Unknown',
+        outcomeDate: dbRow.RECALL_OUTCOME_DATE.value ? utils.getFormattedDateFromString(dbRow.RECALL_OUTCOME_DATE.value) : 'Unknown',
+        reason: dbRow.REASON_ID.value ? Case.sentence(describeCode('RECALL_REASON', dbRow.REASON_ID.value)) : 'Unknown'
     };
 }
 

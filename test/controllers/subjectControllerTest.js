@@ -109,6 +109,8 @@ describe('subjectController', () => {
             getSubject()(reqMock, resMock);
             expect(hdcinfoStub).to.have.callCount(1);
             expect(hdcinfoStub).to.be.calledWith('     id1');
+            expect(hdcrecallStub).to.have.callCount(1);
+            expect(hdcrecallStub).to.be.calledWith('     id1');
         });
 
         it('should render the appropriate subject page', () => {
@@ -133,7 +135,7 @@ describe('subjectController', () => {
                     content: {
                         addresses: "Prisoner has no addresses",
                         aliases: "Prisoner has no aliases",
-                        hdcinfo: "Prisoner has no HDC history",
+                        hdcinfo: "Prisoner has no HDC information",
                         hdcrecall: "Prisoner has no HDC recall history",
                         movements: "Prisoner has no movements",
                         offences: "Prisoner has no offences",
@@ -149,7 +151,7 @@ describe('subjectController', () => {
                     nav: {
                         addresses: {title: "Addresses"},
                         aliases: {title: "Aliases"},
-                        hdcinfo: {title: "HDC history"},
+                        hdcinfo: {title: "HDC recalls and history"},
                         movements: {title: "Movements"},
                         offences: {active: true, title: "Offences"},
                         offencesincustody: {title: "Offences in custody"},

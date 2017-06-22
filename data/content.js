@@ -58,7 +58,7 @@ module.exports = {
             aliases: 'Prisoner has no aliases',
             offencesincustody: 'Prisoner has no offences in custody',
             movements: 'Prisoner has no movements',
-            hdcinfo: 'Prisoner has no HDC history',
+            hdcinfo: 'Prisoner has no HDC information',
             hdcrecall: 'Prisoner has no HDC recall history',
             offences: 'Prisoner has no offences',
             addresses: 'Prisoner has no addresses',

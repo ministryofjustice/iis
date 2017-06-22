@@ -138,6 +138,31 @@ describe('Subject data', function() {
         });
     });
 
+    it("should return expected HDC recall object", function() {
+
+        let recallResponse = {
+            RECALL_DATE_CREATED: {value: '19990101'},
+            ORIGINAL_CURFEW_END_DATE: {value: '19990101'},
+            RECALL_OUTCOME: {value: '2'},
+            RECALL_OUTCOME_DATE: {value: '19990101'},
+            REASON_ID: {value: '1'}
+        };
+
+        let expectedHdcRecall = [{
+            dateCreated: '01/01/1999',
+            originalCurfewEndDate: '01/01/1999',
+            outcomeDate: '01/01/1999',
+            outcome: 'Re-released following recall',
+            reason: 'Breach conditions 38a1(a)'
+        }];
+
+        getCollectionStub = sandbox.stub().callsArgWith(2, [recallResponse]);
+        const result = subjectProxy(getCollectionStub, getTupleStub).getHDCRecall({prisonNumber: 'AA112233'});
+        return result.then((data) => {
+            expect(data).to.deep.equal(expectedHdcRecall);
+        });
+    });
+
     it("should return expected Aliases object", function() {
 
         let aliasOne = {

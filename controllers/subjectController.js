@@ -20,8 +20,7 @@ const dataRequestFunction = {
     aliases: [getAliases],
     addresses: [getAddresses],
     offences: [getOffences],
-    hdcinfo: [getHDCInfo],
-    hdcrecall: [getHDCRecall],
+    hdcinfo: [getHDCRecall, getHDCInfo],
     offencesincustody: [getAdjudications],
     summary: [getCourtHearings, getSentenceHistory],
     sentences: [getSentenceHistory]
@@ -108,7 +107,7 @@ function getNavigation(page) {
         summary: {title: 'Sentence Summary'},
         sentences: {title: 'Sentence History'},
         movements: {title: 'Movements'},
-        hdcinfo: {title: 'HDC history'},
+        hdcinfo: {title: 'HDC recalls and history'},
         offences: {title: 'Offences'},
         offencesincustody: {title: 'Offences in custody'},
         aliases: {title: 'Aliases'},

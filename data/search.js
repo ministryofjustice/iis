@@ -7,14 +7,16 @@ const db = require('../server/iisData');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 
 const TYPES = require('tedious').TYPES;
-const SELECT = `DISTINCT 
-                SUBSTRING(l.INMATE_FORENAME_1, 1, 1),
-                l.PK_PRISON_NUMBER, 
-                l.DATE_1ST_RECEP,
-                l.INMATE_SURNAME,
-                l.INMATE_FORENAME_1,
-                l.INMATE_FORENAME_2,
-                l.INMATE_BIRTH_DATE DOB
+const SELECT = `l.PK_PRISON_NUMBER,
+                  l.DATE_1ST_RECEP,
+                  l.INMATE_SURNAME,
+                  l.INMATE_FORENAME_1,
+                  l.INMATE_FORENAME_2,
+                  l.INMATE_BIRTH_DATE DOB,
+                  k.PERSON_FORENAME_1,
+                  k.PERSON_FORENAME_2,
+                  k.PERSON_SURNAME,
+                  k.PERSON_BIRTH_DATE
                 `;
 const ORDER_BY = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC';
 
@@ -47,11 +49,11 @@ exports.totalRowsForUserInput = function(userInput) {
     return new Promise((resolve, reject) => {
         let obj = getParamsForUserInput(userInput);
 
-        let fields = `
-            DISTINCT l.INMATE_FORENAME_1, l.INMATE_FORENAME_2, l.INMATE_SURNAME, l.INMATE_BIRTH_DATE, 
-            l.PK_PRISON_NUMBER, l.DATE_1ST_RECEP`;
+        // let fields = `
+        //     DISTINCT l.INMATE_FORENAME_1, l.INMATE_FORENAME_2, l.INMATE_SURNAME, l.INMATE_BIRTH_DATE,
+        //     l.PK_PRISON_NUMBER, l.DATE_1ST_RECEP`;
 
-        let sql = 'SELECT COUNT(*) AS totalRows FROM (' + prepareSqlStatement(fields, obj.where) + ') AS search';
+        let sql = 'SELECT COUNT(*) AS totalRows FROM (' + prepareSqlStatement(SELECT, obj.where) + ') AS search';
 
         db.getTuple(sql, obj.params, resolve, reject);
     });
@@ -193,13 +195,14 @@ function getParamsForUserInput(userInput) {
 }
 
 function prepareSqlStatement(fields, where, orderBy, limit) {
-    let sql = 'SELECT';
+    let sql = 'SELECT * FROM (SELECT row_number() OVER ( PARTITION BY PK_PRISON_NUMBER ORDER BY (SELECT 1) ) RN,';
     sql += ' ' + fields;
-    sql += ' FROM IIS.LOSS_OF_LIBERTY l WHERE l.FK_PERSON_IDENTIFIER IN (SELECT FK_PERSON_IDENTIFIER FROM IIS.KNOWN_AS';
-    sql += where ? ' WHERE ' + where + ')' : '';
-    sql += where ? ' AND ' : ') WHERE';
+    sql += ' FROM IIS.KNOWN_AS k INNER JOIN IIS.LOSS_OF_LIBERTY l ON l.FK_PERSON_IDENTIFIER = K.FK_PERSON_IDENTIFIER';
+    sql += where ? ' WHERE ' + where : '';
+    sql += where ? ' AND ' : ' WHERE';
     sql += "NOT EXISTS (SELECT 1 FROM IIS.IIS_IDENTIFIER i WHERE i.FK_PERSON_IDENTIFIER = l.FK_PERSON_IDENTIFIER " +
      "AND PERSON_IDENT_TYPE_CODE = 'NOM')";
+    sql += ' ) NUMBERED_ROWS WHERE RN = 1';
     sql += orderBy ? ' ORDER BY ' + orderBy : '';
     sql += limit ? ' OFFSET ' + limit.start + ' ROWS FETCH NEXT ' + limit.resultsPerPage + ' ROWS ONLY' : '';
 
@@ -213,11 +216,12 @@ function formatRow(dbRow) {
         forename: dbRow.INMATE_FORENAME_1.value ? Case.capital(dbRow.INMATE_FORENAME_1.value) : '',
         forename2: dbRow.INMATE_FORENAME_2.value ? Case.capital(dbRow.INMATE_FORENAME_2.value) : '',
         dob: utils.getFormattedDateFromString(dbRow.DOB.value),
-        firstReceptionDate: utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value)
+        firstReceptionDate: utils.getFormattedDateFromString(dbRow.DATE_1ST_RECEP.value),
+        alias: aliasFor(dbRow)
     };
 }
 
-function realNameOf(dbRow) {
+function aliasFor(dbRow) {
     let realFirst = dbRow.INMATE_FORENAME_1.value;
     let realMiddle = dbRow.INMATE_FORENAME_2.value;
     let realLast = dbRow.INMATE_SURNAME.value;
@@ -229,17 +233,17 @@ function realNameOf(dbRow) {
     let aliasDob = dbRow.PERSON_BIRTH_DATE.value;
 
     if (aliasFirst !== realFirst
-        | aliasMiddle !== realMiddle
-        | aliasLast !== realLast
-        | aliasDob !== realDob) {
+        || aliasMiddle !== realMiddle
+        || aliasLast !== realLast
+        || aliasDob !== realDob) {
 
-        let realName = [realFirst, realMiddle, realLast].filter(name => {
+        let aliasName = [aliasFirst, aliasMiddle, aliasLast].filter(name => {
             return name && name.trim() !== '';
         }).map(name => {
             return Case.capital(name.trim());
         }).join(' ');
 
-        return [realName, utils.getFormattedDateFromString(realDob)].join(', ');
+        return [aliasName, utils.getFormattedDateFromString(aliasDob)].join(', ');
     }
 
     return '';

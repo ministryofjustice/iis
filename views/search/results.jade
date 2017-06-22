@@ -1,13 +1,13 @@
 extends ../layout
 mixin inmate(name, prisonNumber, dob, firstReceptionDate, alias, visited)
     div.inmateDetails(class=visited ? 'visited' : '')
-        a(href="/subject/#{prisonNumber}/summary#{queryStrings.thisPage}").capitalise-text
+        a(href="/subject/#{prisonNumber}/summary#{queryStrings.thisPage}")
             span.inmateContainer
                 span(class=visited ? '' : 'bold-medium').capitalise-text #{name}
                 if dob
                     span(class=visited ? '' : 'bold-medium') &middot; #{dob}
                 if alias
-                    span.block.text-secondary Matching alias: #{alias}
+                    span.block.text-secondary Matched on alias: #{alias}
                 if prisonNumber
                     span.prisonNumber.block.text-secondary Prison no. #{prisonNumber}
                 if firstReceptionDate

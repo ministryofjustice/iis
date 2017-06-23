@@ -99,13 +99,17 @@ module.exports = {
     },
 
     termDisplayNames: {
-        'prisonNumber': 'Prison number',
-        'pncNumber': 'PNC number',
-        'croNumber': 'CRO number',
-        'forename': 'First name',
-        'forename2': 'Middle name',
-        'surname': 'Last name',
-        'age': 'Age',
-        'dob': 'Date of birth'
+        asIs: {
+            'prisonNumber': 'Prison number',
+            'pncNumber': 'PNC number',
+            'croNumber': 'CRO number'
+        },
+        capitals: {
+            'forename': 'First name',
+            'forename2': 'Middle name',
+            'surname': 'Last name'
+        },
+        age: 'Age',
+        dob: 'Date of birth'
     }
 };

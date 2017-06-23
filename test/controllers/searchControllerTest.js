@@ -466,16 +466,16 @@ describe('searchController', () => {
             it('should pass formatted search terms to the view', () => {
 
                 reqMock.session.userInput = {
-                    forename: 'Matthew',
+                    forename: 'MATTHEW',
                     forename2: 'James',
-                    surname: 'Whitfield',
+                    surname: 'whitfield',
                     prisonNumber: '666',
                     dobOrAge: 'dob',
                     dobDay: '01',
                     dobMonth: '02',
                     dobYear: '1999',
-                    pncNumber: 'PNC123',
-                    croNumber: 'CRO456'
+                    pncNumber: 'PNC/123',
+                    croNumber: 'CRO/456'
                 };
 
                 getResultsProxy()(reqMock, resMock);
@@ -504,8 +504,8 @@ describe('searchController', () => {
                         "Middle name": "James",
                         "Prison number": "666",
                         "Date of birth": "01/02/1999",
-                        "PNC number" : "PNC123",
-                        "CRO number": "CRO456"
+                        "PNC number" : "PNC/123",
+                        "CRO number": "CRO/456"
                     }
 
                 };

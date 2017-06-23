@@ -293,9 +293,15 @@ function getSearchTermsForView(userInput) {
 
     let searchTerms = {};
 
-    Object.keys(content.termDisplayNames).forEach(term => {
+    Object.keys(content.termDisplayNames.asIs).forEach(term => {
         if (userInput[term]) {
-            searchTerms[content.termDisplayNames[term]] = userInput[term];
+            searchTerms[content.termDisplayNames.asIs[term]] = userInput[term];
+        }
+    });
+
+    Object.keys(content.termDisplayNames.capitals).forEach(term => {
+        if (userInput[term]) {
+            searchTerms[content.termDisplayNames.capitals[term]] = Case.capital(userInput[term]);
         }
     });
 

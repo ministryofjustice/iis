@@ -16,9 +16,13 @@ const SELECT = `l.PK_PRISON_NUMBER,
                   k.PERSON_FORENAME_1,
                   k.PERSON_FORENAME_2,
                   k.PERSON_SURNAME,
-                  k.PERSON_BIRTH_DATE
+                  k.PERSON_BIRTH_DATE,
+                  CASE
+                    WHEN (l.INMATE_SURNAME = k.PERSON_SURNAME AND l.INMATE_FORENAME_1 = k.PERSON_FORENAME_1) THEN 'false'
+                    ELSE 'true'
+                  END AS MAYBE_ALIAS
                 `;
-const ORDER_BY = 'INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC';
+const ORDER_BY = 'MAYBE_ALIAS, INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC';
 
 const getSearchOperatorSql = {
     prisonNumber: getPrisonNumberSqlWithParams,

@@ -122,7 +122,7 @@ exports.getResults = function(req, res) {
     search.totalRowsForUserInput(req.session.userInput)
         .then(returnedRows => getSearchResultsAndRender(req, res)(returnedRows))
         .catch(error => {
-            logger.error('Error during number of rows search ', {error: error});
+            logger.error('Error during number of rows search: ' + error);
             return renderErrorPage(res, error);
         });
 };
@@ -184,7 +184,7 @@ function getMessageToDisplayFor(sourceError) {
     let message = content.dbErrorCodeMessages[sourceError.code];
     if (message) return message;
 
-    logger.error('content.dbErrorCodeMessages has no message for', {error: sourceError});
+    logger.error('content.dbErrorCodeMessages has no message for: ' + sourceError);
     return content.errMsg.DB_ERROR;
 }
 
@@ -301,7 +301,7 @@ function getSearchTermsForView(userInput) {
 
     if (userInput['dobOrAge'] === 'dob') {
         let dobParts = [userInput['dobDay'], userInput['dobMonth'], userInput['dobYear']];
-        searchTerms[termDisplayNames['dob']] = dobParts.join('/');
+        searchTerms[content.termDisplayNames['dob']] = dobParts.join('/');
     }
 
     return searchTerms;

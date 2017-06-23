@@ -69,7 +69,7 @@ describe('Search', () => {
                     'forename': "",
                     'forename2': "",
                     'prisonNumber': undefined,
-                    'alias' : 'Alias, 02/02/1999'
+                    'alias' : 'Alias'
                 }
             ];
 

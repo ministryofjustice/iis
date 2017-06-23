@@ -153,8 +153,8 @@ describe('subjectController', () => {
                         movements: {title: "Movements"},
                         offences: {active: true, title: "Offences"},
                         offencesincustody: {title: "Offences in custody"},
-                        sentences: {title: "Sentence History"},
-                        summary: {title: "Sentence Summary"}
+                        sentences: {title: "Sentence history"},
+                        summary: {title: "Sentence summary"}
                     },
                     returnQuery: "?page=2&filters=Female"
                 });

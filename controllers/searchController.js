@@ -295,8 +295,6 @@ function addFiltersToUserInput(userInput, query) {
 
 function getSearchTerms(userInput) {
 
-    console.error(userInput);
-
     const termDisplayNames = {
         'prisonNumber': 'Prison number',
         'pncNumber': 'PNC number',

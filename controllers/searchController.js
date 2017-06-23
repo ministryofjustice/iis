@@ -100,13 +100,10 @@ exports.postSearchForm = function(req, res) {
     const searchItems = itemsInQueryString(req.query).filter(item => availableSearchOptions[item]);
 
     if (!inputValidates(searchItems, userInput)) {
-        // more useful handler to be written if necessary
-        // should only occur for those with JS off
         logger.info('Server side input validation used');
         return res.redirect('/search');
     }
 
-    // /search/results to be addressed when audit table is included
     req.session.visited = [];
     req.session.userInput = userInput;
     res.redirect('/search/results');
@@ -164,7 +161,7 @@ function parseResultsPageData(req, rowcount, data, page) {
         err: getPaginationErrors(req.query),
         filtersForView: getInputtedFilters(req.query, 'VIEW'),
         queryStrings: getQueryStringsForSearch(req.url),
-        searchTerms: getSearchTerms(req.session.userInput)
+        searchTerms: getSearchTermsForView(req.session.userInput)
     };
 }
 
@@ -221,7 +218,6 @@ exports.postFilters = function(req, res) {
 
     const newQueryObject = toggleFromQueryItem(req, 'filters', filterPressed, 'referrer');
 
-    // Reset to page 1 because the filters may leave the current page number invalid
     newQueryObject.page = '1';
 
     res.redirect(createUrl('/search/results', newQueryObject));
@@ -293,27 +289,19 @@ function addFiltersToUserInput(userInput, query) {
 }
 
 
-function getSearchTerms(userInput) {
-
-    const termDisplayNames = {
-        'prisonNumber': 'Prison number',
-        'pncNumber': 'PNC number',
-        'croNumber': 'CRO number',
-        'forename': 'First name',
-        'forename2': 'Middle name',
-        'surname': 'Last name',
-        'age': 'Age'
-    };
+function getSearchTermsForView(userInput) {
 
     let searchTerms = {};
 
-    Object.keys(termDisplayNames).forEach(term => {
-        if (userInput[term]) searchTerms[termDisplayNames[term]] = userInput[term];
+    Object.keys(content.termDisplayNames).forEach(term => {
+        if (userInput[term]) {
+            searchTerms[content.termDisplayNames[term]] = userInput[term];
+        }
     });
 
-    if(userInput['dobOrAge'] === 'dob'){
+    if (userInput['dobOrAge'] === 'dob') {
         let dobParts = [userInput['dobDay'], userInput['dobMonth'], userInput['dobYear']];
-        searchTerms['Date of birth'] = dobParts.join('/');
+        searchTerms[termDisplayNames['dob']] = dobParts.join('/');
     }
 
     return searchTerms;

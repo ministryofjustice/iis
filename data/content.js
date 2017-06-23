@@ -96,5 +96,16 @@ module.exports = {
             title: 'There was a problem getting the data from the database',
             desc: 'Please try again'
         }
+    },
+
+    termDisplayNames: {
+        'prisonNumber': 'Prison number',
+        'pncNumber': 'PNC number',
+        'croNumber': 'CRO number',
+        'forename': 'First name',
+        'forename2': 'Middle name',
+        'surname': 'Last name',
+        'age': 'Age',
+        'dob': 'Date of birth'
     }
 };

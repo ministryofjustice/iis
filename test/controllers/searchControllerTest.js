@@ -477,7 +477,7 @@ describe('searchController', () => {
                 expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
             });
 
-            it('should pass formatted search terms to the view', () => {
+            it('should pass formatted search terms to the view - including DOB', () => {
 
                 reqMock.session.userInput = {
                     forename: 'MATTHEW',
@@ -520,6 +520,42 @@ describe('searchController', () => {
                         "Date of birth": "01/02/1999",
                         "PNC number" : "PNC/123",
                         "CRO number": "CRO/456"
+                    }
+
+                };
+
+                expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
+            });
+
+            it('should pass formatted search terms to the view - including age', () => {
+
+                reqMock.session.userInput = {
+                    dobOrAge: 'age',
+                    age: '35-40'
+                };
+
+                getResultsProxy()(reqMock, resMock);
+
+                const expectedPayload = {
+                    content: {
+                        title: 'Your search returned 20 prisoners'
+                    },
+                    pagination: {
+                        'totalPages': 2,
+                        'currPage': 1,
+                        'showPrev': false,
+                        'showNext': true
+                    },
+                    data: {forename: 'Matt'},
+                    err: null,
+                    filtersForView: {},
+                    queryStrings: {
+                        prevPage: "?page=1&filters=Female",
+                        thisPage: "?page=2&filters=Female",
+                        nextPage: "?page=3&filters=Female"
+                    },
+                    searchTerms: {
+                        "Age": "35-40"
                     }
 
                 };

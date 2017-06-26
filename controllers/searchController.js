@@ -125,7 +125,7 @@ exports.getResults = function(req, res) {
     search.totalRowsForUserInput(req.session.userInput)
         .then(returnedRows => getSearchResultsAndRender(req, res)(returnedRows))
         .catch(error => {
-            logger.error('Error during number of rows search: ' + error);
+            logger.error('Error during number of rows search: ' + error.message);
             const query = {error: error.code};
             return res.redirect(createUrl('/search', query));
         });
@@ -149,7 +149,7 @@ function getSearchResultsAndRender(req, res) {
         return search.inmate(req.session.userInput).then(searchResult => {
             return res.render('search/results', parseResultsPageData(req, rowCount, searchResult, currentPage));
         }).catch(error => {
-            logger.error('Error during inmate search ', {error: error});
+            logger.error('Error during inmate search: ' + error.message);
             const query = {error: error.code};
             return res.redirect(createUrl('/search', query));
         });
@@ -168,13 +168,6 @@ function parseResultsPageData(req, rowcount, data, page) {
         queryStrings: getQueryStringsForSearch(req.url),
         searchTerms: getSearchTermsForView(req.session.userInput)
     };
-}
-
-function renderErrorPage(res, error) {
-    return res.render('search', {
-        err: getDbErrorData(error),
-        content: content.view.search
-    });
 }
 
 function getDbErrorData(errorCode) {

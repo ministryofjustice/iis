@@ -541,6 +541,22 @@ describe('searchController', () => {
                     expect(reqMock.session.userInput).to.eql(expectedUserInput);
                 });
 
+                it('should be able to handle Lifer', () => {
+                    reqMock.query.filters = ['Lifer'];
+
+                    const expectedUserInput = {
+                        forename: 'Matthew',
+                        forename2: 'James',
+                        surname: 'Whitfield',
+                        prisonNumber: '666',
+                        page: 1,
+                        isLifer: [true]
+                    };
+
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+                    expect(reqMock.session.userInput).to.eql(expectedUserInput);
+                });
+
                 it('should replace the filters to the user input', () => {
                     reqMock.query.filters = 'Male';
                     reqMock.session.userInput.gender = ['F'];

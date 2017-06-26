@@ -32,7 +32,8 @@ const getSearchOperatorSql = {
     dobDay: getDobSqlWithParams,
     age: getAgeSqlWithParams,
     gender: getGenderSqlWithParams,
-    hasHDC: getHDCHistory
+    hasHDC: getHDCHistory,
+    isLifer: getLifer
 };
 
 exports.inmate = function(userInput) {
@@ -165,6 +166,17 @@ function getHDCHistory(obj) {
         params: []
     };
 }
+
+function getLifer(obj){
+    const sql = 'PK_PRISON_NUMBER IN (SELECT PK_CL_PRISON_NUMBER FROM IIS.CATA_LIFER)';
+
+    return {
+        sql,
+        params: []
+    };
+}
+
+
 
 function getType(v) {
     // default type

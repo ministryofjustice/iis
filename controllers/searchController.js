@@ -211,7 +211,7 @@ exports.postPagination = function(req, res) {
 };
 
 exports.postFilters = function(req, res) {
-    const acceptableFilters = ['Male', 'Female', 'HDC'];
+    const acceptableFilters = ['Male', 'Female', 'HDC', 'Lifer'];
     const [filterPressed] = acceptableFilters.filter(filter => filter === req.body.filter);
 
     const newQueryObject = toggleFromQueryItem(req, 'filters', filterPressed, 'referrer');

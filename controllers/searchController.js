@@ -296,24 +296,27 @@ function addFiltersToUserInput(userInput, query) {
 
 function getSearchTermsForView(userInput) {
 
-    let searchTerms = {};
+    const searchTerms = (userInput['dobOrAge'] === 'dob') ? searchTermObjectWithDob(userInput) : {};
 
-    Object.keys(content.termDisplayNames.asIs).forEach(term => {
-        if (userInput[term]) {
-            searchTerms[content.termDisplayNames.asIs[term]] = userInput[term];
-        }
-    });
+    return Object.keys(userInput).filter(searchItem => content.termDisplayNames[searchItem])
+                                 .reduce(searchTermInCorrectCase(userInput), searchTerms);
 
-    Object.keys(content.termDisplayNames.capitals).forEach(term => {
-        if (userInput[term]) {
-            searchTerms[content.termDisplayNames.capitals[term]] = Case.capital(userInput[term]);
-        }
-    });
+}
 
-    if (userInput['dobOrAge'] === 'dob') {
-        let dobParts = [userInput['dobDay'], userInput['dobMonth'], userInput['dobYear']];
-        searchTerms[content.termDisplayNames['dob']] = dobParts.join('/');
+const searchTermObjectWithDob = userInput => {
+    let dobParts = [userInput['dobDay'], userInput['dobMonth'], userInput['dobYear']];
+    return {
+        [content.termDisplayNames['dob'].name]: dobParts.join('/')
+    };
+};
+
+const searchTermInCorrectCase = userInput => (allTerms, searchTerm) => {
+
+    const itemName = content.termDisplayNames[searchTerm].name;
+
+    if(content.termDisplayNames[searchTerm].case === 'capitalise') {
+        return Object.assign({}, allTerms, {[itemName]: Case.capital(userInput[searchTerm])});
     }
 
-    return searchTerms;
-}
+    return Object.assign({}, allTerms, {[itemName]: userInput[searchTerm]});
+};

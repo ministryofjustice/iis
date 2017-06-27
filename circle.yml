@@ -37,7 +37,7 @@ deployment:
         - npm run wait-for-deploy:
             environment:
                 GIT_REF: $CIRCLE_SHA1
-                APP_BASE_URL: https://hpa-stage.noms.dsd.io/health
+                APP_BASE_URL: https://hpa-stage.hmpps.dsd.io/health
                 WAIT_DURATION: 45000
 
         # Trigger feature tests

@@ -85,8 +85,10 @@ describe('searchController', () => {
 
             postIndex(reqMock, resMock);
             expect(resMock.render).to.have.callCount(1);
-            expect(resMock.render).to.have.been.calledWith('search', {err: expectedError,
-                content: content.view.search});
+            expect(resMock.render).to.have.been.calledWith('search', {
+                err: expectedError,
+                content: content.view.search
+            });
         });
     });
 
@@ -142,7 +144,7 @@ describe('searchController', () => {
             }).postSearchForm;
         };
 
-        it('should redirect to search results of no validation error returned', () => {
+        it('should redirect to search results if no validation error returned', () => {
             reqMock = {
                 body: {
                     forename: 'Matthew',
@@ -230,6 +232,7 @@ describe('searchController', () => {
             expect(reqMock.session.visited).to.eql([]);
         });
     });
+
     describe('getResults', () => {
 
         let getRowsStub;
@@ -310,7 +313,14 @@ describe('searchController', () => {
                         prevPage: "?page=1&filters=Female",
                         thisPage: "?page=2&filters=Female",
                         nextPage: "?page=3&filters=Female"
+                    },
+                    searchTerms: {
+                        "First name": "Matthew",
+                        "Last name": "Whitfield",
+                        "Middle name": "James",
+                        "Prison number": "666"
                     }
+
                 };
 
                 expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
@@ -319,6 +329,7 @@ describe('searchController', () => {
         });
 
         context('rowcounts > 0', () => {
+
             it('should call getInmates', () => {
                 getResultsProxy()(reqMock, resMock);
                 expect(getInmatesStub).to.have.callCount(1);
@@ -331,11 +342,13 @@ describe('searchController', () => {
 
             it('should pass the appropriate data to audit', () => {
                 getResultsProxy()(reqMock, resMock);
-                expect(auditStub).to.be.calledWith('SEARCH', 'x@y.com', {forename: 'Matthew',
-                                                                         forename2: 'James',
-                                                                         page: 1,
-                                                                         prisonNumber: '666',
-                                                                         surname: 'Whitfield'});
+                expect(auditStub).to.be.calledWith('SEARCH', 'x@y.com', {
+                    forename: 'Matthew',
+                    forename2: 'James',
+                    page: 1,
+                    prisonNumber: '666',
+                    surname: 'Whitfield'
+                });
             });
 
             it('should redirectToReferer if the page is not valid', () => {
@@ -371,16 +384,23 @@ describe('searchController', () => {
                         prevPage: "?page=1&filters=Female",
                         thisPage: "?page=2&filters=Female",
                         nextPage: "?page=3&filters=Female"
+                    },
+                    searchTerms: {
+                        "First name": "Matthew",
+                        "Last name": "Whitfield",
+                        "Middle name": "James",
+                        "Prison number": "666"
                     }
+
                 };
 
                 expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
             });
 
             it('should handle when no page passed in', () => {
-                reqMock.url= 'http://something.com/search/results',
+                reqMock.url = 'http://something.com/search/results',
 
-                getResultsProxy()(reqMock, resMock);
+                    getResultsProxy()(reqMock, resMock);
 
                 const expectedPayload = {
                     content: {
@@ -399,7 +419,14 @@ describe('searchController', () => {
                         prevPage: "?page=0",
                         thisPage: "",
                         nextPage: "?page=2"
+                    },
+                    searchTerms: {
+                        "First name": "Matthew",
+                        "Last name": "Whitfield",
+                        "Middle name": "James",
+                        "Prison number": "666"
                     }
+
                 };
 
                 expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
@@ -437,7 +464,100 @@ describe('searchController', () => {
                         prevPage: "?page=1&filters=Female",
                         thisPage: "?page=2&filters=Female",
                         nextPage: "?page=3&filters=Female"
+                    },
+                    searchTerms: {
+                        "First name": "Matthew",
+                        "Last name": "Whitfield",
+                        "Middle name": "James",
+                        "Prison number": "666"
                     }
+
+                };
+
+                expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
+            });
+
+            it('should pass formatted search terms to the view - including DOB', () => {
+
+                reqMock.session.userInput = {
+                    forename: 'MATTHEW',
+                    forename2: 'James',
+                    surname: 'whitfield',
+                    prisonNumber: '666',
+                    dobOrAge: 'dob',
+                    dobDay: '01',
+                    dobMonth: '02',
+                    dobYear: '1999',
+                    pncNumber: 'PNC/123',
+                    croNumber: 'CRO/456'
+                };
+
+                getResultsProxy()(reqMock, resMock);
+
+                const expectedPayload = {
+                    content: {
+                        title: 'Your search returned 20 prisoners'
+                    },
+                    pagination: {
+                        'totalPages': 2,
+                        'currPage': 1,
+                        'showPrev': false,
+                        'showNext': true
+                    },
+                    data: {forename: 'Matt'},
+                    err: null,
+                    filtersForView: {},
+                    queryStrings: {
+                        prevPage: "?page=1&filters=Female",
+                        thisPage: "?page=2&filters=Female",
+                        nextPage: "?page=3&filters=Female"
+                    },
+                    searchTerms: {
+                        "First name": "Matthew",
+                        "Last name": "Whitfield",
+                        "Middle name": "James",
+                        "Prison number": "666",
+                        "Date of birth": "01/02/1999",
+                        "PNC number" : "PNC/123",
+                        "CRO number": "CRO/456"
+                    }
+
+                };
+
+                expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
+            });
+
+            it('should pass formatted search terms to the view - including age', () => {
+
+                reqMock.session.userInput = {
+                    dobOrAge: 'age',
+                    age: '35-40'
+                };
+
+                getResultsProxy()(reqMock, resMock);
+
+                const expectedPayload = {
+                    content: {
+                        title: 'Your search returned 20 prisoners'
+                    },
+                    pagination: {
+                        'totalPages': 2,
+                        'currPage': 1,
+                        'showPrev': false,
+                        'showNext': true
+                    },
+                    data: {forename: 'Matt'},
+                    err: null,
+                    filtersForView: {},
+                    queryStrings: {
+                        prevPage: "?page=1&filters=Female",
+                        thisPage: "?page=2&filters=Female",
+                        nextPage: "?page=3&filters=Female"
+                    },
+                    searchTerms: {
+                        "Age": "35-40"
+                    }
+
                 };
 
                 expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
@@ -614,7 +734,14 @@ describe('searchController', () => {
                             prevPage: "?page=1&filters=Female",
                             thisPage: "?page=2&filters=Female",
                             nextPage: "?page=3&filters=Female"
+                        },
+                        searchTerms: {
+                            "First name": "Matthew",
+                            "Last name": "Whitfield",
+                            "Middle name": "James",
+                            "Prison number": "666"
                         }
+
                     };
 
                     expect(resMock.render).to.be.calledWith('search/results', expectedPayload);

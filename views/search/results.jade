@@ -1,13 +1,13 @@
 extends ../layout
 mixin inmate(name, prisonNumber, dob, firstReceptionDate, alias, visited)
     div.inmateDetails(class=visited ? 'visited' : '')
-        a(href="/subject/#{prisonNumber}/summary#{queryStrings.thisPage}").capitalise-text
+        a(href="/subject/#{prisonNumber}/summary#{queryStrings.thisPage}")
             span.inmateContainer
                 span(class=visited ? '' : 'bold-medium').capitalise-text #{name}
                 if dob
                     span(class=visited ? '' : 'bold-medium') &middot; #{dob}
                 if alias
-                    span.block.text-secondary Alias of: #{alias}
+                    span.block Matched on alias: #{alias}
                 if prisonNumber
                     span.prisonNumber.block.text-secondary Prison no. #{prisonNumber}
                 if firstReceptionDate
@@ -25,6 +25,8 @@ block content
         div.column-two-thirds
             h1.heading-xlarge#contentTitle= content.title
 
+
+
             if filtersForView && (data.length > 1 || (filtersForView.Male || filtersForView.Female || filtersForView.HDC))
                 div#filters
                     fieldset.well
@@ -40,7 +42,7 @@ block content
                 div#searchResults
                     each item in data
                            +inmate(item.forename + (item.forename2) + item.surname,
-                                   item.prisonNumber, item.dob, item.firstReceptionDate, item.realName, item.visited)
+                                   item.prisonNumber, item.dob, item.firstReceptionDate, item.alias, item.visited)
 
 
             if pagination
@@ -67,4 +69,14 @@ block content
                                 a(href="/search/results#{queryStrings.nextPage}") Next
             div.form-group
                 a(href="/search") New search
+
+        div.column-one-third
+            div.well.search-terms-container
+                h3 Results are based on the following search terms
+                div.search-terms
+                    each value, term  in searchTerms
+                        div
+                            span.hint.font-xsmall #{term}
+                            |  #{value}
+
 

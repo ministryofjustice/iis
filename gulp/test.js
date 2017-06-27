@@ -15,7 +15,7 @@ gulp.task('test', function (done) {
 gulp.task('runtest', function () {
     return gulp.src(['test/**/*.js'])
         .pipe(mocha({
-            timeout: 4000,
+            timeout: 5000,
             reporter: 'list',
             istanbul: {
                 dir: 'build/reports/coverage'

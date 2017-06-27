@@ -12,8 +12,9 @@ const initialPage = '<html>' +
     '</html>';
 
 describe('moreless', () => {
-    document.body.innerHTML = initialPage;
-    beforeEach(() => {
+
+    before(() => {
+        document.body.innerHTML = initialPage;
         require('../../assets/javascripts/moreless/moreless');
     });
 

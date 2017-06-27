@@ -16,7 +16,7 @@ block subject-details
         if(data.details[1].length > 0)
             div.padTop
                 each val,index in data.details[1]
-                    div.grid-row.list-row.history
+                    div.grid-row.list-row.history.listItem
                         div.column-full
                             div.left-border
                                 span.quiet.block #{val.stage}

@@ -4,7 +4,7 @@ block subject-details
     div.column-two-thirds
         if (data.details && data.details.length !== 0)
             each val,index in data.details
-                div.grid-row.list-row
+                div.grid-row.list-row.listItem
                     div.column-full
                         div(id="sentence#{index}").left-border.sentence
                             span.quiet Effective sentence

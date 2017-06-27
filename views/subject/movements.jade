@@ -3,7 +3,7 @@ extends ../subject
 block subject-details
     div.column-two-thirds
         each val,index in data.details
-            div.grid-row.list-row
+            div.grid-row.list-row.listItem
                 div.column-full(class="movement-type-#{val.type}")
                     div.left-border
                         span.quiet #{val.date}

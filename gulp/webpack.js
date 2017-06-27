@@ -34,7 +34,7 @@ gulp.task('webpackSearch', function() {
 });
 
 gulp.task('webpackMoreless', function() {
-    return gulp.src('./assets/javascripts/moreless/moreless.js')
+    return gulp.src(['./assets/javascripts/moreless/moreless.js', './assets/javascripts/moreless/longlist.js'])
         .pipe(webpackStream({
             output: {
                 filename: 'morelessBundle.js'

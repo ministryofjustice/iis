@@ -27,7 +27,7 @@ module.exports = {
 
         let err = {
             title: content.errMsg.CANNOT_SUBMIT,
-            items: [{forename: 'Enter forename'}, {forename2: 'Enter middle name'}, {surname: 'Enter surname'}],
+            items: [{forename: 'Enter forename'}, {forename2: 'Enter middle name'}, {surname: 'Enter surname'}]
         };
 
         if (!obj.forename && !obj.forename2 && !obj.surname) {

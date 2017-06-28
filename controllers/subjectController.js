@@ -105,8 +105,8 @@ function renderErrorPage(res, err) {
 
 function getNavigation(page) {
     let nav = {
-        summary: {title: 'Sentence Summary'},
-        sentences: {title: 'Sentence History'},
+        summary: {title: 'Sentence summary'},
+        sentences: {title: 'Sentence history'},
         movements: {title: 'Movements'},
         hdcinfo: {title: 'HDC history'},
         offences: {title: 'Offences'},

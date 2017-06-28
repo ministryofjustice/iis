@@ -7,6 +7,8 @@ const search = require('../data/search');
 const utils = require('../data/utils');
 const audit = require('../data/audit');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
+const Case = require('case');
+
 const {
     objectKeysInArray,
     itemsInQueryString
@@ -101,13 +103,10 @@ exports.postSearchForm = function(req, res) {
     const searchItems = itemsInQueryString(req.query).filter(item => availableSearchOptions[item]);
 
     if (!inputValidates(searchItems, userInput)) {
-        // more useful handler to be written if necessary
-        // should only occur for those with JS off
         logger.info('Server side input validation used');
         return res.redirect('/search');
     }
 
-    // /search/results to be addressed when audit table is included
     req.session.visited = [];
     req.session.userInput = userInput;
     res.redirect('/search/results');
@@ -126,7 +125,7 @@ exports.getResults = function(req, res) {
     search.totalRowsForUserInput(req.session.userInput)
         .then(returnedRows => getSearchResultsAndRender(req, res)(returnedRows))
         .catch(error => {
-            logger.error('Error during number of rows search ', {error: error});
+            logger.error('Error during number of rows search: ' + error.message);
             const query = {error: error.code};
             return res.redirect(createUrl('/search', query));
         });
@@ -150,7 +149,7 @@ function getSearchResultsAndRender(req, res) {
         return search.inmate(req.session.userInput).then(searchResult => {
             return res.render('search/results', parseResultsPageData(req, rowCount, searchResult, currentPage));
         }).catch(error => {
-            logger.error('Error during inmate search ', {error: error});
+            logger.error('Error during inmate search: ' + error.message);
             const query = {error: error.code};
             return res.redirect(createUrl('/search', query));
         });
@@ -166,7 +165,8 @@ function parseResultsPageData(req, rowcount, data, page) {
         data: addSelectionVisitedData(data, req.session) || [],
         err: getPaginationErrors(req.query),
         filtersForView: getInputtedFilters(req.query, 'VIEW'),
-        queryStrings: getQueryStringsForSearch(req.url)
+        queryStrings: getQueryStringsForSearch(req.url),
+        searchTerms: getSearchTermsForView(req.session.userInput)
     };
 }
 
@@ -216,7 +216,6 @@ exports.postFilters = function(req, res) {
 
     const newQueryObject = toggleFromQueryItem(req, 'filters', filterPressed, 'referrer');
 
-    // Reset to page 1 because the filters may leave the current page number invalid
     newQueryObject.page = '1';
 
     res.redirect(createUrl('/search/results', newQueryObject));
@@ -286,3 +285,31 @@ function addFiltersToUserInput(userInput, query) {
     }
     return Object.assign({}, cleanInput, filtersForQuery);
 }
+
+
+function getSearchTermsForView(userInput) {
+
+    const searchTerms = (userInput['dobOrAge'] === 'dob') ? searchTermObjectWithDob(userInput) : {};
+
+    return Object.keys(userInput).filter(searchItem => content.termDisplayNames[searchItem])
+                                 .reduce(searchTermInCorrectCase(userInput), searchTerms);
+
+}
+
+const searchTermObjectWithDob = userInput => {
+    let dobParts = [userInput['dobDay'], userInput['dobMonth'], userInput['dobYear']];
+    return {
+        [content.termDisplayNames['dob'].name]: dobParts.join('/')
+    };
+};
+
+const searchTermInCorrectCase = userInput => (allTerms, searchTerm) => {
+
+    const itemName = content.termDisplayNames[searchTerm].name;
+
+    if(content.termDisplayNames[searchTerm].case === 'capitalise') {
+        return Object.assign({}, allTerms, {[itemName]: Case.capital(userInput[searchTerm])});
+    }
+
+    return Object.assign({}, allTerms, {[itemName]: userInput[searchTerm]});
+};

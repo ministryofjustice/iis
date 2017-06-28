@@ -65,6 +65,7 @@ The following environment variables are used and values should be supplied for c
 * USER_DETAILS_PATH - SSO user details endpoint, usually /api/user_details
 * HEALTHCHECK_INTERVAL - how often to run the passive healthcheck and output to logs, in minutes
 * APPINSIGHTS_INSTRUMENTATIONKEY - Key for Azure application inisghts logger
+* APP_BASE_URL - Points to healthcheck endpoint?
 
 The following environment variables are used and a value MUST be supplied in production.
 

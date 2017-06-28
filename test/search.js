@@ -63,13 +63,13 @@ describe('Search', () => {
             const result = inmateProxy()({prisonNumber: 7});
             const expectedResult = [
                 {
-                    'surname': 'ALIAS',
-                    'dob': '02/02/1999',
+                    'surname': 'DAVID',
+                    'dob': '01/01/1999',
                     'firstReceptionDate': 'Invalid date',
                     'forename': "",
                     'forename2': "",
                     'prisonNumber': undefined,
-                    'realName': 'David, 01/01/1999'
+                    'alias' : 'Alias'
                 }
             ];
 

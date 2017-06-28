@@ -1,6 +1,8 @@
 const logger = require('../log');
 const db = require('../server/auditData');
 const TYPES = require('tedious').TYPES;
+const {getCollection} = require('../server/iisData');
+const utils = require('../data/utils');
 
 const keys = ['LOG_IN', 'DISCLAIMER_ACCEPTED', 'SEARCH', 'VIEW', 'PRINT'];
 
@@ -36,3 +38,25 @@ function addItem(key, user, data) {
         db.addRow(sql, parameters, resolve, reject);
     });
 }
+
+exports.getLatestActions = function() {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT NON_IIS.Audit.[user], LastAction = Max(NON_IIS.Audit.timestamp)
+                     FROM NON_IIS.Audit
+                     GROUP BY NON_IIS.Audit.[user]
+                     ORDER BY LastAction ASC`;
+
+        const parameters = [];
+
+        getCollection(sql, parameters, resolveLatestActionsData(resolve), reject);
+    });
+};
+
+const resolveLatestActionsData = resolve => dbRows => {
+    resolve(dbRows.map(row => {
+        return{
+            user: row.user.value ? row.user.value : 'Unknown',
+            lastActionDate: row.LastAction.value ? utils.getFormattedDateFromString(row.LastAction.value) : 'Unknown'
+        };
+    }));
+};

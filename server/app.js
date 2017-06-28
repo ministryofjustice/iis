@@ -24,6 +24,7 @@ let disclaimer = require('../routes/disclaimer');
 let search = require('../routes/search');
 let subject = require('../routes/subject');
 let print = require('../routes/print');
+let admin = require('../routes/admin');
 
 let content = require('../data/content.js');
 let config = require('../server/config');
@@ -174,6 +175,7 @@ if (!testMode) {
 app.use('/search/', search);
 app.use('/subject/', subject);
 app.use('/print/', print);
+app.use('/admin/', admin);
 
 
 // Error Handler

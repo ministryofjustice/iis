@@ -7,8 +7,6 @@ const expect = chai.expect;
 chai.use(sinonChai);
 const content = require('../../data/content');
 
-const sandbox = sinon.sandbox.create();
-
 const initialPage = '<html>' +
     '<div class="listItem"></div>' +
     '<div class="listItem"></div>' +
@@ -17,7 +15,8 @@ const initialPage = '<html>' +
     '<div class="listItem"></div>' +
     '<div class="listItem"></div>' +
     '<div class="listItem"></div>' +
-    '<div class="listItem"></div>';
+    '<div class="listItem"></div>'+
+    '</html>';
 
 
 describe('Client side long list splitting', () => {

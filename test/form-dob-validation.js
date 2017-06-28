@@ -26,6 +26,17 @@ describe('Date/Age/Age-range validation tests', function() {
             });
     });
 
+    it('should redirect if the date is not in correct format', function() {
+        return common.logInAs('someone')
+            .then(function(authedReq) {
+                return authedReq.post('/search/form?0=dob')
+                    .set('referer', '/search/ ')
+                    .send({dobOrAge: 'dob', dobDay: '20', dobMonth: '12', dobYear: '85'})
+                    .expect(302)
+                    .expect('Location', '/search');
+            });
+    });
+
     it('should return 302 if the date is valid and redirect to results', function() {
         return common.logInAs('someone')
             .then(function(authedReq) {

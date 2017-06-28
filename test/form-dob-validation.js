@@ -52,7 +52,7 @@ describe('Date/Age/Age-range validation tests', function() {
             .then(function(authedReq) {
                 return authedReq.post('/search/form?0=dob')
                     .set('referer', '/search/ ')
-                    .send({age: '-13'})
+                    .send({dobOrAge: 'age', age: '-13'})
                     .expect(302)
                     .expect('Location', '/search');
             });

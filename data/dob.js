@@ -21,7 +21,7 @@ module.exports = {
         let month = obj.dobMonth;
         let year = obj.dobYear;
 
-        if (year.length !== 4 || month.length !== 2 || day.length !== 2) {
+        if (year.length !== 4) {
             return callback({
                 title: content.errMsg.CANNOT_SUBMIT,
                 items: [{dobDay: 'Enter date of birth in the format DD/MM/YYYY'}],

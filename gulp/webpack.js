@@ -6,7 +6,8 @@ const gulp = require('gulp');
 gulp.task('webpack', [
     'webpackSearch',
     'webpackMoreless',
-    'webpackReveal'
+    'webpackReveal',
+    'webpackAdmin'
 ]);
 
 gulp.task('webpackSearch', function() {
@@ -62,6 +63,30 @@ gulp.task('webpackReveal', function() {
         .pipe(webpackStream({
             output: {
                 filename: 'revealBundle.js'
+            },
+            module: {
+                rules: [{
+                    loader: 'babel-loader',
+                    exclude: [/node_modules/],
+                    query: {
+                        presets: [['es2015', {'loose': true}]]
+                    }
+                }]
+            },
+            externals: {
+                //  require("jquery") is external and available
+                //  on the global var jQuery
+                jquery: 'jQuery'
+            }
+        }, webpack2))
+        .pipe(gulp.dest('./public/javascripts'));
+});
+
+gulp.task('webpackAdmin', function() {
+    return gulp.src('./assets/javascripts/admin/tableFilter.js')
+        .pipe(webpackStream({
+            output: {
+                filename: 'adminBundle.js'
             },
             module: {
                 rules: [{

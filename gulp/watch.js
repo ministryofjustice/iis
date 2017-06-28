@@ -17,4 +17,5 @@ gulp.task('watch-tests', function () {
 
 gulp.task('watch-client-js', () => gulp.watch([
     './assets/javascripts/search/**',
-    './assets/javascripts/moreless/**'], {cwd: './'}, ['webpack']));
+    './assets/javascripts/moreless/**',
+    './assets/javascripts/admin/**'], {cwd: './'}, ['webpack']));

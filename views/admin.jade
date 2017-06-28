@@ -1,0 +1,16 @@
+extends layout
+block content
+    input#filter.marginTop(type="text", name="filter", placeholder="Filter table")
+    table#filterTable
+        thead
+            tr
+                th User
+                th Date of last action
+        tbody
+            each item in latestAccess
+                tr.filterableRow(data-id="#{item.user}")
+                    td #{item.user}
+                    td #{item.lastActionDate}
+
+block scripts
+    script(src="/public/javascripts/adminBundle.js?#{version}")

@@ -12,6 +12,9 @@ const filterValues = {
     },
     HDC: {
         parameter: 'hasHDC', value: true
+    },
+    Lifer: {
+        parameter: 'isLifer', value: true
     }
 };
 

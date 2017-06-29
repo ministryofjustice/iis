@@ -9,6 +9,7 @@ const logger = require('../log.js');
 module.exports = {
 
     getTuple: function(sql, params, successCallback, errorCallback) {
+        console.log('HITTING IIS GET TUPLE');
         let connected = false;
         const connection = connect();
 
@@ -61,6 +62,7 @@ module.exports = {
     },
 
     getCollection: function(sql, params, successCallback, errorCallback) {
+        console.log('HITTING IIS GET COLLECTION');
         let connected = false;
         const connection = connect();
 

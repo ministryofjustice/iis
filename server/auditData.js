@@ -10,6 +10,7 @@ const Request = require('tedious').Request;
 module.exports = {
 
     addRow: function(sql, params, successCallback, errorCallback) {
+        console.log('HITTING AUDIT ADD ROW');
         const connection = connect();
         connection.on('connect', error => {
             if (error) {

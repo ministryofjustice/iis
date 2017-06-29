@@ -1,5 +1,9 @@
 extends layout
 block content
+
+    if err
+        include ./search/searchError
+
     input#filter.marginTop(type="text", name="filter", placeholder="Filter table")
     table#filterTable
         thead

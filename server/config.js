@@ -39,5 +39,7 @@ module.exports = {
         USER_DETAILS_PATH: get('USER_DETAILS_PATH', '/api/user_details')
     },
 
-    searchResultsPerPage: get('SEARCH_RESULTS_PER_PAGE', 10)
+    searchResultsPerPage: get('SEARCH_RESULTS_PER_PAGE', 10),
+
+    administrators: get('ADMINISTRATORS', 'joe@example.com').replace(/ /g, '').split(',')
 };

@@ -3,7 +3,8 @@ let express = require('express');
 const {administrators} = require('../server/config');
 
 const {
-    getIndex
+    getIndex,
+    printItems
 } = require('../controllers/adminController');
 
 // eslint-disable-next-line
@@ -24,5 +25,6 @@ router.use(function(req, res, next) {
 });
 
 router.get('/', getIndex);
+router.get('/print', printItems);
 
 module.exports = router;

@@ -77,7 +77,7 @@ describe('printController', () => {
         hdcinfoStub = sandbox.stub().returnsPromise().resolves([{hdc: '1'}]);
         hdcrecallStub = sandbox.stub().returnsPromise().resolves([{recall: '1'}]);
         createPdfStub = sandbox.stub();
-        auditStub = sandbox.spy()
+        auditStub = sandbox.spy();
 
         reqMock = {
             body: {
@@ -246,16 +246,19 @@ describe('printController', () => {
                 forename2: 'James',
                 surname: 'Whitfield',
             }, [{address: '1'}]];
-            const expectedName = {
-                forename: 'Matthew',
-                surname: 'Whitfield',
-                prisonNumber: '     id1'
+            const expectedOptions = {
+                type: 'searchPrint',
+                name: {
+                    forename: 'Matthew',
+                    surname: 'Whitfield',
+                    prisonNumber: '     id1'
+                }
             };
 
             return getController().getPdf(reqMock, resMock).then(() => {
                 expect(createPdfStub.getCall(0).args[1]).to.eql(expectedPrintItems);
                 expect(createPdfStub.getCall(0).args[2]).to.eql(expectedData);
-                expect(createPdfStub.getCall(0).args[4]).to.eql(expectedName);
+                expect(createPdfStub.getCall(0).args[4]).to.eql(expectedOptions);
             });
         });
 
@@ -266,16 +269,19 @@ describe('printController', () => {
 
             const expectedPrintItems = ['offences', 'addresses'];
             const expectedData = [[{offence: '1'}], [{address: '1'}]];
-            const expectedName = {
-                forename: 'Matthew',
-                surname: 'Whitfield',
-                prisonNumber: '     id1'
+            const expectedOptions = {
+                type: 'searchPrint',
+                name: {
+                    forename: 'Matthew',
+                    surname: 'Whitfield',
+                    prisonNumber: '     id1'
+                }
             };
 
             return getController().getPdf(reqMock, resMock).then(() => {
                 expect(createPdfStub.getCall(0).args[1]).to.eql(expectedPrintItems);
                 expect(createPdfStub.getCall(0).args[2]).to.eql(expectedData);
-                expect(createPdfStub.getCall(0).args[4]).to.eql(expectedName);
+                expect(createPdfStub.getCall(0).args[4]).to.eql(expectedOptions);
             });
         });
 
@@ -286,16 +292,19 @@ describe('printController', () => {
 
             const expectedPrintItems = ['addresses'];
             const expectedData = [[{address: '1'}]];
-            const expectedName = {
-                forename: 'Matthew',
-                surname: 'Whitfield',
-                prisonNumber: '     id1'
+            const expectedOptions = {
+                type: 'searchPrint',
+                name: {
+                    forename: 'Matthew',
+                    surname: 'Whitfield',
+                    prisonNumber: '     id1'
+                }
             };
 
             return getController().getPdf(reqMock, resMock).then(() => {
                 expect(createPdfStub.getCall(0).args[1]).to.eql(expectedPrintItems);
                 expect(createPdfStub.getCall(0).args[2]).to.eql(expectedData);
-                expect(createPdfStub.getCall(0).args[4]).to.eql(expectedName);
+                expect(createPdfStub.getCall(0).args[4]).to.eql(expectedOptions);
             });
         });
 

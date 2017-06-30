@@ -13,13 +13,15 @@ module.exports = {
     hdcContent,
     offenceContent,
     custodyOffenceContent,
-    addressContent
+    addressContent,
+    twoColumnTable
 };
 
-function createPdf(res, printItems, data, availablePrintOptions, name) {
+function createPdf(res, printItems, data, availablePrintOptions, options = {}) {
+
     res.writeHead(200, {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename=hpa-'+name.surname+'.pdf'
+        'Content-Disposition': 'attachment; filename=hpa-download.pdf'
     });
 
     const doc = new PDFDocument({
@@ -31,7 +33,21 @@ function createPdf(res, printItems, data, availablePrintOptions, name) {
         }
     });
 
-    const {forename, surname, prisonNumber} = name;
+    if (options.type && options.type === 'searchPrint') {
+        createSearchPrint(doc, options);
+    } else {
+        doc.fontSize(12);
+        doc.moveDown(2);
+    }
+
+    printItems.forEach((item, index) => addSection(doc, availablePrintOptions[item], data[index]));
+
+    doc.pipe(res);
+    doc.end();
+}
+
+function createSearchPrint(doc, options) {
+    const {forename, surname, prisonNumber} = options.name;
 
     doc.on('pageAdded', () => {
         doc.moveTo(doc.x, doc.y).lineTo(545, doc.y).stroke('#ccc');
@@ -51,13 +67,7 @@ function createPdf(res, printItems, data, availablePrintOptions, name) {
         doc.moveDown();
         doc.fontSize(12);
     });
-
-    printItems.forEach((item, index) => addSection(doc, availablePrintOptions[item], data[index]));
-
-    doc.pipe(res);
-    doc.end();
 }
-
 
 function addSection(doc, printOption, items) {
     const {title, addContent} = printOption;
@@ -220,4 +230,22 @@ function addressContent(doc, items) {
             if(addressLine4) doc.text(addressLine4);
         }
     });
+}
+
+function twoColumnTable(doc, items) {
+    const table = new PDFTable(doc, {bottomMargin: 30});
+    table.addColumns([
+        {id: 'item0', width: 400},
+        {id: 'item1', width: 200}
+    ]);
+
+    const tableBody = items.map(item => {
+        return Object.keys(item).reduce((obj, itemKey, index) => {
+            obj[`item${index}`] = item[itemKey];
+            return obj;
+        }, {});
+    });
+
+    table.setNewPageFn(table => table.pdf.addPage());
+    table.addBody(tableBody);
 }

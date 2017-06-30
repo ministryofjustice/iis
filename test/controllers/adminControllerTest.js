@@ -14,6 +14,7 @@ describe('adminController', () => {
     let reqMock;
     let resMock;
     let getActionsStub;
+    let printActionsStub;
 
     beforeEach(() => {
         reqMock = {
@@ -23,6 +24,7 @@ describe('adminController', () => {
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
         getActionsStub = sandbox.stub().returnsPromise().resolves(['actions']);
+        printActionsStub = sandbox.stub();
     });
 
     afterEach(() => {
@@ -68,6 +70,45 @@ describe('adminController', () => {
                 }
             });
         });
+    });
+
+    describe('printItems', () => {
+        const printItemsProxy = (getActions = getActionsStub, printActions = printActionsStub) => {
+            return proxyquire('../../controllers/adminController', {
+                '../data/audit': {
+                    'getLatestActions': getActions
+                },
+                './helpers/pdfHelpers': {
+                    'createPdf': printActions,
+                    'twoColumnTable' : '2ColumnStub'
+                }
+            }).printItems;
+        };
+
+        it('should call getLatestActions', () => {
+            printItemsProxy()(reqMock, resMock);
+            expect(getActionsStub).to.have.callCount(1);
+        });
+
+        it('should print actions if successful', () => {
+            printItemsProxy()(reqMock, resMock);
+            expect(printActionsStub).to.have.callCount(1);
+        });
+
+        it('should pass appropriate data to printItems', () => {
+            printItemsProxy()(reqMock, resMock);
+
+            const availablePrintOptions = {
+                latestAccess: {
+                    title: 'Latest action per user',
+                    addContent: '2ColumnStub',
+                    getData: getActionsStub
+                }
+            };
+
+            expect(printActionsStub).to.be.calledWith(resMock, ['latestAccess'], [['actions']], availablePrintOptions);
+        });
+
     });
 
 });

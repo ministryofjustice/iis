@@ -126,7 +126,7 @@ exports.getPdf = function(req, res) {
     return Promise.all(dataFunctionsToCall.map(dataFunction => dataFunction(prisonNumber)))
         .then(data => {
             const {subjectData, subjectName} = extractSubjectInfo(data, printItems);
-            pdf.createPdf(res, printItems, subjectData, availablePrintOptions, subjectName);
+            pdf.createPdf(res, printItems, subjectData, availablePrintOptions, {type: 'searchPrint', name: subjectName});
         })
         .catch(error => showDbError({error}, prisonNumber, res));
 };

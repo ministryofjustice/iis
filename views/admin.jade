@@ -3,9 +3,13 @@ block content
 
     if err
         include ./search/searchError
+    div.padTop
+        span.column-two-thirds
+            input#filter(type="text", name="filter", placeholder="Filter table")
+        span.column-one-third.textRight
+            a(href="/admin/print") Download to PDF
 
-    input#filter.marginTop(type="text", name="filter", placeholder="Filter table")
-    table#filterTable
+    table#filterTable.padTop
         thead
             tr
                 th User

@@ -307,7 +307,7 @@ const searchTermInCorrectCase = userInput => (allTerms, searchTerm) => {
 
     const itemName = content.termDisplayNames[searchTerm].name;
 
-    if(content.termDisplayNames[searchTerm].case === 'capitalise') {
+    if(content.termDisplayNames[searchTerm].textFormat === 'capitalise') {
         return Object.assign({}, allTerms, {[itemName]: Case.capital(userInput[searchTerm])});
     }
 

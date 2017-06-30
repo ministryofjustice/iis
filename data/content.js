@@ -104,15 +104,15 @@ module.exports = {
         croNumber: {name: 'CRO number'},
         forename: {
             name: 'First name',
-            case: 'capitalise'
+            textFormat: 'capitalise'
         },
         forename2: {
             name: 'Middle name',
-            case: 'capitalise'
+            textFormat: 'capitalise'
         },
         surname: {
             name: 'Last name',
-            case: 'capitalise'
+            textFormat: 'capitalise'
         },
         age: {name: 'Age'},
         dob: {name: 'Date of birth'}

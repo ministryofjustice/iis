@@ -21,7 +21,8 @@ function createPdf(res, printItems, data, availablePrintOptions, options = {}) {
 
     res.writeHead(200, {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename=hpa-download.pdf'
+        'Content-Disposition': 'attachment; filename=hpa-download.pdf',
+        'Pragma': 'token'
     });
 
     const doc = new PDFDocument({

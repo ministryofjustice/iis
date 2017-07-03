@@ -284,7 +284,7 @@ describe('searchController', () => {
             expect(resMock.redirect).to.have.been.calledWith('/search');
         });
 
-        context('rowcounts = 0', () => {
+        context('rowcounts === 0', () => {
             it('should not call getInmates', () => {
                 getRowsStub = sinon.stub().returnsPromise().resolves({totalRows: {value: 0}});
                 getResultsProxy(getRowsStub)(reqMock, resMock);
@@ -304,7 +304,7 @@ describe('searchController', () => {
                 getResultsProxy(getRowsStub)(reqMock, resMock);
 
                 const expectedPayload = {
-                    content: {title: 'Your search did not return any results'},
+                    content: {title: ['Your search did not return any results']},
                     pagination: null,
                     data: [],
                     err: null,
@@ -369,7 +369,7 @@ describe('searchController', () => {
 
                 const expectedPayload = {
                     content: {
-                        title: 'Your search returned 20 prisoners'
+                        title: ['Your search returned', '20 prisoners']
                     },
                     pagination: {
                         'totalPages': 2,
@@ -404,7 +404,7 @@ describe('searchController', () => {
 
                 const expectedPayload = {
                     content: {
-                        title: 'Your search returned 20 prisoners'
+                        title: ['Your search returned', '20 prisoners']
                     },
                     pagination: {
                         'totalPages': 2,
@@ -445,7 +445,7 @@ describe('searchController', () => {
 
                 const expectedPayload = {
                     content: {
-                        title: 'Your search returned 20 prisoners'
+                        title: ['Your search returned', '20 prisoners']
                     },
                     pagination: {
                         'totalPages': 2,
@@ -496,7 +496,7 @@ describe('searchController', () => {
 
                 const expectedPayload = {
                     content: {
-                        title: 'Your search returned 20 prisoners'
+                        title: ['Your search returned', '20 prisoners']
                     },
                     pagination: {
                         'totalPages': 2,
@@ -538,7 +538,7 @@ describe('searchController', () => {
 
                 const expectedPayload = {
                     content: {
-                        title: 'Your search returned 20 prisoners'
+                        title: ['Your search returned', '20 prisoners']
                     },
                     pagination: {
                         'totalPages': 2,
@@ -735,7 +735,7 @@ describe('searchController', () => {
 
                     const expectedPayload = {
                         content: {
-                            title: 'Your search returned 20 prisoners'
+                            title: ['Your search returned', '20 prisoners']
                         },
                         pagination: {
                             'totalPages': 2,

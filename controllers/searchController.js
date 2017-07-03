@@ -254,15 +254,17 @@ function getPageTitle(rowcount) {
     let oResultsPageContent = content.view.results;
 
     if (rowcount === 0) {
-        return oResultsPageContent.title_no_results;
+        return [oResultsPageContent.title_no_results];
     }
 
-    let title = oResultsPageContent.title;
+    let title = oResultsPageContent.title.split(' _x_ ');
+    title[1] = `${rowcount} ${title[1]}`;
+
     if (rowcount > 1) {
-        title += 's';
+        title[1] += 's';
     }
 
-    return title.replace('_x_', rowcount);
+    return title;
 }
 
 function addSelectionVisitedData(data, session) {

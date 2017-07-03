@@ -23,7 +23,11 @@ block content
 
     div.grid-row
         div.column-two-thirds
-            h1.heading-xlarge#contentTitle= content.title
+            h1.heading-xlarge#contentTitle
+                |#{content.title[0]}
+                if content.title[1]
+                    br
+                    |#{content.title[1]}
 
             if filtersForView && (data.length > 1 || (filtersForView.Male || filtersForView.Female || filtersForView.HDC || filtersForView.Lifer))
                 div#filters

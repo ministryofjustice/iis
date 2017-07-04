@@ -82,7 +82,7 @@ describe('Search', () => {
     describe('WHERE statement', () => {
 
         it('should populate prison number if passed in', () => {
-            const result = inmateProxy()({prisonNumber: 7});
+            const result = inmateProxy()({prisonNumber: 12345678});
 
             return result.then((data) => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
@@ -90,7 +90,7 @@ describe('Search', () => {
 
                 expect(sql).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER');
                 expect(params[0].column).to.eql('PK_PRISON_NUMBER');
-                expect(params[0].value).to.eql(7);
+                expect(params[0].value).to.eql(12345678);
             });
         });
 
@@ -172,7 +172,7 @@ describe('Search', () => {
         });
 
         it('should combine where statements', () => {
-            const result = inmateProxy()({prisonNumber: 7, forename: 'Dave'});
+            const result = inmateProxy()({prisonNumber: 77777777, forename: 'Dave'});
 
             return result.then((data) => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
@@ -181,7 +181,23 @@ describe('Search', () => {
                 expect(sql).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER AND ' +
                     'PERSON_FORENAME_1 LIKE @PERSON_FORENAME_1');
                 expect(params[0].column).to.eql('PK_PRISON_NUMBER');
-                expect(params[0].value).to.eql(7);
+                expect(params[0].value).to.eql(77777777);
+                expect(params[1].column).to.eql('PERSON_FORENAME_1');
+                expect(params[1].value).to.eql('Dave');
+            });
+        });
+
+        it('should use wildcard if prison number has too few digits', () => {
+            const result = inmateProxy()({prisonNumber: 77, forename: 'Dave'});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('WHERE PK_PRISON_NUMBER LIKE @PK_PRISON_NUMBER AND ' +
+                    'PERSON_FORENAME_1 LIKE @PERSON_FORENAME_1');
+                expect(params[0].column).to.eql('PK_PRISON_NUMBER');
+                expect(params[0].value).to.eql('%77%');
                 expect(params[1].column).to.eql('PERSON_FORENAME_1');
                 expect(params[1].value).to.eql('Dave');
             });

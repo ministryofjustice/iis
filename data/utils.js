@@ -3,6 +3,7 @@ const moment = require('moment');
 const url = require('url');
 const Case = require('case');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
+const PRISON_NUMBER_LENGTH = 8;
 
 const acronyms = [
     'ARD',
@@ -33,13 +34,19 @@ module.exports = {
 
     padPrisonNumber: function(v) {
         let spaces = '';
-        const lenPrisonNumber = 8;
 
-        for (let i = 0; i < lenPrisonNumber - v.length; i++) {
+        for (let i = 0; i < PRISON_NUMBER_LENGTH - v.length; i++) {
             spaces += ' ';
         }
 
-        return (v.length < lenPrisonNumber) ? (spaces + v) : v;
+        return (v.length < PRISON_NUMBER_LENGTH) ? (spaces + v) : v;
+    },
+
+    wildcardify: function(value) {
+        if (value.toString().length === PRISON_NUMBER_LENGTH) {
+            return value;
+        }
+        return '%'.concat(value, '%');
     },
 
     getAgeFromDOB: function(dateInGDSFormat) {

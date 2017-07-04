@@ -61,8 +61,10 @@ exports.totalRowsForUserInput = function(userInput) {
 };
 
 function getPrisonNumberSqlWithParams(obj) {
-    obj.val = utils.padPrisonNumber(obj.val);
-    return getStringSqlWithParams('PK_PRISON_NUMBER')(obj);
+    obj.val = utils.wildcardify(obj.val);
+    const wildcardEnabled = obj.val[0] === '%' || obj.val[obj.val.length - 1] === '%';
+
+    return getStringSqlWithParams('PK_PRISON_NUMBER', {wildcardEnabled})(obj);
 }
 
 function getPncNumberSqlWithParams(obj) {

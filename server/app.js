@@ -25,6 +25,7 @@ let search = require('../routes/search');
 let subject = require('../routes/subject');
 let print = require('../routes/print');
 let admin = require('../routes/admin');
+let search2 = require('../routes/search2');
 
 let content = require('../data/content.js');
 let config = require('../server/config');
@@ -176,6 +177,7 @@ app.use('/search/', search);
 app.use('/subject/', subject);
 app.use('/print/', print);
 app.use('/admin/', admin);
+app.use('/search2/', search2);
 
 
 // Error Handler

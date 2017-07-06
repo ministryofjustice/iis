@@ -5,6 +5,7 @@ const Case = require('case');
 const utils = require('./utils');
 const db = require('../server/iisData');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
+const PRISON_NUMBER_LENGTH = 8;
 
 const TYPES = require('tedious').TYPES;
 const SELECT = `l.PK_PRISON_NUMBER,
@@ -61,7 +62,7 @@ exports.totalRowsForUserInput = function(userInput) {
 };
 
 function getPrisonNumberSqlWithParams(obj) {
-    obj.val = utils.wildcardify(obj.val);
+    obj.val = utils.wildcardify(obj.val, PRISON_NUMBER_LENGTH);
     const wildcardEnabled = obj.val[0] === '%' || obj.val[obj.val.length - 1] === '%';
 
     return getStringSqlWithParams('PK_PRISON_NUMBER', {wildcardEnabled})(obj);

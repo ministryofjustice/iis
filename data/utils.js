@@ -42,8 +42,8 @@ module.exports = {
         return (v.length < PRISON_NUMBER_LENGTH) ? (spaces + v) : v;
     },
 
-    wildcardify: function(value) {
-        if (value.toString().length === PRISON_NUMBER_LENGTH) {
+    wildcardify: function(value, minValue) {
+        if (value.toString().length === minValue) {
             return value;
         }
         return '%'.concat(value, '%');

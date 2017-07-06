@@ -1,0 +1,83 @@
+extends ../layout
+mixin inmate(item)
+    div.inmateDetails(class=visited ? 'visited' : '')
+        a(href="/subject/#{item.identifier.prisonNumber}/summary#{queryStrings.thisPage}")
+            span.inmateContainer
+                span(class=visited ? '' : 'bold-medium').capitalise-text #{setCase.capital(item.name.first +' '+ (item.name.middle)) +' '+ item.name.last +' '}
+                if item.dob
+                    span(class=item.visited ? '' : 'bold-medium') &middot; #{moment(item.dob).format('DD/MM/YYYY')}
+                if item.isAlias
+                    span.block Matched on alias: #{item.alias.first + ' ' + item.alias.last}
+                if item.identifier.prisonNumber
+                    span.prisonNumber.block.text-secondary Prison no. #{item.identifier.prisonNumber}
+                if item.receptionDate
+                    span.firstReceptionDate.block.text-secondary First reception #{moment(item.receptionDate).format('DD/MM/YYYY')}
+        block
+
+block content
+    div.backLinkContainer
+        a.link-back(href="/search") Back to search
+
+    if err
+        include ./searchError
+
+    div.grid-row
+        div.column-two-thirds
+            h1.heading-xlarge#contentTitle
+                |#{content.title[0]}
+                if content.title[1]
+                    br
+                    |#{content.title[1]}
+
+            if filtersForView && (data.length > 1 || (filtersForView.Male || filtersForView.Female || filtersForView.HDC || filtersForView.Lifer))
+                div#filters
+                    fieldset.well
+                        legend.font-xsmall Search filters
+                        div(role="list")
+                            form(method="post" action='/search2/results/filters')
+                                input(type="hidden" name="_csrf" value="#{csrfToken}")
+                                input#male.filtering-option.font-xsmall(name="filter", type="submit", value="Male" class=filtersForView.Male ? "filtering-option-active" : "")
+                                input#female.filtering-option.font-xsmall(name="filter", type="submit", value="Female" class=filtersForView.Female ? "filtering-option-active" : "")
+                                input#hasDdc.filtering-option.font-xsmall(name="filter", type="submit", value="HDC" class=filtersForView.HDC ? "filtering-option-active" : "")
+                                input#isLifer.filtering-option.font-xsmall(name="filter", type="submit", value="Lifer" class=filtersForView.Lifer ? "filtering-option-active" : "")
+
+            if data && data != 0
+                div#searchResults
+                    each prisoner in data
+                           +inmate(prisoner)
+
+            if pagination
+                form(method="post")
+                    input(type="hidden" name="_csrf" value="#{csrfToken}")
+                    div.form-group.c-align
+                        - var page = pagination.currPage;
+                            span#paginationPrev
+                                if !pagination.showPrev
+                                    span.inactive Previous
+                                else
+                                    a(href="/search2/results#{queryStrings.prevPage}") Previous
+                                |  &nbsp;
+
+                        span
+                            input.form-control#paginationInput(type="number", name="pageNumber", min="0", max=pagination.totalPages, value=pagination.currPage)
+                        span
+                            | of #{pagination.totalPages}
+
+                        span#paginationNext
+                            if !pagination.showNext
+                                span.inactive Next
+                            else
+                                a(href="/search2/results#{queryStrings.nextPage}") Next
+            div.form-group
+                a(href="/search2") New search
+
+        div.column-one-third
+            div.well.search-terms-container
+                h3 Results are based on the following search terms
+                div.search-terms
+                    each value, term  in searchTerms
+                        div
+                            span.hint.font-xsmall #{term}
+                            |  #{value}
+
+

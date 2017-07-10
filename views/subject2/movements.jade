@@ -1,0 +1,18 @@
+extends ../subject2
+
+block subject-details
+    div.column-two-thirds
+        each val,index in data.details
+            div.grid-row.list-row.listItem
+                div.column-full(class="movement-type-#{val.type}")
+                    div.left-border
+                        span.quiet #{val.date}
+                    div.left-border
+                        span.type.bold-small #{val.type == 'D' ? 'OUT' : 'IN'} -&nbsp;
+                        span #{val.status}
+
+                    div.left-border
+                        span #{val.establishment}
+
+        if (data.details.length === 0)
+            span= data.noResultsText

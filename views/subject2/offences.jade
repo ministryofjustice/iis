@@ -1,0 +1,19 @@
+extends ../subject2
+
+block subject-details
+    div.column-two-thirds
+        each val,index in data.details
+            div.grid-row.list-row.listItem
+                    div.column-full
+                        div.left-border
+                            span.quiet.block #{val.caseDate}
+                            span Offence code #{val.offenceCode}
+
+                        div.left-border
+                            if val.establishment
+                                span #{val.establishment.trim()}
+                            else
+                                span #{val.establishment_code}
+
+        if (data.details.length === 0)
+            span= data.noResultsText

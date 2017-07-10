@@ -1,0 +1,43 @@
+extends ../subject2
+
+block subject-details
+    div.column-two-thirds
+        if (data.details[0] && data.details[0].length !== 0)
+            - var firstHearing = data.details[0][0]
+                div.grid-row.list-row
+                    div.column-full
+                        div.left-border
+                            span.quiet Court hearing
+                            div #{firstHearing.date}
+                            div #{firstHearing.court}
+        else
+            div
+                span Prisoner has no court hearings
+
+        p
+
+        if (data.details[1] && data.details[1].length !== 0)
+            - var firstSentence = data.details[1][0]
+            div.grid-row.list-row.listItem
+                div.column-full
+                    div.left-border
+                        span.quiet Effective sentence
+                        div #{firstSentence.changeDate}
+                        div #{firstSentence.length} days
+                        div #{firstSentence.reasonCode}
+                        span.quiet Date of first reception
+                        |  #{data.subject.dateOfFirstReception}
+                        if firstSentence.keyDates
+                            span
+                            ul.prisoner-key-dates
+                                each date, label in firstSentence.keyDates
+                                    if date
+                                        li
+                                            span.quiet #{label}
+                                            |  #{date}
+        else
+            div
+                span Prisoner has no sentence history
+
+block append scripts
+    script(src="/public/javascripts/revealBundle.js?#{version}")

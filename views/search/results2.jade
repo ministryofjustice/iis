@@ -1,7 +1,7 @@
 extends ../layout
 mixin inmate(item)
     div.inmateDetails(class=visited ? 'visited' : '')
-        a(href="/subject/#{item.identifier.prisonNumber}/summary#{queryStrings.thisPage}")
+        a(href="/subject2/#{item.identifier.prisonNumber}/summary#{queryStrings.thisPage}")
             span.inmateContainer
                 span(class=visited ? '' : 'bold-medium').capitalise-text #{setCase.capital(item.name.first +' '+ (item.name.middle)) +' '+ item.name.last +' '}
                 if item.dob

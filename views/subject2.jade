@@ -1,0 +1,95 @@
+extends layout
+
+block content
+
+    div.back-link-container
+        a.link-back(href="/search2/results#{returnQuery}") Back to prisoners
+
+    if err
+        div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
+            h1(class="heading-medium error-summary-heading", id="error-message")= err.title
+
+    div#print-header(aria-hidden="true")
+        span GOV.UK - Inmate information system
+
+    div#print-disclaimer(aria-hidden="true")
+        p.title Disclaimer
+        p
+        | This information is Official Sensitive and should not be shared with anyone who
+        | does not have a valid reason to use it. The Information in this document which was created
+        | using the legacy application, LIDS, is accurate for that period of time entered and should be
+        | used in conjunction with legislation and codes which applied at the time of entry. Information
+        | in this document which was created using Prison NOMIS may not be accurate and should be
+        | discounted. Any information which can be found on Prison NOMIS should be taken from Prison
+        | NOMIS. Please note that MoJ/HMPPS will not accept any responsibility for errors on the system.
+
+    if !err
+        div.grid-row
+            div.column-two-thirds
+                h1.heading-xlarge#subjectName
+                    | #{data.subject.forename}
+                    | #{data.subject.forename2}
+                    | #{data.subject.surname}
+                    span.heading-secondary#ageDetails #{data.subject.dob} (#{data.subject.age} years)
+
+                ul#prisonerInfoSummary.font-medium
+                    if data.subject.sex
+                        li #{data.subject.sex}
+
+                    if data.subject.ethnicity
+                        li
+                            span.dot &middot;
+                            | #{data.subject.ethnicity}
+
+                    if data.subject.countryOfBirth
+                        li
+                            span.dot &middot;
+                            | Born in #{data.subject.countryOfBirth}
+
+                    if data.subject.maritalStatus
+                        li.initiallyHidden
+                            span.dot &middot;
+                            | #{data.subject.maritalStatus}
+
+                    if data.subject.nationality
+                        li.initiallyHidden
+                            span.dot &middot;
+                            | National of #{data.subject.nationality}
+
+                    if data.subject.religion
+                        li.initiallyHidden
+                            span.dot &middot;
+                            | #{data.subject.religion}
+
+
+
+                span#saveLink
+                    a(href="/print?prisonNo=#{data.subject.prisonNumber}") Save as PDF
+            div.column-one-third
+                if data.subject.prisonNumber || data.subject.paroleRefList || data.subject.pnc || data.subject.cro
+                    ul.list.well.refs-box
+                        if data.subject.prisonNumber
+                            li#subjectId= data.subject.prisonNumber
+                                span.form-hint Prison number
+                        if data.subject.paroleRefList
+                            li#parole-refs= data.subject.paroleRefList
+                                span.form-hint Parole ref.
+                        if data.subject.pnc
+                            li#pnc= data.subject.pnc
+                                span.form-hint PNC
+                        if data.subject.cro
+                            li#cro= data.subject.cro
+                                span.form-hint CRO
+
+        section
+            div.grid-row
+                div.column-one-third
+                    include subject/nav.jade
+
+                block subject-details
+
+        div.form-group
+            a(href="/search2") New search
+
+block append scripts
+    script(src="/public/javascripts/morelessBundle.js?#{version}")

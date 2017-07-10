@@ -71,6 +71,8 @@ function revealItem(item) {
         $(item).removeClass('js-hidden');
         $(item).attr('aria-hidden', 'false');
     }
+
+    $(item).find('.initialFocus').focus();
 }
 
 function hideItem(item) {

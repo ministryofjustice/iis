@@ -3,7 +3,7 @@ extends ../subject2
 block subject-details
 
         div.column-two-thirds
-            each val,index in data.details
+            each val, index in subject.aliases
                     div(id="alias#{index}").grid-row.list-row.alias.aliasSearch.listItem
                         div.column-full.left-border
                             //- var ages = val.dob.split('/');
@@ -21,12 +21,12 @@ block subject-details
 
                             div.aliasSearch
                                 div(id="alias#{index}-name")
-                                    | #{val.forename + ' ' + val.forename2 + ' ' + val.surname}
-                                if (val.dob)
-                                    div(id="alias#{index}-dob") Born on: #{val.dob}
+                                    | #{setCase.capital(val.first + ' ' + val.middle + ' ' + val.last)}
+                                if (val.birthDate)
+                                    div(id="alias#{index}-dob") Born on: #{moment(val.birthDate).format('DD/MM/YYYY')}
 
-            if (data.details.length === 0)
-                span= data.noResultsText
+            if (subject.aliases.length === 0)
+                span= noResultsText
 
 
 

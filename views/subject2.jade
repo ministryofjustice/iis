@@ -27,64 +27,64 @@ block content
         div.grid-row
             div.column-two-thirds
                 h1.heading-xlarge#subjectName
-                    | #{data.subject.forename}
-                    | #{data.subject.forename2}
-                    | #{data.subject.surname}
-                    span.heading-secondary#ageDetails #{data.subject.dob} (#{data.subject.age} years)
+                    | #{setCase.capital(subject.summary.name.first)}
+                    | #{setCase.capital(subject.summary.name.middle)}
+                    | #{subject.summary.name.last}
+                    span.heading-secondary#ageDetails #{moment(subject.summary.dob).format('DD/MM/YYYY')} (#{moment().diff(subject.summary.dob, 'years')} years)
 
                 ul#prisonerInfoSummary.font-medium
-                    if data.subject.sex
-                        li #{data.subject.sex}
+                    if subject.summary.sex && (subject.summary.sex ==='F' || subject.summary.sex === 'M')
+                        li #{subject.summary.sex === 'M' ? 'Male' : 'Female'}
 
-                    if data.subject.ethnicity
+                    if subject.summary.ethnicity
                         li
                             span.dot &middot;
-                            | #{data.subject.ethnicity}
+                            | #{subject.summary.ethnicity}
 
-                    if data.subject.countryOfBirth
+                    if subject.summary.birthCountry
                         li
                             span.dot &middot;
-                            | Born in #{data.subject.countryOfBirth}
+                            | Born in #{subject.summary.birthCountry}
 
-                    if data.subject.maritalStatus
+                    if subject.summary.maritalStatus
                         li.initiallyHidden
                             span.dot &middot;
-                            | #{data.subject.maritalStatus}
+                            | #{subject.summary.maritalStatus}
 
-                    if data.subject.nationality
+                    if subject.summary.nationality
                         li.initiallyHidden
                             span.dot &middot;
-                            | National of #{data.subject.nationality}
+                            | National of #{subject.summary.nationality}
 
-                    if data.subject.religion
+                    if subject.summary.religion
                         li.initiallyHidden
                             span.dot &middot;
-                            | #{data.subject.religion}
+                            | #{subject.summary.religion}
 
 
 
                 span#saveLink
-                    a(href="/print?prisonNo=#{data.subject.prisonNumber}") Save as PDF
+                    a(href="/print?prisonNo=#{subject.summary.prisonNumber}") Save as PDF
             div.column-one-third
-                if data.subject.prisonNumber || data.subject.paroleRefList || data.subject.pnc || data.subject.cro
+                if subject.summary.identifier.prisonNumber || subject.summary.identifier.parole || subject.summary.identifier.pnc || subject.identifier.summary.cro
                     ul.list.well.refs-box
-                        if data.subject.prisonNumber
-                            li#subjectId= data.subject.prisonNumber
+                        if subject.summary.identifier.prisonNumber
+                            li#subjectId= subject.summary.identifier.prisonNumber
                                 span.form-hint Prison number
-                        if data.subject.paroleRefList
-                            li#parole-refs= data.subject.paroleRefList
+                        if subject.summary.identifier.parole
+                            li#parole-refs= subject.summary.identifier.parole[0].ref
                                 span.form-hint Parole ref.
-                        if data.subject.pnc
-                            li#pnc= data.subject.pnc
+                        if subject.summary.identifier.pnc
+                            li#pnc= subject.summary.identifier.pnc
                                 span.form-hint PNC
-                        if data.subject.cro
-                            li#cro= data.subject.cro
+                        if subject.summary.identifier.cro
+                            li#cro= subject.summary.identifier.cro
                                 span.form-hint CRO
 
         section
             div.grid-row
                 div.column-one-third
-                    include subject/nav.jade
+                    include subject2/nav.jade
 
                 block subject-details
 

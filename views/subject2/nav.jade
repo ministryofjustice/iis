@@ -1,7 +1,7 @@
 ul.list#inmate-nav
-     each val,index in nav
+     each val, index in nav
         li
             if(val.active)
                 span.bold-small #{val.title}
             else
-                a(id="#{index}", href="/subject/#{data.subject.prisonNumber}/#{index}#{returnQuery}")= val.title
+                a(id="#{index}", href="/subject2/#{subject.summary.identifier.prisonNumber}/#{index}#{returnQuery}")= val.title

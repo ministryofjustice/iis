@@ -2,25 +2,25 @@ extends ../subject2
 
 block subject-details
     div.column-two-thirds
-        if (data.details && data.details.length !== 0)
-            each val,index in data.details
+        if (subject.sentencing && subject.sentencing.length !== 0)
+            each val,index in subject.sentencing
                 div.grid-row.list-row.listItem
                     div.column-full
                         div(id="sentence#{index}").left-border.sentence
                             span.quiet Effective sentence
-                            div #{val.changeDate}
-                            div #{val.length} days
-                            div #{val.reasonCode}
-                            if val.keyDates
+                            div #{moment(val.changeDate).format('DD/MM/YYYY')}
+                            div #{val.lengthDays} days
+                            //div #{val.reasonCode}
+                            if val.dates
                                 ul.prisoner-key-dates
-                                    each date, label in val.keyDates
+                                    each date, label in val.dates
                                         if date
                                             li
                                                 span.quiet #{label}
-                                                |  #{date}
+                                                |  #{moment(date).format('DD/MM/YYYY')}
         else
             div
-                span= data.noResultsText
+                span= noResultsText
 
 block append scripts
     script(src="/public/javascripts/revealBundle.js?#{version}")

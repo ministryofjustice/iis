@@ -2,13 +2,13 @@ extends ../subject2
 
 block subject-details
     div.column-two-thirds
-        if (data.details[0] && data.details[0].length !== 0)
-            - var firstHearing = data.details[0][0]
+        if (subject.courtHearings && subject.courtHearings !== 0)
+            - var firstHearing = subject.courtHearings[0]
                 div.grid-row.list-row
                     div.column-full
                         div.left-border
                             span.quiet Court hearing
-                            div #{firstHearing.date}
+                            div #{moment(firstHearing.date).format('DD/MM/YYYY')}
                             div #{firstHearing.court}
         else
             div
@@ -16,25 +16,24 @@ block subject-details
 
         p
 
-        if (data.details[1] && data.details[1].length !== 0)
-            - var firstSentence = data.details[1][0]
+        if (subject.sentencing && subject.sentencing.length !== 0)
+            - var firstSentence = subject.sentencing[0]
             div.grid-row.list-row.listItem
                 div.column-full
                     div.left-border
                         span.quiet Effective sentence
-                        div #{firstSentence.changeDate}
-                        div #{firstSentence.length} days
-                        div #{firstSentence.reasonCode}
+                        div #{moment(firstSentence.changeDate).format('DD/MM/YYYY')}
+                        div #{firstSentence.lengthDays} days
                         span.quiet Date of first reception
-                        |  #{data.subject.dateOfFirstReception}
-                        if firstSentence.keyDates
+                        |  #{moment(subject.summary.receptionDate).format('DD/MM/YYYY')}
+                        if firstSentence.dates
                             span
                             ul.prisoner-key-dates
-                                each date, label in firstSentence.keyDates
+                                each date, label in firstSentence.dates
                                     if date
                                         li
                                             span.quiet #{label}
-                                            |  #{date}
+                                            |  #{moment(date).format('DD/MM/YYYY')}
         else
             div
                 span Prisoner has no sentence history

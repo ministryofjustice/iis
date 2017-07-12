@@ -2,18 +2,15 @@ extends ../subject2
 
 block subject-details
     div.column-two-thirds
-        each val,index in data.details
+        each val, index in subject.offences
             div.grid-row.list-row.listItem
                     div.column-full
                         div.left-border
-                            span.quiet.block #{val.caseDate}
-                            span Offence code #{val.offenceCode}
+                            span.quiet.block #{moment(val.date).format('DD/MM/YYYY')}
+                            span Offence code #{val.code}
 
                         div.left-border
-                            if val.establishment
-                                span #{val.establishment.trim()}
-                            else
-                                span #{val.establishment_code}
+                            span #{setCase.capital(val.establishment)}
 
-        if (data.details.length === 0)
-            span= data.noResultsText
+        if (subject.offences.length === 0)
+            span= noResultsText

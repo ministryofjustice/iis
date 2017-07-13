@@ -19,7 +19,7 @@ INSERT INTO HPA.PERSONAL_DETAILS
         (
             STUFF(
                 (SELECT
-                     DISTINCT ', ' + CAST(PAROLE_REF_NUMBER AS VARCHAR(7))
+                     DISTINCT ', ' + TRIM(PAROLE_REF_NUMBER)
                  FROM
                      IIS.PAROLE_REVIEW
                  WHERE

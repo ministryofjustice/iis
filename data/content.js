@@ -92,6 +92,23 @@ module.exports = {
             sex: 'Gender',
             age: 'Age'
         },
+        subject2: {
+            prisonNumber: 'Prison number',
+            paroleNumbers: 'Parole reference list',
+            pncNumber: 'PNC',
+            croNumber: 'CRO',
+            dob: 'Date of birth',
+            birthCountry: 'Country of birth',
+            maritalStatus: 'Marital status',
+            ethnicity: 'Ehnicity',
+            nationality: 'Nationality',
+            religion: 'Religion',
+            sex: 'Gender',
+            age: 'Age',
+            receptionDate: 'Date of first reception',
+            name: 'Name',
+            identifier: 'Identifier'
+        },
         dbError: {
             title: 'There was a problem getting the data from the database',
             desc: 'Please try again'

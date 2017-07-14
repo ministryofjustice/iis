@@ -258,6 +258,7 @@ INSERT INTO HPA.MOVEMENTS
             THEN NULL
         ELSE m.DATE_OF_MOVE
         END                      AS DATE,
+        m.TIME_OF_MOVE           AS TIME,
         m.TYPE_OF_MOVE           AS TYPE,
         CASE
         WHEN (m.TYPE_OF_MOVE = 'D')

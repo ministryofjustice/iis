@@ -75,6 +75,7 @@ CREATE TABLE [HPA].[MOVEMENTS] (
         CONSTRAINT PK_MOVEMENTS PRIMARY KEY,
     [PRISON_NUMBER] [VARCHAR](8)  NOT NULL,
     [DATE]          [DATE]        NULL,
+    [TIME]          [DECIMAL](6)  NULL,
     [TYPE]          [CHAR](1)     NULL,
     [MOVEMENT]      [VARCHAR](28) NULL,
     [ESTABLISHMENT] [VARCHAR](30) NULL
@@ -152,35 +153,29 @@ GO
 
 -------------------------------------------------------------------------------------------------------
 
--- Names etc from IIS.KNOWN_AS - Enables searching for prisoners. Summary column is JSON suitable for results listings.
+-- Names etc from IIS.KNOWN_AS - Enables searching for prisoners.
 CREATE TABLE [HPA].[PRISONERS] (
-    [PK_PRISONER]        [INT]            NOT NULL IDENTITY (1, 1)
+    [PK_PRISONER]        [INT]         NOT NULL IDENTITY (1, 1)
         CONSTRAINT PK_PRISONERS PRIMARY KEY,
-    [PRISON_NUMBER]      [VARCHAR](8)     NOT NULL,
-    [PERSON_IDENTIFIER]  [DECIMAL](10)    NOT NULL,
-    [SURNAME]            [VARCHAR](24)    NULL,
-    [FORENAME_1]         [VARCHAR](13)    NULL,
-    [FORENAME_2]         [VARCHAR](13)    NULL,
-    [BIRTH_DATE]         [DATE]           NULL,
-    [IS_ALIAS]           [BIT]            NOT NULL,
-    [SEX]                [CHAR](1)        NULL,
-    [PNC_NUMBER]         [VARCHAR](14)    NULL,
-    [CRO_NUMBER]         [VARCHAR](14)    NULL,
-    [HAS_HDC]            [BIT]            NOT NULL,
-    [IS_LIFER]           [BIT]            NOT NULL,
-    [RECEPTION_DATE]     [DATE]           NULL,
-    [PRIMARY_SURNAME]    [VARCHAR](24)    NULL,
-    [PRIMARY_FORENAME_1] [VARCHAR](13)    NULL,
-    [PRIMARY_INITIAL]    [CHAR](1)        NULL,
-    [PRIMARY_FORENAME_2] [VARCHAR](13)    NULL,
-    [PRIMARY_BIRTH_DATE] [DATE]           NULL,
-    [SUMMARY]            [NVARCHAR](1024) NULL
+    [PRISON_NUMBER]      [VARCHAR](8)  NOT NULL,
+    [PERSON_IDENTIFIER]  [DECIMAL](10) NOT NULL,
+    [SURNAME]            [VARCHAR](24) NULL,
+    [FORENAME_1]         [VARCHAR](13) NULL,
+    [FORENAME_2]         [VARCHAR](13) NULL,
+    [BIRTH_DATE]         [DATE]        NULL,
+    [IS_ALIAS]           [BIT]         NOT NULL,
+    [SEX]                [CHAR](1)     NULL,
+    [PNC_NUMBER]         [VARCHAR](14) NULL,
+    [CRO_NUMBER]         [VARCHAR](14) NULL,
+    [HAS_HDC]            [BIT]         NOT NULL,
+    [IS_LIFER]           [BIT]         NOT NULL,
+    [RECEPTION_DATE]     [DATE]        NULL,
+    [PRIMARY_SURNAME]    [VARCHAR](24) NULL,
+    [PRIMARY_FORENAME_1] [VARCHAR](13) NULL,
+    [PRIMARY_INITIAL]    [CHAR](1)     NULL,
+    [PRIMARY_FORENAME_2] [VARCHAR](13) NULL,
+    [PRIMARY_BIRTH_DATE] [DATE]        NULL
 );
-GO
-
-ALTER TABLE [HPA].[PRISONERS]
-    ADD CONSTRAINT [PRISONERS.SUMMARY should be formatted as JSON]
-CHECK (ISJSON(SUMMARY) > 0);
 GO
 
 -------------------------------------------------------------------------------------------------------
@@ -253,5 +248,3 @@ ALTER TABLE [HPA].[PRISONER_DETAILS]
 CHECK (ISJSON(SENTENCING) > 0);
 GO
 
-
--- Total 1 second

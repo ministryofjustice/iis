@@ -62,8 +62,7 @@ INSERT INTO HPA.PRISONERS
         WHEN (l.INMATE_BIRTH_DATE = '18991231')
             THEN NULL
         ELSE l.INMATE_BIRTH_DATE
-        END          AS                      DOB,
-        NULL         AS                      SUMMARY
+        END          AS                      DOB
     FROM IIS.KNOWN_AS k
         INNER JOIN IIS.LOSS_OF_LIBERTY l ON l.FK_PERSON_IDENTIFIER = K.FK_PERSON_IDENTIFIER
     WHERE
@@ -71,37 +70,6 @@ INSERT INTO HPA.PRISONERS
                    FROM IIS.IIS_IDENTIFIER i
                    WHERE i.FK_PERSON_IDENTIFIER = k.FK_PERSON_IDENTIFIER AND PERSON_IDENT_TYPE_CODE = 'NOM');
 GO
--- approx 9m
+-- approx 10m
 -- count = 4,220,054
 
-
--- Create summary JSON suitable for results listings
-UPDATE HPA.PRISONERS
-SET SUMMARY = (
-    SELECT
-        IS_ALIAS           AS isAlias,
-        HAS_HDC            AS hasHdc,
-        IS_LIFER           AS isLifer,
-        PRISON_NUMBER      AS 'identifier.prisonNumber',
-        PNC_NUMBER         AS 'identifier.pnc',
-        CRO_NUMBER         AS 'identifier.cro',
-        RECEPTION_DATE     AS receptionDate,
-        SEX                AS sex,
-        PRIMARY_INITIAL    AS initial,
-        PRIMARY_SURNAME    AS 'name.last',
-        PRIMARY_FORENAME_1 AS 'name.first',
-        PRIMARY_FORENAME_2 AS 'name.middle',
-        PRIMARY_BIRTH_DATE AS 'dob',
-        SURNAME            AS 'alias.last',
-        FORENAME_1         AS 'alias.first',
-        FORENAME_2         AS 'alias.Middle',
-        BIRTH_DATE         AS 'alias.dob'
-    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-);
-GO
--- approx 45m
--- count = 4,220,054
-
-
-
--- total approx 1h

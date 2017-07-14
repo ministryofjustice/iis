@@ -25,6 +25,7 @@ let search = require('../routes/search');
 let subject = require('../routes/subject');
 let subject2 = require('../routes/subject2');
 let print = require('../routes/print');
+let print2 = require('../routes/print2');
 let admin = require('../routes/admin');
 let search2 = require('../routes/search2');
 
@@ -178,8 +179,10 @@ app.use('/search/', search);
 app.use('/subject/', subject);
 app.use('/subject2/', subject2);
 app.use('/print/', print);
+app.use('/print2/', print2);
 app.use('/admin/', admin);
 app.use('/search2/', search2);
+
 
 
 // Error Handler

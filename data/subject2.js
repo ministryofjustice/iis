@@ -12,10 +12,10 @@ const dataAccessOptions = {
     movements: 'JSON_QUERY(MOVEMENTS) AS movements',
     offences: 'JSON_QUERY(OFFENCES) AS offences',
     offencesInCustody: 'JSON_QUERY(OFFENCES_IN_CUSTODY) AS offencesInCustody',
-    sentenceHistory: 'JSON_QUERY(SENTENCING) AS sentencing'
+    sentencing: 'JSON_QUERY(SENTENCING) AS sentencing'
 };
 
-exports.getSubject = function(prisonNumber, dataRequired) {
+exports.getSubject = function(prisonNumber, dataRequired = ['summary']) {
 
     logger.debug('Subject info search');
     const params = [
@@ -23,9 +23,18 @@ exports.getSubject = function(prisonNumber, dataRequired) {
     ];
 
     let sql = `SELECT ${getSelectString(dataRequired)}
-               FROM HPA.PRISONER_DETAILS
-               WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER
-               FOR JSON AUTO, WITHOUT_ARRAY_WRAPPER`;
+               FROM ( 
+                       SELECT
+                         row_number()
+                         OVER ( PARTITION BY PRISON_NUMBER
+                           ORDER BY (IS_ALIAS) ) ROW_NUM,
+                         *
+                       FROM HPA.PRISONERS
+                       WHERE PRISON_NUMBER = @PK_PRISON_NUMBER
+                     ) NUMBERED_ROWS
+                WHERE ROW_NUM = 1
+                ORDER BY IS_ALIAS, SURNAME, PRIMARY_INITIAL, BIRTH_DATE, RECEPTION_DATE DESC
+                FOR JSON PATH`;
 
     logger.debug('Subject info search', sql);
 
@@ -36,6 +45,9 @@ exports.getSubject = function(prisonNumber, dataRequired) {
 
 const getSelectString = dataRequired => {
     return dataRequired.reduce((selectString, item) => {
+        if (item === 'summary') {
+            return selectString;
+        }
         return selectString.concat(', ', dataAccessOptions[item]);
     }, dataAccessOptions['summary']);
 };

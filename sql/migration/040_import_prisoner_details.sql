@@ -62,6 +62,21 @@ GO
 -------------------------------------------------------------------------------------------------------
 
 UPDATE HPA.PRISONER_DETAILS
+SET CATEGORY =
+(
+    SELECT TOP 1
+        DATE  AS date,
+        CATEGORY AS category
+    FROM HPA.PRISONER_CATEGORY c
+    WHERE c.PRISON_NUMBER = PK_PRISON_NUMBER
+    ORDER BY DATE DESC
+    FOR JSON PATH
+);
+GO
+-- approx
+-------------------------------------------------------------------------------------------------------
+
+UPDATE HPA.PRISONER_DETAILS
 SET COURT_HEARINGS =
 (
     SELECT

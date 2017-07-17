@@ -149,7 +149,6 @@ GO
 
 -------------------------------------------------------------------------------------------------------
 
-
 INSERT INTO HPA.COURT_HEARINGS
     SELECT DISTINCT
         TRIM(l.PK_PRISON_NUMBER) AS PRISON_NUMBER,
@@ -344,6 +343,31 @@ INSERT INTO HPA.OFFENCES_IN_CUSTODY
                    WHERE i.FK_PERSON_IDENTIFIER = l.FK_PERSON_IDENTIFIER AND PERSON_IDENT_TYPE_CODE = 'NOM');
 GO
 --approx 3m
+
+-------------------------------------------------------------------------------------------------------
+
+INSERT INTO HPA.PRISONER_CATEGORY
+    SELECT DISTINCT
+        TRIM(l.PK_PRISON_NUMBER) AS PK_PRISON_NUMBER,
+        CASE
+        WHEN (S.STATE_START_DATE = '18991231')
+            THEN NULL
+        ELSE S.STATE_START_DATE
+        END AS DATE,
+        (
+            SELECT TRIM(CODE_DESCRIPTION)
+            FROM IIS.IIS_CODE
+            WHERE PK_CODE_TYPE = 11 AND PK_CODE_REF = S.STATE_VALUE
+        )                        AS CATEGORY
+    FROM IIS.LOSS_OF_LIBERTY l
+        INNER JOIN IIS.STATE_CHANGE S
+            ON S.FK_PRISON_NUMBER = L.PK_PRISON_NUMBER
+    WHERE STATE_BAND = 2
+          AND NOT EXISTS(SELECT 1
+                         FROM IIS.IIS_IDENTIFIER i
+                         WHERE i.FK_PERSON_IDENTIFIER = l.FK_PERSON_IDENTIFIER AND PERSON_IDENT_TYPE_CODE = 'NOM');
+GO
+-- approx 6m
 
 -------------------------------------------------------------------------------------------------------
 

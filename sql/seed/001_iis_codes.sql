@@ -81,6 +81,10 @@ VALUES
     (8, '2',      2, null, null, null, 'NOT PROVEN             ', null, 1, null, null),
     (8, '3',      3, null, null, null, 'NOT COMPLETED          ', null, 1, null, null),
     (8, '6',      6, null, null, null, 'DISMISSED              ', null, 1, null, null),
-    (8, '8',      8, null, null, null, 'NOT PROCEEDED WITH     ', null, 1, null, null)
+    (8, '8',      8, null, null, null, 'NOT PROCEEDED WITH     ', null, 1, null, null),
+    -- Prisoner category
+    (11, 'C       ',      1, null, null, null, 'CATEGORY C', null, 1, null, null),
+    (11, 'D       ',      2, null, null, null, 'CATEGORY D', null, 1, null, null),
+    (11, 'X       ',      3, null, null, null, 'UNCATEGORISED (SENT MALES)  ', null, 1, null, null)
 ;
 GO

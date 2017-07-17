@@ -132,6 +132,16 @@ CREATE TABLE [HPA].[PERSONAL_DETAILS] (
 );
 GO
 
+-------------------------------------------------------------------------------------------------------
+
+CREATE TABLE [HPA].[PRISONER_CATEGORY] (
+    [PK_PRISONER_CATEGORY] [INT]         NOT NULL IDENTITY (1, 1)
+        CONSTRAINT PK_PRISONER_CATEGORIES PRIMARY KEY,
+    [PRISON_NUMBER]        [VARCHAR](8)  NOT NULL,
+    [DATE]                 [DATE]        NULL,
+    [CATEGORY]             [VARCHAR](28) NULL
+);
+GO
 
 -------------------------------------------------------------------------------------------------------
 
@@ -188,6 +198,7 @@ CREATE TABLE [HPA].[PRISONER_DETAILS] (
     [PERSONAL_DETAILS]    [NVARCHAR](512)  NULL,
     [ADDRESSES]           [NVARCHAR](MAX)  NULL,
     [ALIASES]             [NVARCHAR](MAX)  NULL,
+    [CATEGORY]            [NVARCHAR](256)  NULL,
     [COURT_HEARINGS]      [NVARCHAR](1024) NULL,
     [HDC_INFO]            [NVARCHAR](MAX)  NULL,
     [HDC_RECALL]          [NVARCHAR](512)  NULL,
@@ -211,6 +222,11 @@ GO
 ALTER TABLE [HPA].[PRISONER_DETAILS]
     ADD CONSTRAINT [PRISONER_DETAILS.ALIASES should be formatted as JSON]
 CHECK (ISJSON(ALIASES) > 0);
+GO
+
+ALTER TABLE [HPA].[PRISONER_DETAILS]
+    ADD CONSTRAINT [PRISONER_DETAILS.CATEGORY should be formatted as JSON]
+CHECK (ISJSON(CATEGORY) > 0);
 GO
 
 ALTER TABLE [HPA].[PRISONER_DETAILS]

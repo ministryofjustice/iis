@@ -40,11 +40,11 @@ UPDATE HPA.PRISONER_DETAILS
 SET ADDRESSES =
 (
     SELECT
+        TYPE   AS type,
+        PERSON AS person,
         STREET AS street,
         TOWN   AS town,
-        COUNTY AS county,
-        TYPE   AS type,
-        PERSON AS person
+        COUNTY AS county
     FROM HPA.ADDRESSES a
     WHERE a.PRISON_NUMBER = PK_PRISON_NUMBER
     FOR JSON PATH
@@ -73,7 +73,7 @@ SET CATEGORY =
     FOR JSON PATH
 );
 GO
--- approx
+-- approx 48m
 -------------------------------------------------------------------------------------------------------
 
 UPDATE HPA.PRISONER_DETAILS
@@ -95,13 +95,13 @@ UPDATE HPA.PRISONER_DETAILS
 SET HDC_INFO =
 (
     SELECT
-        DATE                AS date,
         STAGE               AS stage,
         STATUS              AS status,
+        DATE                AS date,
         JSON_QUERY(REASONS) AS reasons
     FROM HPA.HDC_INFO h
     WHERE h.PRISON_NUMBER = PK_PRISON_NUMBER
-    ORDER BY DATE DESC
+    ORDER BY DATE DESC, STAGE DESC
     FOR JSON PATH
 );
 GO
@@ -131,9 +131,9 @@ SET MOVEMENTS =
 (
     SELECT
         DATE          AS date,
+        ESTABLISHMENT AS establishment,
         TYPE          AS type,
-        MOVEMENT      AS movement,
-        ESTABLISHMENT AS establishment
+        MOVEMENT      AS movement
     FROM HPA.MOVEMENTS m
     WHERE m.PRISON_NUMBER = PK_PRISON_NUMBER
     ORDER BY DATE DESC, TIME DESC
@@ -147,8 +147,8 @@ UPDATE HPA.PRISONER_DETAILS
 SET OFFENCES =
 (
     SELECT
-        CODE          AS code,
         DATE          AS date,
+        CODE          AS code,
         ESTABLISHMENT AS establishment
     FROM HPA.OFFENCES o
     WHERE o.PRISON_NUMBER = PK_PRISON_NUMBER
@@ -163,8 +163,8 @@ SET OFFENCES_IN_CUSTODY =
 (
     SELECT
         DATE          AS date,
-        CHARGE        AS charge,
         OUTCOME       AS outcome,
+        CHARGE        AS charge,
         ESTABLISHMENT AS establishment
     FROM HPA.OFFENCES_IN_CUSTODY o
     WHERE o.PRISON_NUMBER = PK_PRISON_NUMBER

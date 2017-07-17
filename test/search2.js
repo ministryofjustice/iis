@@ -11,27 +11,17 @@ chai.use(sinonChai);
 const sandbox = sinon.sandbox.create();
 
 const standardResponse = [{
-    PRISON_NUMBER: {
-        value: 'AB111111',
-    },
-    SUMMARY: {
-        value: JSON.stringify({
-            "isAlias":false,
-            "hasHdc":false,
-            "isLifer":false,
-            "identifier":{"prisonNumber":"AB111122"},
-            "receptionDate":"1999-01-12",
-            "sex":"M",
-            "initial":"F",
-            "name":{
-                "last":"SURNAME L",
-                "first":"FIRST L",
-                "middle":"MIDDLE L"
-            },
-            "dob":"1980-01-12",
-            "alias":{"last":"SURNAME L","first":"FIRST L","Middle":"MIDDLE L","dob":"1980-01-12"}
-        })
-    }
+    prisonNumber: {value: 'AB111122'},
+    receptionDate: {value: '1999-01-12'},
+    lastName: {value: "SURNAME L"},
+    firstName: {value: "FIRST L"},
+    middleName: {value: "MIDDLE L"},
+    dob: {value: "1980-01-12"},
+    isAlias: {value: false},
+    aliasLast: {value: "SURNAME L"},
+    aliasFirst: {value: "FIRST L"},
+    aliasMiddle: {value: "MIDDLE L"}
+
 }];
 
 describe('Search', () => {
@@ -74,27 +64,16 @@ describe('Search', () => {
             const result = inmateProxy()({prisonNumber: 7});
             const expectedResult = [
                 {
-                    "alias": {
-                        "Middle": "MIDDLE L",
-                        "dob": "1980-01-12",
-                        "first": "FIRST L",
-                        "last": "SURNAME L"
-                    },
+                    "aliasMiddle": "MIDDLE L",
+                    "aliasFirst": "FIRST L",
+                    "aliasLast": "SURNAME L",
                     "dob": "1980-01-12",
-                    "hasHdc": false,
-                    "identifier": {
-                        "prisonNumber": "AB111122"
-                    },
-                    "initial": "F",
+                    "prisonNumber": "AB111122",
                     "isAlias": false,
-                    "isLifer": false,
-                    "name": {
-                        "first": "FIRST L",
-                        "last": "SURNAME L",
-                        "middle": "MIDDLE L",
-                    },
+                    "firstName": "FIRST L",
+                    "lastName": "SURNAME L",
+                    "middleName": "MIDDLE L",
                     "receptionDate": "1999-01-12",
-                    "sex": "M"
                 }
             ];
 

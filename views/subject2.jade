@@ -27,9 +27,9 @@ block content
         div.grid-row
             div.column-two-thirds
                 h1.heading-xlarge#subjectName
-                    | #{setCase.capital(subject.summary.name.first)}
-                    | #{setCase.capital(subject.summary.name.middle)}
-                    | #{subject.summary.name.last}
+                    | #{setCase.capital(subject.summary.firstName)}
+                    | #{setCase.capital(subject.summary.middleName)}
+                    | #{subject.summary.lastName}
                     span.heading-secondary#ageDetails #{moment(subject.summary.dob).format('DD/MM/YYYY')} (#{moment().diff(subject.summary.dob, 'years')} years)
 
                 ul#prisonerInfoSummary.font-medium
@@ -66,19 +66,19 @@ block content
                 span#saveLink
                     a(href="/print?prisonNo=#{subject.summary.prisonNumber}") Save as PDF
             div.column-one-third
-                if subject.summary.identifier.prisonNumber || subject.summary.identifier.parole || subject.summary.identifier.pnc || subject.identifier.summary.cro
+                if subject.summary.prisonNumber || subject.summary.parole.paroleNumbers || subject.summary.pncNumber || subject.summary.croNumber
                     ul.list.well.refs-box
-                        if subject.summary.identifier.prisonNumber
-                            li#subjectId= subject.summary.identifier.prisonNumber
+                        if subject.summary.prisonNumber
+                            li#subjectId= subject.summary.prisonNumber
                                 span.form-hint Prison number
-                        if subject.summary.identifier.parole
-                            li#parole-refs= subject.summary.identifier.parole[0].ref
+                        if subject.summary.paroleNumbers
+                            li#parole-refs= subject.summary.paroleNumbers
                                 span.form-hint Parole ref.
-                        if subject.summary.identifier.pnc
-                            li#pnc= subject.summary.identifier.pnc
+                        if subject.summary.pncNumber
+                            li#pnc= subject.summary.pncNumber
                                 span.form-hint PNC
-                        if subject.summary.identifier.cro
-                            li#cro= subject.summary.identifier.cro
+                        if subject.summary.croNumber
+                            li#cro= subject.summary.croNumber
                                 span.form-hint CRO
 
         section

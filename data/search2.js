@@ -42,7 +42,16 @@ exports.getSearchResults = function(userInput) {
     return new Promise((resolve, reject) => {
         const obj = getParamsForUserInput(userInput);
         const resultLimits = getPaginationLimits(userInput.page);
-        const sql = `SELECT PRISON_NUMBER, SUMMARY
+        const sql = `SELECT PRISON_NUMBER      AS prisonNumber,
+                            RECEPTION_DATE     AS receptionDate,
+                            PRIMARY_SURNAME    AS lastName,
+                            PRIMARY_FORENAME_1 AS firstName,
+                            PRIMARY_FORENAME_2 AS middleName,
+                            PRIMARY_BIRTH_DATE AS dob,
+                            IS_ALIAS           AS isAlias,
+                            SURNAME            AS aliasLast,
+                            FORENAME_1         AS aliasFirst,
+                            FORENAME_2         AS aliasMiddle
                      FROM (
                             SELECT
                               row_number()
@@ -57,11 +66,15 @@ exports.getSearchResults = function(userInput) {
                      OFFSET ${resultLimits.start} ROWS
                      FETCH NEXT ${resultLimits.resultsPerPage} ROWS ONLY`;
 
-        db.getCollection(sql, obj.params, parseSearchResult(resolve), reject);
+        db.getCollection(sql, obj.params, parseSearchResults(resolve), reject);
     });
 };
 
-const parseSearchResult = resolve => results => resolve(results.map(item => JSON.parse(item.SUMMARY.value)));
+const parseSearchResults = resolve => results => resolve(results.map(item => flattenedPrisonerResult(item)));
+
+const flattenedPrisonerResult = item => Object.keys(item).reduce((newItem, attribute) => {
+    return Object.assign({}, newItem, {[attribute]: item[attribute].value});
+}, {});
 
 function getPaginationLimits(pageOn) {
     return {

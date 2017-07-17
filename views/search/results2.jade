@@ -1,15 +1,15 @@
 extends ../layout
 mixin inmate(item)
     div.inmateDetails(class=visited ? 'visited' : '')
-        a(href="/subject2/#{item.identifier.prisonNumber}/summary#{queryStrings.thisPage}")
+        a(href="/subject2/#{item.prisonNumber}/summary#{queryStrings.thisPage}")
             span.inmateContainer
-                span(class=visited ? '' : 'bold-medium').capitalise-text #{setCase.capital(item.name.first +' '+ (item.name.middle)) +' '+ item.name.last +' '}
+                span(class=visited ? '' : 'bold-medium').capitalise-text #{setCase.capital(item.firstName +' '+ (item.middleName)) +' '+ item.lastName +' '}
                 if item.dob
                     span(class=item.visited ? '' : 'bold-medium') &middot; #{moment(item.dob).format('DD/MM/YYYY')}
                 if item.isAlias
                     span.block Matched on alias: #{item.alias.first + ' ' + item.alias.last}
-                if item.identifier.prisonNumber
-                    span.prisonNumber.block.text-secondary Prison no. #{item.identifier.prisonNumber}
+                if item.prisonNumber
+                    span.prisonNumber.block.text-secondary Prison no. #{item.prisonNumber}
                 if item.receptionDate
                     span.firstReceptionDate.block.text-secondary First reception #{moment(item.receptionDate).format('DD/MM/YYYY')}
         block

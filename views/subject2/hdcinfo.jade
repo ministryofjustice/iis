@@ -25,7 +25,7 @@ block subject-details
                                     each val2, index2 in val.reasons
                                         |#{setCase.capital(val2.reason)}
                                         if index2 < (val.reasons.length - 1)
-                                            |,
+                                            |,&nbsp
 
         if (subject.hdcRecall.length === 0 && subject.hdcInfo.length === 0)
             span= noResultsText

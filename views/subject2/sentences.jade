@@ -11,13 +11,36 @@ block subject-details
                             div #{moment(val.changeDate).format('DD/MM/YYYY')}
                             div #{val.lengthDays} days
                             //div #{val.reasonCode}
-                            if val.dates
-                                ul.prisoner-key-dates
-                                    each date, label in val.dates
-                                        if date
-                                            li
-                                                span.quiet #{label}
-                                                |  #{moment(date).format('DD/MM/YYYY')}
+                            if val.SED || val.LED || val.CRD || val.HDCED || val.PED || val.NPD || val.HDCAD
+                                ul
+                                    if val.SED
+                                        li
+                                            span.quiet SED
+                                            |  #{moment(val.SED).format('DD/MM/YYYY')}
+                                    if val.LED
+                                        li
+                                            span.quiet LED
+                                            |  #{moment(val.LED).format('DD/MM/YYYY')}
+                                    if val.CRD
+                                        li
+                                            span.quiet CRO
+                                            |  #{moment(val.CRD).format('DD/MM/YYYY')}
+                                    if val.PED
+                                        li
+                                            span.quiet PED
+                                            |  #{moment(val.PED).format('DD/MM/YYYY')}
+                                    if val.NPD
+                                        li
+                                            span.quiet NPD
+                                            |  #{moment(val.NPD).format('DD/MM/YYYY')}
+                                    if val.HDCED
+                                        li
+                                            span.quiet HDCED
+                                            |  #{moment(val.HDCED).format('DD/MM/YYYY')}
+                                    if val.HDCAD
+                                        li
+                                            span.quiet HDCAD
+                                            |  #{moment(val.HDCAD).format('DD/MM/YYYY')}
         else
             div
                 span= noResultsText

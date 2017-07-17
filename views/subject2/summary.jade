@@ -26,14 +26,37 @@ block subject-details
                         div #{firstSentence.lengthDays} days
                         span.quiet Date of first reception
                         |  #{moment(subject.summary.receptionDate).format('DD/MM/YYYY')}
-                        if firstSentence.dates
-                            span
-                            ul.prisoner-key-dates
-                                each date, label in firstSentence.dates
-                                    if date
-                                        li
-                                            span.quiet #{label}
-                                            |  #{moment(date).format('DD/MM/YYYY')}
+                        if firstSentence.SED || firstSentence.LED || firstSentence.CRD || firstSentence.HDCED || firstSentence.PED || firstSentence.NPD || firstSentence.HDCAD
+                            ul
+                                if firstSentence.SED
+                                    li
+                                        span.quiet SED
+                                        |  #{moment(firstSentence.SED).format('DD/MM/YYYY')}
+                                if firstSentence.LED
+                                    li
+                                        span.quiet LED
+                                        |  #{moment(firstSentence.LED).format('DD/MM/YYYY')}
+                                if firstSentence.CRD
+                                    li
+                                        span.quiet CRD
+                                        |  #{moment(firstSentence.CRD).format('DD/MM/YYYY')}
+                                if firstSentence.PED
+                                    li
+                                        span.quiet PED
+                                        |  #{moment(firstSentence.PED).format('DD/MM/YYYY')}
+                                if firstSentence.NPD
+                                    li
+                                        span.quiet NPD
+                                        |  #{moment(firstSentence.NPD).format('DD/MM/YYYY')}
+                                if firstSentence.HDCED
+                                    li
+                                        span.quiet HDCED
+                                        |  #{moment(firstSentence.HDCED).format('DD/MM/YYYY')}
+                                if firstSentence.HDCAD
+                                    li
+                                        span.quiet HDCAD
+                                        |  #{moment(firstSentence.HDCAD).format('DD/MM/YYYY')}
+
         else
             div
                 span Prisoner has no sentence history

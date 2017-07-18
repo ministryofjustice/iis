@@ -5,6 +5,7 @@ general:
   branches:
     ignore:
         - azure
+        - deploy-to-preprod
 dependencies:
   post:
     - npm run postinstall

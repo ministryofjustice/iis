@@ -11,8 +11,8 @@ const dataRequiredForPage = {
     offences: ['offences'],
     hdcinfo: ['hdcRecall', 'hdcInfo'],
     offencesincustody: ['offencesInCustody'],
-    summary: ['courtHearings', 'sentenceHistory'],
-    sentences: ['sentenceHistory']
+    summary: ['courtHearings', 'sentencing'],
+    sentences: ['sentencing']
 };
 
 exports.getSubject = function(req, res) {

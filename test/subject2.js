@@ -12,7 +12,7 @@ const sandbox = sinon.sandbox.create();
 
 describe('Subject data', function() {
 
-    const standardResponse = {
+    const standardResponse = [{
         JSON1: {
             value: JSON.stringify({
                 "prisonNumber":"AB111111",
@@ -41,7 +41,7 @@ describe('Subject data', function() {
                 }]
             })
         }
-    };
+    }];
 
     const expectedReturnValue = {
         prisonNumber: "AB111111",
@@ -70,8 +70,8 @@ describe('Subject data', function() {
         }]
     };
 
-    let getCollectionStub = sandbox.stub().returns(null);
-    let getTupleStub = sandbox.stub().callsArgWith(2, standardResponse);
+    let getCollectionStub = sandbox.stub().callsArgWith(2, standardResponse);
+    let getTupleStub = sandbox.stub().returns(null);
 
     const subjectProxy = (getCollection = getCollectionStub,
                           getTuple = getTupleStub) => {
@@ -97,15 +97,19 @@ describe('Subject data', function() {
 
     it("should return expected object when response is split", () => {
 
-        const splitJson = standardResponse.JSON1.value.split(/("M")/);
+        const splitJson = standardResponse[0].JSON1.value.split(/("M")/);
 
-        const splitResponse = {
-            JSON1: {value: splitJson[0]},
-            JSON2: {value: splitJson[1].concat(splitJson[2])}
-        };
+        const splitResponse = [
+            {
+                JSON1: {value: splitJson[0], meta: 'something'}
+            },
+            {
+                JSON2: {value: splitJson[1].concat(splitJson[2]), meta: 'somethingElse'}
+            }
+        ];
 
-        const getSplitTupleStub = sandbox.stub().callsArgWith(2, splitResponse);
-        const result = subjectProxy(getCollectionStub, getSplitTupleStub).getSubject('AB111111', ['summary']);
+        const getCollectionStub = sandbox.stub().callsArgWith(2, splitResponse);
+        const result = subjectProxy(getCollectionStub).getSubject('AB111111', ['summary']);
 
 
         return result.then(data => {
@@ -124,14 +128,14 @@ describe('Subject data', function() {
             {page: 'movements', sql: ', JSON_QUERY(MOVEMENTS) AS movements'},
             {page: 'offences', sql: ', JSON_QUERY(OFFENCES) AS offences'},
             {page: 'offencesInCustody', sql: ', JSON_QUERY(OFFENCES_IN_CUSTODY) AS offencesInCustody'},
-            {page: 'sentenceHistory', sql: ', JSON_QUERY(SENTENCING) AS sentencing'}
+            {page: 'sentencing', sql: ', JSON_QUERY(SENTENCING) AS sentencing'},
         ];
 
         it('should always request summary data', () => {
             options.forEach(option => {
                 subjectProxy().getSubject('AB111111', [option.page]);
-                expect(getTupleStub).to.have.callCount(1);
-                const sql = getTupleStub.getCalls()[0].args[0];
+                expect(getCollectionStub).to.have.callCount(1);
+                const sql = getCollectionStub.getCalls()[0].args[0];
 
                 expect(sql).to.contain('JSON_QUERY(PERSONAL_DETAILS) AS summary');
                 sandbox.reset();
@@ -141,8 +145,8 @@ describe('Subject data', function() {
         it('should include the specific data needed', () => {
             options.forEach(option => {
                 subjectProxy().getSubject('AB111111', [option.page]);
-                expect(getTupleStub).to.have.callCount(1);
-                const sql = getTupleStub.getCalls()[0].args[0];
+                expect(getCollectionStub).to.have.callCount(1);
+                const sql = getCollectionStub.getCalls()[0].args[0];
 
                 expect(sql).to.contain(option.sql);
                 sandbox.reset();
@@ -150,9 +154,9 @@ describe('Subject data', function() {
         });
 
         it('should be able to hand multiple requests', () => {
-            subjectProxy().getSubject('AB111111', ['offences', 'sentenceHistory']);
-            expect(getTupleStub).to.have.callCount(1);
-            const sql = getTupleStub.getCalls()[0].args[0];
+            subjectProxy().getSubject('AB111111', ['offences', 'sentencing']);
+            expect(getCollectionStub).to.have.callCount(1);
+            const sql = getCollectionStub.getCalls()[0].args[0];
 
             expect(sql).to.contain('JSON_QUERY(PERSONAL_DETAILS) AS summary, ' +
                 'JSON_QUERY(OFFENCES) AS offences, ' +

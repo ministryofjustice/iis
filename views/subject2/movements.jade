@@ -2,17 +2,18 @@ extends ../subject2
 
 block subject-details
     div.column-two-thirds
-        each val,index in subject.movements
-            div.grid-row.list-row.listItem
-                div.column-full(class="movement-type-#{val.type}")
-                    div.left-border
-                        span.quiet #{moment(val.date).format('DD/MM/YYYY')}
-                    div.left-border
-                        span.type.bold-small #{val.type == 'D' ? 'OUT' : 'IN'} -&nbsp;
-                        span #{setCase.capital(val.movement)}
+        if (subject.movements && subject.movements.length !== 0)
+            each val,index in subject.movements
+                div.grid-row.list-row.listItem
+                    div.column-full(class="movement-type-#{val.type}")
+                        div.left-border
+                            span.quiet #{moment(val.date).format('DD/MM/YYYY')}
+                        div.left-border
+                            span.type.bold-small #{val.type == 'D' ? 'OUT' : 'IN'} -&nbsp;
+                            span #{setCase.capital(val.movement)}
 
-                    div.left-border
-                        span #{setCase.capital(val.establishment)}
+                        div.left-border
+                            span #{setCase.capital(val.establishment)}
 
-        if (subject.movements.length === 0)
+        else
             span= noResultsText

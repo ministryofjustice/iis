@@ -23,23 +23,14 @@ exports.getSubject = function(prisonNumber, dataRequired = ['summary']) {
     ];
 
     let sql = `SELECT ${getSelectString(dataRequired)}
-               FROM ( 
-                       SELECT
-                         row_number()
-                         OVER ( PARTITION BY PRISON_NUMBER
-                           ORDER BY (IS_ALIAS) ) ROW_NUM,
-                         *
-                       FROM HPA.PRISONERS
-                       WHERE PRISON_NUMBER = @PK_PRISON_NUMBER
-                     ) NUMBERED_ROWS
-                WHERE ROW_NUM = 1
-                ORDER BY IS_ALIAS, SURNAME, PRIMARY_INITIAL, BIRTH_DATE, RECEPTION_DATE DESC
-                FOR JSON PATH`;
+               FROM HPA.PRISONER_DETAILS
+               WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER
+               FOR JSON AUTO, WITHOUT_ARRAY_WRAPPER`;
 
     logger.debug('Subject info search', sql);
 
     return new Promise((resolve, reject) => {
-        db.getTuple(sql, params, resolveJsonResponse(resolve), reject);
+        db.getCollection(sql, params, resolveJsonResponse(resolve), reject);
     });
 };
 
@@ -53,11 +44,16 @@ const getSelectString = dataRequired => {
 };
 
 const resolveJsonResponse = resolve => response => {
-    resolve(
-        JSON.parse(
-            Object.keys(response).reduce((totalResponse, key) => {
-                return totalResponse.concat(response[key].value);
-            }, '')
-        )
-    );
+    const concatinatedResponse = response.map(valueOfJsonSegment).join('');
+
+    resolve(JSON.parse(concatinatedResponse));
+};
+
+const valueOfJsonSegment = responseSegment => {
+    return Object.keys(responseSegment).reduce((segmentString, segmentKey) => {
+        if(segmentKey.includes('JSON')) {
+            return segmentString.concat(responseSegment[segmentKey].value);
+        }
+        return segmentString;
+    }, '');
 };

@@ -11,7 +11,8 @@ module.exports = {
     sentenceHistoryContent,
     courtHearingsContent,
     movementContent,
-    hdcContent,
+    hdcInfoContent,
+    hdcRecallContent,
     offenceContent,
     custodyOffenceContent,
     addressContent,
@@ -23,7 +24,7 @@ function createPdf(res, printItems, data, availablePrintOptions, options = {}) {
     res.writeHead(200, {
         'Content-Type': 'application/pdf',
         'Content-Disposition': 'attachment; filename=hpa-download.pdf',
-        'Pragma': 'token'
+        Pragma: 'token'
     });
 
     const doc = new PDFDocument({
@@ -43,7 +44,10 @@ function createPdf(res, printItems, data, availablePrintOptions, options = {}) {
     }
 
     printItems.forEach(item => {
-        addSection(doc, availablePrintOptions[item], data[item]);
+        Object.keys(availablePrintOptions[item]).forEach(dataType => {
+            addSection(doc, availablePrintOptions[item], data[dataType], dataType);
+        });
+
     });
 
     doc.pipe(res);
@@ -74,15 +78,15 @@ function createSearchPrint(doc, data) {
     });
 }
 
-function addSection(doc, printOption, items) {
-    const {title, addContent} = printOption;
+function addSection(doc, printOption, items, dataType) {
+    const {title, addContent} = printOption[dataType];
 
     doc.addPage();
 
     doc.fontSize(20).text(title);
     doc.fontSize(12);
 
-    if (items.length === 0) return emptySection(doc, title);
+    if (!items) return emptySection(doc, title);
 
     addContent(doc, items);
 }
@@ -168,13 +172,13 @@ function movementContent(doc, items) {
         const {date, establishment, type, movement} = item;
         return {date: moment(date).format('DD/MM/YYYY'),
             establishment: Case.capital(establishment),
-            detail: `${type === 'D' ? 'OUT' : 'IN'} - ${Case.capital(movement)}`};
+            detail: `${type === 'D' ? 'OUT' : 'IN'} - ${Case.sentence(movement)}`};
     });
     table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
 }
 
-function hdcContent(doc, items) {
+function hdcInfoContent(doc, items) {
 
     const table = new PDFTable(doc, {bottomMargin: 30});
     table.addColumns([
@@ -184,28 +188,56 @@ function hdcContent(doc, items) {
     ]);
 
     const tableBody = items.map(item => {
-        const {stage, date, status, reason} = item;
-        return {stage, detail: `${status}, ${date}`, reason};
+        const {stage, date, status, reasons} = item;
+        return {
+            stage: Case.sentence(stage),
+            detail: `${Case.sentence(status)}, ${moment(date).format('DD/MM/YYYY')}`,
+            reasons: Case.capital(reasons)};
     });
     table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
+}
+
+function hdcRecallContent(doc, items) {
+
+    items.forEach(item => {
+        const table = new PDFTable(doc, {bottomMargin: 30});
+        table.addColumns([
+            {id: 'key', width: 170},
+            {id: 'value', width: 300}
+        ]);
+        const {createdDate, curfewEndDate, outcome, outcomeDate, reason} = item;
+
+        const tableBody = [
+            {key: 'Recall date', value: moment(createdDate).format('DD/MM/YYYY')},
+            {key: 'Original curfew end date', value: moment(curfewEndDate).format('DD/MM/YYYY')},
+            {key: 'Outcome', value: Case.sentence(outcome)},
+            {key: 'Outcome date', value: moment(outcomeDate).format('DD/MM/YYYY')},
+            {key: 'Reason', value: Case.sentence(reason)}
+        ];
+
+        table.setNewPageFn(table => table.pdf.addPage());
+        table.addBody(tableBody);
+
+        doc.moveDown();
+    });
 }
 
 function offenceContent(doc, items) {
 
     const table = new PDFTable(doc, {bottomMargin: 30});
     table.addColumns([
-        {id: 'caseDate', width: 130},
+        {id: 'date', width: 130},
         {id: 'offenceCode', width: 200},
         {id: 'establishment', width: 200}
     ]);
 
     const tableBody = items.map(item => {
-        const {caseDate, offenceCode, establishment, establishment_code} = item;
+        const {date, code, establishment, establishment_code} = item;
         return {
-            caseDate,
-            offenceCode: `Offence code ${offenceCode}`,
-            establishment: establishment ? `${establishment}` : `${establishment_code}`};
+            date: moment(date).format('DD/MM/YYYY'),
+            offenceCode: `Offence code ${code}`,
+            establishment: establishment ? `${Case.sentence(establishment)}` : `${establishment_code}`};
     });
     table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
@@ -222,7 +254,11 @@ function custodyOffenceContent(doc, items) {
 
     const tableBody = items.map(item => {
         const {date, outcome, charge, establishment} = item;
-        return {date, detail: `${outcome} - ${charge}` , establishment};
+        return {
+            date: moment(date).format('DD/MM/YYYY'),
+            detail: `${Case.sentence(outcome)} - ${Case.sentence(charge)}`,
+            establishment: Case.sentence(establishment)
+        };
     });
     table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
@@ -232,13 +268,13 @@ function addressContent(doc, items) {
 
     items.forEach(item => {
         doc.moveDown();
-        const {type, name, addressLine1, addressLine2, addressLine4} = item;
-        if(addressLine1) {
-            if(type) doc.text(type);
-            if(name) doc.text(name);
-            if(addressLine1) doc.text(addressLine1);
-            if(addressLine2) doc.text(addressLine2);
-            if(addressLine4) doc.text(addressLine4);
+        const {type, person, street, town, county} = item;
+        if(street) {
+            if(type) Case.capital(doc.text(type));
+            if(person) doc.text(Case.capital(person));
+            if(street) doc.text(Case.capital(street));
+            if(town) doc.text(Case.capital(town));
+            if(county) doc.text(Case.capital(county));
         }
     });
 }

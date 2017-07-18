@@ -26,13 +26,13 @@ block content
                         input(type="hidden" name="_csrf" value="#{csrfToken}")
 
                         div.multiple-choice
-                            input#subject(name="printOption", type="checkbox", value="subject")
-                            label(for="subject")
+                            input#summary(name="printOption", type="checkbox", value="summary")
+                            label(for="summary")
                                 | Subject
 
                         div.multiple-choice
-                            input#sentenceHistory(name="printOption", type="checkbox", value="sentenceHistory")
-                            label(for="sentenceHistory")
+                            input#sentencing(name="printOption", type="checkbox", value="sentencing")
+                            label(for="sentencing")
                                 | Sentence History
 
                         div.multiple-choice
@@ -56,8 +56,8 @@ block content
                                 | Offences
 
                         div.multiple-choice
-                            input#custodyOffences(name="printOption", type="checkbox", value="custodyOffences")
-                            label(for="custodyOffences")
+                            input#offencesInCustody(name="printOption", type="checkbox", value="offencesInCustody")
+                            label(for="offencesInCustody")
                                 | Offences in custody
 
                         div.multiple-choice

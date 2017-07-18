@@ -6,16 +6,16 @@ ignore:
     - eslint > shelljs:
         reason: None given
         expires: '2017-04-27T11:02:02.704Z'
-      git-rev-sync > shelljs:
-        reason: None given
-        expires: '2017-06-16T08:02:58.980Z'
     - gulp-eslint > eslint > shelljs:
         reason: None given
         expires: '2017-04-27T11:02:02.704Z'
-      eslint > shelljs:
+    - gulp-eslint > eslint > shelljs:
         reason: None given
         expires: '2017-06-16T08:02:58.980Z'
-    - gulp-eslint > eslint > shelljs:
+    - git-rev-sync > shelljs:
+        reason: None given
+        expires: '2017-06-16T08:02:58.980Z'
+    - eslint > shelljs:
         reason: None given
         expires: '2017-06-16T08:02:58.980Z'
   'npm:ms:20170412':
@@ -291,37 +291,58 @@ patch:
   'npm:minimatch:20160620':
     - gulp > vinyl-fs > glob-stream > glob > minimatch:
         patched: '2017-03-28T11:00:11.327Z'
-      gulp-nodemon > gulp > vinyl-fs > glob-stream > glob > minimatch:
-        patched: '2017-05-17T07:56:41.041Z'
     - gulp-nodemon > gulp > vinyl-fs > glob-stream > glob > minimatch:
         patched: '2017-03-28T11:00:11.327Z'
-      gulp > vinyl-fs > glob-stream > glob > minimatch:
-        patched: '2017-05-17T07:56:41.041Z'
     - gulp-nodemon > gulp > vinyl-fs > glob-stream > minimatch:
         patched: '2017-03-28T11:00:11.327Z'
-      gulp > vinyl-fs > glob-stream > minimatch:
-        patched: '2017-05-17T07:56:41.041Z'
     - gulp > vinyl-fs > glob-stream > minimatch:
         patched: '2017-03-28T11:00:11.327Z'
-      gulp-nodemon > gulp > vinyl-fs > glob-stream > minimatch:
-        patched: '2017-05-17T07:56:41.041Z'
     - gulp-nodemon > gulp > vinyl-fs > glob-watcher > gaze > globule > minimatch:
         patched: '2017-03-28T11:00:11.327Z'
-      gulp > vinyl-fs > glob-watcher > gaze > globule > glob > minimatch:
-        patched: '2017-05-17T07:56:41.041Z'
     - gulp-nodemon > gulp > vinyl-fs > glob-watcher > gaze > globule > glob > minimatch:
         patched: '2017-03-28T11:00:11.327Z'
-      gulp-nodemon > gulp > vinyl-fs > glob-watcher > gaze > globule > minimatch:
-        patched: '2017-05-17T07:56:41.041Z'
     - gulp > vinyl-fs > glob-watcher > gaze > globule > glob > minimatch:
         patched: '2017-03-28T11:00:11.327Z'
-      gulp-nodemon > gulp > vinyl-fs > glob-watcher > gaze > globule > glob > minimatch:
-        patched: '2017-05-17T07:56:41.041Z'
     - gulp > vinyl-fs > glob-watcher > gaze > globule > minimatch:
         patched: '2017-05-17T07:56:41.041Z'
+    - gulp-nodemon > gulp > vinyl-fs > glob-stream > glob > minimatch:
+        patched: '2017-05-17T07:56:41.041Z'
+    - gulp > vinyl-fs > glob-stream > glob > minimatch:
+        patched: '2017-05-17T07:56:41.041Z'
+    - gulp > vinyl-fs > glob-stream > minimatch:
+        patched: '2017-05-17T07:56:41.041Z'
+    - gulp-nodemon > gulp > vinyl-fs > glob-stream > minimatch:
+        patched: '2017-05-17T07:56:41.041Z'
+    - gulp > vinyl-fs > glob-watcher > gaze > globule > glob > minimatch:
+        patched: '2017-05-17T07:56:41.041Z'
+    - gulp-nodemon > gulp > vinyl-fs > glob-watcher > gaze > globule > minimatch:
+        patched: '2017-05-17T07:56:41.041Z'
+    - gulp-nodemon > gulp > vinyl-fs > glob-watcher > gaze > globule > glob > minimatch:
+        patched: '2017-05-17T07:56:41.041Z'
+    - gulp-nodemon > gulp > vinyl-fs > glob-watcher > gaze > globule > minimatch:
+        patched: '2017-07-18T11:04:05.049Z'
+    - gulp > vinyl-fs > glob-stream > minimatch:
+        patched: '2017-07-18T11:04:05.049Z'
+    - gulp > vinyl-fs > glob-stream > glob > minimatch:
+        patched: '2017-07-18T11:04:05.049Z'
+    - gulp-nodemon > gulp > vinyl-fs > glob-stream > glob > minimatch:
+        patched: '2017-07-18T11:04:05.049Z'
+    - gulp > vinyl-fs > glob-watcher > gaze > globule > minimatch:
+        patched: '2017-07-18T11:04:05.049Z'
+    - gulp-nodemon > gulp > vinyl-fs > glob-stream > minimatch:
+        patched: '2017-07-18T11:04:05.049Z'
+    - gulp > vinyl-fs > glob-watcher > gaze > globule > glob > minimatch:
+        patched: '2017-07-18T11:04:05.049Z'
+    - gulp-nodemon > gulp > vinyl-fs > glob-watcher > gaze > globule > glob > minimatch:
+        patched: '2017-07-18T11:04:05.049Z'
   'npm:uglify-js:20150824':
     - jade > transformers > uglify-js:
         patched: '2017-05-17T07:56:41.041Z'
   'npm:uglify-js:20151024':
     - jade > transformers > uglify-js:
         patched: '2017-05-17T07:56:41.041Z'
+    - jade > transformers > uglify-js:
+        patched: '2017-07-18T11:04:05.049Z'
+  'npm:ms:20170412':
+    - gulp-sourcemaps > debug-fabulous > debug > ms:
+        patched: '2017-07-18T11:04:05.049Z'

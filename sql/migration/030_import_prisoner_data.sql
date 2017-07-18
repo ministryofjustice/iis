@@ -190,16 +190,20 @@ INSERT INTO HPA.HDC_INFO
             WHERE PK_CODE_TYPE = 119 AND PK_CODE_REF_NUM = h.HDC_STATUS
         )                        AS STATUS,
         (
-            SELECT (
-                       SELECT TRIM(CODE_DESCRIPTION)
-                       FROM IIS.IIS_CODE
-                       WHERE PK_CODE_TYPE = 120 AND PK_CODE_REF_NUM = r.REASON
-                   ) AS reason
-            FROM
-                IIS.HDC_REASON r
-            WHERE
-                r.FK_HDC_HISTORY = h.PKTS_HDC_HISTORY
-            FOR JSON PATH)       AS REASONS
+            STUFF(
+                (SELECT DISTINCT ', ' + (
+                    SELECT TRIM(CODE_DESCRIPTION)
+                    FROM IIS.IIS_CODE
+                    WHERE PK_CODE_TYPE = 120 AND PK_CODE_REF_NUM = r.REASON
+                )
+                 FROM
+                     IIS.HDC_REASON r
+                 WHERE
+                     r.FK_HDC_HISTORY = h.PKTS_HDC_HISTORY
+                 FOR XML PATH (''), TYPE
+                ).value('text()[1]','NVARCHAR(512)'),1,2,N'')
+        )                        AS REASONS
+
     FROM IIS.LOSS_OF_LIBERTY l
         INNER JOIN IIS.HDC_HISTORY h
             ON FK_PRISON_NUMBER = l.PK_PRISON_NUMBER
@@ -353,7 +357,7 @@ INSERT INTO HPA.PRISONER_CATEGORY
         WHEN (S.STATE_START_DATE = '18991231')
             THEN NULL
         ELSE S.STATE_START_DATE
-        END AS DATE,
+        END                      AS DATE,
         (
             SELECT TRIM(CODE_DESCRIPTION)
             FROM IIS.IIS_CODE

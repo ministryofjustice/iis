@@ -39,19 +39,14 @@ GO
 -------------------------------------------------------------------------------------------------------
 
 CREATE TABLE [HPA].[HDC_INFO] (
-    [PK_HDC_INFO]   [INT]           NOT NULL IDENTITY (1, 1)
+    [PK_HDC_INFO]   [INT]          NOT NULL IDENTITY (1, 1)
         CONSTRAINT PK_HDC_INFO PRIMARY KEY,
-    [PRISON_NUMBER] [VARCHAR](8)    NOT NULL,
-    [DATE]          [DATE]          NULL,
-    [STAGE]         [VARCHAR](28)   NULL,
-    [STATUS]        [VARCHAR](28)   NULL,
-    [REASONS]       [NVARCHAR](512) NULL
+    [PRISON_NUMBER] [VARCHAR](8)   NOT NULL,
+    [DATE]          [DATE]         NULL,
+    [STAGE]         [VARCHAR](28)  NULL,
+    [STATUS]        [VARCHAR](28)  NULL,
+    [REASONS]       [VARCHAR](512) NULL
 );
-GO
-
-ALTER TABLE [HPA].[HDC_INFO]
-    ADD CONSTRAINT [HDC_INFO.REASONS should be formatted as JSON]
-CHECK (ISJSON(REASONS) > 0);
 GO
 
 -------------------------------------------------------------------------------------------------------

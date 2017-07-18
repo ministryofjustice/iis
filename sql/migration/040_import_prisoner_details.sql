@@ -65,7 +65,7 @@ UPDATE HPA.PRISONER_DETAILS
 SET CATEGORY =
 (
     SELECT TOP 1
-        DATE  AS date,
+        DATE     AS date,
         CATEGORY AS category
     FROM HPA.PRISONER_CATEGORY c
     WHERE c.PRISON_NUMBER = PK_PRISON_NUMBER
@@ -95,10 +95,10 @@ UPDATE HPA.PRISONER_DETAILS
 SET HDC_INFO =
 (
     SELECT
-        STAGE               AS stage,
-        STATUS              AS status,
-        DATE                AS date,
-        JSON_QUERY(REASONS) AS reasons
+        STAGE   AS stage,
+        STATUS  AS status,
+        DATE    AS date,
+        REASONS AS reasons
     FROM HPA.HDC_INFO h
     WHERE h.PRISON_NUMBER = PK_PRISON_NUMBER
     ORDER BY DATE DESC, STAGE DESC

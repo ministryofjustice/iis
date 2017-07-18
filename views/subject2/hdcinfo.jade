@@ -2,18 +2,19 @@ extends ../subject2
 
 block subject-details
     div.column-two-thirds
-        each val,index in subject.hdcRecall
-            div.grid-row.list-row.recall
-                div.column-full
-                    div.left-border
-                        span.quiet.block HDC Recall
-                        div Recall date: #{moment(val.createdDate).format('DD/MM/YYYY')}
-                        div Original curfew end date: #{moment(val.curfewEndDate).format('DD/MM/YYYY')}
-                        div Outcome: #{val.outcome}
-                        div Outcome date: #{moment(val.outcomeDate).format('DD/MM/YYYY')}
-                        div Reason: #{setCase.capital(val.reason)}
+        if subject.hdcRecall
+            each val,index in subject.hdcRecall
+                div.grid-row.list-row.recall
+                    div.column-full
+                        div.left-border
+                            span.quiet.block HDC Recall
+                            div Recall date: #{moment(val.createdDate).format('DD/MM/YYYY')}
+                            div Original curfew end date: #{moment(val.curfewEndDate).format('DD/MM/YYYY')}
+                            div Outcome: #{val.outcome}
+                            div Outcome date: #{moment(val.outcomeDate).format('DD/MM/YYYY')}
+                            div Reason: #{setCase.capital(val.reason)}
 
-        if(subject.hdcInfo.length > 0)
+        if(subject.hdcInfo && subject.hdcInfo.length > 0)
             div.padTop
                 each val,index in subject.hdcInfo
                     div.grid-row.list-row.history.listItem
@@ -21,11 +22,7 @@ block subject-details
                             div.left-border
                                 span.quiet.block #{setCase.capital(val.stage)}
                                 span #{setCase.capital(val.status)}, #{moment(val.date).format('DD/MM/YYYY')}
-                                div
-                                    each val2, index2 in val.reasons
-                                        |#{setCase.capital(val2.reason)}
-                                        if index2 < (val.reasons.length - 1)
-                                            |,&nbsp
+                                div #{setCase.capital(val.reasons)}
 
-        if (subject.hdcRecall.length === 0 && subject.hdcInfo.length === 0)
+        if ((!subject.hdcRecall || subject.hdcRecall.length === 0) && (!subject.hdcInfo || subject.hdcInfo.length === 0))
             span= noResultsText

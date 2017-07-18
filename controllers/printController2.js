@@ -8,47 +8,60 @@ const {
 const {getSubject} = require('../data/subject2');
 const pdf = require('./helpers/pdfHelpers2');
 const audit = require('../data/audit');
+const Case = require('case');
 
 const availablePrintOptions = {
     summary: {
-        title: 'Subject',
-        addContent: pdf.subjectContent,
-        getData: ['summary']
+        summary: {
+            title: 'Subject',
+            addContent: pdf.subjectContent
+        }
     },
     sentencing: {
-        title: 'Sentence History',
-        addContent: pdf.sentenceHistoryContent,
-        getData: ['sentencing']
+        sentencing: {
+            title: 'Sentence History',
+            addContent: pdf.sentenceHistoryContent
+        }
     },
     courtHearings: {
-        title: 'Court Hearings',
-        addContent: pdf.courtHearingsContent,
-        getData: ['courtHearings']
+        courtHearings: {
+            title: 'Court Hearings',
+            addContent: pdf.courtHearingsContent
+        }
     },
     movements: {
-        title: 'Movements',
-        addContent: pdf.movementContent,
-        getData: ['movements']
+        movements: {
+            title: 'Movements',
+            addContent: pdf.movementContent
+        }
     },
     hdc: {
-        title: 'HDC history',
-        addContent: pdf.hdcContent,
-        getData: ['hdcRecall', 'hdcInfo']
+        hdcRecall: {
+            title: 'HDC recall',
+            addContent: pdf.hdcRecallContent
+        },
+        hdcInfo: {
+            title: 'HDC history',
+            addContent: pdf.hdcInfoContent
+        }
     },
     offences: {
-        title: 'Offences',
-        addContent: pdf.offenceContent,
-        getData: ['offences']
+        offences: {
+            title: 'Offences',
+            addContent: pdf.offenceContent
+        }
     },
-    custodyOffences: {
-        title: 'Offences in custody',
-        addContent: pdf.custodyOffenceContent,
-        getData: ['offencesInCustody']
+    offencesInCustody: {
+        offencesInCustody: {
+            title: 'Offences in custody',
+            addContent: pdf.custodyOffenceContent
+        }
     },
     addresses: {
-        title: 'Addresses',
-        addContent: pdf.addressContent,
-        getData: ['addresses']
+        addresses: {
+            title: 'Addresses',
+            addContent: pdf.addressContent
+        }
     }
 };
 
@@ -56,7 +69,10 @@ exports.getPrintForm = (req, res) => {
     logger.debug('GET /print');
     const {prisonNo, err} = req.query;
 
-    if(!prisonNo) return res.redirect('/search2');
+    if(!prisonNo) {
+        logger.debug('no prison number');
+        return res.redirect('/search2');
+    }
     renderFormPage(res, prisonNo, err);
 };
 
@@ -77,23 +93,23 @@ function getNameAndRender(res, renderData) {
         .then(subject => {
 
             renderData.name = {
-                forename: subject.summary.firstName,
+                forename: Case.capital(subject.summary.firstName),
                 surname: subject.summary.lastName
             };
 
-            return res.render('print', renderData);
+            return res.render('print2', renderData);
         })
         .catch(error => showDbError({error}, renderData.prisonNumber, res));
 }
 
 function renderWithoutName(res, renderData) {
-    return res.render('print', renderData);
+    return res.render('print2', renderData);
 }
 
 exports.postPrintForm = (req, res) => {
-    logger.debug('POST /print');
+    logger.debug('POST /print2');
 
-    const userReturnedOptions = req.body.printOption;
+    const userReturnedOptions = Array.isArray(req.body.printOption) ? req.body.printOption : [req.body.printOption];
     const prisonNo = req.query.prisonNo;
 
     audit.record('PRINT', req.user.email, {prisonNo, fieldsPrinted: userReturnedOptions});
@@ -116,7 +132,10 @@ exports.postPrintForm = (req, res) => {
 exports.getPdf = function(req, res) {
 
     const prisonNumber = req.query.prisonNo;
-    if (!prisonNumber || !req.query.fields) return res.redirect('/search2');
+    if (!prisonNumber || !req.query.fields) {
+        logger.debug('no prison number or query fields');
+        return res.redirect('/search2');
+    }
 
     const fieldsInQuery = Array.isArray(req.query.fields) ? req.query.fields : [req.query.fields];
     const printItems = itemsInQueryString(fieldsInQuery).filter(item => availablePrintOptions[item]);
@@ -133,7 +152,7 @@ exports.getPdf = function(req, res) {
 };
 
 const getDataFunctionsToCall = printItems => {
-    const flattenedPrintItems = printItems.map(item => availablePrintOptions[item].getData)
+    const flattenedPrintItems = printItems.map(item => Object.keys(availablePrintOptions[item]))
                                           .reduce((a, b) => a.concat(b), []);
 
     return [...new Set(flattenedPrintItems)];

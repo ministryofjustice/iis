@@ -2,16 +2,17 @@ extends ../subject2
 
 block subject-details
     div.column-two-thirds
-        each val, index in subject.addresses
-            if (val.street)
-                div(id="address#{index}").grid-row.list-row.address
-                    div.column-full
-                        div.left-border
-                            span(id="address#{index}-type").quiet.block= setCase.capital(val.type)
-                            div(id="address#{index}-name")= setCase.capital(val.person)
-                            div(id="address#{index}-line1")= setCase.capital(val.street)
-                            div(id="address#{index}-line2")= setCase.capital(val.town)
-                            div(id="address#{index}-line4")= setCase.capital(val.county)
+        if subject.addresses
+            each val, index in subject.addresses
+                if (val.street)
+                    div(id="address#{index}").grid-row.list-row.address
+                        div.column-full
+                            div.left-border
+                                span(id="address#{index}-type").quiet.block= setCase.capital(val.type)
+                                div(id="address#{index}-name")= setCase.capital(val.person)
+                                div(id="address#{index}-line1")= setCase.capital(val.street)
+                                div(id="address#{index}-line2")= setCase.capital(val.town)
+                                div(id="address#{index}-line4")= setCase.capital(val.county)
 
-        if (subject.addresses.length === 0)
+        if (!subject.addresses || subject.addresses.length === 0)
             span= noResultsText

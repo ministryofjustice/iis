@@ -1,9 +1,9 @@
 extends ../layout
 mixin inmate(item)
-    div.inmateDetails(class=visited ? 'visited' : '')
+    div.inmateDetails(class=item.visited ? 'visited' : '')
         a(href="/subject2/#{item.prisonNumber}/summary#{queryStrings.thisPage}")
             span.inmateContainer
-                span(class=visited ? '' : 'bold-medium').capitalise-text #{setCase.capital(item.firstName +' '+ (item.middleName)) +' '+ item.lastName +' '}
+                span(class=item.visited ? '' : 'bold-medium').capitalise-text #{setCase.capital(item.firstName +' '+ (item.middleName)) +' '+ item.lastName +' '}
                 if item.dob
                     span(class=item.visited ? '' : 'bold-medium') &middot; #{moment(item.dob).format('DD/MM/YYYY')}
                 if item.isAlias

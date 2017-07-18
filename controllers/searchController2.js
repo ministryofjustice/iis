@@ -275,7 +275,7 @@ function addSelectionVisitedData(data, session) {
     }
 
     return data.map(inmate => {
-        inmate.visited = session.visited.includes(inmate.identifier.prisonNumber);
+        inmate.visited = session.visited.includes(inmate.prisonNumber);
         return inmate;
     });
 }

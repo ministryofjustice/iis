@@ -75,7 +75,7 @@ VALUES
     (2, '85',      85, null, null, null, 'UNAUTH USE OF CTRL''D DRUG   ', null, 1, null, null),
     (2, '92',      92, null, null, null, 'POSSESSION UNAUTHORISED ITEM ', null, 1, null, null),
     (2, '190',     190, null, null, null, 'DISOBEYING A LAWFUL ORDER   ', null, 1, null, null),
-    (2, '210',     210, null, null, null, 'POFFENCE AGAINST GOAD       ', null, 1, null, null),
+    (2, '210',     210, null, null, null, 'OFFENCE AGAINST GOAD       ', null, 1, null, null),
     -- Adjudication outcome
     (8, '1',      1, null, null, null, 'PROVED                 ', null, 1, null, null),
     (8, '2',      2, null, null, null, 'NOT PROVEN             ', null, 1, null, null),

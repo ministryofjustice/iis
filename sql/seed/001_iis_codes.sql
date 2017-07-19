@@ -6,9 +6,9 @@ VALUES
     (14, '98',       1, null, null, null, 'Other                       ', null, 1, null, null),
     (14, '99',       1, null, null, null, 'Not Known                   ', null, 1, null, null),
     -- Ethnicity
-    (22, 'W1      ', 1, null, null, null, 'White                       ', null, 1, null, null),
+    (22, 'W1      ', 1, null, null, null, 'White-British               ', null, 1, null, null),
     (22, 'A2      ', 1, null, null, null, 'Asian-Pakistani             ', null, 1, null, null),
-    (22, 'BO      ', 1, null, null, null, 'Black Other                 ', null, 1, null, null),
+    (22, 'BO      ', 1, null, null, null, 'Black - other               ', null, 1, null, null),
     -- Nationality
     (25, 'UK      ', 1, null, null, null, 'United Kingdom              ', null, 1, null, null),
     (25, 'GM      ', 1, null, null, null, 'Gambia                      ', null, 1, null, null),

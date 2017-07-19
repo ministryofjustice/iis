@@ -9,7 +9,7 @@ block subject-details
                         div.left-border
                             span.quiet Court hearing
                             div #{moment(firstHearing.date).format('DD/MM/YYYY')}
-                            div #{firstHearing.court}
+                            div #{setCase.capital(firstHearing.court)}
         else
             div
                 span Prisoner has no court hearings

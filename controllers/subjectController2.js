@@ -1,5 +1,6 @@
 const logger = require('../log');
 const utils = require('../data/utils');
+const {sentence, capital, capitalWithAcronyms, sentenceWithAcronyms} = require('./helpers/textHelpers');
 const url = require('url');
 const {getSubject} = require('../data/subject2');
 const content = require('../data/content');
@@ -50,7 +51,7 @@ function renderPage(data) {
         nav: getNavigation(page),
         noResultsText,
         moment: require('moment'),
-        setCase: require('case')
+        setCase: {capital, sentence, capitalWithAcronyms, sentenceWithAcronyms}
     });
 }
 

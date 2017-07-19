@@ -44,9 +44,19 @@ SET ADDRESSES =
         PERSON AS person,
         STREET AS street,
         TOWN   AS town,
-        COUNTY AS county
-    FROM HPA.ADDRESSES a
-    WHERE a.PRISON_NUMBER = PK_PRISON_NUMBER
+        COUNTY AS county,
+        PK_ADDRESS AS sequence
+    FROM (
+             SELECT
+                 row_number()
+                 OVER ( PARTITION BY PRISON_NUMBER, STREET, TOWN, COUNTY, TYPE, PERSON
+                     ORDER BY (PK_ADDRESS) ) ROW_NUM,
+                 *
+             FROM HPA.ADDRESSES a
+             WHERE a.PRISON_NUMBER = PK_PRISON_NUMBER
+         ) NUMBERED_ROWS
+    WHERE ROW_NUM = 1
+    ORDER BY sequence
     FOR JSON PATH
 );
 GO

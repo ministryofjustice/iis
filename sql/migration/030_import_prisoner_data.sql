@@ -73,11 +73,11 @@ GO
 -------------------------------------------------------------------------------------------------------
 
 INSERT INTO HPA.ADDRESSES
-    SELECT DISTINCT
+    SELECT
         TRIM(l.PK_PRISON_NUMBER) AS PRISON_NUMBER,
-        TRIM(INMATE_ADDRESS_1)      STREET,
-        TRIM(INMATE_ADDRESS_2)      TOWN,
-        TRIM(INMATE_ADDRESS_4)      COUNTY,
+        TRIM(INMATE_ADDRESS_1)   AS STREET,
+        TRIM(INMATE_ADDRESS_2)   AS TOWN,
+        TRIM(INMATE_ADDRESS_4)   AS COUNTY,
         (
             CASE ADDRESS_TYPE
             WHEN 'C'
@@ -98,14 +98,15 @@ INSERT INTO HPA.ADDRESSES
                 THEN 'Supervising officer'
             ELSE 'Unknown'
             END
-        )                           TYPE,
-        TRIM(PERSON_DETS)           PERSON
+        )                        AS TYPE,
+        TRIM(PERSON_DETS)        AS PERSON
     FROM IIS.LOSS_OF_LIBERTY l
         INNER JOIN IIS.INMATE_ADDRESS a ON l.PK_PRISON_NUMBER = a.FK_PRISON_NUMBER
     WHERE
         NOT EXISTS(SELECT 1
                    FROM IIS.IIS_IDENTIFIER i
-                   WHERE i.FK_PERSON_IDENTIFIER = l.FK_PERSON_IDENTIFIER AND PERSON_IDENT_TYPE_CODE = 'NOM');
+                   WHERE i.FK_PERSON_IDENTIFIER = l.FK_PERSON_IDENTIFIER AND PERSON_IDENT_TYPE_CODE = 'NOM')
+    ORDER BY SQ_HAS_ADDRESS ASC;
 GO
 --approx 9m
 
@@ -201,7 +202,7 @@ INSERT INTO HPA.HDC_INFO
                  WHERE
                      r.FK_HDC_HISTORY = h.PKTS_HDC_HISTORY
                  FOR XML PATH (''), TYPE
-                ).value('text()[1]','NVARCHAR(512)'),1,2,N'')
+                ).value('text()[1]', 'NVARCHAR(512)'), 1, 2, N'')
         )                        AS REASONS
 
     FROM IIS.LOSS_OF_LIBERTY l

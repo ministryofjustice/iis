@@ -56,7 +56,7 @@ SET ADDRESSES =
              WHERE a.PRISON_NUMBER = PK_PRISON_NUMBER
          ) NUMBERED_ROWS
     WHERE ROW_NUM = 1
-    ORDER BY sequence
+    ORDER BY sequence DESC
     FOR JSON PATH
 );
 GO

@@ -12,7 +12,7 @@ block subject-details
                             div Original curfew end date: #{moment(val.curfewEndDate).format('DD/MM/YYYY')}
                             div Outcome: #{val.outcome}
                             div Outcome date: #{moment(val.outcomeDate).format('DD/MM/YYYY')}
-                            div Reason: #{setCase.sentence(val.reason)}
+                            div Reason: #{setCase.sentenceWithAcronyms(val.reason)}
 
         if(subject.hdcInfo && subject.hdcInfo.length > 0)
             div.padTop
@@ -21,7 +21,7 @@ block subject-details
                         div.column-full
                             div.left-border
                                 span.quiet.block #{setCase.capitalWithAcronyms(val.stage)}
-                                span #{setCase.capital(val.status)}, #{moment(val.date).format('DD/MM/YYYY')}
+                                span #{setCase.sentenceWithAcronyms(val.status)}, #{moment(val.date).format('DD/MM/YYYY')}
                                 div #{setCase.capitalWithAcronyms(val.reasons)}
 
         if ((!subject.hdcRecall || subject.hdcRecall.length === 0) && (!subject.hdcInfo || subject.hdcInfo.length === 0))

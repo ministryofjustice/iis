@@ -1,7 +1,7 @@
 const PDFDocument = require('pdfkit');
 const PDFTable = require('voilab-pdf-table');
 const content = require('../../data/content');
-const Case = require('case');
+const Case = require('./textHelpers');
 const moment = require('moment');
 
 module.exports = {
@@ -100,6 +100,7 @@ function subjectContent(doc, items) {
 
     const excludedItems = ['initial', 'firstName', 'middleName', 'lastName'];
 
+
     const table = new PDFTable(doc, {bottomMargin: 30});
     table.addColumns([
         {id: 'key', width: 150},
@@ -108,12 +109,31 @@ function subjectContent(doc, items) {
 
     const tableBody = Object.keys(items).map(key => {
         if (items[key] && !excludedItems.includes(key)) {
-            const value = typeof items[key] === 'string' ? items[key].trim() : items[key];
+            const value = getSubjectValue(items, key);
             return {key: `${content.pdf.subject2[key] || key}: `, value};
         }
     }).filter(n => n);
     table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
+}
+
+function getSubjectValue(items, key) {
+    const dates = ['dob', 'receptionDate'];
+
+    if(dates.includes(key)) {
+        return moment(items[key]).format('DD/MM/YYYY');
+    }
+
+    if(key === 'sex') {
+        if (items[key] === 'M') {
+            return 'Male';
+        }
+
+        if (items[key] === 'F') {
+            return 'Female';
+        }
+    }
+    return items[key];
 }
 
 function sentenceHistoryContent(doc, items) {
@@ -172,7 +192,7 @@ function movementContent(doc, items) {
         const {date, establishment, type, movement} = item;
         return {date: moment(date).format('DD/MM/YYYY'),
             establishment: Case.capital(establishment),
-            detail: `${type === 'D' ? 'OUT' : 'IN'} - ${Case.sentence(movement)}`};
+            detail: `${type === 'D' ? 'OUT' : 'IN'} - ${Case.sentenceWithAcronyms(movement)}`};
     });
     table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
@@ -190,9 +210,9 @@ function hdcInfoContent(doc, items) {
     const tableBody = items.map(item => {
         const {stage, date, status, reasons} = item;
         return {
-            stage: Case.sentence(stage),
-            detail: `${Case.sentence(status)}, ${moment(date).format('DD/MM/YYYY')}`,
-            reasons: Case.capital(reasons)};
+            stage: Case.sentenceWithAcronyms(stage),
+            detail: `${Case.sentenceWithAcronyms(status)}, ${moment(date).format('DD/MM/YYYY')}`,
+            reasons: Case.capitalWithAcronyms(reasons)};
     });
     table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
@@ -211,9 +231,9 @@ function hdcRecallContent(doc, items) {
         const tableBody = [
             {key: 'Recall date', value: moment(createdDate).format('DD/MM/YYYY')},
             {key: 'Original curfew end date', value: moment(curfewEndDate).format('DD/MM/YYYY')},
-            {key: 'Outcome', value: Case.sentence(outcome)},
+            {key: 'Outcome', value: Case.sentenceWithAcronyms(outcome)},
             {key: 'Outcome date', value: moment(outcomeDate).format('DD/MM/YYYY')},
-            {key: 'Reason', value: Case.sentence(reason)}
+            {key: 'Reason', value: Case.sentenceWithAcronyms(reason)}
         ];
 
         table.setNewPageFn(table => table.pdf.addPage());
@@ -237,7 +257,7 @@ function offenceContent(doc, items) {
         return {
             date: moment(date).format('DD/MM/YYYY'),
             offenceCode: `Offence code ${code}`,
-            establishment: establishment ? `${Case.sentence(establishment)}` : `${establishment_code}`};
+            establishment: establishment ? `${Case.sentenceWithAcronyms(establishment)}` : `${establishment_code}`};
     });
     table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
@@ -256,8 +276,8 @@ function custodyOffenceContent(doc, items) {
         const {date, outcome, charge, establishment} = item;
         return {
             date: moment(date).format('DD/MM/YYYY'),
-            detail: `${Case.sentence(outcome)} - ${Case.sentence(charge)}`,
-            establishment: Case.sentence(establishment)
+            detail: `${Case.sentence(outcome)} - ${Case.sentenceWithAcronyms(charge)}`,
+            establishment: Case.sentenceWithAcronyms(establishment)
         };
     });
     table.setNewPageFn(table => table.pdf.addPage());
@@ -272,7 +292,7 @@ function addressContent(doc, items) {
         if(street) {
             if(type) Case.capital(doc.text(type));
             if(person) doc.text(Case.capital(person));
-            if(street) doc.text(Case.capital(street));
+            if(street) doc.text(Case.capitalWithAcronyms(street));
             if(town) doc.text(Case.capital(town));
             if(county) doc.text(Case.capital(county));
         }

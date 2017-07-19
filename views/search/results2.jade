@@ -7,7 +7,7 @@ mixin inmate(item)
                 if item.dob
                     span(class=item.visited ? '' : 'bold-medium') &middot; #{moment(item.dob).format('DD/MM/YYYY')}
                 if item.isAlias
-                    span.block Matched on alias: #{item.alias.first + ' ' + item.alias.last}
+                    span.block Matched on alias: #{setCase.capital(item.aliasFirst + ' ' + item.aliasLast)}
                 if item.prisonNumber
                     span.prisonNumber.block.text-secondary Prison no. #{item.prisonNumber}
                 if item.receptionDate

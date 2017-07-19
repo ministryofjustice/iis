@@ -203,7 +203,12 @@ describe('subjectController2', () => {
                 reqMock.params.page = 'offences';
                 return getSubject()(reqMock, resMock).then(() => {
                     expect(resMock.render.getCall(0).args[1].moment).to.eql(require('moment'));
-                    expect(resMock.render.getCall(0).args[1].setCase).to.eql(require('case'));
+                    expect(resMock.render.getCall(0).args[1].setCase).to.eql({
+                        sentence: require('../../controllers/helpers/textHelpers').sentence,
+                        capital: require('../../controllers/helpers/textHelpers').capital,
+                        capitalWithAcronyms: require('../../controllers/helpers/textHelpers').capitalWithAcronyms,
+                        sentenceWithAcronyms: require('../../controllers/helpers/textHelpers').sentenceWithAcronyms
+                    });
                 });
             });
         });

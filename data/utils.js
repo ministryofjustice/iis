@@ -113,5 +113,3 @@ module.exports = {
         }).pop();
     }
 };
-
-

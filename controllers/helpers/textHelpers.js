@@ -12,6 +12,7 @@ const rawAcronyms = [
     'ARP',
     'CRC',
     'CJA',
+    'CS',
     'DTO',
     'EPP',
     'GOAD',

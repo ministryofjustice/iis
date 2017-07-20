@@ -16,17 +16,20 @@ const rawAcronyms = [
     'EPP',
     'GOAD',
     'HDC',
+    'HDCED',
     'HMP',
     'HMYOI',
     'IPP',
     'NFA',
     'NPS',
     'OMU',
+    'PO',
+    'PS',
+    'SPO',
     'YMCA',
     'YO',
     'YOI',
-    'YP',
-    'HDCED'
+    'YP'
 ];
 
 const acronyms = rawAcronyms.map(ac => {

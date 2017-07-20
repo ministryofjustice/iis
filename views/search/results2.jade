@@ -1,7 +1,7 @@
 extends ../layout
 mixin inmate(item)
     div.inmateDetails(class=item.visited ? 'visited' : '')
-        a(href="/subject2/#{item.prisonNumber}/summary#{queryStrings.thisPage}")
+        a(href="/subject/#{item.prisonNumber}/summary#{queryStrings.thisPage}")
             span.inmateContainer
                 span(class=item.visited ? '' : 'bold-medium').capitalise-text #{setCase.capital(item.firstName +' '+ (item.middleName)) +' '+ item.lastName +' '}
                 if item.dob
@@ -34,7 +34,7 @@ block content
                     fieldset.well
                         legend.font-xsmall Search filters
                         div(role="list")
-                            form(method="post" action='/search2/results/filters')
+                            form(method="post" action='/search/results/filters')
                                 input(type="hidden" name="_csrf" value="#{csrfToken}")
                                 input#male.filtering-option.font-xsmall(name="filter", type="submit", value="Male" class=filtersForView.Male ? "filtering-option-active" : "")
                                 input#female.filtering-option.font-xsmall(name="filter", type="submit", value="Female" class=filtersForView.Female ? "filtering-option-active" : "")
@@ -55,7 +55,7 @@ block content
                                 if !pagination.showPrev
                                     span.inactive Previous
                                 else
-                                    a(href="/search2/results#{queryStrings.prevPage}") Previous
+                                    a(href="/search/results#{queryStrings.prevPage}") Previous
                                 |  &nbsp;
 
                         span
@@ -67,9 +67,9 @@ block content
                             if !pagination.showNext
                                 span.inactive Next
                             else
-                                a(href="/search2/results#{queryStrings.nextPage}") Next
+                                a(href="/search/results#{queryStrings.nextPage}") Next
             div.form-group
-                a(href="/search2") New search
+                a(href="/search") New search
 
         div.column-one-third
             div.well.search-terms-container

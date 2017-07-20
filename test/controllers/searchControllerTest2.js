@@ -65,7 +65,7 @@ describe('searchController', () => {
                 }
             };
 
-            const expectedUrl = '/search2/form?0=names&1=dob';
+            const expectedUrl = '/search/form?0=names&1=dob';
 
             postIndex(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
@@ -121,7 +121,7 @@ describe('searchController', () => {
 
             getSearchForm(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
-            expect(resMock.redirect).to.have.been.calledWith('/search2');
+            expect(resMock.redirect).to.have.been.calledWith('/search');
         });
     });
 
@@ -158,7 +158,7 @@ describe('searchController', () => {
 
             postSearchFormProxy()(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
-            expect(resMock.redirect).to.have.been.calledWith('/search2/results');
+            expect(resMock.redirect).to.have.been.calledWith('/search/results');
         });
 
         it('should set the userInput on the session ', () => {
@@ -211,7 +211,7 @@ describe('searchController', () => {
 
             postSearchFormProxy(dobValidatorStub, namesValidatorStub, identifierValidatorStub)(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
-            expect(resMock.redirect).to.have.been.calledWith('/search2');
+            expect(resMock.redirect).to.have.been.calledWith('/search');
         });
 
         it('should reset the visited results', () => {
@@ -246,7 +246,7 @@ describe('searchController', () => {
 
             reqMock = {
                 headers: {
-                    referer: 'http://something.com/search2/results?page=2'
+                    referer: 'http://something.com/search/results?page=2'
                 },
                 session: {
                     userInput: {
@@ -258,8 +258,8 @@ describe('searchController', () => {
                 },
                 query: {page: 1},
                 user: {email: 'x@y.com'},
-                url: 'http://something.com/search2/results?page=2&filters=Female',
-                get: (item) => 'http://something.com/search2/results?page=2'
+                url: 'http://something.com/search/results?page=2&filters=Female',
+                get: (item) => 'http://something.com/search/results?page=2'
             };
         });
 
@@ -281,7 +281,7 @@ describe('searchController', () => {
 
             getResultsProxy()(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
-            expect(resMock.redirect).to.have.been.calledWith('/search2');
+            expect(resMock.redirect).to.have.been.calledWith('/search');
         });
 
         context('rowcounts === 0', () => {
@@ -358,7 +358,7 @@ describe('searchController', () => {
                 getResultsProxy()(reqMock, resMock);
 
                 expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/search2/results?page=2&invalidPage=20');
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?page=2&invalidPage=20');
             });
 
             it('should render results page', () => {
@@ -594,7 +594,7 @@ describe('searchController', () => {
                     getResultsProxy(getRowsStub)(reqMock, resMock);
 
                     expect(resMock.redirect).to.have.callCount(1);
-                    expect(resMock.redirect).to.have.been.calledWith('/search2?error=ETIMEOUT');
+                    expect(resMock.redirect).to.have.been.calledWith('/search?error=ETIMEOUT');
                 });
             });
 
@@ -604,7 +604,7 @@ describe('searchController', () => {
                     getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
 
                     expect(resMock.redirect).to.have.callCount(1);
-                    expect(resMock.redirect).to.have.been.calledWith('/search2?error=ETIMEOUT');
+                    expect(resMock.redirect).to.have.been.calledWith('/search?error=ETIMEOUT');
                 });
             });
 
@@ -789,7 +789,7 @@ describe('searchController', () => {
                 };
                 postPagination(reqMock, resMock);
                 expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/search2/results?page=8');
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?page=8');
 
             });
 
@@ -804,7 +804,7 @@ describe('searchController', () => {
                 };
                 postPagination(reqMock, resMock);
                 expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/search2/results?filters=HDC&page=8');
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?filters=HDC&page=8');
             });
         });
 
@@ -819,7 +819,7 @@ describe('searchController', () => {
                 };
                 postFilters(reqMock, resMock);
                 expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/search2/results?filters=Male&page=1');
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?filters=Male&page=1');
 
             });
 
@@ -833,7 +833,7 @@ describe('searchController', () => {
                 };
                 postFilters(reqMock, resMock);
                 expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/search2/results?page=1');
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?page=1');
             });
 
             it('should be able to add more than one filter', () => {
@@ -846,7 +846,7 @@ describe('searchController', () => {
                 };
                 postFilters(reqMock, resMock);
                 expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/search2/results?filters=Male&filters=Female&page=1');
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?filters=Male&filters=Female&page=1');
             });
         });
     });

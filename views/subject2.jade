@@ -3,7 +3,7 @@ extends layout
 block content
 
     div.back-link-container
-        a.link-back(href="/search2/results#{returnQuery}") Back to prisoners
+        a.link-back(href="/search/results#{returnQuery}") Back to prisoners
 
     if err
         div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
@@ -64,7 +64,7 @@ block content
 
 
                 span#saveLink
-                    a(href="/print2?prisonNo=#{subject.summary.prisonNumber}") Save as PDF
+                    a(href="/print?prisonNo=#{subject.summary.prisonNumber}") Save as PDF
             div.column-one-third
                 if subject.summary.prisonNumber || subject.summary.parole.paroleNumbers || subject.summary.pncNumber || subject.summary.croNumber
                     ul.list.well.refs-box
@@ -89,7 +89,7 @@ block content
                 block subject-details
 
         div.form-group
-            a(href="/search2") New search
+            a(href="/search") New search
 
 block append scripts
     script(src="/public/javascripts/morelessBundle.js?#{version}")

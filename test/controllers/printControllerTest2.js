@@ -112,7 +112,7 @@ describe('printController', () => {
 
             getController().getPrintForm(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
-            expect(resMock.redirect).to.have.been.calledWith('/search2');
+            expect(resMock.redirect).to.have.been.calledWith('/search');
         });
     });
 
@@ -120,7 +120,7 @@ describe('printController', () => {
 
         it('should redirect to the pdf with the appropriate query string', () => {
 
-            const expectedUrl = '/print2/pdf?prisonNo=12345678&fields=summary&fields=offencesInCustody';
+            const expectedUrl = '/print/pdf?prisonNo=12345678&fields=summary&fields=offencesInCustody';
 
             getController().postPrintForm(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
@@ -147,7 +147,7 @@ describe('printController', () => {
                 user: {email: 'x@y.com'},
             };
 
-            const expectedUrl = '/print2/pdf?prisonNo=12345678&fields=summary&fields=offencesInCustody';
+            const expectedUrl = '/print/pdf?prisonNo=12345678&fields=summary&fields=offencesInCustody';
 
             getController().postPrintForm(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
@@ -156,7 +156,7 @@ describe('printController', () => {
 
         it('should return to print form if no items are selected', () => {
             reqMock = {
-                body: {printOption: []},
+                body: {},
                 query: {prisonNo: '12345678'},
                 user: {email: 'x@y.com'},
             };
@@ -288,7 +288,7 @@ describe('printController', () => {
             const subjectStub = sandbox.stub().returnsPromise().rejects();
             return getController({subject: subjectStub}).getPdf(reqMock, resMock).then(() => {
                 expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/print2?prisonNo=12345678&err=db');
+                expect(resMock.redirect).to.have.been.calledWith('/print?prisonNo=12345678&err=db');
             });
         });
     });

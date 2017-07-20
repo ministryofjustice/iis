@@ -1,36 +1,35 @@
 'use strict';
 
-let logger = require('../log.js');
-let expressWinston = require('express-winston');
-let addRequestId = require('express-request-id')();
-let uuidV1 = require('uuid/v1');
-let moment = require('moment');
+const logger = require('../log.js');
+const expressWinston = require('express-winston');
+const addRequestId = require('express-request-id')();
+const uuidV1 = require('uuid/v1');
+const moment = require('moment');
 
-let bodyParser = require('body-parser');
-let cookieSession = require('cookie-session');
-let express = require('express');
-let path = require('path');
+const bodyParser = require('body-parser');
+const cookieSession = require('cookie-session');
+const express = require('express');
+const path = require('path');
 
-let passport = require('passport');
-let OAuth2Strategy = require('passport-oauth2').Strategy;
-let request = require('request');
+const passport = require('passport');
+const OAuth2Strategy = require('passport-oauth2').Strategy;
+const request = require('request');
 
-let helmet = require('helmet');
-let csurf = require('csurf');
-let compression = require('compression');
+const helmet = require('helmet');
+const csurf = require('csurf');
+const compression = require('compression');
 
-let index = require('../routes/index');
-let disclaimer = require('../routes/disclaimer');
-let search = require('../routes/search');
-let subject = require('../routes/subject');
-let subject2 = require('../routes/subject2');
-let print = require('../routes/print');
-let print2 = require('../routes/print2');
-let admin = require('../routes/admin');
-let search2 = require('../routes/search2');
+const index = require('../routes/index');
+const disclaimer = require('../routes/disclaimer');
+const admin = require('../routes/admin');
 
-let content = require('../data/content.js');
-let config = require('../server/config');
+// remove 2s below to revert to old route
+const search = require('../routes/search2');
+const subject = require('../routes/subject2');
+const print = require('../routes/print2');
+
+const content = require('../data/content.js');
+const config = require('../server/config');
 const healthcheck = require('../server/healthcheck');
 
 const version = moment.now().toString();
@@ -177,13 +176,9 @@ if (!testMode) {
 }
 app.use('/search/', search);
 app.use('/subject/', subject);
-app.use('/subject2/', subject2);
 app.use('/print/', print);
-app.use('/print2/', print2);
+
 app.use('/admin/', admin);
-app.use('/search2/', search2);
-
-
 
 // Error Handler
 app.use(function(req, res, next) {
@@ -232,12 +227,12 @@ function addTemplateVariables(req, res, next) {
 
 function dummyUserProfile(req, res, next) {
     req.user = {
-        'id': 1,
-        'email': 'test@test.com',
-        'firstName': 'Test',
-        'lastName': 'Tester',
-        'profileLink': '/profile',
-        'logoutLink': '/logout'
+        id: 1,
+        email: 'test@test.com',
+        firstName: 'Test',
+        lastName: 'Tester',
+        profileLink: '/profile',
+        logoutLink: '/logout'
     };
     res.locals.profile = req.user;
     next();

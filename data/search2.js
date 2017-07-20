@@ -1,5 +1,6 @@
 'use strict';
 
+const utils = require('./utils');
 const db = require('../server/iisData');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 const TYPES = require('tedious').TYPES;
@@ -11,8 +12,8 @@ const getSearchOperatorSql = {
     forename: getStringSqlWithParams('FORENAME_1', {wildcardEnabled: true}),
     forename2: getStringSqlWithParams('FORENAME_2', {wildcardEnabled: true}),
     surname: getStringSqlWithParams('SURNAME', {wildcardEnabled: true}),
-    dobDay: getStringSqlWithParams('BIRTH_DATE'),
-    age: getStringSqlWithParams('AGE'),
+    dobDay: getDobSqlWithParams,
+    age: getAgeSqlWithParams,
     gender: getGenderSqlWithParams,
     hasHDC: getFilterSql('HAS_HDC'),
     isLifer: getFilterSql('IS_LIFER')
@@ -117,6 +118,35 @@ function getStringSqlWithParams(dbColumn, options = {}) {
                 value: obj.val
             }]
         };
+    };
+}
+
+function getDobSqlWithParams(obj) {
+    if (obj.userInput.dobOrAge !== 'dob') {
+        return null;
+    }
+
+    obj.val = obj.userInput.dobYear + '-' +
+        utils.pad(obj.userInput.dobMonth) + '-' +
+        utils.pad(obj.userInput.dobDay);
+
+    return getStringSqlWithParams('BIRTH_DATE', false)(obj);
+}
+
+function getAgeSqlWithParams(obj) {
+    if (obj.userInput.dobOrAge !== 'age') {
+        return null;
+    }
+
+    let dateRange = utils.getDateRange(obj.userInput.age);
+
+    let sql = '(BIRTH_DATE >= @from_date AND BIRTH_DATE <= @to_date)';
+    return {
+        sql,
+        params: [
+            {column: 'from_date', type: TYPES.VarChar, value: dateRange[0]},
+            {column: 'to_date', type: TYPES.VarChar, value: dateRange[1]}
+        ]
     };
 }
 

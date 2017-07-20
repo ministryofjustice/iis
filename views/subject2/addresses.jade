@@ -9,7 +9,7 @@ block subject-details
                         div.column-full
                             div.left-border
                                 span(id="address#{index}-type").quiet.block= setCase.capital(val.type)
-                                div(id="address#{index}-name")= setCase.capital(val.person)
+                                div(id="address#{index}-name")= setCase.capitalWithAcronyms(val.person)
                                 div(id="address#{index}-line1")= setCase.capitalWithAcronyms(val.street)
                                 div(id="address#{index}-line2")= setCase.capital(val.town)
                                 div(id="address#{index}-line4")= setCase.capital(val.county)

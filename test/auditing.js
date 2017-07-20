@@ -42,35 +42,7 @@ describe('Auditing', function() {
             });
     });
 
-    it('should record search event with search inputs', function() {
-        let browser;
-        return common.logInAs()
-            .then(function(_browser) {
-                browser = _browser;
-            })
-            .then(function() {
-                return browser.post('/search')
-                    .send({option: 'identifier'})
-                    .expect(302)
-                    .expect("Location", "/search/form?0=identifier")
-            })
-            .then(function() {
-                return browser.post('/search/form')
-                    .send({prisonNumber: 'AA123456'})
-                    .expect(302)
-                    .expect("Location", "/search/results")
-            })
-            .then(function() {
-                common.sinon.stub(search, 'totalRowsForUserInput').returnsPromise().resolves(0);
-                common.sinon.stub(audit, "record");
-                return browser.get('/search/results')
-                    .set('Referer', 'somewhere')
-            })
-            .then(function() {
-                common.sinon.assert.calledOnce(audit.record);
-                common.sinon.assert.calledWithExactly(audit.record, "SEARCH", "test@test.com", {page: 1, prisonNumber: 'AA123456'});
-            });
-    });
+
 });
 
 describe('Audit', () => {

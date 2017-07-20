@@ -39,27 +39,27 @@ block content
                     if subject.summary.ethnicity
                         li
                             span.dot &middot;
-                            | #{subject.summary.ethnicity}
+                            | #{setCase.capital(subject.summary.ethnicity)}
 
                     if subject.summary.birthCountry
                         li
                             span.dot &middot;
-                            | Born in #{subject.summary.birthCountry}
+                            | Born in #{setCase.capital(subject.summary.birthCountry)}
 
                     if subject.summary.maritalStatus
                         li.initiallyHidden
                             span.dot &middot;
-                            | #{subject.summary.maritalStatus}
+                            | #{setCase.capital(subject.summary.maritalStatus)}
 
                     if subject.summary.nationality
                         li.initiallyHidden
                             span.dot &middot;
-                            | National of #{subject.summary.nationality}
+                            | National of #{setCase.capital(subject.summary.nationality)}
 
                     if subject.summary.religion
                         li.initiallyHidden
                             span.dot &middot;
-                            | #{subject.summary.religion}
+                            | #{setCase.capital(subject.summary.religion)}
 
 
 

@@ -182,7 +182,7 @@ describe('Search', () => {
         });
 
         it('should populate dob if passed in', () => {
-            const result = inmateProxy()({dobOrAge: 'dob', dobDay: 'date'});
+            const result = inmateProxy()({dobOrAge: 'dob', dobDay: 'dd', dobMonth: 'mm', dobYear: 'yyyy'});
 
             return result.then((data) => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
@@ -190,9 +190,19 @@ describe('Search', () => {
 
                 expect(sql).to.contain('WHERE BIRTH_DATE = @BIRTH_DATE');
                 expect(params[0].column).to.eql('BIRTH_DATE');
-                expect(params[0].value).to.eql('date');
+                expect(params[0].value).to.eql('yyyy-mm-dd');
             });
+        });
 
+        it('should populate age if passed in', () => {
+            const result = inmateProxy()({dobOrAge: 'age', age: '44-45'});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('BIRTH_DATE >= @from_date AND BIRTH_DATE <= @to_date');
+            });
         });
 
         it('should combine where statements', () => {

@@ -68,7 +68,7 @@ describe('Auditing', function() {
             })
             .then(function() {
                 common.sinon.assert.calledOnce(audit.record);
-                common.sinon.assert.calledWithExactly(audit.record, "SEARCH", "test@test.com", {page: 1, prisonNumber: 'AA123456'});
+                common.sinon.assert.calledWithExactly(audit.record, "SEARCH", "test@test.com", {prisonNumber: 'AA123456'});
             });
     });
 });

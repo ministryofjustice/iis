@@ -77,7 +77,7 @@ exports.postIndex = function(req, res) {
 
     const selectedOptions = objectKeysInArray(availableSearchOptions, userReturnedOptions);
 
-    return res.redirect(createUrl('/search2/form', selectedOptions));
+    return res.redirect(createUrl('/search/form', selectedOptions));
 };
 
 exports.getSearchForm = function(req, res) {
@@ -86,7 +86,7 @@ exports.getSearchForm = function(req, res) {
 
     if (anyUnsupportedItems) {
         logger.warn('No such search option', {view: req.params.view});
-        return res.redirect('/search2');
+        return res.redirect('/search');
     }
 
     const hints = flatten(searchItems.map(item => availableSearchOptions[item].hints));
@@ -104,18 +104,18 @@ exports.postSearchForm = function(req, res) {
 
     if (!inputValidates(searchItems, userInput)) {
         logger.info('Server side input validation used');
-        return res.redirect('/search2');
+        return res.redirect('/search');
     }
 
     req.session.visited = [];
     req.session.userInput = userInput;
-    res.redirect('/search2/results');
+    res.redirect('/search/results');
 };
 
 exports.getResults = function(req, res) {
-    logger.info('GET /search2/results');
+    logger.info('GET /search/results');
     if (!req.headers.referer) {
-        return res.redirect('/search2');
+        return res.redirect('/search');
     }
 
     req.session.userInput = addFiltersToUserInput(req.session.userInput, req.query);
@@ -127,7 +127,7 @@ exports.getResults = function(req, res) {
         .catch(error => {
             logger.error('Error during number of rows search: ' + error.message);
             const query = {error: error.code};
-            return res.redirect(createUrl('/search2', query));
+            return res.redirect(createUrl('/search', query));
         });
 };
 
@@ -151,7 +151,7 @@ function getSearchResultsAndRender(req, res) {
         }).catch(error => {
             logger.error('Error during inmate search: ' + error.message);
             const query = {error: error.code};
-            return res.redirect(createUrl('/search2', query));
+            return res.redirect(createUrl('/search', query));
         });
     };
 }
@@ -209,7 +209,7 @@ const flatten = arr => Array.prototype.concat(...arr);
 exports.postPagination = function(req, res) {
     const query = mergeIntoQuery(req.query, {page: req.body.pageNumber});
 
-    res.redirect(createUrl('/search2/results', query));
+    res.redirect(createUrl('/search/results', query));
 };
 
 exports.postFilters = function(req, res) {
@@ -220,7 +220,7 @@ exports.postFilters = function(req, res) {
 
     newQueryObject.page = '1';
 
-    res.redirect(createUrl('/search2/results', newQueryObject));
+    res.redirect(createUrl('/search/results', newQueryObject));
 };
 
 const getPaginationErrors = query => {

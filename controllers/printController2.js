@@ -71,7 +71,7 @@ exports.getPrintForm = (req, res) => {
 
     if(!prisonNo) {
         logger.debug('no prison number');
-        return res.redirect('/search2');
+        return res.redirect('/search');
     }
     renderFormPage(res, prisonNo, err);
 };
@@ -109,15 +109,14 @@ function renderWithoutName(res, renderData) {
 exports.postPrintForm = (req, res) => {
     logger.debug('POST /print2');
 
-    const userReturnedOptions = Array.isArray(req.body.printOption) ? req.body.printOption : [req.body.printOption];
     const prisonNo = req.query.prisonNo;
-
-    audit.record('PRINT', req.user.email, {prisonNo, fieldsPrinted: userReturnedOptions});
-
-    if (!userReturnedOptions || userReturnedOptions.length === 0) {
+    if (!req.body.printOption) {
         logger.warn('No print items selected');
         return renderFormPage(res, prisonNo, 'noneSelected');
     }
+
+    const userReturnedOptions = Array.isArray(req.body.printOption) ? req.body.printOption : [req.body.printOption];
+    audit.record('PRINT', req.user.email, {prisonNo, fieldsPrinted: userReturnedOptions});
 
     const selectedOptions = objectKeysInArray(availablePrintOptions, userReturnedOptions);
     const query = {
@@ -125,7 +124,7 @@ exports.postPrintForm = (req, res) => {
         fields: selectedOptions
     };
 
-    const redirectUrl = url.format({'pathname': '/print2/pdf', query});
+    const redirectUrl = url.format({pathname: '/print/pdf', query});
     return res.redirect(redirectUrl);
 };
 
@@ -144,10 +143,10 @@ exports.getPdf = function(req, res) {
 
     return getSubject(prisonNumber, dataFunctionsToCall.map(dataFunction => dataFunction))
         .then(data => {
-            pdf.createPdf(res, printItems, data, availablePrintOptions, {type: 'searchPrint'})
+            pdf.createPdf(res, printItems, data, availablePrintOptions, {type: 'searchPrint'});
         })
         .catch(error => {
-            showDbError({error}, prisonNumber, res)
+            showDbError({error}, prisonNumber, res);
         });
 };
 
@@ -160,7 +159,7 @@ const getDataFunctionsToCall = printItems => {
 
 function showDbError(error, prisonNo, res) {
 
-    console.error(error)
+    console.error(error);
 
     logger.error('Error during data collection for pdf ', error);
 
@@ -168,14 +167,14 @@ function showDbError(error, prisonNo, res) {
         prisonNo,
         err: 'db'
     };
-    const redirectUrl = url.format({'pathname': '/print2', query});
+    const redirectUrl = url.format({pathname: '/print', query});
     return res.redirect(redirectUrl);
 }
 
 function getDisplayError(type) {
     const error = {
-        'db': {title: content.pdf.dbError.title, desc: content.pdf.dbError.desc},
-        'noneSelected': {title: content.view.print.noneSelected}
+        db: {title: content.pdf.dbError.title, desc: content.pdf.dbError.desc},
+        noneSelected: {title: content.view.print.noneSelected}
     };
 
     return error[type];

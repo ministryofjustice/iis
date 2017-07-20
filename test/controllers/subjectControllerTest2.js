@@ -25,7 +25,7 @@ describe('subjectController2', () => {
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
 
         subjectStub = sandbox.stub().returnsPromise().resolves({
-            prisonNumber: '     id1',
+            prisonNumber: 'id1',
             personIdentifier: '1',
             dob: '1'
         });
@@ -62,62 +62,62 @@ describe('subjectController2', () => {
         it('should audit that the page has been viewed', () => {
             getSubject()(reqMock, resMock);
             expect(auditSpy).to.have.callCount(1);
-            expect(auditSpy).to.be.calledWith('VIEW', 'x@y.com', {page: 'aliases', prisonNumber: '     id1'});
+            expect(auditSpy).to.be.calledWith('VIEW', 'x@y.com', {page: 'aliases', prisonNumber: 'id1'});
         });
 
         it('should call getSummary and pass in prison number', () => {
             getSubject()(reqMock, resMock);
             expect(subjectStub).to.have.callCount(1);
-            expect(subjectStub).to.be.calledWith('     id1');
+            expect(subjectStub).to.be.calledWith('id1');
         });
 
         describe('data requested', () => {
             it('should get data for the appropriate page if aliases', () => {
                 getSubject()(reqMock, resMock);
                 expect(subjectStub).to.have.callCount(1);
-                expect(subjectStub).to.be.calledWith('     id1', ['aliases']);
+                expect(subjectStub).to.be.calledWith('id1', ['aliases']);
             });
 
             it('should get data for the appropriate page if hdcinfo', () => {
                 reqMock.params.page = 'hdcinfo';
                 getSubject()(reqMock, resMock);
                 expect(subjectStub).to.have.callCount(1);
-                expect(subjectStub).to.be.calledWith('     id1', ['hdcRecall', 'hdcInfo']);
+                expect(subjectStub).to.be.calledWith('id1', ['hdcRecall', 'hdcInfo']);
             });
 
             it('should get data for the appropriate page if movements', () => {
                 reqMock.params.page = 'movements';
                 getSubject()(reqMock, resMock);
                 expect(subjectStub).to.have.callCount(1);
-                expect(subjectStub).to.be.calledWith('     id1', ['movements']);
+                expect(subjectStub).to.be.calledWith('id1', ['movements']);
             });
 
             it('should get data for the appropriate page if addresses', () => {
                 reqMock.params.page = 'addresses';
                 getSubject()(reqMock, resMock);
                 expect(subjectStub).to.have.callCount(1);
-                expect(subjectStub).to.be.calledWith('     id1', ['addresses']);
+                expect(subjectStub).to.be.calledWith('id1', ['addresses']);
             });
 
             it('should get data for the appropriate page if offences', () => {
                 reqMock.params.page = 'offences';
                 getSubject()(reqMock, resMock);
                 expect(subjectStub).to.have.callCount(1);
-                expect(subjectStub).to.be.calledWith('     id1', ['offences']);
+                expect(subjectStub).to.be.calledWith('id1', ['offences']);
             });
 
             it('should get data for the appropriate page if offencesInCustody', () => {
                 reqMock.params.page = 'offencesincustody';
                 getSubject()(reqMock, resMock);
                 expect(subjectStub).to.have.callCount(1);
-                expect(subjectStub).to.be.calledWith('     id1', ['offencesInCustody']);
+                expect(subjectStub).to.be.calledWith('id1', ['offencesInCustody']);
             });
 
             it('should get data for the appropriate page if summary', () => {
                 reqMock.params.page = 'summary';
                 getSubject()(reqMock, resMock);
                 expect(subjectStub).to.have.callCount(1);
-                expect(subjectStub).to.be.calledWith('     id1', ['courtHearings', 'sentencing']);
+                expect(subjectStub).to.be.calledWith('id1', ['courtHearings', 'sentencing']);
             });
         });
 
@@ -141,7 +141,7 @@ describe('subjectController2', () => {
                 reqMock.params.page = 'offences';
                 return getSubject()(reqMock, resMock).then(() => {
                     expect(resMock.render.getCall(0).args[0]).to.eql('subject2/offences');
-                    expect(resMock.render.getCall(0).args[1].subject).to.eql({dob: "1", personIdentifier: "1", prisonNumber: "     id1"});
+                    expect(resMock.render.getCall(0).args[1].subject).to.eql({dob: "1", personIdentifier: "1", prisonNumber: "id1"});
                 });
             });
 

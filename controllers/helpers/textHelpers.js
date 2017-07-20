@@ -3,6 +3,7 @@ const Case = require('case');
 module.exports = {
     sentence,
     capital,
+    lower,
     sentenceWithAcronyms,
     capitalWithAcronyms
 };
@@ -47,6 +48,10 @@ function sentence(text) {
 
 function capital(text) {
     return Case.capital(text);
+}
+
+function lower(text) {
+    return Case.lower(text);
 }
 
 function sentenceWithAcronyms(text) {

@@ -1,5 +1,4 @@
 const logger = require('../log');
-const utils = require('../data/utils');
 const {sentence, capital, capitalWithAcronyms, sentenceWithAcronyms} = require('./helpers/textHelpers');
 const url = require('url');
 const {getSubject} = require('../data/subject2');
@@ -19,9 +18,8 @@ const dataRequiredForPage = {
 exports.getSubject = function(req, res) {
 
     const {page, id} = req.params;
-    const prisonNumber = utils.padPrisonNumber(id);
     saveVisited(req.session, id);
-    audit.record('VIEW', req.user.email, {page, prisonNumber});
+    audit.record('VIEW', req.user.email, {page, prisonNumber: id});
 
     const pageObject = {
         res,
@@ -31,7 +29,7 @@ exports.getSubject = function(req, res) {
         returnQuery: url.parse(req.url).search ? url.parse(req.url).search : ''
     };
 
-    return getSubject(prisonNumber, dataRequiredForPage[page])
+    return getSubject(id, dataRequiredForPage[page])
         .then(subjectData => {
             pageObject.subjectData = subjectData;
             return renderPage(pageObject);

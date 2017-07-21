@@ -30,7 +30,9 @@ block content
                     | #{setCase.capital(subject.summary.firstName)}
                     | #{setCase.capital(subject.summary.middleName)}
                     | #{subject.summary.lastName}
-                    span.heading-secondary#ageDetails #{moment(subject.summary.dob).format('DD/MM/YYYY')} (#{moment().diff(subject.summary.dob, 'years')} years)
+                    if subject.summary.dob
+                        span.heading-secondary#ageDetails #{moment(subject.summary.dob).format('DD/MM/YYYY')} (#{moment().diff(subject.summary.dob, 'years')} years)
+
 
                 ul#prisonerInfoSummary.font-medium
                     if subject.summary.sex && (subject.summary.sex ==='F' || subject.summary.sex === 'M')

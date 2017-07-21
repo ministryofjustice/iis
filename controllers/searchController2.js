@@ -270,7 +270,7 @@ function getPageTitle(rowcount) {
 }
 
 function addSelectionVisitedData(data, session) {
-    if (!session.visited || session.visited.length === 0) {
+    if (!data || !session.visited || session.visited.length === 0) {
         return data;
     }
 

@@ -485,6 +485,46 @@ describe('searchController', () => {
                 expect(resMock.render).to.be.calledWith('search/results2', expectedPayload);
             });
 
+            it('should not add visited data when there are no results', () => {
+                reqMock.session.visited = ['1', '3'];
+                const receivedData = null;
+
+                getInmatesStub = sandbox.stub().returnsPromise().resolves(receivedData);
+
+                getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+
+                const expectedPayload = {
+                    content: {
+                        title: ['Your search returned', '20 prisoners']
+                    },
+                    pagination: {
+                        'totalPages': 2,
+                        'currPage': 1,
+                        'showPrev': false,
+                        'showNext': true
+                    },
+                    data: [],
+                    err: null,
+                    filtersForView: {},
+                    queryStrings: {
+                        prevPage: "?page=1&filters=Female",
+                        thisPage: "?page=2&filters=Female",
+                        nextPage: "?page=3&filters=Female"
+                    },
+                    searchTerms: {
+                        "First name": "Matthew",
+                        "Last name": "Whitfield",
+                        "Middle name": "James",
+                        "Prison number": "666"
+                    },
+                    moment: require('moment'),
+                    setCase: require('case')
+
+                };
+
+                expect(resMock.render).to.be.calledWith('search/results2', expectedPayload);
+            });
+
             it('should pass formatted search terms to the view - including DOB', () => {
 
                 reqMock.session.userInput = {

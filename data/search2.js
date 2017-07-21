@@ -9,8 +9,8 @@ const getSearchOperatorSql = {
     prisonNumber: getStringSqlWithParams('PRISON_NUMBER'),
     pncNumber: getStringSqlWithParams('PNC_NUMBER'),
     croNumber: getStringSqlWithParams('CRO_NUMBER'),
-    forename: getStringSqlWithParams('FORENAME_1', {wildcardEnabled: true}),
-    forename2: getStringSqlWithParams('FORENAME_2', {wildcardEnabled: true}),
+    forename: getStringSqlWithParams('FORENAME_1', {wildcardEnabled: true, wildcardInitial: true}),
+    forename2: getStringSqlWithParams('FORENAME_2', {wildcardEnabled: true, wildcardInitial: true}),
     surname: getStringSqlWithParams('SURNAME', {wildcardEnabled: true}),
     dobDay: getDobSqlWithParams,
     age: getAgeSqlWithParams,
@@ -104,21 +104,33 @@ function getParamsForUserInput(userInput) {
 }
 
 function getStringSqlWithParams(dbColumn, options = {}) {
-    const {wildcardEnabled} = options;
-
     return obj => {
 
-        const operator = wildcardEnabled && obj.val.includes('%') ? 'LIKE' : '=';
+        const {operator, value} = getStringInput(options, obj.val);
 
         return {
             sql: `${dbColumn} ${operator} @${dbColumn}`,
             params: [{
                 column: dbColumn,
                 type: TYPES.VarChar,
-                value: obj.val
+                value
             }]
         };
     };
+}
+
+function getStringInput(options, value) {
+    const {wildcardEnabled, wildcardInitial} = options;
+
+    if(wildcardEnabled && value.includes('%')) {
+        return {operator: 'LIKE', value};
+    }
+
+    if(wildcardInitial && value.length === 1) {
+        return {operator: 'LIKE', value: value.concat('%')};
+    }
+
+    return {operator: '=', value};
 }
 
 function getDobSqlWithParams(obj) {

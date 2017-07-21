@@ -181,6 +181,42 @@ describe('Search', () => {
             });
         });
 
+        it('should automatically use wildcard for first and middle name if initial used', () => {
+            const result = inmateProxy()({forename: 'D', forename2: 'J'});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('WHERE FORENAME_1 LIKE @FORENAME_1 AND ' +
+                    'FORENAME_2 LIKE @FORENAME_2');
+
+                expect(params[0].column).to.eql('FORENAME_1');
+                expect(params[0].value).to.eql('D%');
+
+                expect(params[1].column).to.eql('FORENAME_2');
+                expect(params[1].value).to.eql('J%');
+            });
+        });
+
+        it('should not automatically use wildcard for first and middle name if more than initial used', () => {
+            const result = inmateProxy()({forename: 'Da', forename2: 'Ja'});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('WHERE FORENAME_1 = @FORENAME_1 AND ' +
+                    'FORENAME_2 = @FORENAME_2');
+
+                expect(params[0].column).to.eql('FORENAME_1');
+                expect(params[0].value).to.eql('Da');
+
+                expect(params[1].column).to.eql('FORENAME_2');
+                expect(params[1].value).to.eql('Ja');
+            });
+        });
+
         it('should populate dob if passed in', () => {
             const result = inmateProxy()({dobOrAge: 'dob', dobDay: 'dd', dobMonth: 'mm', dobYear: 'yyyy'});
 

@@ -61,6 +61,11 @@ block content
                                 | Offences in custody
 
                         div.multiple-choice
+                            input#aliases(name="printOption", type="checkbox", value="aliases")
+                            label(for="offencesInCustody")
+                                | Aliases
+
+                        div.multiple-choice
                             input#addresses(name="printOption", type="checkbox", value="addresses")
                             label(for="addresses")
                                 | Addresses

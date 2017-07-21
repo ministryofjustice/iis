@@ -16,6 +16,9 @@ let subjectStub;
 let createPdfStub;
 let auditStub;
 
+const allItems = ['summary', 'sentencing', 'courtHearings', 'movements', 'hdc', 'offences', 'offencesInCustody', 'addresses', 'aliases'];
+const allDataRequests = ['summary', 'sentencing', 'courtHearings', 'movements', 'hdcRecall', 'hdcInfo', 'offences', 'offencesInCustody', 'addresses', 'aliases'];
+
 const getController = ({subject = subjectStub, createPdf = createPdfStub} = {}) => {
     return proxyquire('../../controllers/printController2', {
         '../data/subject2': {
@@ -120,7 +123,24 @@ describe('printController', () => {
 
         it('should redirect to the pdf with the appropriate query string', () => {
 
-            const expectedUrl = '/print/pdf?prisonNo=12345678&fields=summary&fields=offencesInCustody';
+            reqMock = {
+                body: {
+                    printOption: allItems
+                },
+                query: {prisonNo: '12345678'},
+                user: {email: 'x@y.com'},
+            };
+
+            const expectedUrl = '/print/pdf?prisonNo=12345678' +
+                '&fields=summary' +
+                '&fields=sentencing' +
+                '&fields=courtHearings' +
+                '&fields=movements' +
+                '&fields=hdc' +
+                '&fields=offences' +
+                '&fields=offencesInCustody' +
+                '&fields=addresses' +
+                '&fields=aliases';
 
             getController().postPrintForm(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
@@ -184,11 +204,11 @@ describe('printController', () => {
 
         it('should get the data for the fields in the query string', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
+                query: {prisonNo: '12345678', fields: allItems}
             };
             getController().getPdf(reqMock, resMock);
             expect(subjectStub).to.have.callCount(1);
-            expect(subjectStub).to.be.calledWith('12345678', ['summary', 'addresses']);
+            expect(subjectStub).to.be.calledWith('12345678', allDataRequests);
         });
 
         it('should call createPdf if all data requests resolve successfully', () => {

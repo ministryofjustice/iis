@@ -62,6 +62,12 @@ const availablePrintOptions = {
             title: 'Addresses',
             addContent: pdf.addressContent
         }
+    },
+    aliases: {
+        aliases: {
+            title: 'Aliases ',
+            addContent: pdf.aliasContent
+        }
     }
 };
 

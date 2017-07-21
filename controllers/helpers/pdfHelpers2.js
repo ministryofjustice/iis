@@ -16,7 +16,8 @@ module.exports = {
     offenceContent,
     custodyOffenceContent,
     addressContent,
-    twoColumnTable
+    twoColumnTable,
+    aliasContent
 };
 
 function createPdf(res, printItems, data, availablePrintOptions, options = {}) {
@@ -295,6 +296,21 @@ function addressContent(doc, items) {
             if(street) doc.text(Case.capitalWithAcronyms(street));
             if(town) doc.text(Case.capital(town));
             if(county) doc.text(Case.capital(county));
+        }
+    });
+}
+
+function aliasContent(doc, items) {
+
+    items.forEach(item => {
+        doc.moveDown();
+        const {first, middle, last, birthDate} = item;
+
+        if(first || middle || last) {
+            doc.text(Case.capital(first + ' ' + middle + ' ' + last));
+        }
+        if(birthDate) {
+            doc.text(`Born on: ${moment(birthDate).format('DD/MM/YYYY')}`);
         }
     });
 }

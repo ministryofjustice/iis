@@ -38,27 +38,27 @@ block content
                     if subject.summary.sex && (subject.summary.sex ==='F' || subject.summary.sex === 'M')
                         li #{subject.summary.sex === 'M' ? 'Male' : 'Female'}
 
-                    if subject.summary.ethnicity
+                    if subject.summary.ethnicity && subject.summary.ethnicity !== 'NOT STATED' && subject.summary.ethnicity !== 'OTHER' && subject.summary.ethnicity !== 'Other'
                         li
                             span.dot &middot;
                             | #{setCase.capital(subject.summary.ethnicity)}
 
-                    if subject.summary.birthCountry
+                    if subject.summary.birthCountry && subject.summary.birthCountry !== 'OTHER' && subject.summary.birthCountry !== 'Other' && subject.summary.birthCountry !== 'UNKNOWN'
                         li
                             span.dot &middot;
                             | Born in #{setCase.capital(subject.summary.birthCountry)}
 
-                    if subject.summary.maritalStatus
+                    if subject.summary.maritalStatus && subject.summary.maritalStatus !== 'NOT REQUIRED' && subject.summary.maritalStatus !== 'Refused or Unacceptable Ans.'
                         li.initiallyHidden
                             span.dot &middot;
                             | #{setCase.capital(subject.summary.maritalStatus)}
 
-                    if subject.summary.nationality
+                    if subject.summary.nationality && subject.summary.nationality !== 'UNAVAILABLE'
                         li.initiallyHidden
                             span.dot &middot;
                             | National of #{setCase.capital(subject.summary.nationality)}
 
-                    if subject.summary.religion
+                    if subject.summary.religion && subject.summary.religion !== 'NON PERMITTED RELIGIONS' && subject.summary.religion !== 'OTHER NON PERMITTED RELIGION'
                         li.initiallyHidden
                             span.dot &middot;
                             | #{setCase.capital(subject.summary.religion)}

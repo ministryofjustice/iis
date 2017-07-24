@@ -2,6 +2,24 @@ extends ../subject2
 
 block subject-details
     div.column-two-thirds
+        if (subject.category)
+                    div.grid-row.list-row
+                        div.column-full
+                            div.left-border
+                                span.quiet Last recorded category
+                                div #{setCase.capitalWithAcronyms(subject.category.category)}
+                                div #{moment(subject.category.date).format('DD/MM/YYYY')}
+        p
+
+        if (subject.establishment)
+                            div.grid-row.list-row
+                                div.column-full
+                                    div.left-border
+                                        span.quiet Last recorded establishment
+                                        div
+                                            | #{setCase.capitalWithAcronyms(subject.establishment)}
+        p
+
         if (subject.courtHearings && subject.courtHearings !== 0)
             - var firstHearing = subject.courtHearings[0]
                 div.grid-row.list-row

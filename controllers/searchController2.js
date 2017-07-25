@@ -139,7 +139,7 @@ function getSearchResultsAndRender(req, res) {
     return function(rowCountData) {
         const rowCount = rowCountData.totalRows.value;
         if (rowCount === 0) {
-            return res.render('search/results', parseResultsPageData(req, rowCount));
+            return res.render('search/results2', parseResultsPageData(req, rowCount));
         }
 
         if (!isValidPage(currentPage, rowCount)) {
@@ -155,6 +155,44 @@ function getSearchResultsAndRender(req, res) {
         });
     };
 }
+
+exports.getEditSearch = function(req, res) {
+    const formItemSelected = req.query.formItem;
+
+    if(!formItemSelected || !Object.keys(availableSearchOptions).includes(formItemSelected) || !req.session.userInput) {
+        return res.redirect('/search');
+    }
+
+    const formContents = availableSearchOptions[formItemSelected].fields.reduce((formObject, formItem) => {
+        if(req.session.userInput[formItem]) {
+            return Object.assign({}, formObject, {[formItem]: req.session.userInput[formItem]});
+        }
+        return formObject;
+    }, {});
+
+    res.render('search/full-search', {
+        content: content.view.search,
+        searchItems: formItemSelected,
+        hints: availableSearchOptions[formItemSelected].hints,
+        formContents
+    });
+};
+
+exports.postEditSearch = function(req, res) {
+    const oldUserInput = Object.assign({}, req.session.userInput);
+    const newUserInput = userInputFromSearchForm(req.body);
+    const removeIfCurrentCriteria = removeAllFromSameCriteriaConstructor(oldUserInput, newUserInput);
+    const oldInputWithoutCurrentCriteria = Object.keys(oldUserInput).reduce(removeIfCurrentCriteria, {});
+
+    const searchItems = itemsInQueryString(req.query).filter(item => availableSearchOptions[item]);
+    if (!inputValidates(searchItems, newUserInput)) {
+        logger.info('Server side input validation used');
+        return res.redirect('/search');
+    }
+
+    req.session.userInput = Object.assign({}, oldInputWithoutCurrentCriteria, newUserInput);
+    res.redirect('/search/results');
+};
 
 function parseResultsPageData(req, rowcount, data, page) {
     return {
@@ -301,19 +339,35 @@ function getSearchTermsForView(userInput) {
 }
 
 const searchTermObjectWithDob = userInput => {
-    let dobParts = [userInput['dobDay'], userInput['dobMonth'], userInput['dobYear']];
-    return {
-        [content.termDisplayNames['dob'].name]: dobParts.join('/')
-    };
+    const value = [userInput['dobDay'], userInput['dobMonth'], userInput['dobYear']].join('/');
+    const itemName = content.termDisplayNames['dob'].name;
+
+    return searchTermObject('dob', itemName, false, value);
 };
 
 const searchTermInCorrectCase = userInput => (allTerms, searchTerm) => {
 
+    const searchCriteria = searchCriteriaForInputType(searchTerm);
     const itemName = content.termDisplayNames[searchTerm].name;
+    const capitaliseName = content.termDisplayNames[searchTerm].textFormat === 'capitalise';
+    const termObject = searchTermObject(searchCriteria, itemName, capitaliseName, userInput[searchTerm]);
 
-    if(content.termDisplayNames[searchTerm].textFormat === 'capitalise') {
-        return Object.assign({}, allTerms, {[itemName]: Case.capital(userInput[searchTerm])});
-    }
-
-    return Object.assign({}, allTerms, {[itemName]: userInput[searchTerm]});
+    return Object.assign({}, allTerms, termObject);
 };
+
+const searchCriteriaForInputType = term => {
+    return Object.keys(availableSearchOptions).find(criteria => availableSearchOptions[criteria].fields.includes(term));
+};
+
+const searchTermObject = (searchCriteria, itemName, capitaliseValue, value) => {
+    const valueWithCase = capitaliseValue ? Case.capital(value) : value;
+    return {[itemName]: {searchCriteria, value: valueWithCase}};
+};
+
+const removeAllFromSameCriteriaConstructor = (existingUserInput, userInput) => (newObj, inputType) => {
+    const searchCriteria = searchCriteriaForInputType(Object.keys(userInput)[0]);
+    if(availableSearchOptions[searchCriteria].fields.includes(inputType)) {
+        return newObj;
+    }
+    return Object.assign({}, newObj, {[inputType]: existingUserInput[inputType]});
+}

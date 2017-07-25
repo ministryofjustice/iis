@@ -75,9 +75,9 @@ block content
             div.well.search-terms-container
                 h3 Results are based on the following search terms
                 div.search-terms
-                    each value, term  in searchTerms
-                        div
+                    each item, term  in searchTerms
+                        div.searchedTerm
                             span.hint.font-xsmall #{term}
-                            |  #{value}
-
-
+                            |  #{item.value}
+                            div
+                                a(href="/search/edit?formItem=#{item.searchCriteria}") change

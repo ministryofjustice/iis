@@ -65,7 +65,7 @@ const availablePrintOptions = {
     },
     aliases: {
         aliases: {
-            title: 'Aliases ',
+            title: 'Aliases',
             addContent: pdf.aliasContent
         }
     }

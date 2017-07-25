@@ -11,7 +11,7 @@ const dataRequiredForPage = {
     offences: ['offences'],
     hdcinfo: ['hdcRecall', 'hdcInfo'],
     offencesincustody: ['offencesInCustody'],
-    summary: ['courtHearings', 'sentencing', 'category', 'establishment'],
+    summary: ['sentenceSummary'],
     sentences: ['sentencing']
 };
 

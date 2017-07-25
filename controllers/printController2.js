@@ -17,6 +17,12 @@ const availablePrintOptions = {
             addContent: pdf.subjectContent
         }
     },
+    sentenceSummary: {
+        sentenceSummary: {
+            title: 'Sentence Summary',
+            addContent: pdf.sentenceSummaryContent
+        }
+    },
     sentencing: {
         sentencing: {
             title: 'Sentence History',

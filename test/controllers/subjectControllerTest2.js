@@ -117,7 +117,7 @@ describe('subjectController2', () => {
                 reqMock.params.page = 'summary';
                 getSubject()(reqMock, resMock);
                 expect(subjectStub).to.have.callCount(1);
-                expect(subjectStub).to.be.calledWith('id1', ['courtHearings', 'sentencing']);
+                expect(subjectStub).to.be.calledWith('id1', ['sentenceSummary']);
             });
         });
 

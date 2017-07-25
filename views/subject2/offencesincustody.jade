@@ -5,7 +5,7 @@ block subject-details
         if (subject.offencesInCustody && subject.offencesInCustody.length !== 0)
             each val,index in subject.offencesInCustody
                 div.grid-row.list-row.listItem
-                    div.column-full
+                    div.column-full(class="offenceInCustody")
                         div.left-border
                             span.quiet #{moment(val.date).format('DD/MM/YYYY')}
                         div.left-border

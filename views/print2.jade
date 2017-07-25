@@ -31,6 +31,11 @@ block content
                                 | Subject
 
                         div.multiple-choice
+                            input#sentenceSummary(name="printOption", type="checkbox", value="sentenceSummary")
+                            label(for="sentenceSummary")
+                                | Sentence Summary
+
+                        div.multiple-choice
                             input#sentencing(name="printOption", type="checkbox", value="sentencing")
                             label(for="sentencing")
                                 | Sentence History

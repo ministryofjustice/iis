@@ -3,11 +3,13 @@ const PDFTable = require('voilab-pdf-table');
 const content = require('../../data/content');
 const Case = require('./textHelpers');
 const moment = require('moment');
+const logger = require('../../log');
 
 module.exports = {
     createPdf,
     addSection,
     subjectContent,
+    sentenceSummaryContent,
     sentenceHistoryContent,
     courtHearingsContent,
     movementContent,
@@ -63,23 +65,24 @@ function createSearchPrint(doc, data) {
         doc.moveTo(doc.x, doc.y).lineTo(545, doc.y).stroke('#ccc');
         doc.moveDown(2);
         doc.image('assets/images/HMPPS_logo_crop.png', {width: 160});
-        doc.image('assets/images/icon-important-2x.png', doc.x+200, doc.y-80, {width: 10});
+        doc.image('assets/images/icon-important-2x.png', doc.x + 200, doc.y - 80, {width: 10});
         doc.fontSize(13);
-        doc.text('Notice', doc.x+220, doc.y-80, {align: 'justify'});
+        doc.text('Notice', doc.x + 220, doc.y - 80, {align: 'justify'});
         doc.fontSize(10);
-        doc.text(content.pdf.disclaimer, doc.x-20, doc.y, {align: 'justify'});
+        doc.text(content.pdf.disclaimer, doc.x - 20, doc.y, {align: 'justify'});
         doc.fontSize(11);
         doc.moveDown();
-        doc.moveTo(doc.x-200, doc.y).lineTo(545, doc.y).stroke('#ccc');
+        doc.moveTo(doc.x - 200, doc.y).lineTo(545, doc.y).stroke('#ccc');
         doc.moveDown(2);
         doc.fontSize(24);
-        doc.text(`${Case.capital(firstName)} ${Case.capital(lastName)}, ${prisonNumber}`, doc.x-200, doc.y);
+        doc.text(`${Case.capital(firstName)} ${Case.capital(lastName)}, ${prisonNumber}`, doc.x - 200, doc.y);
         doc.moveDown();
         doc.fontSize(12);
     });
 }
 
 function addSection(doc, printOption, items, dataType) {
+
     const {title, addContent} = printOption[dataType];
 
     doc.addPage();
@@ -95,6 +98,18 @@ function addSection(doc, printOption, items, dataType) {
 function emptySection(doc, title) {
     doc.moveDown();
     doc.text(`Subject has no ${Case.lower(title)}.`);
+}
+
+function subSection(doc, title) {
+    doc.moveDown();
+    doc.fontSize(14).text(title);
+    doc.fontSize(12);
+}
+
+function pad(doc, text) {
+    doc.moveDown();
+    doc.text(text);
+    doc.moveDown();
 }
 
 function subjectContent(doc, items) {
@@ -121,11 +136,11 @@ function subjectContent(doc, items) {
 function getSubjectValue(items, key) {
     const dates = ['dob', 'receptionDate'];
 
-    if(dates.includes(key)) {
+    if (dates.includes(key)) {
         return moment(items[key]).format('DD/MM/YYYY');
     }
 
-    if(key === 'sex') {
+    if (key === 'sex') {
         if (items[key] === 'M') {
             return 'Male';
         }
@@ -137,11 +152,26 @@ function getSubjectValue(items, key) {
     return items[key];
 }
 
+function sentenceSummaryContent(doc, items) {
+
+    subSection(doc, 'Last recorded establishment');
+    pad(doc, Case.capital(items.establishment));
+
+    subSection(doc, 'Last recorded category');
+    categoryContent(doc, [items.category]);
+
+    subSection(doc, 'Court Hearing');
+    courtHearingsContent(doc, [items.courtHearing]);
+
+    subSection(doc, 'Effective Sentence');
+    sentenceHistoryContent(doc, [items.effectiveSentence]);
+}
+
 function sentenceHistoryContent(doc, items) {
 
     const table = new PDFTable(doc, {bottomMargin: 30});
     table.addColumns([
-        {id: 'changeDate', width: 150},
+        {id: 'changeDate', width: 130},
         {id: 'length', width: 150},
         {id: 'dates', width: 150, align: 'left'}
     ]);
@@ -151,10 +181,10 @@ function sentenceHistoryContent(doc, items) {
         const keyDateKeys = ['CRD', 'HDCED', 'LED', 'SED'];
 
         const dateString = Object.keys(item).map(key => {
-                if(keyDateKeys.includes(key)) {
-                    return `${key}: ${moment(item[key]).format('DD/MM/YYYY')}`;
-                }
-            })
+            if (keyDateKeys.includes(key)) {
+                return `${key}: ${moment(item[key]).format('DD/MM/YYYY')}`;
+            }
+        })
             .filter(n => n)
             .join('\n');
 
@@ -180,6 +210,22 @@ function courtHearingsContent(doc, items) {
     table.addBody(tableBody);
 }
 
+function categoryContent(doc, items) {
+
+    const table = new PDFTable(doc, {bottomMargin: 30});
+    table.addColumns([
+        {id: 'date', width: 130},
+        {id: 'category', width: 300}
+    ]);
+
+    const tableBody = items.map(item => {
+        const {date, category} = item;
+        return {date: moment(date).format('DD/MM/YYYY'), category: Case.capital(category)};
+    });
+    table.setNewPageFn(table => table.pdf.addPage());
+    table.addBody(tableBody);
+}
+
 function movementContent(doc, items) {
 
     const table = new PDFTable(doc, {bottomMargin: 30});
@@ -191,9 +237,11 @@ function movementContent(doc, items) {
 
     const tableBody = items.map(item => {
         const {date, establishment, type, movement} = item;
-        return {date: moment(date).format('DD/MM/YYYY'),
+        return {
+            date: moment(date).format('DD/MM/YYYY'),
             establishment: Case.capital(establishment),
-            detail: `${type === 'D' ? 'OUT' : 'IN'} - ${Case.sentenceWithAcronyms(movement)}`};
+            detail: `${type === 'D' ? 'OUT' : 'IN'} - ${Case.sentenceWithAcronyms(movement)}`
+        };
     });
     table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
@@ -213,7 +261,8 @@ function hdcInfoContent(doc, items) {
         return {
             stage: Case.sentenceWithAcronyms(stage),
             detail: `${Case.sentenceWithAcronyms(status)}, ${moment(date).format('DD/MM/YYYY')}`,
-            reasons: Case.capitalWithAcronyms(reasons)};
+            reasons: Case.capitalWithAcronyms(reasons)
+        };
     });
     table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
@@ -258,7 +307,8 @@ function offenceContent(doc, items) {
         return {
             date: moment(date).format('DD/MM/YYYY'),
             offenceCode: `Offence code ${code}`,
-            establishment: establishment ? `${Case.sentenceWithAcronyms(establishment)}` : `${establishment_code}`};
+            establishment: establishment ? `${Case.sentenceWithAcronyms(establishment)}` : `${establishment_code}`
+        };
     });
     table.setNewPageFn(table => table.pdf.addPage());
     table.addBody(tableBody);
@@ -290,12 +340,12 @@ function addressContent(doc, items) {
     items.forEach(item => {
         doc.moveDown();
         const {type, person, street, town, county} = item;
-        if(street) {
-            if(type) Case.capital(doc.text(type));
-            if(person) doc.text(Case.capital(person));
-            if(street) doc.text(Case.capitalWithAcronyms(street));
-            if(town) doc.text(Case.capital(town));
-            if(county) doc.text(Case.capital(county));
+        if (street) {
+            if (type) Case.capital(doc.text(type));
+            if (person) doc.text(Case.capital(person));
+            if (street) doc.text(Case.capitalWithAcronyms(street));
+            if (town) doc.text(Case.capital(town));
+            if (county) doc.text(Case.capital(county));
         }
     });
 }
@@ -306,10 +356,10 @@ function aliasContent(doc, items) {
         doc.moveDown();
         const {first, middle, last, birthDate} = item;
 
-        if(first || middle || last) {
+        if (first || middle || last) {
             doc.text(Case.capital(first + ' ' + middle + ' ' + last));
         }
-        if(birthDate) {
+        if (birthDate) {
             doc.text(`Born on: ${moment(birthDate).format('DD/MM/YYYY')}`);
         }
     });

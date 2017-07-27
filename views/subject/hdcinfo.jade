@@ -2,26 +2,27 @@ extends ../subject
 
 block subject-details
     div.column-two-thirds
-        each val,index in data.details[0]
-            div.grid-row.list-row.recall
-                div.column-full
-                    div.left-border
-                        span.quiet.block HDC Recall
-                        div Recall date: #{val.dateCreated}
-                        div Original curfew end date: #{val.originalCurfewEndDate}
-                        div Outcome: #{val.outcome}
-                        div Outcome date: #{val.outcomeDate}
-                        div Reason: #{val.reason}
+        if subject.hdcRecall
+            each val,index in subject.hdcRecall
+                div.grid-row.list-row.recall
+                    div.column-full
+                        div.left-border
+                            span.quiet.block HDC Recall
+                            div Recall date: #{moment(val.createdDate).format('DD/MM/YYYY')}
+                            div Original curfew end date: #{moment(val.curfewEndDate).format('DD/MM/YYYY')}
+                            div Outcome: #{val.outcome}
+                            div Outcome date: #{moment(val.outcomeDate).format('DD/MM/YYYY')}
+                            div Reason: #{setCase.sentenceWithAcronyms(val.reason)}
 
-        if(data.details[1].length > 0)
+        if(subject.hdcInfo && subject.hdcInfo.length > 0)
             div.padTop
-                each val,index in data.details[1]
+                each val,index in subject.hdcInfo
                     div.grid-row.list-row.history.listItem
                         div.column-full
                             div.left-border
-                                span.quiet.block #{val.stage}
-                                span #{val.status}, #{val.date}
-                                div #{val.reason}
+                                span.quiet.block #{setCase.capitalWithAcronyms(val.stage)}
+                                span #{setCase.sentenceWithAcronyms(val.status)}, #{moment(val.date).format('DD/MM/YYYY')}
+                                div #{setCase.capitalWithAcronyms(val.reasons)}
 
-        if (data.details[0].length === 0 && data.details[1].length === 0)
-            span= data.noResultsText
+        if ((!subject.hdcRecall || subject.hdcRecall.length === 0) && (!subject.hdcInfo || subject.hdcInfo.length === 0))
+            span= noResultsText

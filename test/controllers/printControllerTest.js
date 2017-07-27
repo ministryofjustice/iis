@@ -1,6 +1,3 @@
-const {
-    postPrintForm
-} = require('../../controllers/printController');
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
@@ -16,38 +13,16 @@ sinonStubPromise(sinon);
 let reqMock;
 let resMock;
 let subjectStub;
-let sentenceHistoryStub;
-let courtHearingsStub;
-let movementsStub;
-let aliasesStub;
-let addressesStub;
-let offencesStub;
-let hdcinfoStub;
-let hdcrecallStub;
 let createPdfStub;
 let auditStub;
 
-const getController = ({subject = subjectStub,
-                        sentenceHistory = sentenceHistoryStub,
-                        courtHearings = courtHearingsStub,
-                        movements = movementsStub,
-                        aliases = aliasesStub,
-                        addresses = addressesStub,
-                        offences = offencesStub,
-                        hdcinfo = hdcinfoStub,
-                        hdcrecall = hdcrecallStub,
-                        createPdf = createPdfStub} = {}) => {
+const allItems = ['summary', 'sentencing', 'courtHearings', 'movements', 'hdc', 'offences', 'offencesInCustody', 'addresses', 'aliases'];
+const allDataRequests = ['summary', 'sentencing', 'courtHearings', 'movements', 'hdcRecall', 'hdcInfo', 'offences', 'offencesInCustody', 'addresses', 'aliases'];
+
+const getController = ({subject = subjectStub, createPdf = createPdfStub} = {}) => {
     return proxyquire('../../controllers/printController', {
         '../data/subject': {
-            'getSubject': subject,
-            'getSentenceHistory': sentenceHistory,
-            'getCourtHearings': courtHearings,
-            'getMovements': movements,
-            'getAliases': aliases,
-            'getAddresses': addresses,
-            'getOffences': offences,
-            'getHDCInfo': hdcinfo,
-            'getHDCRecall': hdcrecall
+            'getSubject': subject
         },
         './helpers/pdfHelpers': {
             'createPdf': createPdf
@@ -63,27 +38,21 @@ describe('printController', () => {
 
     beforeEach(() => {
         subjectStub = sandbox.stub().returnsPromise().resolves({
-            prisonNumber: '     id1',
-            forename: 'Matthew',
-            forename2: 'James',
-            surname: 'Whitfield',
+            summary: {
+                prisonNumber: '     id1',
+                firstName: 'Matthew',
+                middleName: 'James',
+                lastName: 'Whitfield'
+            }
         });
-        sentenceHistoryStub = sandbox.stub().returnsPromise().resolves([{sentence: '1'}]);
-        courtHearingsStub = sandbox.stub().returnsPromise().resolves([{courtHearing: '1'}]);
-        movementsStub = sandbox.stub().returnsPromise().resolves([{movement: '1'}]);
-        aliasesStub = sandbox.stub().returnsPromise().resolves([{alias: '1'}]);
-        addressesStub = sandbox.stub().returnsPromise().resolves([{address: '1'}]);
-        offencesStub = sandbox.stub().returnsPromise().resolves([{offence: '1'}]);
-        hdcinfoStub = sandbox.stub().returnsPromise().resolves([{hdc: '1'}]);
-        hdcrecallStub = sandbox.stub().returnsPromise().resolves([{recall: '1'}]);
         createPdfStub = sandbox.stub();
         auditStub = sandbox.spy();
 
         reqMock = {
             body: {
-                printOption: ['subject', 'custodyOffences']
+                printOption: ['summary', 'offencesInCustody']
             },
-            query: {prisonNo: '12345678', fields: ['subject', 'custodyOffences']},
+            query: {prisonNo: '12345678', fields: ['summary', 'custodyOffences']},
             user: {email: 'x@y.com'}
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy(), writeHead: sandbox.spy()};
@@ -154,9 +123,26 @@ describe('printController', () => {
 
         it('should redirect to the pdf with the appropriate query string', () => {
 
-            const expectedUrl = '/print/pdf?prisonNo=12345678&fields=subject&fields=custodyOffences';
+            reqMock = {
+                body: {
+                    printOption: allItems
+                },
+                query: {prisonNo: '12345678'},
+                user: {email: 'x@y.com'},
+            };
 
-            postPrintForm(reqMock, resMock);
+            const expectedUrl = '/print/pdf?prisonNo=12345678' +
+                '&fields=summary' +
+                '&fields=sentencing' +
+                '&fields=courtHearings' +
+                '&fields=movements' +
+                '&fields=hdc' +
+                '&fields=offences' +
+                '&fields=offencesInCustody' +
+                '&fields=addresses' +
+                '&fields=aliases';
+
+            getController().postPrintForm(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
             expect(resMock.redirect).to.have.been.calledWith(expectedUrl);
         });
@@ -169,28 +155,28 @@ describe('printController', () => {
         it('should pass the appropriate data to audit', () => {
             getController().postPrintForm(reqMock, resMock);
             expect(auditStub).to.be.calledWith('PRINT', 'x@y.com', {prisonNo: '12345678',
-                fieldsPrinted: ['subject', 'custodyOffences']});
+                fieldsPrinted: ['summary', 'offencesInCustody']});
         });
 
         it('should remove any unexpected inputs', () => {
             reqMock = {
                 body: {
-                    printOption: ['subject', 'custodyOffences', 'matt']
+                    printOption: ['summary', 'offencesInCustody', 'matt']
                 },
                 query: {prisonNo: '12345678'},
                 user: {email: 'x@y.com'},
             };
 
-            const expectedUrl = '/print/pdf?prisonNo=12345678&fields=subject&fields=custodyOffences';
+            const expectedUrl = '/print/pdf?prisonNo=12345678&fields=summary&fields=offencesInCustody';
 
-            postPrintForm(reqMock, resMock);
+            getController().postPrintForm(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
             expect(resMock.redirect).to.have.been.calledWith(expectedUrl);
         });
 
         it('should return to print form if no items are selected', () => {
             reqMock = {
-                body: {printOption: []},
+                body: {},
                 query: {prisonNo: '12345678'},
                 user: {email: 'x@y.com'},
             };
@@ -218,16 +204,16 @@ describe('printController', () => {
 
         it('should get the data for the fields in the query string', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['subject', 'addresses']}
+                query: {prisonNo: '12345678', fields: allItems}
             };
             getController().getPdf(reqMock, resMock);
             expect(subjectStub).to.have.callCount(1);
-            expect(addressesStub).to.have.callCount(1);
+            expect(subjectStub).to.be.calledWith('12345678', allDataRequests);
         });
 
         it('should call createPdf if all data requests resolve successfully', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['subject', 'addresses']}
+                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
             };
             return getController().getPdf(reqMock, resMock).then(() => {
                 expect(createPdfStub).to.have.callCount(1);
@@ -236,23 +222,18 @@ describe('printController', () => {
 
         it('should pass in the data to createpdf', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['subject', 'addresses']}
+                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
             };
 
-            const expectedPrintItems = ['subject', 'addresses'];
-            const expectedData = [{
-                prisonNumber: '     id1',
-                forename: 'Matthew',
-                forename2: 'James',
-                surname: 'Whitfield',
-            }, [{address: '1'}]];
+            const expectedPrintItems = ['summary', 'addresses'];
+            const expectedData = {"summary": {
+                "firstName": "Matthew",
+                "lastName": "Whitfield",
+                "middleName": "James",
+                "prisonNumber": "     id1"
+            }};
             const expectedOptions = {
                 type: 'searchPrint',
-                name: {
-                    forename: 'Matthew',
-                    surname: 'Whitfield',
-                    prisonNumber: '     id1'
-                }
             };
 
             return getController().getPdf(reqMock, resMock).then(() => {
@@ -268,14 +249,14 @@ describe('printController', () => {
             };
 
             const expectedPrintItems = ['offences', 'addresses'];
-            const expectedData = [[{offence: '1'}], [{address: '1'}]];
+            const expectedData = {"summary": {
+                "firstName": "Matthew",
+                "lastName": "Whitfield",
+                "middleName": "James",
+                "prisonNumber": "     id1"
+            }};
             const expectedOptions = {
                 type: 'searchPrint',
-                name: {
-                    forename: 'Matthew',
-                    surname: 'Whitfield',
-                    prisonNumber: '     id1'
-                }
             };
 
             return getController().getPdf(reqMock, resMock).then(() => {
@@ -291,14 +272,14 @@ describe('printController', () => {
             };
 
             const expectedPrintItems = ['addresses'];
-            const expectedData = [[{address: '1'}]];
+            const expectedData = {"summary": {
+                "firstName": "Matthew",
+                "lastName": "Whitfield",
+                "middleName": "James",
+                "prisonNumber": "     id1"
+            }};
             const expectedOptions = {
                 type: 'searchPrint',
-                name: {
-                    forename: 'Matthew',
-                    surname: 'Whitfield',
-                    prisonNumber: '     id1'
-                }
             };
 
             return getController().getPdf(reqMock, resMock).then(() => {
@@ -310,7 +291,7 @@ describe('printController', () => {
 
         it('should not call createPdf if any data requests resolve unsuccessfully', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['subject', 'addresses']}
+                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
             };
 
             const subjectStub = sandbox.stub().returnsPromise().rejects();
@@ -321,7 +302,7 @@ describe('printController', () => {
 
         it('should redirect to print page if any data requests resolve unsuccessfully', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['subject', 'addresses']}
+                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
             };
 
             const subjectStub = sandbox.stub().returnsPromise().rejects();

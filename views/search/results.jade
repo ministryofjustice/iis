@@ -1,17 +1,17 @@
 extends ../layout
-mixin inmate(name, prisonNumber, dob, firstReceptionDate, alias, visited)
-    div.inmateDetails(class=visited ? 'visited' : '')
-        a(href="/subject/#{prisonNumber}/summary#{queryStrings.thisPage}")
+mixin inmate(item)
+    div.inmateDetails(class=item.visited ? 'visited' : '')
+        a(href="/subject/#{item.prisonNumber}/summary#{queryStrings.thisPage}")
             span.inmateContainer
-                span(class=visited ? '' : 'bold-medium').capitalise-text #{name}
-                if dob
-                    span(class=visited ? '' : 'bold-medium') &middot; #{dob}
-                if alias
-                    span.block Matched on alias: #{alias}
-                if prisonNumber
-                    span.prisonNumber.block.text-secondary Prison no. #{prisonNumber}
-                if firstReceptionDate
-                    span.firstReceptionDate.block.text-secondary First reception #{firstReceptionDate}
+                span(class=item.visited ? '' : 'bold-medium').capitalise-text #{setCase.capital(item.firstName +' '+ (item.middleName)) +' '+ item.lastName +' '}
+                if item.dob
+                    span(class=item.visited ? '' : 'bold-medium') &middot; #{moment(item.dob).format('DD/MM/YYYY')}
+                if item.isAlias
+                    span.block Matched on alias: #{setCase.capital(item.aliasFirst + ' ' + item.aliasLast)}
+                if item.prisonNumber
+                    span.prisonNumber.block.text-secondary Prison no. #{item.prisonNumber}
+                if item.receptionDate
+                    span.firstReceptionDate.block.text-secondary First reception #{moment(item.receptionDate).format('DD/MM/YYYY')}
         block
 
 block content
@@ -43,10 +43,8 @@ block content
 
             if data && data != 0
                 div#searchResults
-                    each item in data
-                           +inmate(item.forename + (item.forename2) + item.surname,
-                                   item.prisonNumber, item.dob, item.firstReceptionDate, item.alias, item.visited)
-
+                    each prisoner in data
+                           +inmate(prisoner)
 
             if pagination
                 form(method="post")
@@ -77,9 +75,9 @@ block content
             div.well.search-terms-container
                 h3 Results are based on the following search terms
                 div.search-terms
-                    each value, term  in searchTerms
-                        div
+                    each item, term  in searchTerms
+                        div.searchedTerm
                             span.hint.font-xsmall #{term}
-                            |  #{value}
-
-
+                            |  #{item.value}
+                            div
+                                a(href="/search/edit?formItem=#{item.searchCriteria}") change

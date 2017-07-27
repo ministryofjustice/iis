@@ -5,50 +5,75 @@ const {
     objectKeysInArray,
     itemsInQueryString
 } = require('./helpers/formHelpers');
-const subjectData = require('../data/subject');
+const {getSubject} = require('../data/subject');
 const pdf = require('./helpers/pdfHelpers');
 const audit = require('../data/audit');
+const Case = require('case');
 
 const availablePrintOptions = {
-    subject: {
-        title: 'Subject',
-        addContent: pdf.subjectContent,
-        getData: subjectData.getSubject
+    summary: {
+        summary: {
+            title: 'Subject',
+            addContent: pdf.subjectContent
+        }
     },
-    sentenceHistory: {
-        title: 'Sentence History',
-        addContent: pdf.sentenceHistoryContent,
-        getData: subjectData.getSentenceHistory
+    sentenceSummary: {
+        sentenceSummary: {
+            title: 'Sentence Summary',
+            addContent: pdf.sentenceSummaryContent
+        }
+    },
+    sentencing: {
+        sentencing: {
+            title: 'Sentence History',
+            addContent: pdf.sentenceHistoryContent
+        }
     },
     courtHearings: {
-        title: 'Court Hearings',
-        addContent: pdf.courtHearingsContent,
-        getData: subjectData.getCourtHearings
+        courtHearings: {
+            title: 'Court Hearings',
+            addContent: pdf.courtHearingsContent
+        }
     },
     movements: {
-        title: 'Movements',
-        addContent: pdf.movementContent,
-        getData: subjectData.getMovements
+        movements: {
+            title: 'Movements',
+            addContent: pdf.movementContent
+        }
     },
     hdc: {
-        title: 'HDC history',
-        addContent: pdf.hdcContent,
-        getData: subjectData.getHDCInfo
+        hdcRecall: {
+            title: 'HDC recall',
+            addContent: pdf.hdcRecallContent
+        },
+        hdcInfo: {
+            title: 'HDC history',
+            addContent: pdf.hdcInfoContent
+        }
     },
     offences: {
-        title: 'Offences',
-        addContent: pdf.offenceContent,
-        getData: subjectData.getOffences
+        offences: {
+            title: 'Offences',
+            addContent: pdf.offenceContent
+        }
     },
-    custodyOffences: {
-        title: 'Offences in custody',
-        addContent: pdf.custodyOffenceContent,
-        getData: subjectData.getAdjudications
+    offencesInCustody: {
+        offencesInCustody: {
+            title: 'Offences in custody',
+            addContent: pdf.custodyOffenceContent
+        }
     },
     addresses: {
-        title: 'Addresses',
-        addContent: pdf.addressContent,
-        getData: subjectData.getAddresses
+        addresses: {
+            title: 'Addresses',
+            addContent: pdf.addressContent
+        }
+    },
+    aliases: {
+        aliases: {
+            title: 'Aliases',
+            addContent: pdf.aliasContent
+        }
     }
 };
 
@@ -56,7 +81,10 @@ exports.getPrintForm = (req, res) => {
     logger.debug('GET /print');
     const {prisonNo, err} = req.query;
 
-    if(!prisonNo) return res.redirect('/search');
+    if(!prisonNo) {
+        logger.debug('no prison number');
+        return res.redirect('/search');
+    }
     renderFormPage(res, prisonNo, err);
 };
 
@@ -73,12 +101,12 @@ function renderFormPage(res, prisonNo, err) {
 }
 
 function getNameAndRender(res, renderData) {
-    return subjectData.getSubject(renderData.prisonNumber)
-        .then(subjectData => {
+    return getSubject(renderData.prisonNumber)
+        .then(subject => {
 
             renderData.name = {
-                forename: subjectData.forename.trim(),
-                surname: subjectData.surname.trim()
+                forename: Case.capital(subject.summary.firstName),
+                surname: subject.summary.lastName
             };
 
             return res.render('print', renderData);
@@ -93,15 +121,14 @@ function renderWithoutName(res, renderData) {
 exports.postPrintForm = (req, res) => {
     logger.debug('POST /print');
 
-    const userReturnedOptions = req.body.printOption;
     const prisonNo = req.query.prisonNo;
-
-    audit.record('PRINT', req.user.email, {prisonNo, fieldsPrinted: userReturnedOptions});
-
-    if (!userReturnedOptions || userReturnedOptions.length === 0) {
+    if (!req.body.printOption) {
         logger.warn('No print items selected');
         return renderFormPage(res, prisonNo, 'noneSelected');
     }
+
+    const userReturnedOptions = Array.isArray(req.body.printOption) ? req.body.printOption : [req.body.printOption];
+    audit.record('PRINT', req.user.email, {prisonNo, fieldsPrinted: userReturnedOptions});
 
     const selectedOptions = objectKeysInArray(availablePrintOptions, userReturnedOptions);
     const query = {
@@ -109,53 +136,42 @@ exports.postPrintForm = (req, res) => {
         fields: selectedOptions
     };
 
-    const redirectUrl = url.format({'pathname': '/print/pdf', query});
+    const redirectUrl = url.format({pathname: '/print/pdf', query});
     return res.redirect(redirectUrl);
 };
 
 exports.getPdf = function(req, res) {
 
     const prisonNumber = req.query.prisonNo;
-    if (!prisonNumber || !req.query.fields) return res.redirect('/search');
+    if (!prisonNumber || !req.query.fields) {
+        logger.debug('no prison number or query fields');
+        return res.redirect('/search');
+    }
 
     const fieldsInQuery = Array.isArray(req.query.fields) ? req.query.fields : [req.query.fields];
     const printItems = itemsInQueryString(fieldsInQuery).filter(item => availablePrintOptions[item]);
 
     const dataFunctionsToCall = getDataFunctionsToCall(printItems);
 
-    return Promise.all(dataFunctionsToCall.map(dataFunction => dataFunction(prisonNumber)))
+    return getSubject(prisonNumber, dataFunctionsToCall.map(dataFunction => dataFunction))
         .then(data => {
-            const {subjectData, subjectName} = extractSubjectInfo(data, printItems);
-            pdf.createPdf(res, printItems, subjectData, availablePrintOptions, {type: 'searchPrint', name: subjectName});
+            pdf.createPdf(res, printItems, data, availablePrintOptions, {type: 'searchPrint'});
         })
-        .catch(error => showDbError({error}, prisonNumber, res));
+        .catch(error => {
+            showDbError({error}, prisonNumber, res);
+        });
 };
 
-function getDataFunctionsToCall(printItems) {
-    const itemsSelected = printItems.map(item => availablePrintOptions[item].getData);
-    // we always need subject call to get name
-    if(!itemsSelected.includes(availablePrintOptions.subject.getData)) {
-        itemsSelected.unshift(availablePrintOptions.subject.getData);
-    }
+const getDataFunctionsToCall = printItems => {
+    const flattenedPrintItems = printItems.map(item => Object.keys(availablePrintOptions[item]))
+                                          .reduce((a, b) => a.concat(b), []);
 
-    return itemsSelected;
-}
-
-function extractSubjectInfo(data, printItems) {
-    const subjectName = {
-        forename: data[0].forename.trim(),
-        surname: data[0].surname.trim(),
-        prisonNumber: data[0].prisonNumber
-    };
-    const subjectNotSelected = data.length === printItems.length + 1;
-    const subjectData = subjectNotSelected ? data.filter((item, index) => index !== 0) : data;
-
-    return {subjectData, subjectName};
-}
+    return [...new Set(flattenedPrintItems)];
+};
 
 function showDbError(error, prisonNo, res) {
 
-    console.error(error)
+    console.error(error);
 
     logger.error('Error during data collection for pdf ', error);
 
@@ -163,14 +179,14 @@ function showDbError(error, prisonNo, res) {
         prisonNo,
         err: 'db'
     };
-    const redirectUrl = url.format({'pathname': '/print', query});
+    const redirectUrl = url.format({pathname: '/print', query});
     return res.redirect(redirectUrl);
 }
 
 function getDisplayError(type) {
     const error = {
-        'db': {title: content.pdf.dbError.title, desc: content.pdf.dbError.desc},
-        'noneSelected': {title: content.view.print.noneSelected}
+        db: {title: content.pdf.dbError.title, desc: content.pdf.dbError.desc},
+        noneSelected: {title: content.view.print.noneSelected}
     };
 
     return error[type];

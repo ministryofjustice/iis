@@ -11,16 +11,17 @@ chai.use(sinonChai);
 const sandbox = sinon.sandbox.create();
 
 const standardResponse = [{
-    PK_PRISON_NUMBER: {},
-    INMATE_FORENAME_1: {},
-    INMATE_FORENAME_2: {},
-    INMATE_SURNAME: {value: 'DAVID'},
-    DOB: {value: '19990101'},
-    DATE_1ST_RECEP: {},
-    PERSON_FORENAME_1: {},
-    PERSON_FORENAME_2: {},
-    PERSON_SURNAME: {value: 'ALIAS'},
-    PERSON_BIRTH_DATE: {value: '19990202'},
+    prisonNumber: {value: 'AB111122'},
+    receptionDate: {value: '1999-01-12'},
+    lastName: {value: "SURNAME L"},
+    firstName: {value: "FIRST L"},
+    middleName: {value: "MIDDLE L"},
+    dob: {value: "1980-01-12"},
+    isAlias: {value: false},
+    aliasLast: {value: "SURNAME L"},
+    aliasFirst: {value: "FIRST L"},
+    aliasMiddle: {value: "MIDDLE L"}
+
 }];
 
 describe('Search', () => {
@@ -34,7 +35,7 @@ describe('Search', () => {
                 'getCollection': getCollection,
                 'getTuple': getTuple
             }
-        }).inmate;
+        }).getSearchResults;
     };
 
     afterEach(() => {
@@ -63,13 +64,16 @@ describe('Search', () => {
             const result = inmateProxy()({prisonNumber: 7});
             const expectedResult = [
                 {
-                    'surname': 'DAVID',
-                    'dob': '01/01/1999',
-                    'firstReceptionDate': 'Invalid date',
-                    'forename': "",
-                    'forename2': "",
-                    'prisonNumber': undefined,
-                    'alias' : 'Alias'
+                    "aliasMiddle": "MIDDLE L",
+                    "aliasFirst": "FIRST L",
+                    "aliasLast": "SURNAME L",
+                    "dob": "1980-01-12",
+                    "prisonNumber": "AB111122",
+                    "isAlias": false,
+                    "firstName": "FIRST L",
+                    "lastName": "SURNAME L",
+                    "middleName": "MIDDLE L",
+                    "receptionDate": "1999-01-12",
                 }
             ];
 
@@ -82,43 +86,41 @@ describe('Search', () => {
     describe('WHERE statement', () => {
 
         it('should populate prison number if passed in', () => {
-            const result = inmateProxy()({prisonNumber: 12345678});
+            const result = inmateProxy()({prisonNumber: '12345678'});
 
             return result.then((data) => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER');
-                expect(params[0].column).to.eql('PK_PRISON_NUMBER');
-                expect(params[0].value).to.eql(12345678);
+                expect(sql).to.contain('WHERE PRISON_NUMBER = @PRISON_NUMBER');
+                expect(params[0].column).to.eql('PRISON_NUMBER');
+                expect(params[0].value).to.eql('12345678');
             });
         });
 
         it('should populate PNC number if passed in', () => {
-            const result = inmateProxy()({pncNumber: 7});
+            const result = inmateProxy()({pncNumber: '7'});
 
             return result.then((data) => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain("WHERE iis.IIS_IDENTIFIER.PERSON_IDENT_TYPE_CODE = 'PNC'");
-                expect(sql).to.contain("AND iis.IIS_IDENTIFIER.PERSON_IDENTIFIER_VALUE = @PNC");
-                expect(params[0].column).to.eql('PNC');
-                expect(params[0].value).to.eql(7);
+                expect(sql).to.contain("WHERE PNC_NUMBER = @PNC_NUMBER");
+                expect(params[0].column).to.eql('PNC_NUMBER');
+                expect(params[0].value).to.eql('7');
             });
         });
 
         it('should populate CRO number if passed in', () => {
-            const result = inmateProxy()({croNumber: 7});
+            const result = inmateProxy()({croNumber: '7'});
 
             return result.then((data) => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain("WHERE iis.IIS_IDENTIFIER.PERSON_IDENT_TYPE_CODE = 'CRO'");
-                expect(sql).to.contain("AND iis.IIS_IDENTIFIER.PERSON_IDENTIFIER_VALUE = @CRO");
-                expect(params[0].column).to.eql('CRO');
-                expect(params[0].value).to.eql(7);
+                expect(sql).to.contain("WHERE CRO_NUMBER = @CRO_NUMBER");
+                expect(params[0].column).to.eql('CRO_NUMBER');
+                expect(params[0].value).to.eql('7');
             });
         });
 
@@ -129,8 +131,8 @@ describe('Search', () => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE PERSON_FORENAME_1 LIKE @PERSON_FORENAME_1');
-                expect(params[0].column).to.eql('PERSON_FORENAME_1');
+                expect(sql).to.contain('WHERE FORENAME_1 = @FORENAME_1');
+                expect(params[0].column).to.eql('FORENAME_1');
                 expect(params[0].value).to.eql('Dave');
             });
         });
@@ -142,63 +144,132 @@ describe('Search', () => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE PERSON_FORENAME_1 LIKE @PERSON_FORENAME_1 AND ' +
-                    'PERSON_FORENAME_2 LIKE @PERSON_FORENAME_2 AND ' +
-                    'PERSON_SURNAME LIKE @PERSON_SURNAME');
+                expect(sql).to.contain('WHERE FORENAME_1 = @FORENAME_1 AND ' +
+                    'FORENAME_2 = @FORENAME_2 AND ' +
+                    'SURNAME = @SURNAME');
 
-                expect(params[0].column).to.eql('PERSON_FORENAME_1');
+                expect(params[0].column).to.eql('FORENAME_1');
                 expect(params[0].value).to.eql('Dave');
 
-                expect(params[1].column).to.eql('PERSON_FORENAME_2');
+                expect(params[1].column).to.eql('FORENAME_2');
                 expect(params[1].value).to.eql('James');
 
-                expect(params[2].column).to.eql('PERSON_SURNAME');
+                expect(params[2].column).to.eql('SURNAME');
                 expect(params[2].value).to.eql('Jones');
             });
         });
 
-        it('should populate dob if passed in', () => {
-            const result = inmateProxy()({dobOrAge: 'dob', dobDay: 'date'});
+        it('should use wildcard for full name if percentages used', () => {
+            const result = inmateProxy()({forename: 'Dave%', forename2: 'James%', surname: 'Jones%'});
 
             return result.then((data) => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE PERSON_BIRTH_DATE = @PERSON_BIRTH_DATE');
-                expect(params[0].column).to.eql('PERSON_BIRTH_DATE');
-                expect(params[0].value).to.eql('NaNdate');
-            });
+                expect(sql).to.contain('WHERE FORENAME_1 LIKE @FORENAME_1 AND ' +
+                    'FORENAME_2 LIKE @FORENAME_2 AND ' +
+                    'SURNAME LIKE @SURNAME');
 
+                expect(params[0].column).to.eql('FORENAME_1');
+                expect(params[0].value).to.eql('Dave%');
+
+                expect(params[1].column).to.eql('FORENAME_2');
+                expect(params[1].value).to.eql('James%');
+
+                expect(params[2].column).to.eql('SURNAME');
+                expect(params[2].value).to.eql('Jones%');
+            });
+        });
+
+        it('should automatically use wildcard for first and middle name if initial used', () => {
+            const result = inmateProxy()({forename: 'D', forename2: 'J'});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('WHERE FORENAME_1 LIKE @FORENAME_1 AND ' +
+                    'FORENAME_2 LIKE @FORENAME_2');
+
+                expect(params[0].column).to.eql('FORENAME_1');
+                expect(params[0].value).to.eql('D%');
+
+                expect(params[1].column).to.eql('FORENAME_2');
+                expect(params[1].value).to.eql('J%');
+            });
+        });
+
+        it('should not automatically use wildcard for first and middle name if more than initial used', () => {
+            const result = inmateProxy()({forename: 'Da', forename2: 'Ja'});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('WHERE FORENAME_1 = @FORENAME_1 AND ' +
+                    'FORENAME_2 = @FORENAME_2');
+
+                expect(params[0].column).to.eql('FORENAME_1');
+                expect(params[0].value).to.eql('Da');
+
+                expect(params[1].column).to.eql('FORENAME_2');
+                expect(params[1].value).to.eql('Ja');
+            });
+        });
+
+        it('should populate dob if passed in', () => {
+            const result = inmateProxy()({dobOrAge: 'dob', dobDay: 'dd', dobMonth: 'mm', dobYear: 'yyyy'});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('WHERE BIRTH_DATE = @BIRTH_DATE');
+                expect(params[0].column).to.eql('BIRTH_DATE');
+                expect(params[0].value).to.eql('yyyy-mm-dd');
+            });
+        });
+
+        it('should populate age if passed in', () => {
+            const result = inmateProxy()({dobOrAge: 'age', age: '44-45'});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('BIRTH_DATE >= @from_date AND BIRTH_DATE <= @to_date');
+            });
         });
 
         it('should combine where statements', () => {
-            const result = inmateProxy()({prisonNumber: 77777777, forename: 'Dave'});
+            const result = inmateProxy()({prisonNumber: '77777777', forename: 'Dave'});
 
             return result.then((data) => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER AND ' +
-                    'PERSON_FORENAME_1 LIKE @PERSON_FORENAME_1');
-                expect(params[0].column).to.eql('PK_PRISON_NUMBER');
-                expect(params[0].value).to.eql(77777777);
-                expect(params[1].column).to.eql('PERSON_FORENAME_1');
+                expect(sql).to.contain('WHERE PRISON_NUMBER = @PRISON_NUMBER AND ' +
+                    'FORENAME_1 = @FORENAME_1');
+                expect(params[0].column).to.eql('PRISON_NUMBER');
+                expect(params[0].value).to.eql('77777777');
+                expect(params[1].column).to.eql('FORENAME_1');
                 expect(params[1].value).to.eql('Dave');
             });
         });
 
-        it('should use wildcard if prison number has too few digits', () => {
+
+        it('should not use wildcard if no percentage on name', () => {
             const result = inmateProxy()({prisonNumber: 77, forename: 'Dave'});
 
             return result.then((data) => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE PK_PRISON_NUMBER LIKE @PK_PRISON_NUMBER AND ' +
-                    'PERSON_FORENAME_1 LIKE @PERSON_FORENAME_1');
-                expect(params[0].column).to.eql('PK_PRISON_NUMBER');
-                expect(params[0].value).to.eql('%77%');
-                expect(params[1].column).to.eql('PERSON_FORENAME_1');
+                expect(sql).to.contain('WHERE PRISON_NUMBER = @PRISON_NUMBER AND ' +
+                    'FORENAME_1 = @FORENAME_1');
+                expect(params[0].column).to.eql('PRISON_NUMBER');
+                expect(params[0].value).to.eql(77);
+                expect(params[1].column).to.eql('FORENAME_1');
                 expect(params[1].value).to.eql('Dave');
             });
         });
@@ -210,7 +281,7 @@ describe('Search', () => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE (PERSON_SEX = @gender0)');
+                expect(sql).to.contain('WHERE (SEX = @gender0)');
                 expect(params[0].column).to.eql('gender0');
                 expect(params[0].value).to.eql('M');
             });
@@ -223,7 +294,7 @@ describe('Search', () => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE (PERSON_SEX = @gender0 OR PERSON_SEX = @gender1)');
+                expect(sql).to.contain('WHERE (SEX = @gender0 OR SEX = @gender1)');
                 expect(params[0].column).to.eql('gender0');
                 expect(params[0].value).to.eql('M');
                 expect(params[1].column).to.eql('gender1');
@@ -237,19 +308,19 @@ describe('Search', () => {
             return result.then((data) => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
 
-                expect(sql).to.contain('exists (select 1 from IIS.HDC_HISTORY WHERE FK_PRISON_NUMBER = PK_PRISON_NUMBER)');
+                expect(sql).to.contain("HAS_HDC = 'TRUE'");
             });
         });
     });
 
-    it('should order the data by surname, first initial, then date of first reception.', () => {
+    it('should order the data by alias, surname, first initial, then date of first reception.', () => {
         const result = inmateProxy()({prisonNumber: 7});
 
         return result.then((data) => {
             const sql = getCollectionStub.getCalls()[0].args[0];
             const params = getCollectionStub.getCalls()[0].args[1];
 
-            expect(sql).to.contain('INMATE_SURNAME, SUBSTRING(INMATE_FORENAME_1, 1, 1), DOB, DATE_1ST_RECEP DESC');
+            expect(sql).to.contain('ORDER BY IS_ALIAS, PRIMARY_SURNAME, PRIMARY_INITIAL, BIRTH_DATE, RECEPTION_DATE DESC');
         });
     });
 });

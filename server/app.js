@@ -23,10 +23,9 @@ const index = require('../routes/index');
 const disclaimer = require('../routes/disclaimer');
 const admin = require('../routes/admin');
 
-// remove 2s below to revert to old route
-const search = require('../routes/search2');
-const subject = require('../routes/subject2');
-const print = require('../routes/print2');
+const search = require('../routes/search');
+const subject = require('../routes/subject');
+const print = require('../routes/print');
 
 const content = require('../data/content.js');
 const config = require('../server/config');

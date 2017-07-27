@@ -3,7 +3,7 @@ const logger = require('../log');
 const dob = require('../data/dob');
 const identifier = require('../data/identifier');
 const names = require('../data/names');
-const search = require('../data/search');
+const {getSearchResultsCount, getSearchResults} = require('../data/search');
 const utils = require('../data/utils');
 const audit = require('../data/audit');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
@@ -122,7 +122,7 @@ exports.getResults = function(req, res) {
 
     audit.record('SEARCH', req.user.email, req.session.userInput);
 
-    search.totalRowsForUserInput(req.session.userInput)
+    getSearchResultsCount(req.session.userInput)
         .then(returnedRows => getSearchResultsAndRender(req, res)(returnedRows))
         .catch(error => {
             logger.error('Error during number of rows search: ' + error.message);
@@ -146,7 +146,7 @@ function getSearchResultsAndRender(req, res) {
             return res.redirect(getReferrerUrlWithInvalidPage(req, currentPage));
         }
 
-        return search.inmate(req.session.userInput).then(searchResult => {
+        return getSearchResults(req.session.userInput).then(searchResult => {
             return res.render('search/results', parseResultsPageData(req, rowCount, searchResult, currentPage));
         }).catch(error => {
             logger.error('Error during inmate search: ' + error.message);
@@ -155,6 +155,44 @@ function getSearchResultsAndRender(req, res) {
         });
     };
 }
+
+exports.getEditSearch = function(req, res) {
+    const formItemSelected = req.query.formItem;
+
+    if(!formItemSelected || !Object.keys(availableSearchOptions).includes(formItemSelected) || !req.session.userInput) {
+        return res.redirect('/search');
+    }
+
+    const formContents = availableSearchOptions[formItemSelected].fields.reduce((formObject, formItem) => {
+        if(req.session.userInput[formItem]) {
+            return Object.assign({}, formObject, {[formItem]: req.session.userInput[formItem]});
+        }
+        return formObject;
+    }, {});
+
+    res.render('search/full-search', {
+        content: content.view.search,
+        searchItems: formItemSelected,
+        hints: availableSearchOptions[formItemSelected].hints,
+        formContents
+    });
+};
+
+exports.postEditSearch = function(req, res) {
+    const oldUserInput = Object.assign({}, req.session.userInput);
+    const newUserInput = userInputFromSearchForm(req.body);
+    const removeIfCurrentCriteria = removeAllFromSameCriteriaConstructor(oldUserInput, newUserInput);
+    const oldInputWithoutCurrentCriteria = Object.keys(oldUserInput).reduce(removeIfCurrentCriteria, {});
+
+    const searchItems = itemsInQueryString(req.query).filter(item => availableSearchOptions[item]);
+    if (!inputValidates(searchItems, newUserInput)) {
+        logger.info('Server side input validation used');
+        return res.redirect('/search');
+    }
+
+    req.session.userInput = Object.assign({}, oldInputWithoutCurrentCriteria, newUserInput);
+    res.redirect('/search/results');
+};
 
 function parseResultsPageData(req, rowcount, data, page) {
     return {
@@ -166,7 +204,9 @@ function parseResultsPageData(req, rowcount, data, page) {
         err: getPaginationErrors(req.query),
         filtersForView: getInputtedFilters(req.query, 'VIEW'),
         queryStrings: getQueryStringsForSearch(req.url),
-        searchTerms: getSearchTermsForView(req.session.userInput)
+        searchTerms: getSearchTermsForView(req.session.userInput),
+        moment: require('moment'),
+        setCase: require('case')
     };
 }
 
@@ -268,7 +308,7 @@ function getPageTitle(rowcount) {
 }
 
 function addSelectionVisitedData(data, session) {
-    if (!session.visited || session.visited.length === 0) {
+    if (!data || !session.visited || session.visited.length === 0) {
         return data;
     }
 
@@ -299,19 +339,35 @@ function getSearchTermsForView(userInput) {
 }
 
 const searchTermObjectWithDob = userInput => {
-    let dobParts = [userInput['dobDay'], userInput['dobMonth'], userInput['dobYear']];
-    return {
-        [content.termDisplayNames['dob'].name]: dobParts.join('/')
-    };
+    const value = [userInput['dobDay'], userInput['dobMonth'], userInput['dobYear']].join('/');
+    const itemName = content.termDisplayNames['dob'].name;
+
+    return searchTermObject('dob', itemName, false, value);
 };
 
 const searchTermInCorrectCase = userInput => (allTerms, searchTerm) => {
 
+    const searchCriteria = searchCriteriaForInputType(searchTerm);
     const itemName = content.termDisplayNames[searchTerm].name;
+    const capitaliseName = content.termDisplayNames[searchTerm].textFormat === 'capitalise';
+    const termObject = searchTermObject(searchCriteria, itemName, capitaliseName, userInput[searchTerm]);
 
-    if(content.termDisplayNames[searchTerm].textFormat === 'capitalise') {
-        return Object.assign({}, allTerms, {[itemName]: Case.capital(userInput[searchTerm])});
-    }
-
-    return Object.assign({}, allTerms, {[itemName]: userInput[searchTerm]});
+    return Object.assign({}, allTerms, termObject);
 };
+
+const searchCriteriaForInputType = term => {
+    return Object.keys(availableSearchOptions).find(criteria => availableSearchOptions[criteria].fields.includes(term));
+};
+
+const searchTermObject = (searchCriteria, itemName, capitaliseValue, value) => {
+    const valueWithCase = capitaliseValue ? Case.capital(value) : value;
+    return {[itemName]: {searchCriteria, value: valueWithCase}};
+};
+
+const removeAllFromSameCriteriaConstructor = (existingUserInput, userInput) => (newObj, inputType) => {
+    const searchCriteria = searchCriteriaForInputType(Object.keys(userInput)[0]);
+    if(availableSearchOptions[searchCriteria].fields.includes(inputType)) {
+        return newObj;
+    }
+    return Object.assign({}, newObj, {[inputType]: existingUserInput[inputType]});
+}

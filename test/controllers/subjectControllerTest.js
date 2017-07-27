@@ -13,12 +13,6 @@ describe('subjectController', () => {
     let reqMock;
     let resMock;
     let subjectStub;
-    let movementsStub;
-    let aliasesStub;
-    let addressesStub;
-    let offencesStub;
-    let hdcinfoStub;
-    let hdcrecallStub;
     let auditSpy;
 
     beforeEach(() => {
@@ -31,16 +25,10 @@ describe('subjectController', () => {
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
 
         subjectStub = sandbox.stub().returnsPromise().resolves({
-            prisonNumber: '     id1',
+            prisonNumber: 'id1',
             personIdentifier: '1',
             dob: '1'
         });
-        movementsStub = sandbox.stub().returns(null);
-        aliasesStub = sandbox.stub().returnsPromise().resolves({dob: '1'});
-        addressesStub = sandbox.stub().returns(null);
-        offencesStub = sandbox.stub().returnsPromise().resolves({dob: '1'});
-        hdcinfoStub = sandbox.stub().returnsPromise().resolves();
-        hdcrecallStub = sandbox.stub().returns(null);
         auditSpy = sandbox.spy();
     });
 
@@ -48,25 +36,10 @@ describe('subjectController', () => {
         sandbox.reset();
     });
 
-    const getSubject = ({
-                            subject = subjectStub,
-                            movements = movementsStub,
-                            aliases = aliasesStub,
-                            addresses = addressesStub,
-                            offences = offencesStub,
-                            hdcinfo = hdcinfoStub,
-                            hdcrecall = hdcrecallStub
-                        } = {}) => {
+    const getSubject = ({subject = subjectStub} = {}) => {
         return proxyquire('../../controllers/subjectController', {
             '../data/subject': {
                 'getSubject': subject,
-                'getMovements': movements,
-                'getAliases': aliases,
-                'getAddresses': addresses,
-                'getOffences': offences,
-                'getHDCInfo': hdcinfo,
-                'getHDCRecall': hdcrecall
-
             },
             '../data/audit': {
                 'record': auditSpy
@@ -89,76 +62,153 @@ describe('subjectController', () => {
         it('should audit that the page has been viewed', () => {
             getSubject()(reqMock, resMock);
             expect(auditSpy).to.have.callCount(1);
-            expect(auditSpy).to.be.calledWith('VIEW', 'x@y.com', {page: 'aliases', prisonNumber: '     id1'});
+            expect(auditSpy).to.be.calledWith('VIEW', 'x@y.com', {page: 'aliases', prisonNumber: 'id1'});
         });
 
         it('should call getSummary and pass in prison number', () => {
             getSubject()(reqMock, resMock);
             expect(subjectStub).to.have.callCount(1);
-            expect(subjectStub).to.be.calledWith('     id1');
+            expect(subjectStub).to.be.calledWith('id1');
         });
 
-        it('should get data for the appropriate page', () => {
-            getSubject()(reqMock, resMock);
-            expect(aliasesStub).to.have.callCount(1);
-            expect(aliasesStub).to.be.calledWith('     id1');
-        });
+        describe('data requested', () => {
+            it('should get data for the appropriate page if aliases', () => {
+                getSubject()(reqMock, resMock);
+                expect(subjectStub).to.have.callCount(1);
+                expect(subjectStub).to.be.calledWith('id1', ['aliases']);
+            });
 
-        it('should get data for the appropriate page if not summary', () => {
-            reqMock.params.page = 'hdcinfo';
-            getSubject()(reqMock, resMock);
-            expect(hdcinfoStub).to.have.callCount(1);
-            expect(hdcinfoStub).to.be.calledWith('     id1');
-            expect(hdcrecallStub).to.have.callCount(1);
-            expect(hdcrecallStub).to.be.calledWith('     id1');
+            it('should get data for the appropriate page if hdcinfo', () => {
+                reqMock.params.page = 'hdcinfo';
+                getSubject()(reqMock, resMock);
+                expect(subjectStub).to.have.callCount(1);
+                expect(subjectStub).to.be.calledWith('id1', ['hdcRecall', 'hdcInfo']);
+            });
+
+            it('should get data for the appropriate page if movements', () => {
+                reqMock.params.page = 'movements';
+                getSubject()(reqMock, resMock);
+                expect(subjectStub).to.have.callCount(1);
+                expect(subjectStub).to.be.calledWith('id1', ['movements']);
+            });
+
+            it('should get data for the appropriate page if addresses', () => {
+                reqMock.params.page = 'addresses';
+                getSubject()(reqMock, resMock);
+                expect(subjectStub).to.have.callCount(1);
+                expect(subjectStub).to.be.calledWith('id1', ['addresses']);
+            });
+
+            it('should get data for the appropriate page if offences', () => {
+                reqMock.params.page = 'offences';
+                getSubject()(reqMock, resMock);
+                expect(subjectStub).to.have.callCount(1);
+                expect(subjectStub).to.be.calledWith('id1', ['offences']);
+            });
+
+            it('should get data for the appropriate page if offencesInCustody', () => {
+                reqMock.params.page = 'offencesincustody';
+                getSubject()(reqMock, resMock);
+                expect(subjectStub).to.have.callCount(1);
+                expect(subjectStub).to.be.calledWith('id1', ['offencesInCustody']);
+            });
+
+            it('should get data for the appropriate page if summary', () => {
+                reqMock.params.page = 'summary';
+                getSubject()(reqMock, resMock);
+                expect(subjectStub).to.have.callCount(1);
+                expect(subjectStub).to.be.calledWith('id1', ['sentenceSummary']);
+            });
         });
 
         it('should render the appropriate subject page', () => {
             return getSubject()(reqMock, resMock).then(() => {
                 expect(resMock.render).to.have.callCount(1);
-                expect(resMock.render).to.be.calledWith('subject/aliases');
-            })
+                expect(resMock.render.getCall(0).args[0]).to.eql('subject/aliases');
+            });
         });
 
         it('should render the appropriate subject page if not summary', () => {
             reqMock.params.page = 'offences';
             return getSubject()(reqMock, resMock).then(() => {
                 expect(resMock.render).to.have.callCount(1);
-                expect(resMock.render).to.be.calledWith('subject/offences');
+                expect(resMock.render.getCall(0).args[0]).to.eql('subject/offences');
             });
         });
 
-        it('should send appropriate data to page', () => {
-            reqMock.params.page = 'offences';
-            return getSubject()(reqMock, resMock).then(() => {
-                expect(resMock.render).to.be.calledWith('subject/offences', {
-                    content: {
-                        addresses: "Prisoner has no addresses",
-                        aliases: "Prisoner has no aliases",
-                        hdcinfo: "Prisoner has no HDC information",
-                        hdcrecall: "Prisoner has no HDC recall history",
-                        movements: "Prisoner has no movements",
-                        offences: "Prisoner has no offences",
-                        offencesincustody: "Prisoner has no offences in custody",
-                        sentences: "Prisoner has no sentence history",
-                        title: "Prisoner details"
-                    },
-                    data: {
-                        details: {dob: "1"},
-                        noResultsText: "Prisoner has no offences",
-                        subject: {dob: "1", personIdentifier: "1", prisonNumber: "     id1"}
-                    },
-                    nav: {
-                        addresses: {title: "Addresses"},
-                        aliases: {title: "Aliases"},
-                        hdcinfo: {title: "HDC recalls and history"},
-                        movements: {title: "Movements"},
-                        offences: {active: true, title: "Offences"},
-                        offencesincustody: {title: "Offences in custody"},
-                        sentences: {title: "Sentence history"},
-                        summary: {title: "Sentence summary"}
-                    },
-                    returnQuery: "?page=2&filters=Female"
+        describe('page data', () => {
+            it('should send appropriate subject data to page', () => {
+                reqMock.params.page = 'offences';
+                return getSubject()(reqMock, resMock).then(() => {
+                    expect(resMock.render.getCall(0).args[0]).to.eql('subject/offences');
+                    expect(resMock.render.getCall(0).args[1].subject).to.eql({dob: "1", personIdentifier: "1", prisonNumber: "id1"});
+                });
+            });
+
+            it('should send return query to page', () => {
+                reqMock.params.page = 'offences';
+                return getSubject()(reqMock, resMock).then(() => {
+                    expect(resMock.render.getCall(0).args[1].returnQuery).to.eql("?page=2&filters=Female");
+                });
+            });
+
+            it('should send no results text to page', () => {
+                reqMock.params.page = 'offences';
+                return getSubject()(reqMock, resMock).then(() => {
+                    expect(resMock.render.getCall(0).args[1].noResultsText).to.eql("Prisoner has no offences");
+                });
+            });
+
+            it('should send no results text to page', () => {
+                reqMock.params.page = 'offences';
+                return getSubject()(reqMock, resMock).then(() => {
+                    expect(resMock.render.getCall(0).args[1].noResultsText).to.eql("Prisoner has no offences");
+                });
+            });
+
+            it('should send content to page', () => {
+                reqMock.params.page = 'offences';
+                return getSubject()(reqMock, resMock).then(() => {
+                    expect(resMock.render.getCall(0).args[1].content).to.eql({
+                        title: 'Prisoner details',
+                        aliases: 'Prisoner has no aliases',
+                        offencesincustody: 'Prisoner has no offences in custody',
+                        movements: 'Prisoner has no movements',
+                        hdcinfo: 'Prisoner has no HDC information',
+                        hdcrecall: 'Prisoner has no HDC recall history',
+                        offences: 'Prisoner has no offences',
+                        addresses: 'Prisoner has no addresses',
+                        sentences: 'Prisoner has no sentence history'
+                    });
+                });
+            });
+
+            it('should send nav content to page', () => {
+                reqMock.params.page = 'offences';
+                return getSubject()(reqMock, resMock).then(() => {
+                    expect(resMock.render.getCall(0).args[1].nav).to.eql({
+                        summary: {title: 'Sentence summary'},
+                        sentences: {title: 'Sentence history'},
+                        movements: {title: 'Movements'},
+                        hdcinfo: {title: 'HDC recalls and history'},
+                        offences: {title: 'Offences', active: true},
+                        offencesincustody: {title: 'Offences in custody'},
+                        aliases: {title: 'Aliases'},
+                        addresses: {title: 'Addresses'}
+                    });
+                });
+            });
+
+            it('should send moment and case to page', () => {
+                reqMock.params.page = 'offences';
+                return getSubject()(reqMock, resMock).then(() => {
+                    expect(resMock.render.getCall(0).args[1].moment).to.eql(require('moment'));
+                    expect(resMock.render.getCall(0).args[1].setCase).to.eql({
+                        sentence: require('../../controllers/helpers/textHelpers').sentence,
+                        capital: require('../../controllers/helpers/textHelpers').capital,
+                        capitalWithAcronyms: require('../../controllers/helpers/textHelpers').capitalWithAcronyms,
+                        sentenceWithAcronyms: require('../../controllers/helpers/textHelpers').sentenceWithAcronyms
+                    });
                 });
             });
         });

@@ -11,11 +11,15 @@ const Case = require('case');
 
 const {
     objectKeysInArray,
-    itemsInQueryString
+    itemsInQueryString,
+    removeArrayContentsFromObject,
+    formItemsArray,
+    filterUserInputByArray,
+    arrayDifference
 } = require('./helpers/formHelpers');
 const {
     getInputtedFilters,
-    removeAllFilters
+    addFiltersToUserInput
 } = require('./helpers/filterHelpers');
 const {
     getQueryStringsForSearch,
@@ -42,6 +46,12 @@ const availableSearchOptions = exports.availableSearchOptions = {
         hints: []
     }
 };
+
+const allAcceptableFields = Object.keys(availableSearchOptions).reduce((acceptableFields, searchOptionKey) => {
+    return acceptableFields.concat(...availableSearchOptions[searchOptionKey].fields);
+}, []);
+
+const extractSearchFields = filterUserInputByArray(allAcceptableFields);
 
 exports.getIndex = function(req, res) {
     logger.debug('GET /search');
@@ -119,10 +129,13 @@ exports.getResults = function(req, res) {
     }
 
     req.session.userInput = addFiltersToUserInput(req.session.userInput, req.query);
+    req.session.hidden = typeof req.query.hidden === 'string' ? [req.query.hidden] : req.query.hidden;
 
-    audit.record('SEARCH', req.user.email, req.session.userInput);
+    const unhiddenUserInput = getUnhiddenUserInput(req.session.userInput, req.session.hidden);
 
-    getSearchResultsCount(req.session.userInput)
+    audit.record('SEARCH', req.user.email, unhiddenUserInput);
+
+    getSearchResultsCount(unhiddenUserInput)
         .then(returnedRows => getSearchResultsAndRender(req, res)(returnedRows))
         .catch(error => {
             logger.error('Error during number of rows search: ' + error.message);
@@ -131,10 +144,15 @@ exports.getResults = function(req, res) {
         });
 };
 
+function getUnhiddenUserInput(userInput, hiddenArray) {
+    return hiddenArray && hiddenArray.length > 0 ? removeArrayContentsFromObject(userInput, hiddenArray) : userInput;
+}
+
 function getSearchResultsAndRender(req, res) {
 
     const currentPage = getCurrentPage(req.query);
     req.session.userInput.page = currentPage;
+    const unhiddenUserInput = getUnhiddenUserInput(req.session.userInput, req.session.hidden);
 
     return function(rowCountData) {
         const rowCount = rowCountData.totalRows.value;
@@ -146,7 +164,7 @@ function getSearchResultsAndRender(req, res) {
             return res.redirect(getReferrerUrlWithInvalidPage(req, currentPage));
         }
 
-        return getSearchResults(req.session.userInput).then(searchResult => {
+        return getSearchResults(unhiddenUserInput).then(searchResult => {
             return res.render('search/results', parseResultsPageData(req, rowCount, searchResult, currentPage));
         }).catch(error => {
             logger.error('Error during inmate search: ' + error.message);
@@ -204,7 +222,7 @@ function parseResultsPageData(req, rowcount, data, page) {
         err: getPaginationErrors(req.query),
         filtersForView: getInputtedFilters(req.query, 'VIEW'),
         queryStrings: getQueryStringsForSearch(req.url),
-        searchTerms: getSearchTermsForView(req.session.userInput),
+        searchTerms: getSearchTermsForView(req.session.userInput, req.session.hidden),
         moment: require('moment'),
         setCase: require('case')
     };
@@ -260,6 +278,25 @@ exports.postFilters = function(req, res) {
 
     res.redirect(createUrl('/search/results', newQueryObject));
 };
+
+exports.postToggle = function(req, res) {
+    const toggleCriteria = formItemsArray(req.body.toggle_criteria);
+    const searchTermsInUserInput = extractSearchFields(req.session.userInput);
+    const itemsToggledOff = arrayDifference(searchTermsInUserInput, toggleCriteria);
+    const allItemsToggledOff = addDobFields(toggleCriteria, itemsToggledOff);
+    const newQueryObject = mergeIntoQuery(req.query, {hidden: allItemsToggledOff});
+    newQueryObject.page = '1';
+
+    res.redirect(createUrl('/search/results', newQueryObject));
+};
+
+function addDobFields(userInput, itemsOff) {
+    const dobFields = ['dobDay', 'dobMonth', 'dobYear'];
+    if (!userInput.includes('dob')) {
+        return itemsOff;
+    }
+    return itemsOff.filter(field => field !== 'dobOrAge' && !dobFields.includes(field));
+}
 
 const getPaginationErrors = query => {
     if (query.invalidPage) {
@@ -318,50 +355,52 @@ function addSelectionVisitedData(data, session) {
     });
 }
 
-function addFiltersToUserInput(userInput, query) {
-    const filtersForQuery = getInputtedFilters(query, 'QUERY');
-    const cleanInput = removeAllFilters(userInput);
+function getSearchTermsForView(userInput, hiddenList) {
 
-    if (!filtersForQuery) {
-        return Object.assign({}, cleanInput);
-    }
-    return Object.assign({}, cleanInput, filtersForQuery);
-}
-
-
-function getSearchTermsForView(userInput) {
-
-    const searchTerms = (userInput['dobOrAge'] === 'dob') ? searchTermObjectWithDob(userInput) : {};
+    const searchTerms = (userInput['dobOrAge'] === 'dob') ? searchTermObjectWithDob(userInput, hiddenList) : {};
 
     return Object.keys(userInput).filter(searchItem => content.termDisplayNames[searchItem])
-                                 .reduce(searchTermInCorrectCase(userInput), searchTerms);
+                                 .reduce(searchTermObjectForView(userInput, hiddenList), searchTerms);
 
 }
 
-const searchTermObjectWithDob = userInput => {
+const searchTermObjectWithDob = (userInput, hiddenList) => {
     const value = [userInput['dobDay'], userInput['dobMonth'], userInput['dobYear']].join('/');
     const itemName = content.termDisplayNames['dob'].name;
 
-    return searchTermObject('dob', itemName, false, value);
+    const termOptions = {
+        capitaliseValue: false,
+        hidden: !!(hiddenList && (hiddenList.includes('dobDay') ||
+                                  hiddenList.includes('dobMonth') ||
+                                  hiddenList.includes('dobYear')))
+    };
+
+    return searchTermObject(itemName, value, 'dob', termOptions, 'dob');
 };
 
-const searchTermInCorrectCase = userInput => (allTerms, searchTerm) => {
-
-    const searchCriteria = searchCriteriaForInputType(searchTerm);
+const searchTermObjectForView = (userInput, hiddenList) => (allTerms, searchTerm) => {
     const itemName = content.termDisplayNames[searchTerm].name;
-    const capitaliseName = content.termDisplayNames[searchTerm].textFormat === 'capitalise';
-    const termObject = searchTermObject(searchCriteria, itemName, capitaliseName, userInput[searchTerm]);
+    const value = userInput[searchTerm];
+    const searchCriteria = searchCriteriaForInputType(searchTerm);
+    const termOptions = {
+        capitaliseValue: content.termDisplayNames[searchTerm].textFormat === 'capitalise',
+        hidden: !!(hiddenList && hiddenList.includes(searchTerm))
+    };
 
-    return Object.assign({}, allTerms, termObject);
+    return Object.assign({}, allTerms, searchTermObject(itemName, value, searchCriteria, termOptions, searchTerm));
 };
 
 const searchCriteriaForInputType = term => {
-    return Object.keys(availableSearchOptions).find(criteria => availableSearchOptions[criteria].fields.includes(term));
+    return Object.keys(availableSearchOptions).find(criteria => {
+        return availableSearchOptions[criteria].fields.includes(term);
+    });
 };
 
-const searchTermObject = (searchCriteria, itemName, capitaliseValue, value) => {
+const searchTermObject = (itemName, value, searchCriteria, termOptions, searchTerm) => {
+    const {capitaliseValue, hidden} = termOptions;
+
     const valueWithCase = capitaliseValue ? Case.capital(value) : value;
-    return {[itemName]: {searchCriteria, value: valueWithCase}};
+    return {[itemName]: {searchCriteria, value: valueWithCase, hidden, searchTerm}};
 };
 
 const removeAllFromSameCriteriaConstructor = (existingUserInput, userInput) => (newObj, inputType) => {
@@ -370,4 +409,4 @@ const removeAllFromSameCriteriaConstructor = (existingUserInput, userInput) => (
         return newObj;
     }
     return Object.assign({}, newObj, {[inputType]: existingUserInput[inputType]});
-}
+};

@@ -235,9 +235,8 @@ abbr { border-bottom: 1px dashed #6F777B; }
 .search-terms-container h3 { margin-bottom: 10px; }
 .hint { color: #6f777b; }
 div.search-terms a {
+    display: block;
     font-size: medium;
-}
-.search-terms div{
-    line-height: 90%;
-    padding-bottom: 10px;
+    padding-bottom: 15px;
+    padding-left: 23px;
 }

@@ -7,7 +7,8 @@ gulp.task('webpack', [
     'webpackSearch',
     'webpackMoreless',
     'webpackReveal',
-    'webpackAdmin'
+    'webpackAdmin',
+    'webpackResults'
 ]);
 
 gulp.task('webpackSearch', function() {
@@ -87,6 +88,30 @@ gulp.task('webpackAdmin', function() {
         .pipe(webpackStream({
             output: {
                 filename: 'adminBundle.js'
+            },
+            module: {
+                rules: [{
+                    loader: 'babel-loader',
+                    exclude: [/node_modules/],
+                    query: {
+                        presets: [['es2015', {'loose': true}]]
+                    }
+                }]
+            },
+            externals: {
+                //  require("jquery") is external and available
+                //  on the global var jQuery
+                jquery: 'jQuery'
+            }
+        }, webpack2))
+        .pipe(gulp.dest('./public/javascripts'));
+});
+
+gulp.task('webpackResults', function() {
+    return gulp.src('./assets/javascripts/results/submitChange.js')
+        .pipe(webpackStream({
+            output: {
+                filename: 'resultsBundle.js'
             },
             module: {
                 rules: [{

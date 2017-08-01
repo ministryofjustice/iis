@@ -10,7 +10,8 @@ const {
     postPagination,
     postFilters,
     getEditSearch,
-    postEditSearch
+    postEditSearch,
+    postToggle
 } = require('../controllers/searchController');
 
 // eslint-disable-next-line
@@ -30,7 +31,9 @@ router.post('/form', postSearchForm);
 router.get('/results', getResults);
 router.post('/results', postPagination);
 router.post('/results/filters', postFilters);
+router.post('/results/filters', postToggle);
 router.get('/edit', getEditSearch);
 router.post('/edit', postEditSearch);
+router.post('/results/toggle', postToggle);
 
 module.exports = router;

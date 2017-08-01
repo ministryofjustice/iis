@@ -75,9 +75,13 @@ block content
             div.well.search-terms-container
                 h3 Results are based on the following search terms
                 div.search-terms
-                    each item, term  in searchTerms
-                        div.searchedTerm
-                            span.hint.font-xsmall #{term}
-                            |  #{item.value}
-                            div
+                    form(method="post" name="toggleTerm" action='/search/results/toggle')
+                        input(type="hidden" name="_csrf" value="#{csrfToken}")
+                        each item, term  in searchTerms
+                            div.searchedTerm
+                                input(type="checkbox" name="toggle_criteria" value="#{item.searchTerm}" checked=item.hidden ? undefined : 'checked')
+                                span.hint.font-xsmall #{term}
+                                |  #{item.value}
                                 a(href="/search/edit?formItem=#{item.searchCriteria}") change
+block append scripts
+    script(src="/public/javascripts/resultsBundle.js?#{version}")

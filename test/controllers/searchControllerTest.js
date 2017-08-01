@@ -5,7 +5,8 @@ const {
     postPagination,
     postFilters,
     getEditSearch,
-    postEditSearch
+    postEditSearch,
+    postToggle
 } = require('../../controllers/searchController');
 const chai = require('chai');
 const sinon = require('sinon');
@@ -317,10 +318,10 @@ describe('searchController', () => {
                         nextPage: "?page=3&filters=Female"
                     },
                     searchTerms: {
-                        "First name": { searchCriteria: "names", value: "Matthew" },
-                        "Last name": { searchCriteria: "names", value: "Whitfield" },
-                        "Middle name": { searchCriteria: "names", value: "James" },
-                        "Prison number": { searchCriteria: "identifier", value: "666" }
+                        "First name": { searchCriteria: "names", value: "Matthew", searchTerm: "forename", hidden: false },
+                        "Last name": { searchCriteria: "names", value: "Whitfield", searchTerm: "surname", hidden: false },
+                        "Middle name": { searchCriteria: "names", value: "James", searchTerm: "forename2", hidden: false },
+                        "Prison number": { searchCriteria: "identifier", value: "666", searchTerm: "prisonNumber", hidden: false }
                     },
                     moment: require('moment'),
                     setCase: require('case')
@@ -390,10 +391,10 @@ describe('searchController', () => {
                         nextPage: "?page=3&filters=Female"
                     },
                     searchTerms: {
-                        "First name": { searchCriteria: "names", value: "Matthew" },
-                        "Last name": { searchCriteria: "names", value: "Whitfield" },
-                        "Middle name": { searchCriteria: "names", value: "James" },
-                        "Prison number": { searchCriteria: "identifier", value: "666" }
+                        "First name": { searchCriteria: "names", value: "Matthew", searchTerm: "forename", hidden: false },
+                        "Last name": { searchCriteria: "names", value: "Whitfield", searchTerm: "surname", hidden: false },
+                        "Middle name": { searchCriteria: "names", value: "James", searchTerm: "forename2", hidden: false },
+                        "Prison number": { searchCriteria: "identifier", value: "666", searchTerm: "prisonNumber", hidden: false }
                     },
                     moment: require('moment'),
                     setCase: require('case')
@@ -427,10 +428,10 @@ describe('searchController', () => {
                         nextPage: "?page=2"
                     },
                     searchTerms: {
-                        "First name": { searchCriteria: "names", value: "Matthew" },
-                        "Last name": { searchCriteria: "names", value: "Whitfield" },
-                        "Middle name": { searchCriteria: "names", value: "James" },
-                        "Prison number": { searchCriteria: "identifier", value: "666" }
+                        "First name": { searchCriteria: "names", value: "Matthew", searchTerm: "forename", hidden: false },
+                        "Last name": { searchCriteria: "names", value: "Whitfield", searchTerm: "surname", hidden: false },
+                        "Middle name": { searchCriteria: "names", value: "James", searchTerm: "forename2", hidden: false },
+                        "Prison number": { searchCriteria: "identifier", value: "666", searchTerm: "prisonNumber", hidden: false }
                     },
                     moment: require('moment'),
                     setCase: require('case')
@@ -474,10 +475,10 @@ describe('searchController', () => {
                         nextPage: "?page=3&filters=Female"
                     },
                     searchTerms: {
-                        "First name": { searchCriteria: "names", value: "Matthew" },
-                        "Last name": { searchCriteria: "names", value: "Whitfield" },
-                        "Middle name": { searchCriteria: "names", value: "James" },
-                        "Prison number": { searchCriteria: "identifier", value: "666" }
+                        "First name": { searchCriteria: "names", value: "Matthew", searchTerm: "forename", hidden: false },
+                        "Last name": { searchCriteria: "names", value: "Whitfield", searchTerm: "surname", hidden: false },
+                        "Middle name": { searchCriteria: "names", value: "James", searchTerm: "forename2", hidden: false },
+                        "Prison number": { searchCriteria: "identifier", value: "666", searchTerm: "prisonNumber", hidden: false }
                     },
                     moment: require('moment'),
                     setCase: require('case')
@@ -514,10 +515,10 @@ describe('searchController', () => {
                         nextPage: "?page=3&filters=Female"
                     },
                     searchTerms: {
-                        "First name": { searchCriteria: "names", value: "Matthew" },
-                        "Last name": { searchCriteria: "names", value: "Whitfield" },
-                        "Middle name": { searchCriteria: "names", value: "James" },
-                        "Prison number": { searchCriteria: "identifier", value: "666" }
+                        "First name": { searchCriteria: "names", value: "Matthew", searchTerm: "forename", hidden: false },
+                        "Last name": { searchCriteria: "names", value: "Whitfield", searchTerm: "surname", hidden: false },
+                        "Middle name": { searchCriteria: "names", value: "James", searchTerm: "forename2", hidden: false },
+                        "Prison number": { searchCriteria: "identifier", value: "666", searchTerm: "prisonNumber", hidden: false }
                     },
                     moment: require('moment'),
                     setCase: require('case')
@@ -563,13 +564,13 @@ describe('searchController', () => {
                         nextPage: "?page=3&filters=Female"
                     },
                     searchTerms: {
-                        "CRO number": { searchCriteria: "identifier", value: "CRO/456" },
-                        "Date of birth": { searchCriteria: "dob", value: "01/02/1999" },
-                        "First name": { searchCriteria: "names", value: "Matthew" },
-                        "Last name": { searchCriteria: "names", value: "Whitfield" },
-                        "Middle name": { searchCriteria: "names", value: "James" },
-                        "PNC number": { searchCriteria: "identifier", value: "PNC/123" },
-                        "Prison number": { searchCriteria: "identifier", value: "666" }
+                        "CRO number": { searchCriteria: "identifier", value: "CRO/456", searchTerm: "croNumber", hidden: false },
+                        "Date of birth": { searchCriteria: "dob", value: "01/02/1999", searchTerm: "dob", hidden: false },
+                        "First name": { searchCriteria: "names", value: "Matthew", searchTerm: "forename", hidden: false },
+                        "Last name": { searchCriteria: "names", value: "Whitfield", searchTerm: "surname", hidden: false },
+                        "Middle name": { searchCriteria: "names", value: "James", searchTerm: "forename2", hidden: false },
+                        "PNC number": { searchCriteria: "identifier", value: "PNC/123", searchTerm: "pncNumber", hidden: false },
+                        "Prison number": { searchCriteria: "identifier", value: "666", searchTerm: "prisonNumber", hidden: false }
                     },
                     moment: require('moment'),
                     setCase: require('case')
@@ -607,7 +608,7 @@ describe('searchController', () => {
                         nextPage: "?page=3&filters=Female"
                     },
                     searchTerms: {
-                        "Age": { searchCriteria: "dob", value: "35-40" }
+                        "Age": { searchCriteria: "dob", value: "35-40", searchTerm: "age", hidden: false}
                     },
                     moment: require('moment'),
                     setCase: require('case')
@@ -806,10 +807,10 @@ describe('searchController', () => {
                             nextPage: "?page=3&filters=Female"
                         },
                         searchTerms: {
-                            "First name": { searchCriteria: "names", value: "Matthew" },
-                            "Last name": { searchCriteria: "names", value: "Whitfield" },
-                            "Middle name": { searchCriteria: "names", value: "James" },
-                            "Prison number": { searchCriteria: "identifier", value: "666" }
+                            "First name": { searchCriteria: "names", value: "Matthew", searchTerm: "forename", hidden: false },
+                            "Last name": { searchCriteria: "names", value: "Whitfield", searchTerm: "surname", hidden: false },
+                            "Middle name": { searchCriteria: "names", value: "James", searchTerm: "forename2", hidden: false },
+                            "Prison number": { searchCriteria: "identifier", value: "666", searchTerm: "prisonNumber", hidden: false }
                         },
                         moment: require('moment'),
                         setCase: require('case')
@@ -819,6 +820,110 @@ describe('searchController', () => {
                     expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
 
                 });
+            });
+
+            context('When hidden is in the query', () => {
+                it('should make not pass attribute to getResults if hidden in query string', () => {
+                    reqMock.query.hidden = 'surname';
+
+                    const expectedUserInput = {
+                        forename: 'Matthew',
+                        forename2: 'James',
+                        prisonNumber: '666',
+                        page: 1
+                    };
+
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+                    expect(getInmatesStub.callCount).to.eql(1);
+                    expect(getInmatesStub).to.be.calledWith(expectedUserInput);
+                });
+
+                it('should have no impact on data attributes if non-supported hidden is added to query', () => {
+                    reqMock.query.hidden = 'cleethorpes';
+
+                    const expectedUserInput = {
+                        forename: 'Matthew',
+                        forename2: 'James',
+                        surname: 'Whitfield',
+                        prisonNumber: '666',
+                        page: 1
+                    };
+
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+                    expect(getInmatesStub.callCount).to.eql(1);
+                    expect(getInmatesStub).to.be.calledWith(expectedUserInput);
+                });
+
+                it('should detail hidden search terms for the view', () => {
+                    reqMock.query.hidden = 'surname';
+
+                    const expectedSearchTerms = {
+                        "First name": { searchCriteria: "names", value: "Matthew", searchTerm: "forename", hidden: false },
+                        "Last name": { searchCriteria: "names", value: "Whitfield", searchTerm: "surname", hidden: true },
+                        "Middle name": { searchCriteria: "names", value: "James", searchTerm: "forename2", hidden: false },
+                        "Prison number": { searchCriteria: "identifier", value: "666", searchTerm: "prisonNumber", hidden: false }
+                    };
+
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+
+                    const searchTerms = resMock.render.getCalls()[0].args[1].searchTerms;
+                    expect(searchTerms).to.eql(expectedSearchTerms);
+                });
+
+                it('should detail hidden search terms for the view', () => {
+                    reqMock.query.hidden = 'cleethorpes';
+                    const expectedSearchTerms = {
+                        "First name": { searchCriteria: "names", value: "Matthew", searchTerm: "forename", hidden: false },
+                        "Last name": { searchCriteria: "names", value: "Whitfield", searchTerm: "surname", hidden: false },
+                        "Middle name": { searchCriteria: "names", value: "James", searchTerm: "forename2", hidden: false },
+                        "Prison number": { searchCriteria: "identifier", value: "666", searchTerm: "prisonNumber", hidden: false }
+                    };
+
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+
+                    const searchTerms = resMock.render.getCalls()[0].args[1].searchTerms;
+                    expect(searchTerms).to.eql(expectedSearchTerms);
+                });
+
+                it('should remove all dob attributes from getResults', () => {
+                    reqMock.query.hidden = ['dobDay', 'dobMonth', 'dobYear'];
+                    reqMock.session.userInput = {
+                        dobDay: '12',
+                        dobMonth: '03',
+                        dobYear: '1985',
+                        forename: 'Matthew',
+                    };
+
+                    const expectedUserInput = {
+                        forename: 'Matthew',
+                        page: 1
+                    };
+
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+                    expect(getInmatesStub.callCount).to.eql(1);
+                    expect(getInmatesStub).to.be.calledWith(expectedUserInput);
+                });
+
+                it('should detail hidden dob terms for the view', () => {
+                    reqMock.query.hidden = ['dobOrAge', 'dobDay', 'dobMonth', 'dobYear'];
+                    reqMock.session.userInput = {
+                        dobOrAge: 'dob',
+                        dobDay: '12',
+                        dobMonth: '03',
+                        dobYear: '1985',
+                        forename: 'Matthew',
+                    };
+                    const expectedSearchTerms = {
+                        "First name": { searchCriteria: "names", value: "Matthew", searchTerm: "forename", hidden: false },
+                        "Date of birth": { searchCriteria: "dob", value: "12/03/1985", searchTerm: "dob", hidden: true }
+                    };
+
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+
+                    const searchTerms = resMock.render.getCalls()[0].args[1].searchTerms;
+                    expect(searchTerms).to.eql(expectedSearchTerms);
+                });
+
             });
         });
 
@@ -1086,6 +1191,157 @@ describe('searchController', () => {
                 expect(resMock.redirect).to.have.been.calledWith('/search');
             });
 
+        });
+
+        describe('postToggle', () => {
+            it('should redirect to first results page appending the toggle that is not selected', () => {
+                reqMock = {
+                    body: {
+                        pageNumber: '8',
+                        toggle_criteria: ['forename', 'forename2', 'prisonNumber']
+                    },
+                    session: {
+                        userInput: {
+                            forename: 'Matthew',
+                            forename2: 'James',
+                            surname: 'Whitfield',
+                            prisonNumber: '666'
+                        }
+                    },
+                    get: item => 'http://something.com/search/results'
+                };
+                postToggle(reqMock, resMock);
+                expect(resMock.redirect).to.have.callCount(1);
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?hidden=surname&page=1');
+
+            });
+
+            it('should be able to add more than one item', () => {
+                reqMock = {
+                    body: {
+                        pageNumber: '8',
+                        toggle_criteria: ['forename', 'forename2']
+                    },
+                    session: {
+                        userInput: {
+                            forename: 'Matthew',
+                            forename2: 'James',
+                            surname: 'Whitfield',
+                            prisonNumber: '666'
+                        }
+                    },
+                    get: (item) => 'http://something.com/search/results?hidden=surname'
+                };
+                postToggle(reqMock, resMock);
+                expect(resMock.redirect).to.have.callCount(1);
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?hidden=surname&hidden=prisonNumber&page=1');
+            });
+
+            it('should handle unsupported toggle', () => {
+                reqMock = {
+                    body: {
+                        pageNumber: '8',
+                        toggle_criteria: ['cleethorpes', 'forename', 'forename2', 'prisonNumber']
+                    },
+                    session: {
+                        userInput: {
+                            forename: 'Matthew',
+                            forename2: 'James',
+                            surname: 'Whitfield',
+                            prisonNumber: '666'
+                        }
+                    },
+                    get: item => 'http://something.com/search/results?hidden=surname'
+                };
+                postToggle(reqMock, resMock);
+                expect(resMock.redirect).to.have.callCount(1);
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?hidden=surname&page=1');
+            });
+
+            it('should be able to add more single item', () => {
+                reqMock = {
+                    body: {
+                        pageNumber: '8',
+                        toggle_criteria: 'forename'
+                    },
+                    session: {
+                        userInput: {
+                            forename: 'Matthew',
+                            surname: 'Whitfield',
+                        }
+                    },
+                    get: (item) => 'http://something.com/search/results?hidden=surname'
+                };
+                postToggle(reqMock, resMock);
+                expect(resMock.redirect).to.have.callCount(1);
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?hidden=surname&page=1');
+            });
+
+            it('should remove all dob items', () => {
+                reqMock = {
+                    body: {
+                        pageNumber: '8',
+                        toggle_criteria: ['forename', 'surname']
+                    },
+                    session: {
+                        userInput: {
+                            forename: 'Matthew',
+                            surname: 'Whitfield',
+                            dobOrAge: 'dob',
+                            dobDay: '12',
+                            dobMonth: '03',
+                            dobYear: '1985'
+                        }
+                    },
+                };
+                postToggle(reqMock, resMock);
+                expect(resMock.redirect).to.have.callCount(1);
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?hidden=dobOrAge&hidden=dobDay&hidden=dobMonth&hidden=dobYear&page=1');
+            });
+
+            it('should not remove all dob items if toggled on', () => {
+                reqMock = {
+                    body: {
+                        pageNumber: '8',
+                        toggle_criteria: ['surname', 'dob']
+                    },
+                    session: {
+                        userInput: {
+                            forename: 'Matthew',
+                            surname: 'Whitfield',
+                            dobOrAge: 'dob',
+                            dobDay: '12',
+                            dobMonth: '03',
+                            dobYear: '1985'
+                        }
+                    },
+                };
+                postToggle(reqMock, resMock);
+                expect(resMock.redirect).to.have.callCount(1);
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?hidden=forename&page=1');
+            });
+
+            it('should not remove filters', () => {
+                reqMock = {
+                    body: {
+                        pageNumber: '8',
+                        toggle_criteria: ['surname', 'dob']
+                    },
+                    session: {
+                        userInput: {
+                            forename: 'Matthew',
+                            surname: 'Whitfield',
+                            dobOrAge: 'dob',
+                            dobDay: '12',
+                            dobMonth: '03',
+                            dobYear: '1985'
+                        }
+                    },
+                };
+                postToggle(reqMock, resMock);
+                expect(resMock.redirect).to.have.callCount(1);
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?hidden=forename&page=1');
+            });
         });
     });
 });

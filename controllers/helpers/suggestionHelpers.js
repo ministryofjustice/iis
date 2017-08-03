@@ -15,7 +15,7 @@ const moment = require('moment');
 
 function getSearchSuggestions(userInput) {
 
-    let searchTerms = getSearchTermsFromInput(userInput);
+    const searchTerms = getSearchTermsFromInput(userInput);
 
     let suggestions = Object.keys(searchTerms)
         .filter(searchItem => searchSuggestions[searchItem])

@@ -54,7 +54,10 @@ describe('searchController', () => {
 
             getIndex(reqMock, resMock);
             expect(resMock.render).to.have.callCount(1);
-            expect(resMock.render).to.have.been.calledWith('search', {content: content.view.search, err: expectedError});
+            expect(resMock.render).to.have.been.calledWith('search', {
+                content: content.view.search,
+                err: expectedError
+            });
         });
     });
 
@@ -316,11 +319,20 @@ describe('searchController', () => {
                         thisPage: "?page=2&filters=Female",
                         nextPage: "?page=3&filters=Female"
                     },
+                    suggestions: {
+                        forename: [{type: "useInitial", term: "forename", value: "M"}],
+                        surname: [
+                            {type: "addWildcard", term: "surname", value: "Whitfield%"},
+                            {type: "addShorterWildcard", term: "surname", value: "Whitfie%"}],
+                        firstLast: [
+                            {type: "swap", term: "forename", value: "Whitfield"},
+                            {type: "swap", term: "surname", value: "Matthew"}]
+                    },
                     searchTerms: {
-                        "First name": { searchCriteria: "names", value: "Matthew" },
-                        "Last name": { searchCriteria: "names", value: "Whitfield" },
-                        "Middle name": { searchCriteria: "names", value: "James" },
-                        "Prison number": { searchCriteria: "identifier", value: "666" }
+                        "First name": {searchCriteria: "names", value: "Matthew"},
+                        "Last name": {searchCriteria: "names", value: "Whitfield"},
+                        "Middle name": {searchCriteria: "names", value: "James"},
+                        "Prison number": {searchCriteria: "identifier", value: "666"}
                     },
                     moment: require('moment'),
                     setCase: require('case')
@@ -390,10 +402,19 @@ describe('searchController', () => {
                         nextPage: "?page=3&filters=Female"
                     },
                     searchTerms: {
-                        "First name": { searchCriteria: "names", value: "Matthew" },
-                        "Last name": { searchCriteria: "names", value: "Whitfield" },
-                        "Middle name": { searchCriteria: "names", value: "James" },
-                        "Prison number": { searchCriteria: "identifier", value: "666" }
+                        "First name": {searchCriteria: "names", value: "Matthew"},
+                        "Last name": {searchCriteria: "names", value: "Whitfield"},
+                        "Middle name": {searchCriteria: "names", value: "James"},
+                        "Prison number": {searchCriteria: "identifier", value: "666"}
+                    },
+                    suggestions: {
+                        forename: [{type: "useInitial", term: "forename", value: "M"}],
+                        surname: [
+                            {type: "addWildcard", term: "surname", value: "Whitfield%"},
+                            {type: "addShorterWildcard", term: "surname", value: "Whitfie%"}],
+                        firstLast: [
+                            {type: "swap", term: "forename", value: "Whitfield"},
+                            {type: "swap", term: "surname", value: "Matthew"}]
                     },
                     moment: require('moment'),
                     setCase: require('case')
@@ -427,10 +448,19 @@ describe('searchController', () => {
                         nextPage: "?page=2"
                     },
                     searchTerms: {
-                        "First name": { searchCriteria: "names", value: "Matthew" },
-                        "Last name": { searchCriteria: "names", value: "Whitfield" },
-                        "Middle name": { searchCriteria: "names", value: "James" },
-                        "Prison number": { searchCriteria: "identifier", value: "666" }
+                        "First name": {searchCriteria: "names", value: "Matthew"},
+                        "Last name": {searchCriteria: "names", value: "Whitfield"},
+                        "Middle name": {searchCriteria: "names", value: "James"},
+                        "Prison number": {searchCriteria: "identifier", value: "666"}
+                    },
+                    suggestions: {
+                        forename: [{type: "useInitial", term: "forename", value: "M"}],
+                        surname: [
+                            {type: "addWildcard", term: "surname", value: "Whitfield%"},
+                            {type: "addShorterWildcard", term: "surname", value: "Whitfie%"}],
+                        firstLast: [
+                            {type: "swap", term: "forename", value: "Whitfield"},
+                            {type: "swap", term: "surname", value: "Matthew"}]
                     },
                     moment: require('moment'),
                     setCase: require('case')
@@ -474,10 +504,19 @@ describe('searchController', () => {
                         nextPage: "?page=3&filters=Female"
                     },
                     searchTerms: {
-                        "First name": { searchCriteria: "names", value: "Matthew" },
-                        "Last name": { searchCriteria: "names", value: "Whitfield" },
-                        "Middle name": { searchCriteria: "names", value: "James" },
-                        "Prison number": { searchCriteria: "identifier", value: "666" }
+                        "First name": {searchCriteria: "names", value: "Matthew"},
+                        "Last name": {searchCriteria: "names", value: "Whitfield"},
+                        "Middle name": {searchCriteria: "names", value: "James"},
+                        "Prison number": {searchCriteria: "identifier", value: "666"}
+                    },
+                    suggestions: {
+                        forename: [{type: "useInitial", term: "forename", value: "M"}],
+                        surname: [
+                            {type: "addWildcard", term: "surname", value: "Whitfield%"},
+                            {type: "addShorterWildcard", term: "surname", value: "Whitfie%"}],
+                        firstLast: [
+                            {type: "swap", term: "forename", value: "Whitfield"},
+                            {type: "swap", term: "surname", value: "Matthew"}]
                     },
                     moment: require('moment'),
                     setCase: require('case')
@@ -514,10 +553,19 @@ describe('searchController', () => {
                         nextPage: "?page=3&filters=Female"
                     },
                     searchTerms: {
-                        "First name": { searchCriteria: "names", value: "Matthew" },
-                        "Last name": { searchCriteria: "names", value: "Whitfield" },
-                        "Middle name": { searchCriteria: "names", value: "James" },
-                        "Prison number": { searchCriteria: "identifier", value: "666" }
+                        "First name": {searchCriteria: "names", value: "Matthew"},
+                        "Last name": {searchCriteria: "names", value: "Whitfield"},
+                        "Middle name": {searchCriteria: "names", value: "James"},
+                        "Prison number": {searchCriteria: "identifier", value: "666"}
+                    },
+                    suggestions: {
+                        forename: [{type: "useInitial", term: "forename", value: "M"}],
+                        surname: [
+                            {type: "addWildcard", term: "surname", value: "Whitfield%"},
+                            {type: "addShorterWildcard", term: "surname", value: "Whitfie%"}],
+                        firstLast: [
+                            {type: "swap", term: "forename", value: "Whitfield"},
+                            {type: "swap", term: "surname", value: "Matthew"}]
                     },
                     moment: require('moment'),
                     setCase: require('case')
@@ -563,13 +611,25 @@ describe('searchController', () => {
                         nextPage: "?page=3&filters=Female"
                     },
                     searchTerms: {
-                        "CRO number": { searchCriteria: "identifier", value: "CRO/456" },
-                        "Date of birth": { searchCriteria: "dob", value: "01/02/1999" },
-                        "First name": { searchCriteria: "names", value: "Matthew" },
-                        "Last name": { searchCriteria: "names", value: "Whitfield" },
-                        "Middle name": { searchCriteria: "names", value: "James" },
-                        "PNC number": { searchCriteria: "identifier", value: "PNC/123" },
-                        "Prison number": { searchCriteria: "identifier", value: "666" }
+                        "CRO number": {searchCriteria: "identifier", value: "CRO/456"},
+                        "Date of birth": {searchCriteria: "dob", value: "01/02/1999"},
+                        "First name": {searchCriteria: "names", value: "Matthew"},
+                        "Last name": {searchCriteria: "names", value: "Whitfield"},
+                        "Middle name": {searchCriteria: "names", value: "James"},
+                        "PNC number": {searchCriteria: "identifier", value: "PNC/123"},
+                        "Prison number": {searchCriteria: "identifier", value: "666"}
+                    },
+                    suggestions: {
+                        forename: [{type: "useInitial", term: "forename", value: "M"}],
+                        surname: [
+                            {type: "addWildcard", term: "surname", value: "Whitfield%"},
+                            {type: "addShorterWildcard", term: "surname", value: "Whitfie%"}],
+                        dob: [
+                            {type: "convertToAgeRange", term: "age", value: "16-20"},
+                            {type: "convertToAgeRange", term: "dobOrAge", value: "age"}],
+                        firstLast: [
+                            {type: "swap", term: "forename", value: "Whitfield"},
+                            {type: "swap", term: "surname", value: "Matthew"}]
                     },
                     moment: require('moment'),
                     setCase: require('case')
@@ -607,8 +667,9 @@ describe('searchController', () => {
                         nextPage: "?page=3&filters=Female"
                     },
                     searchTerms: {
-                        "Age": { searchCriteria: "dob", value: "35-40" }
+                        "Age": {searchCriteria: "dob", value: "35-40"}
                     },
+                    suggestions: null,
                     moment: require('moment'),
                     setCase: require('case')
 
@@ -806,10 +867,19 @@ describe('searchController', () => {
                             nextPage: "?page=3&filters=Female"
                         },
                         searchTerms: {
-                            "First name": { searchCriteria: "names", value: "Matthew" },
-                            "Last name": { searchCriteria: "names", value: "Whitfield" },
-                            "Middle name": { searchCriteria: "names", value: "James" },
-                            "Prison number": { searchCriteria: "identifier", value: "666" }
+                            "First name": {searchCriteria: "names", value: "Matthew"},
+                            "Last name": {searchCriteria: "names", value: "Whitfield"},
+                            "Middle name": {searchCriteria: "names", value: "James"},
+                            "Prison number": {searchCriteria: "identifier", value: "666"}
+                        },
+                        suggestions: {
+                            forename: [{type: "useInitial", term: "forename", value: "M"}],
+                            surname: [
+                                {type: "addWildcard", term: "surname", value: "Whitfield%"},
+                                {type: "addShorterWildcard", term: "surname", value: "Whitfie%"}],
+                            firstLast: [
+                                {type: "swap", term: "forename", value: "Whitfield"},
+                                {type: "swap", term: "surname", value: "Matthew"}]
                         },
                         moment: require('moment'),
                         setCase: require('case')
@@ -922,9 +992,11 @@ describe('searchController', () => {
             it('should redirect to the search page if no form item in query', () => {
                 reqMock = {
                     query: {},
-                    session: {userInput: {
-                        'dobDay': '12'
-                    }}
+                    session: {
+                        userInput: {
+                            'dobDay': '12'
+                        }
+                    }
                 };
                 const expectedUrl = '/search';
 
@@ -936,9 +1008,11 @@ describe('searchController', () => {
             it('should render full search if contains formItem and session data', () => {
                 reqMock = {
                     query: {formItem: 'dob'},
-                    session: {userInput: {
-                        'dobDay': '12'
-                    }}
+                    session: {
+                        userInput: {
+                            'dobDay': '12'
+                        }
+                    }
                 };
                 const expectedUrl = 'search/full-search';
 
@@ -950,9 +1024,11 @@ describe('searchController', () => {
             it('should pass appropriate data to view', () => {
                 reqMock = {
                     query: {formItem: 'dob'},
-                    session: {userInput: {
-                        'dobDay': '12'
-                    }}
+                    session: {
+                        userInput: {
+                            'dobDay': '12'
+                        }
+                    }
                 };
                 const expectedPayload = {
                     "content": {

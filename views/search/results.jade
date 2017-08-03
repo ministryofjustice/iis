@@ -81,3 +81,11 @@ block content
                             |  #{item.value}
                             div
                                 a(href="/search/edit?formItem=#{item.searchCriteria}") change
+
+            if suggestions
+                |  &nbsp;
+                div.help-container.form-hint
+                    span.hint.font-xsmall Not found what you're looking for?
+                    div
+                    span.hint.font-xsmall
+                        a#suggestions(href="/search/suggestions") Try these alternatives

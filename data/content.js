@@ -65,6 +65,10 @@ module.exports = {
             sentences: 'Prisoner has no sentence history'
         },
 
+        suggestions: {
+            title: 'Suggestions & tips'
+        },
+
         print: {
             body: 'Select all that apply',
             noneSelected: 'Please select at least one item to print'

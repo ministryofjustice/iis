@@ -1,0 +1,92 @@
+extends ../layout
+
+block content
+    div.back-link-container
+        a.link-back(href="/search/results#{returnQuery}") Back to prisoners
+
+    if err
+        include ./searchError
+
+    div.grid-row
+        div.column-two-thirds
+            h1.heading-xlarge#contentTitle= content.title
+
+                if suggestions['dob']
+                    - var suggestion = suggestions['dob'][0]
+                    div.search-suggestion
+                        h2.heading-medium
+                            a(href="/search/suggestion?field=dob&suggest=#{suggestion.type}") Change the date of birth to an age range:
+                            span#dobAgeRangeSuggestion  #{suggestion.value}
+                        p.form-hint
+                            | Reason: A common way to create an alias is to change the DOB by 1 day or 1 year.
+                            | If this is not a known recorded alias, any records with a slightly different DOB will
+                            | not be displayed
+
+                if suggestions['age']
+                    - var suggestion = suggestions['age'][0]
+                    div.search-suggestion
+                        h2.heading-medium
+                            a(href="/search/suggestion?field=age&suggest=#{suggestion.type}") Change the age to an age range:
+                            span#ageAgeRangeSuggestion  #{suggestion.value}
+                        p.form-hint
+                            | Reason: A common way to create an alias is to change the DOB by 1 day or 1 year.
+                            | If this is not a known recorded alias, any records with a slightly different DOB will
+                            | not be displayed
+
+                if suggestions['surname']
+                    each suggestion in suggestions['surname']
+                        if suggestion.type == 'addWildcard'
+                            div.search-suggestion
+                                h2.heading-medium
+                                    a(href="/search/suggestion?field=surname&suggest=#{suggestion.type}") Add a wildcard to the surname:
+                                    span#surnameWildcardSuggestion  #{suggestion.value}
+                                p.form-hint
+                                    | Reason: Some establishments when using LIDS added more information after a surname
+                                    |  - e.g. alerts. An exact surname match may not pick up these records
+                        if suggestion.type == 'addShorterWildcard'
+                            div.search-suggestion
+                                h2.heading-medium
+                                    a(href="/search/suggestion?field=surname&suggest=#{suggestion.type}") Shorten the surname by 2 characters and add a wildcard:
+                                    span#surnameShortWildcardSuggestion  #{suggestion.value}
+                                p.form-hint
+                                    | Reason: An exact surname search for example for STEELE will miss and records where
+                                    | the surname has been incorrectly recorded as STEEL
+
+                if suggestions['forename']
+                    each suggestion in suggestions['forename']
+                        if suggestion.type == 'useInitial'
+                            div.search-suggestion
+                                h2.heading-medium
+                                    a(href="/search/suggestion?field=forename&suggest=#{suggestion.type}") Search using an initial only in first name:
+                                    span#forenameInitialSuggestion  #{suggestion.value}
+                                p.form-hint
+                                    | Reason: An exact forename search for names which can be shortened could miss records e.g.
+                                    | recorded forenames for Evelyn have included Eve, Eva, Evalyn, Evaline
+
+                if suggestions['firstLast']
+                    - var first = suggestions['firstLast'][0]
+                    - var last = suggestions['firstLast'][1]
+                    div.search-suggestion
+                        h2.heading-medium
+                            a(href="/search/suggestion?field=firstLast&suggest=#{first.type}") Swap surname and forename:
+                            span#nameSwapSuggestion  #{first.value}, #{last.value}
+                        p.form-hint
+                            | Reason: Where a prisoner has a forename and surname which could be interchangeable - e.g.
+                            | Lewis George/George Lewis - these may have been recorded incorrectly
+
+
+            p &nbsp
+            div.form-group
+                a(href="/search") New search
+
+         div.column-one-third
+                    div.well.search-terms-container
+                        h3 Your current search terms
+                        div.search-terms
+                            each item, term  in searchTerms
+                                div.searchedTerm
+                                    span.hint.font-xsmall #{term}
+                                    |  #{item.value}
+                                    div
+                                        a(href="/search/edit?formItem=#{item.searchCriteria}") change
+

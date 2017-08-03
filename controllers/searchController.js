@@ -8,6 +8,8 @@ const utils = require('../data/utils');
 const audit = require('../data/audit');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 const Case = require('case');
+const url = require('url');
+const moment = require('moment');
 
 const {
     objectKeysInArray,
@@ -24,6 +26,9 @@ const {
     getUrlAsObject,
     createUrl
 } = require('./helpers/urlHelpers');
+const {
+    getSearchSuggestions
+} = require('./helpers/suggestionHelpers');
 
 const availableSearchOptions = exports.availableSearchOptions = {
     identifier: {
@@ -159,12 +164,12 @@ function getSearchResultsAndRender(req, res) {
 exports.getEditSearch = function(req, res) {
     const formItemSelected = req.query.formItem;
 
-    if(!formItemSelected || !Object.keys(availableSearchOptions).includes(formItemSelected) || !req.session.userInput) {
+    if (!formItemSelected || !Object.keys(availableSearchOptions).includes(formItemSelected) || !req.session.userInput) {
         return res.redirect('/search');
     }
 
     const formContents = availableSearchOptions[formItemSelected].fields.reduce((formObject, formItem) => {
-        if(req.session.userInput[formItem]) {
+        if (req.session.userInput[formItem]) {
             return Object.assign({}, formObject, {[formItem]: req.session.userInput[formItem]});
         }
         return formObject;
@@ -194,7 +199,26 @@ exports.postEditSearch = function(req, res) {
     res.redirect('/search/results');
 };
 
+exports.getSuggestions = function(req, res) {
+    return res.render('search/suggestions', {
+        content: content.view.suggestions,
+        returnQuery: url.parse(req.url).search ? url.parse(req.url).search : '',
+        suggestions: req.session.suggestions,
+        searchTerms: req.session.searchTerms
+    });
+};
+
+exports.getSuggestion = function(req, res) {
+    req.session.userInput = applySuggestionsToUserInput(req.session.userInput, req.query, req.session);
+    res.redirect('/search/results');
+};
+
+
 function parseResultsPageData(req, rowcount, data, page) {
+
+    req.session.suggestions = getSearchSuggestions(req.session.userInput);
+    req.session.searchTerms = getSearchTermsForView(req.session.userInput);
+
     return {
         content: {
             title: getPageTitle(rowcount)
@@ -204,7 +228,8 @@ function parseResultsPageData(req, rowcount, data, page) {
         err: getPaginationErrors(req.query),
         filtersForView: getInputtedFilters(req.query, 'VIEW'),
         queryStrings: getQueryStringsForSearch(req.url),
-        searchTerms: getSearchTermsForView(req.session.userInput),
+        suggestions: req.session.suggestions ? req.session.suggestions : null,
+        searchTerms: req.session.searchTerms,
         moment: require('moment'),
         setCase: require('case')
     };
@@ -328,14 +353,30 @@ function addFiltersToUserInput(userInput, query) {
     return Object.assign({}, cleanInput, filtersForQuery);
 }
 
+function applySuggestionsToUserInput(userInput, query, session) {
+
+    if (!query.suggest || !query.field || !session.suggestions) return userInput;
+
+    const suggestions = session.suggestions[query.field].filter(suggestion =>
+        suggestion.type === query.suggest
+    );
+
+    if (!suggestions || suggestions.length === 0) return userInput;
+
+    return Object.assign({}, userInput, suggestions.reduce(newValues, {}));
+}
+
+function newValues(newValues, suggestion) {
+    return Object.assign({}, newValues, {[suggestion.term]: suggestion.value});
+}
+
 
 function getSearchTermsForView(userInput) {
 
     const searchTerms = (userInput['dobOrAge'] === 'dob') ? searchTermObjectWithDob(userInput) : {};
 
     return Object.keys(userInput).filter(searchItem => content.termDisplayNames[searchItem])
-                                 .reduce(searchTermInCorrectCase(userInput), searchTerms);
-
+        .reduce(searchTermInCorrectCase(userInput), searchTerms);
 }
 
 const searchTermObjectWithDob = userInput => {
@@ -366,7 +407,7 @@ const searchTermObject = (searchCriteria, itemName, capitaliseValue, value) => {
 
 const removeAllFromSameCriteriaConstructor = (existingUserInput, userInput) => (newObj, inputType) => {
     const searchCriteria = searchCriteriaForInputType(Object.keys(userInput)[0]);
-    if(availableSearchOptions[searchCriteria].fields.includes(inputType)) {
+    if (availableSearchOptions[searchCriteria].fields.includes(inputType)) {
         return newObj;
     }
     return Object.assign({}, newObj, {[inputType]: existingUserInput[inputType]});

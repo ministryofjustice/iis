@@ -8,11 +8,17 @@ block subject-details
                     div.column-full(class="offenceInCustody")
                         div.left-border
                             span.quiet #{moment(val.date).format('DD/MM/YYYY')}
+                            |  #{setCase.capitalWithAcronyms(val.establishment)}
                         div.left-border
                             span.bold #{setCase.capital(val.outcome)}
                             |  - #{setCase.capitalWithAcronyms(val.charge)}
-                        div.left-border
-                            span #{setCase.capitalWithAcronyms(val.establishment)}
+                        if (val.punishments)
+                            div.left-border
+                                ul
+                                    each item in val.punishments
+                                        li
+                                            span.dot &middot;
+                                            |  #{setCase.capital(item.punishment)} (#{item.duration} days)
 
         else
             span= noResultsText

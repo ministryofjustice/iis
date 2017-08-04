@@ -11,7 +11,7 @@ const dataAccessOptions = {
     hdcRecall: 'JSON_QUERY(HDC_RECALL) AS hdcRecall',
     movements: 'JSON_QUERY(MOVEMENTS) AS movements',
     offences: 'JSON_QUERY(OFFENCES) AS offences',
-    offencesInCustody: 'JSON_QUERY(OFFENCES_IN_CUSTODY) AS offencesInCustody',
+    offencesInCustody: 'JSON_QUERY(ADJUDICATIONS) AS offencesInCustody',
     sentencing: 'JSON_QUERY(SENTENCING) AS sentencing',
     sentenceSummary: `  JSON_QUERY(CATEGORY) AS 'sentenceSummary.category', 
                         JSON_VALUE(MOVEMENTS, \'$[0].establishment\') AS 'sentenceSummary.establishment', 

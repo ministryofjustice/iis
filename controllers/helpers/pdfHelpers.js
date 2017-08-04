@@ -316,23 +316,20 @@ function offenceContent(doc, items) {
 
 function custodyOffenceContent(doc, items) {
 
-    const table = new PDFTable(doc, {bottomMargin: 30});
-    table.addColumns([
-        {id: 'date', width: 100},
-        {id: 'detail', width: 250},
-        {id: 'establishment', width: 150}
-    ]);
+    items.forEach(item => {
 
-    const tableBody = items.map(item => {
-        const {date, outcome, charge, establishment} = item;
-        return {
-            date: moment(date).format('DD/MM/YYYY'),
-            detail: `${Case.sentence(outcome)} - ${Case.sentenceWithAcronyms(charge)}`,
-            establishment: Case.sentenceWithAcronyms(establishment)
-        };
+        subSection(doc, `${moment(item.date).format('DD/MM/YYYY')}, ${Case.sentenceWithAcronyms(item.establishment)}`);
+        doc.text(`${Case.sentence(item.outcome)} - ${Case.sentenceWithAcronyms(item.charge)}`);
+
+        if (item.punishments)
+            punishmentContent(doc, item.punishments);
     });
-    table.setNewPageFn(table => table.pdf.addPage());
-    table.addBody(tableBody);
+}
+
+function punishmentContent(doc, items) {
+    items.forEach(item => {
+        doc.text(` - ${Case.sentenceWithAcronyms(item.punishment)} (${item.duration} days)`);
+    });
 }
 
 function addressContent(doc, items) {

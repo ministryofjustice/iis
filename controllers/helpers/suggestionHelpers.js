@@ -17,7 +17,7 @@ function getSearchSuggestions(userInput) {
 
     const searchTerms = getSearchTermsFromInput(userInput);
 
-    let suggestions = Object.keys(searchTerms)
+    const suggestions = Object.keys(searchTerms)
         .filter(searchItem => searchSuggestions[searchItem])
         .reduce(suggestionsFor(searchTerms), {});
 
@@ -44,15 +44,14 @@ function getSearchTermsFromInput(userInput) {
 
 const suggestionsFor = inputs => (allSuggestions, searchTerm) => {
 
-    let suggestions = searchSuggestions[searchTerm].map(suggestion => {
-        return Object.assign({}, suggestion, {value: suggestion.suggest(inputs[searchTerm])});
-    }).map(suggestion => {
-        delete suggestion['suggest'];
-        return suggestion;
+    const suggestions = searchSuggestions[searchTerm].map(suggestion => {
+        const value = suggestion.suggest(inputs[searchTerm]);
+        const {type, term} = suggestion;
+        return {type, term, value}
     }).filter(suggestion => suggestion.value !== null);
 
     return suggestions.length === 0 ? allSuggestions : Object.assign({}, allSuggestions, {[searchTerm]: suggestions});
-}
+};
 
 const searchSuggestions = {
     forename: [{
@@ -92,7 +91,7 @@ const searchSuggestions = {
         term: 'dobOrAge',
         suggest: val => 'age'
     }]
-}
+};
 
 function useInitial(name) {
     return name.length <= 1 ? null : Case.capital(name.substring(0, 1));
@@ -116,14 +115,14 @@ function useLast(names) {
 
 function ageToAgeRange(age) {
     if (age.includes('-')) return null;
-    let start = age - 2;
-    let end = +age + 2;
+    const start = age - 2;
+    const end = +age + 2;
     return `${start}-${end}`
 }
 
 function dobToAgeRange(dob) {
-    let years = moment().diff(dob, 'years');
-    let start = years - 2;
-    let end = +years + 2;
+    const years = moment().diff(dob, 'years');
+    const start = years - 2;
+    const end = +years + 2;
     return `${start}-${end}`;
 }

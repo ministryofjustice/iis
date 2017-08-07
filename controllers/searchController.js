@@ -203,7 +203,7 @@ exports.getSuggestions = function(req, res) {
     return res.render('search/suggestions', {
         content: content.view.suggestions,
         returnQuery: url.parse(req.url).search ? url.parse(req.url).search : '',
-        suggestions: req.session.suggestions,
+        suggestions: getSearchSuggestions(req.session.userInput),
         searchTerms: req.session.searchTerms
     });
 };
@@ -216,7 +216,6 @@ exports.getSuggestion = function(req, res) {
 
 function parseResultsPageData(req, rowcount, data, page) {
 
-    req.session.suggestions = getSearchSuggestions(req.session.userInput);
     req.session.searchTerms = getSearchTermsForView(req.session.userInput);
 
     return {
@@ -228,7 +227,7 @@ function parseResultsPageData(req, rowcount, data, page) {
         err: getPaginationErrors(req.query),
         filtersForView: getInputtedFilters(req.query, 'VIEW'),
         queryStrings: getQueryStringsForSearch(req.url),
-        suggestions: req.session.suggestions ? req.session.suggestions : null,
+        suggestions: getSearchSuggestions(req.session.userInput),
         searchTerms: req.session.searchTerms,
         moment: require('moment'),
         setCase: require('case')
@@ -355,15 +354,17 @@ function addFiltersToUserInput(userInput, query) {
 
 function applySuggestionsToUserInput(userInput, query, session) {
 
-    if (!query.suggest || !query.field || !session.suggestions) return userInput;
+    if (!query.suggest || !query.field) return userInput;
 
-    const suggestions = session.suggestions[query.field].filter(suggestion =>
+    const suggestions = getSearchSuggestions(session.userInput);
+
+    const suggestionsToApply = suggestions[query.field].filter(suggestion =>
         suggestion.type === query.suggest
     );
 
-    if (!suggestions || suggestions.length === 0) return userInput;
+    if (!suggestionsToApply || suggestionsToApply.length === 0) return userInput;
 
-    return Object.assign({}, userInput, suggestions.reduce(newValues, {}));
+    return Object.assign({}, userInput, suggestionsToApply.reduce(newValues, {}));
 }
 
 function newValues(newValues, suggestion) {

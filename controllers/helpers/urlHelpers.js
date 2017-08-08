@@ -5,7 +5,8 @@ module.exports = {
     mergeIntoQuery,
     toggleFromQueryItem,
     getUrlAsObject,
-    createUrl
+    createUrl,
+    retainUrlQuery
 };
 
 
@@ -54,4 +55,8 @@ function getUrlAsObject(urlToParse) {
 
 function createUrl(pathname, queryObject) {
     return url.format({pathname, query: queryObject});
+}
+
+function retainUrlQuery(urlToParse) {
+    return url.parse(urlToParse).search ? url.parse(urlToParse).search : '';
 }

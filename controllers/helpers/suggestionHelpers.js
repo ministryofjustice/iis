@@ -52,7 +52,7 @@ const suggestionsFor = inputs => (allSuggestions, searchTerm) => {
     }).filter(suggestion => suggestion.value !== null);
 
     return suggestions.length === 0 ? allSuggestions : Object.assign({}, allSuggestions, {[searchTerm]: suggestions});
-}
+};
 
 const searchSuggestions = {
     forename: [{
@@ -92,7 +92,7 @@ const searchSuggestions = {
         term: 'dobOrAge',
         suggest: val => 'age'
     }]
-}
+};
 
 function useInitial(name) {
     return name.length <= 1 ? null : Case.capital(name.substring(0, 1));
@@ -118,7 +118,7 @@ function ageToAgeRange(age) {
     if (age.includes('-')) return null;
     let start = age - 2;
     let end = +age + 2;
-    return `${start}-${end}`
+    return `${start}-${end}`;
 }
 
 function dobToAgeRange(dob) {

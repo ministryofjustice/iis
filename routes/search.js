@@ -3,15 +3,11 @@ let express = require('express');
 
 const {
     getIndex,
-    postIndex,
-    getSearchForm,
-    postSearchForm,
     getResults,
     postPagination,
     postFilters,
-    getEditSearch,
-    postEditSearch,
-    getSuggestions,
+    postSearchForm,
+	getSuggestions,
     getSuggestion
 } = require('../controllers/searchController');
 
@@ -26,14 +22,10 @@ router.use(function(req, res, next) {
 });
 
 router.get('/', getIndex);
-router.post('/', postIndex);
-router.get('/form', getSearchForm);
-router.post('/form', postSearchForm);
 router.get('/results', getResults);
 router.post('/results', postPagination);
 router.post('/results/filters', postFilters);
-router.get('/edit', getEditSearch);
-router.post('/edit', postEditSearch);
+router.post('/results/search', postSearchForm);
 router.get('/suggestions', getSuggestions);
 router.get('/suggestion', getSuggestion);
 

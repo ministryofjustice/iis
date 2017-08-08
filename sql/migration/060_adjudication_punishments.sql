@@ -54,7 +54,7 @@ INSERT INTO HPA.ADJUDICATIONS
             WHERE e.PK_ESTABLISHMENT_CODE = SUBSTRING(o.OFFENCE_ESTAB_COMP_CODE, 1, 2)
         )                                                                  AS ESTABLISHMENT,
         (
-            SELECT
+            SELECT DISTINCT
                 (SELECT TRIM(CODE_DESCRIPTION)
                  FROM IIS.IIS_CODE
                  WHERE PK_CODE_TYPE = '3' AND PK_CODE_REF = p.PUNISHMENT) AS 'punishment',

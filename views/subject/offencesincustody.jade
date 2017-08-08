@@ -14,11 +14,9 @@ block subject-details
                             |  - #{setCase.capitalWithAcronyms(val.charge)}
                         if (val.punishments)
                             div.left-border
-                                ul
+                                ul.list.list-bullet.no-margin
                                     each item in val.punishments
-                                        li
-                                            span.dot &middot;
-                                            |  #{setCase.capital(item.punishment)} (#{item.duration} days)
+                                        li #{setCase.capital(item.punishment)} (#{item.duration} days)
 
         else
             span= noResultsText

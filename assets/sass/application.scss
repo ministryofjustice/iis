@@ -1,6 +1,6 @@
 // Path to assets for use with the file-url function
 // in the govuk frontend toolkit's url-helpers partial
-$path: "/public/images/";
+$path: "/public/images";
 
 // Import GOV.UK elements from /govuk-modules/, this will import the frontend toolkit and some base styles.
 // Take a look in /govuk-modules/_govuk-elements.scss to see which files are imported.
@@ -240,4 +240,36 @@ div.search-terms a {
 .search-terms div{
     line-height: 90%;
     padding-bottom: 10px;
+}
+.formIdentifiers input, .formAlternative input {
+    width: 100%;
+}
+#formHolder {
+    border-right: 2px solid #bfc1c3;
+    padding-right: 5%;
+}
+#formTab {
+    margin-bottom: 15px;
+    background-color: #dee0e2;
+    padding: 3px 3px 0 3px;
+}
+#formTab li{
+    display: inline-block;
+}
+#formTab li a{
+    padding: 10px;
+    display: block;
+}
+#formTab li.active a{
+    font-weight: bold;
+    color: #0b0c0c;
+    text-decoration: none;
+    background-color: white;
+}
+#noPrisoners {
+    text-align: center;
+    margin-top: 100px;
+    padding-top: 260px;
+    color: #6f777b;
+    background: url(#{$path}/prison-cell.png) top center no-repeat;
 }

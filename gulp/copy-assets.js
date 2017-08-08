@@ -9,9 +9,9 @@ gulp.task('copy-assets', [
 
 gulp.task('copy-local-assets', function() {
   return gulp.src(['!assets/sass{,/**/*}',
-      '!assets/javascripts/search{,/**/*}',
       '!assets/javascripts/moreless{,/**/*}',
       '!assets/javascripts/admin{,/**/*}',
+      '!assets/javascripts/tabs{,/**/*}',
       'assets/**'])
   .pipe(gulp.dest('public'));
 });

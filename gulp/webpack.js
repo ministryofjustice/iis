@@ -4,35 +4,11 @@ const webpack2 = require('webpack');
 const gulp = require('gulp');
 
 gulp.task('webpack', [
-    'webpackSearch',
     'webpackMoreless',
     'webpackReveal',
-    'webpackAdmin'
+    'webpackAdmin',
+    'webpackTabs'
 ]);
-
-gulp.task('webpackSearch', function() {
-    return gulp.src('./assets/javascripts/search/search.js')
-        .pipe(webpackStream({
-            output: {
-                filename: 'searchBundle.js'
-            },
-            module: {
-                rules: [{
-                    loader: 'babel-loader',
-                    exclude: [/node_modules/],
-                    query: {
-                        presets: [['es2015', {'loose': true}]]
-                    }
-                }]
-            },
-            externals: {
-                //  require("jquery") is external and available
-                //  on the global var jQuery
-                jquery: 'jQuery'
-            }
-        }, webpack2))
-        .pipe(gulp.dest('./public/javascripts'));
-});
 
 gulp.task('webpackMoreless', function() {
     return gulp.src(['./assets/javascripts/moreless/moreless.js', './assets/javascripts/moreless/longlist.js'])
@@ -87,6 +63,30 @@ gulp.task('webpackAdmin', function() {
         .pipe(webpackStream({
             output: {
                 filename: 'adminBundle.js'
+            },
+            module: {
+                rules: [{
+                    loader: 'babel-loader',
+                    exclude: [/node_modules/],
+                    query: {
+                        presets: [['es2015', {'loose': true}]]
+                    }
+                }]
+            },
+            externals: {
+                //  require("jquery") is external and available
+                //  on the global var jQuery
+                jquery: 'jQuery'
+            }
+        }, webpack2))
+        .pipe(gulp.dest('./public/javascripts'));
+});
+
+gulp.task('webpackTabs', function() {
+    return gulp.src('./assets/javascripts/tabs/entryPoint.js')
+        .pipe(webpackStream({
+            output: {
+                filename: 'tabs.js'
             },
             module: {
                 rules: [{

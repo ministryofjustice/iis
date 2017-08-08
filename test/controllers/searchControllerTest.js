@@ -1,11 +1,7 @@
 const {
     getIndex,
-    postIndex,
-    getSearchForm,
     postPagination,
     postFilters,
-    getEditSearch,
-    postEditSearch
 } = require('../../controllers/searchController');
 const chai = require('chai');
 const sinon = require('sinon');
@@ -28,7 +24,9 @@ describe('searchController', () => {
             user: {
                 email: 'x@y.com',
             },
-            query: {}
+            query: {},
+            session: {},
+            url: 'http://something.com/search'
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
     });
@@ -41,7 +39,8 @@ describe('searchController', () => {
         it('should render the search page', () => {
             getIndex(reqMock, resMock);
             expect(resMock.render).to.have.callCount(1);
-            expect(resMock.render).to.have.been.calledWith('search', {content: content.view.search, err: null});
+            const view = resMock.render.getCalls()[0].args[0];
+            expect(view).to.eql('search/index');
         });
 
         it('should pass in error object if in query', () => {
@@ -51,100 +50,38 @@ describe('searchController', () => {
                 desc: content.errMsg.DB_ERROR_DESC
             };
 
-
             getIndex(reqMock, resMock);
             expect(resMock.render).to.have.callCount(1);
-            expect(resMock.render).to.have.been.calledWith('search', {
-                content: content.view.search,
-                err: expectedError
-            });
-        });
-    });
-
-    describe('postIndex', () => {
-
-        it('should redirect to the search page with the appropriate query string', () => {
-            reqMock = {
-                body: {
-                    option: ['names', 'dob']
-                }
-            };
-
-            const expectedUrl = '/search/form?0=names&1=dob';
-
-            postIndex(reqMock, resMock);
-            expect(resMock.redirect).to.have.callCount(1);
-            expect(resMock.redirect).to.have.been.calledWith(expectedUrl);
+            const payload = resMock.render.getCalls()[0].args[1];
+            expect(payload.err).to.eql(expectedError);
         });
 
-        it('should render the search page with an error if no options selected', () => {
-            reqMock = {
-                body: {option: []},
-                user: {id: 1}
-            };
+        it('should clear userinput', () => {
+            reqMock.session.userInput = {some: 'thing'};
+            const expectedUi= {};
 
-            const expectedError = {
-                title: content.errMsg.CANNOT_SUBMIT,
-                desc: content.errMsg.NO_OPTION_SELECTED
-            };
-
-            postIndex(reqMock, resMock);
-            expect(resMock.render).to.have.callCount(1);
-            expect(resMock.render).to.have.been.calledWith('search', {
-                err: expectedError,
-                content: content.view.search
-            });
-        });
-    });
-
-    describe('getSearchForm', () => {
-        it('should render the full search and pass in search items from query string', () => {
-            reqMock = {
-                query: {0: 'names', 1: 'dob'}
-            };
-
-            getSearchForm(reqMock, resMock);
-            expect(resMock.render).to.have.callCount(1);
-            expect(resMock.render).to.have.been.calledWith('search/full-search', {
-                content: {
-                    body: 'Select all that apply',
-                    title: 'What information do you have on the subject?'
-                },
-                searchItems: ['names', 'dob'],
-                hints: ['wildcard']
-            });
-
+            getIndex(reqMock, resMock);
+            expect(reqMock.session.userInput).to.eql(expectedUi);
         });
 
-        it('should redirect to search if query contains unsupported search items', () => {
-            reqMock = {
-                query: {0: 'names', 1: 'dob', 2: 'bob'},
-                params: {
-                    view: 'view'
-                }
-            };
-
-            getSearchForm(reqMock, resMock);
-            expect(resMock.redirect).to.have.callCount(1);
-            expect(resMock.redirect).to.have.been.calledWith('/search');
+        it('should tell the view to use placeholder', () => {
+            getIndex(reqMock, resMock);
+            const payload = resMock.render.getCalls()[0].args[1];
+            expect(payload.usePlaceholder).to.eql(true);
         });
     });
 
     describe('postSearchForm', () => {
-        let dobValidatorStub;
-        let namesValidatorStub;
-        let identifierValidatorStub;
+        let descriptionValidatorStub;
 
-        const postSearchFormProxy = (dobValidatorStub = sandbox.stub().returns(null),
-                                     namesValidatorStub = sandbox.stub().returns(null),
-                                     identifierValidatorStub = sandbox.stub().returns(null)) => {
+        beforeEach(() => {
+            descriptionValidatorStub = sandbox.stub().returns(null);
+        });
+
+        const postSearchFormProxy = (descriptionValidator = descriptionValidatorStub) => {
             return proxyquire('../../controllers/searchController', {
-                '../data/dob': {
-                    'validate': dobValidatorStub
-                }, '../data/names': {
-                    'validate': namesValidatorStub
-                }, '../data/identifier': {
-                    'validate': identifierValidatorStub
+                './helpers/formValidators': {
+                    'validateDescriptionForm': descriptionValidator
                 }
             }).postSearchForm;
         };
@@ -157,8 +94,10 @@ describe('searchController', () => {
                     surname: 'Whitfield',
                     prisonNumber: ''
                 },
-                query: {0: 'names', 1: 'identifier'},
-                session: {}
+                session: {
+                    userInput: {}
+                },
+                url: 'http://something.com/search'
             };
 
             postSearchFormProxy()(reqMock, resMock);
@@ -175,7 +114,10 @@ describe('searchController', () => {
                     prisonNumber: '666'
                 },
                 query: {0: 'names', 1: 'identifier'},
-                session: {}
+                session: {
+                    userInput: {}
+                },
+                url: 'http://something.com/search'
             };
 
             postSearchFormProxy()(reqMock, resMock);
@@ -191,32 +133,38 @@ describe('searchController', () => {
                     prisonNumber: '666'
                 },
                 query: {0: 'names', 1: 'identifier', 2: 'incorrect'},
-                session: {}
+                session: {
+                    userInput: {}
+                },
+                url: 'http://something.com/search'
             };
 
             postSearchFormProxy()(reqMock, resMock);
             expect(reqMock.session.userInput).to.eql(reqMock.body);
         });
 
-        it('should redirect to search if any of the inputs do not validate', () => {
-            dobValidatorStub = sandbox.stub().returns({error: 'error'});
-            namesValidatorStub = sandbox.stub().returns({error: 'error'});
-            identifierValidatorStub = sandbox.stub().returns(null);
+        it('should render search with validation error if any of the inputs do not validate', () => {
+            descriptionValidatorStub = sandbox.stub().returns({error: 'error'});
 
             reqMock = {
                 body: {
                     forename: 'Matthew',
                     forename2: 'James',
-                    surname: 'Whitfield',
-                    prisonNumber: '666'
+                    surname: 'Whitfield'
                 },
                 query: {0: 'names'},
-                session: {}
+                session: {
+                    userInput: {}
+                },
+                url: 'http://something.com/search'
             };
 
-            postSearchFormProxy(dobValidatorStub, namesValidatorStub, identifierValidatorStub)(reqMock, resMock);
-            expect(resMock.redirect).to.have.callCount(1);
-            expect(resMock.redirect).to.have.been.calledWith('/search');
+            postSearchFormProxy(descriptionValidatorStub)(reqMock, resMock);
+            expect(resMock.render).to.have.callCount(1);
+            const view = resMock.render.getCalls()[0].args[0];
+            const payload = resMock.render.getCalls()[0].args[1];
+            expect(view).to.eql('search/index');
+            expect(payload.err).to.eql({error: 'error'});
         });
 
         it('should reset the visited results', () => {
@@ -245,7 +193,7 @@ describe('searchController', () => {
         let auditStub;
 
         beforeEach(() => {
-            getRowsStub = sandbox.stub().returnsPromise().resolves({totalRows: {value: 20}});
+            getRowsStub = sandbox.stub().returnsPromise().resolves([{totalRows: {value: 20}}]);
             getInmatesStub = sandbox.stub().returnsPromise().resolves({forename: 'Matt'});
             auditStub = sandbox.spy();
 
@@ -257,8 +205,7 @@ describe('searchController', () => {
                     userInput: {
                         forename: 'Matthew',
                         forename2: 'James',
-                        surname: 'Whitfield',
-                        prisonNumber: '666'
+                        surname: 'Whitfield'
                     }
                 },
                 query: {page: 1},
@@ -291,34 +238,45 @@ describe('searchController', () => {
 
         context('rowcounts === 0', () => {
             it('should not call getInmates', () => {
-                getRowsStub = sinon.stub().returnsPromise().resolves({totalRows: {value: 0}});
+                getRowsStub = sinon.stub().returnsPromise().resolves([{totalRows: {value: 0}}]);
                 getResultsProxy(getRowsStub)(reqMock, resMock);
 
                 expect(getInmatesStub).to.have.callCount(0);
             });
 
             it('should render results page', () => {
-                getRowsStub = sinon.stub().returnsPromise().resolves({totalRows: {value: 0}});
+                getRowsStub = sinon.stub().returnsPromise().resolves([{totalRows: {value: 0}}]);
 
                 getResultsProxy(getRowsStub)(reqMock, resMock);
                 expect(resMock.render).to.have.callCount(1);
             });
 
             it('should pass appropriate data to view', () => {
-                getRowsStub = sinon.stub().returnsPromise().resolves({totalRows: {value: 0}});
+                getRowsStub = sinon.stub().returnsPromise().resolves([{totalRows: {value: 0}}]);
                 getResultsProxy(getRowsStub)(reqMock, resMock);
 
                 const expectedPayload = {
-                    content: {title: ['Your search did not return any results']},
-                    pagination: null,
+                    content: { title: "HPA Prisoner Search" },
                     data: [],
                     err: null,
                     filtersForView: {},
+
+                    formContents: {
+                        forename: "Matthew",
+                        forename2: "James",
+                        surname: "Whitfield"
+                    },
+                    idSearch: false,
+                    moment: require('moment'),
+                    pagination: null,
                     queryStrings: {
                         prevPage: "?page=1&filters=Female",
                         thisPage: "?page=2&filters=Female",
                         nextPage: "?page=3&filters=Female"
                     },
+                    rowCount: 0,
+                    setCase: require('case'),
+                    usePlaceholder: false,
                     suggestions: {
                         forename: [{type: "useInitial", term: "forename", value: "M"}],
                         surname: [
@@ -327,19 +285,17 @@ describe('searchController', () => {
                         firstLast: [
                             {type: "swap", term: "forename", value: "Whitfield"},
                             {type: "swap", term: "surname", value: "Matthew"}]
-                    },
-                    searchTerms: {
-                        "First name": {searchCriteria: "names", value: "Matthew"},
-                        "Last name": {searchCriteria: "names", value: "Whitfield"},
-                        "Middle name": {searchCriteria: "names", value: "James"},
-                        "Prison number": {searchCriteria: "identifier", value: "666"}
-                    },
-                    moment: require('moment'),
-                    setCase: require('case')
-
+                    }
                 };
 
-                expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
+                expect(resMock.render).to.be.calledWith('search/index', expectedPayload);
+            });
+
+            it('should tell the view if id search', () => {
+                reqMock.session.userInput = {prisonNumber: '666'};
+                getResultsProxy(getRowsStub)(reqMock, resMock);
+                const payload = resMock.render.getCalls()[0].args[1];
+                expect(payload.idSearch).to.eql(true);
             });
 
         });
@@ -362,7 +318,6 @@ describe('searchController', () => {
                     forename: 'Matthew',
                     forename2: 'James',
                     page: 1,
-                    prisonNumber: '666',
                     surname: 'Whitfield'
                 });
             });
@@ -385,7 +340,7 @@ describe('searchController', () => {
 
                 const expectedPayload = {
                     content: {
-                        title: ['Your search returned', '20 prisoners']
+                        title: "HPA Prisoner Search"
                     },
                     pagination: {
                         'totalPages': 2,
@@ -401,12 +356,6 @@ describe('searchController', () => {
                         thisPage: "?page=2&filters=Female",
                         nextPage: "?page=3&filters=Female"
                     },
-                    searchTerms: {
-                        "First name": {searchCriteria: "names", value: "Matthew"},
-                        "Last name": {searchCriteria: "names", value: "Whitfield"},
-                        "Middle name": {searchCriteria: "names", value: "James"},
-                        "Prison number": {searchCriteria: "identifier", value: "666"}
-                    },
                     suggestions: {
                         forename: [{type: "useInitial", term: "forename", value: "M"}],
                         surname: [
@@ -417,11 +366,18 @@ describe('searchController', () => {
                             {type: "swap", term: "surname", value: "Matthew"}]
                     },
                     moment: require('moment'),
-                    setCase: require('case')
-
+                    setCase: require('case'),
+                    formContents: {
+                        forename: "Matthew",
+                        forename2: "James",
+                        surname: "Whitfield"
+                    },
+                    idSearch: false,
+                    rowCount: 20,
+                    usePlaceholder: false
                 };
 
-                expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
+                expect(resMock.render).to.be.calledWith('search/index', expectedPayload);
             });
 
             it('should handle when no page passed in', () => {
@@ -431,7 +387,7 @@ describe('searchController', () => {
 
                 const expectedPayload = {
                     content: {
-                        title: ['Your search returned', '20 prisoners']
+                        title: "HPA Prisoner Search"
                     },
                     pagination: {
                         'totalPages': 2,
@@ -447,12 +403,6 @@ describe('searchController', () => {
                         thisPage: "",
                         nextPage: "?page=2"
                     },
-                    searchTerms: {
-                        "First name": {searchCriteria: "names", value: "Matthew"},
-                        "Last name": {searchCriteria: "names", value: "Whitfield"},
-                        "Middle name": {searchCriteria: "names", value: "James"},
-                        "Prison number": {searchCriteria: "identifier", value: "666"}
-                    },
                     suggestions: {
                         forename: [{type: "useInitial", term: "forename", value: "M"}],
                         surname: [
@@ -463,27 +413,35 @@ describe('searchController', () => {
                             {type: "swap", term: "surname", value: "Matthew"}]
                     },
                     moment: require('moment'),
-                    setCase: require('case')
-
+                    setCase: require('case'),
+                    formContents: {
+                        forename: "Matthew",
+                        forename2: "James",
+                        surname: "Whitfield"
+                    },
+                    idSearch: false,
+                    rowCount: 20,
+                    usePlaceholder: false
                 };
 
-                expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
+                expect(resMock.render).to.be.calledWith('search/index', expectedPayload);
             });
 
             it('should add visited data', () => {
                 reqMock.session.visited = ['1', '3'];
+
                 const receivedData = [
                     {prisonNumber: '1', forename: 'Matt'},
                     {prisonNumber: '2', forename: 'Alistair'},
                     {prisonNumber: '3', forename: 'Zed'},
                 ];
-                getInmatesStub = sandbox.stub().returnsPromise().resolves(receivedData);
 
+                getInmatesStub = sandbox.stub().returnsPromise().resolves(receivedData);
                 getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
 
                 const expectedPayload = {
                     content: {
-                        title: ['Your search returned', '20 prisoners']
+                        title: 'HPA Prisoner Search'
                     },
                     pagination: {
                         'totalPages': 2,
@@ -503,12 +461,6 @@ describe('searchController', () => {
                         thisPage: "?page=2&filters=Female",
                         nextPage: "?page=3&filters=Female"
                     },
-                    searchTerms: {
-                        "First name": {searchCriteria: "names", value: "Matthew"},
-                        "Last name": {searchCriteria: "names", value: "Whitfield"},
-                        "Middle name": {searchCriteria: "names", value: "James"},
-                        "Prison number": {searchCriteria: "identifier", value: "666"}
-                    },
                     suggestions: {
                         forename: [{type: "useInitial", term: "forename", value: "M"}],
                         surname: [
@@ -518,12 +470,19 @@ describe('searchController', () => {
                             {type: "swap", term: "forename", value: "Whitfield"},
                             {type: "swap", term: "surname", value: "Matthew"}]
                     },
+                    formContents: {
+                        forename: "Matthew",
+                        forename2: "James",
+                        surname: "Whitfield"
+                    },
+                    idSearch: false,
+                    rowCount: 20,
+                    usePlaceholder: false,
                     moment: require('moment'),
                     setCase: require('case')
-
                 };
 
-                expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
+                expect(resMock.render).to.be.calledWith('search/index', expectedPayload);
             });
 
             it('should not add visited data when there are no results', () => {
@@ -536,7 +495,7 @@ describe('searchController', () => {
 
                 const expectedPayload = {
                     content: {
-                        title: ['Your search returned', '20 prisoners']
+                        title: "HPA Prisoner Search"
                     },
                     pagination: {
                         'totalPages': 2,
@@ -552,12 +511,6 @@ describe('searchController', () => {
                         thisPage: "?page=2&filters=Female",
                         nextPage: "?page=3&filters=Female"
                     },
-                    searchTerms: {
-                        "First name": {searchCriteria: "names", value: "Matthew"},
-                        "Last name": {searchCriteria: "names", value: "Whitfield"},
-                        "Middle name": {searchCriteria: "names", value: "James"},
-                        "Prison number": {searchCriteria: "identifier", value: "666"}
-                    },
                     suggestions: {
                         forename: [{type: "useInitial", term: "forename", value: "M"}],
                         surname: [
@@ -568,114 +521,18 @@ describe('searchController', () => {
                             {type: "swap", term: "surname", value: "Matthew"}]
                     },
                     moment: require('moment'),
-                    setCase: require('case')
-
+                    setCase: require('case'),
+                    formContents: {
+                        forename: "Matthew",
+                        forename2: "James",
+                        surname: "Whitfield"
+                    },
+                    idSearch: false,
+                    rowCount: 20,
+                    usePlaceholder: false
                 };
 
-                expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
-            });
-
-            it('should pass formatted search terms to the view - including DOB', () => {
-
-                reqMock.session.userInput = {
-                    forename: 'MATTHEW',
-                    forename2: 'James',
-                    surname: 'whitfield',
-                    prisonNumber: '666',
-                    dobOrAge: 'dob',
-                    dobDay: '01',
-                    dobMonth: '02',
-                    dobYear: '1999',
-                    pncNumber: 'PNC/123',
-                    croNumber: 'CRO/456'
-                };
-
-                getResultsProxy()(reqMock, resMock);
-
-                const expectedPayload = {
-                    content: {
-                        title: ['Your search returned', '20 prisoners']
-                    },
-                    pagination: {
-                        'totalPages': 2,
-                        'currPage': 1,
-                        'showPrev': false,
-                        'showNext': true
-                    },
-                    data: {forename: 'Matt'},
-                    err: null,
-                    filtersForView: {},
-                    queryStrings: {
-                        prevPage: "?page=1&filters=Female",
-                        thisPage: "?page=2&filters=Female",
-                        nextPage: "?page=3&filters=Female"
-                    },
-                    searchTerms: {
-                        "CRO number": {searchCriteria: "identifier", value: "CRO/456"},
-                        "Date of birth": {searchCriteria: "dob", value: "01/02/1999"},
-                        "First name": {searchCriteria: "names", value: "Matthew"},
-                        "Last name": {searchCriteria: "names", value: "Whitfield"},
-                        "Middle name": {searchCriteria: "names", value: "James"},
-                        "PNC number": {searchCriteria: "identifier", value: "PNC/123"},
-                        "Prison number": {searchCriteria: "identifier", value: "666"}
-                    },
-                    suggestions: {
-                        forename: [{type: "useInitial", term: "forename", value: "M"}],
-                        surname: [
-                            {type: "addWildcard", term: "surname", value: "Whitfield%"},
-                            {type: "addShorterWildcard", term: "surname", value: "Whitfie%"}],
-                        dob: [
-                            {type: "convertToAgeRange", term: "age", value: "16-20"},
-                            {type: "convertToAgeRange", term: "dobOrAge", value: "age"}],
-                        firstLast: [
-                            {type: "swap", term: "forename", value: "Whitfield"},
-                            {type: "swap", term: "surname", value: "Matthew"}]
-                    },
-                    moment: require('moment'),
-                    setCase: require('case')
-
-                };
-
-                expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
-            });
-
-            it('should pass formatted search terms to the view - including age', () => {
-
-                reqMock.session.userInput = {
-                    dobOrAge: 'age',
-                    age: '35-40'
-                };
-
-                getResultsProxy()(reqMock, resMock);
-
-                const expectedPayload = {
-                    content: {
-                        title: ['Your search returned', '20 prisoners']
-                    },
-                    pagination: {
-                        'totalPages': 2,
-                        'currPage': 1,
-                        'showPrev': false,
-                        'showNext': true
-                    },
-                    data: {forename: 'Matt'},
-                    err: null,
-                    filtersForView: {},
-                    queryStrings: {
-                        prevPage: "?page=1&filters=Female",
-                        thisPage: "?page=2&filters=Female",
-                        nextPage: "?page=3&filters=Female"
-                    },
-                    searchTerms: {
-                        "Age": {searchCriteria: "dob", value: "35-40"}
-                    },
-                    suggestions: null,
-                    moment: require('moment'),
-                    setCase: require('case')
-
-                };
-
-                expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
+                expect(resMock.render).to.be.calledWith('search/index', expectedPayload);
             });
 
             it('should pass a pageError if one is present', () => {
@@ -720,7 +577,6 @@ describe('searchController', () => {
                         forename: 'Matthew',
                         forename2: 'James',
                         surname: 'Whitfield',
-                        prisonNumber: '666',
                         page: 1,
                     };
 
@@ -735,7 +591,6 @@ describe('searchController', () => {
                         forename: 'Matthew',
                         forename2: 'James',
                         surname: 'Whitfield',
-                        prisonNumber: '666',
                         page: 1,
                         gender: ['F']
                     };
@@ -751,7 +606,6 @@ describe('searchController', () => {
                         forename: 'Matthew',
                         forename2: 'James',
                         surname: 'Whitfield',
-                        prisonNumber: '666',
                         page: 1,
                         gender: ['F', 'M']
                     };
@@ -767,7 +621,6 @@ describe('searchController', () => {
                         forename: 'Matthew',
                         forename2: 'James',
                         surname: 'Whitfield',
-                        prisonNumber: '666',
                         page: 1,
                         hasHDC: [true]
                     };
@@ -783,7 +636,6 @@ describe('searchController', () => {
                         forename: 'Matthew',
                         forename2: 'James',
                         surname: 'Whitfield',
-                        prisonNumber: '666',
                         page: 1,
                         isLifer: [true]
                     };
@@ -800,7 +652,6 @@ describe('searchController', () => {
                         forename: 'Matthew',
                         forename2: 'James',
                         surname: 'Whitfield',
-                        prisonNumber: '666',
                         page: 1,
                         gender: ['M']
                     };
@@ -817,7 +668,6 @@ describe('searchController', () => {
                         forename: 'Matthew',
                         forename2: 'James',
                         surname: 'Whitfield',
-                        prisonNumber: '666',
                         page: 1,
                         gender: ['F']
                     };
@@ -835,7 +685,6 @@ describe('searchController', () => {
                         forename: 'Matthew',
                         forename2: 'James',
                         surname: 'Whitfield',
-                        prisonNumber: '666',
                         page: 1,
                         hasHDC: [true]
                     };
@@ -849,9 +698,7 @@ describe('searchController', () => {
                     getResultsProxy()(reqMock, resMock);
 
                     const expectedPayload = {
-                        content: {
-                            title: ['Your search returned', '20 prisoners']
-                        },
+                        content: { title: "HPA Prisoner Search" },
                         pagination: {
                             'totalPages': 2,
                             'currPage': 1,
@@ -866,11 +713,10 @@ describe('searchController', () => {
                             thisPage: "?page=2&filters=Female",
                             nextPage: "?page=3&filters=Female"
                         },
-                        searchTerms: {
-                            "First name": {searchCriteria: "names", value: "Matthew"},
-                            "Last name": {searchCriteria: "names", value: "Whitfield"},
-                            "Middle name": {searchCriteria: "names", value: "James"},
-                            "Prison number": {searchCriteria: "identifier", value: "666"}
+                        formContents: {
+                            forename: "Matthew",
+                            forename2: "James",
+                            surname: "Whitfield"
                         },
                         suggestions: {
                             forename: [{type: "useInitial", term: "forename", value: "M"}],
@@ -881,12 +727,14 @@ describe('searchController', () => {
                                 {type: "swap", term: "forename", value: "Whitfield"},
                                 {type: "swap", term: "surname", value: "Matthew"}]
                         },
+                        idSearch: false,
+                        rowCount: 20,
+                        usePlaceholder: false,
                         moment: require('moment'),
                         setCase: require('case')
-
                     };
 
-                    expect(resMock.render).to.be.calledWith('search/results', expectedPayload);
+                    expect(resMock.render).to.be.calledWith('search/index', expectedPayload);
 
                 });
             });
@@ -960,208 +808,6 @@ describe('searchController', () => {
                 expect(resMock.redirect).to.have.callCount(1);
                 expect(resMock.redirect).to.have.been.calledWith('/search/results?filters=Male&filters=Female&page=1');
             });
-        });
-
-        describe('getEditSearch', () => {
-
-            beforeEach(() => {
-                reqMock = {
-                    query: {formItem: 'dob'},
-                    session: {
-                        userInput: {
-                            dobDay: '12',
-                            dobMonth: '03',
-                            dobYear: '2000'
-                        }
-                    }
-                };
-            });
-
-            it('should redirect to the search page if no data in session', () => {
-                reqMock = {
-                    query: {formItem: 'dob'},
-                    session: {}
-                };
-                const expectedUrl = '/search';
-
-                getEditSearch(reqMock, resMock);
-                expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith(expectedUrl);
-            });
-
-            it('should redirect to the search page if no form item in query', () => {
-                reqMock = {
-                    query: {},
-                    session: {
-                        userInput: {
-                            'dobDay': '12'
-                        }
-                    }
-                };
-                const expectedUrl = '/search';
-
-                getEditSearch(reqMock, resMock);
-                expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith(expectedUrl);
-            });
-
-            it('should render full search if contains formItem and session data', () => {
-                reqMock = {
-                    query: {formItem: 'dob'},
-                    session: {
-                        userInput: {
-                            'dobDay': '12'
-                        }
-                    }
-                };
-                const expectedUrl = 'search/full-search';
-
-                getEditSearch(reqMock, resMock);
-                expect(resMock.render).to.have.callCount(1);
-                expect(resMock.render.getCalls()[0].args[0]).to.eql(expectedUrl);
-            });
-
-            it('should pass appropriate data to view', () => {
-                reqMock = {
-                    query: {formItem: 'dob'},
-                    session: {
-                        userInput: {
-                            'dobDay': '12'
-                        }
-                    }
-                };
-                const expectedPayload = {
-                    "content": {
-                        "body": "Select all that apply",
-                        "title": "What information do you have on the subject?"
-                    },
-                    "formContents": {
-                        "dobDay": "12",
-                    },
-                    "hints": [],
-                    "searchItems": "dob"
-                };
-
-                getEditSearch(reqMock, resMock);
-                expect(resMock.render).to.have.callCount(1);
-                expect(resMock.render.getCalls()[0].args[1]).to.eql(expectedPayload);
-            });
-        });
-
-        describe('postEditSearch', () => {
-
-            let dobValidatorStub;
-            let namesValidatorStub;
-            let identifierValidatorStub;
-
-            const editSearchProxy = (dobValidatorStub = sandbox.stub().returns(null),
-                                     namesValidatorStub = sandbox.stub().returns(null),
-                                     identifierValidatorStub = sandbox.stub().returns(null)) => {
-                return proxyquire('../../controllers/searchController', {
-                    '../data/dob': {
-                        'validate': dobValidatorStub
-                    }, '../data/names': {
-                        'validate': namesValidatorStub
-                    }, '../data/identifier': {
-                        'validate': identifierValidatorStub
-                    }
-                }).postEditSearch;
-            };
-
-            it('should combine userinput with existing session data', () => {
-                reqMock = {
-                    body: {
-                        dobDay: '12',
-                    },
-                    query: {0: 'names', 1: 'identifier'},
-                    session: {
-                        userInput: {
-                            forename: 'Matthew',
-                            forename2: 'James',
-                            dobDay: '10'
-                        }
-                    }
-                };
-
-                const expectedUserInput = {
-                    forename: 'Matthew',
-                    forename2: 'James',
-                    dobDay: '12'
-                };
-
-                editSearchProxy()(reqMock, resMock);
-                expect(reqMock.session.userInput).to.eql(expectedUserInput);
-            });
-
-            it('should remove any that are blank within the same category', () => {
-                reqMock = {
-                    body: {
-                        dobDay: '12',
-                    },
-                    query: {0: 'names', 1: 'identifier'},
-                    session: {
-                        userInput: {
-                            forename: 'Matthew',
-                            forename2: 'James',
-                            dobDay: '10',
-                            dobMonth: '10',
-                            dobYear: '10'
-                        }
-                    }
-                };
-
-                const expectedUserInput = {
-                    forename: 'Matthew',
-                    forename2: 'James',
-                    dobDay: '12'
-                };
-
-                editSearchProxy()(reqMock, resMock);
-                expect(reqMock.session.userInput).to.eql(expectedUserInput);
-            });
-
-            it('should redirect to search results page', () => {
-                reqMock = {
-                    body: {
-                        firstName: '',
-                        dobDay: '12',
-                    },
-                    query: {0: 'names', 1: 'identifier'},
-                    session: {
-                        userInput: {
-                            dobDay: '10',
-                            dobMonth: '3',
-                            dobYear: '1985'
-                        }
-                    }
-                };
-
-                editSearchProxy()(reqMock, resMock);
-                expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/search/results');
-            });
-
-            it('should redirect to search if any of the inputs do not validate', () => {
-                dobValidatorStub = sandbox.stub().returns({error: 'error'});
-                namesValidatorStub = sandbox.stub().returns({error: 'error'});
-                identifierValidatorStub = sandbox.stub().returns(null);
-
-                reqMock = {
-                    body: {
-                        forename: 'Matthew',
-                        forename2: 'James',
-                        surname: 'Whitfield',
-                        prisonNumber: '666'
-                    },
-                    query: {0: 'names'},
-                    session: {}
-                };
-
-                editSearchProxy(dobValidatorStub, namesValidatorStub, identifierValidatorStub)(reqMock, resMock);
-                expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/search');
-            });
-
         });
     });
 });

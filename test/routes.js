@@ -47,37 +47,6 @@ describe('Test redirections when session set and not set', function() {
             });
     });
 
-    it('should return status code 200 if an option hasnt been selected', function() {
-        return common.logInAs("someone")
-            .then(function(authedReq) {
-                return authedReq.post('/search')
-                    .expect(200)
-                    .expect(function(res) {
-                        expect(res.text).to.contain('error-summary')
-                    });
-            });
-    });
-
-    it('should return 302 if at least one option has been selected', function() {
-        return common.logInAs("someone")
-            .then(function(authedReq) {
-                return authedReq.post('/search')
-                    .send({option: 'names'})
-                    .expect(302)
-                    .expect("Location", '/search/form?0=names');
-            });
-    });
-
-    it('should redirect to appropriate url if multiple selected', function() {
-        return common.logInAs("someone")
-            .then(function(authedReq) {
-                return authedReq.post('/search')
-                    .send({option: ["names", "dob"]})
-                    .expect(302)
-                    .expect("Location", "/search/form?0=names&1=dob")
-            });
-    });
-
     it('should redirect to search if non admin user tries to access admin', function() {
         return common.logInAs("someone")
             .then(function(authedReq) {

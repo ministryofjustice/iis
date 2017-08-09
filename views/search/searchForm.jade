@@ -6,14 +6,16 @@ div#formHolder
         li(class = !idSearch && !usePlaceholder ? "active" : undefined)
             a#otherFormLink.tab(data-tab="altForm") Name/age
     div.formIdentifiers.tabPanel(data-panel="idForm" class = idSearch || usePlaceholder ?  undefined : "initiallyHidden")
-        form(method="post" action='/search/results/search')
+        form(id="idForm" method="post" action='/search/results/search')
             input(type="hidden" name="_csrf" value="#{csrfToken}")
             include ./identifier.jade
             button.button#submitId Search
 
     div.formAlternative.tabPanel(data-panel="altForm" class = !idSearch && !usePlaceholder ? undefined : "initiallyHidden")
-        form(method="post" action='/search/results/search')
+        form(id="descriptionForm" method="post" action='/search/results/search')
             input(type="hidden" name="_csrf" value="#{csrfToken}")
             include ./names.jade
             include ./dob.jade
             button.button#submitNonId Search
+    div.padTop
+        a#clearSearch(href="/search") Clear search

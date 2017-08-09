@@ -127,7 +127,7 @@ describe('Subject data', function() {
             {page: 'hdcRecall', sql: ', JSON_QUERY(HDC_RECALL) AS hdcRecall'},
             {page: 'movements', sql: ', JSON_QUERY(MOVEMENTS) AS movements'},
             {page: 'offences', sql: ', JSON_QUERY(OFFENCES) AS offences'},
-            {page: 'offencesInCustody', sql: ', JSON_QUERY(OFFENCES_IN_CUSTODY) AS offencesInCustody'},
+            {page: 'offencesInCustody', sql: ', JSON_QUERY(ADJUDICATIONS) AS offencesInCustody'},
             {page: 'sentencing', sql: ', JSON_QUERY(SENTENCING) AS sentencing'},
         ];
 

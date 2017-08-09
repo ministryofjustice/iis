@@ -1,0 +1,12 @@
+INSERT INTO IIS.ADJ_PUNISHMENT (
+    PKTS_ADJ_PUNISHMENT,
+    PUNISHMENT_NO,
+    PUNISHMENT,
+    DURATION_PUN,
+    XIDBKEY,
+    FK_ADJ_OFFENCE)
+
+VALUES
+    ('1', 1, 2, 7, 1, '12341'),
+    ('2', 2, 6, 7, 1, '12341'),
+    ('3', 1, 8, 21, 1, '12342');

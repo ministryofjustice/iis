@@ -21,7 +21,8 @@ module.exports = {
     },
 
     dbErrorCodeMessages: {
-        ETIMEOUT: 'The search timed out. Try a more specific query'
+        ETIMEOUT: 'The search timed out. Try a more specific query',
+        emptySubmission: 'Please enter a value for at least one field'
     },
 
     view: {

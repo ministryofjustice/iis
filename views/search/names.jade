@@ -1,20 +1,19 @@
 block search-page
     div.form-group
         label(for="forename")
-            span.form-label-bold Forename or first initial
+            span.form-label First name or initial
 
         input.form-control.initialFocus#forename(type="text", name="forename", maxlength="13" value="#{formContents && formContents.forename ? formContents.forename : ''}")
 
     div.form-group
         label(for="forename2")
-            span.form-label-bold Middle name or initial
-            span.form-hint Previously known as forename 2
+            span.form-label Middle name or initial
 
         input.form-control#forename2(type="text", name="forename2", maxlength="13" value="#{formContents && formContents.forename2 ? formContents.forename2 : ''}")
 
 
     div.form-group
         label(for="surname")
-            span.form-label-bold Surname
+            span.form-label Surname
 
         input.form-control#surname(type="text", name="surname", maxlength="26" value="#{formContents && formContents.surname ? formContents.surname : ''}")

@@ -1,7 +1,7 @@
 'use strict';
 
 const utils = require('./utils');
-const db = require('../server/iisData');
+const {getCollection} = require('../server/iisData');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 const TYPES = require('tedious').TYPES;
 
@@ -35,7 +35,7 @@ exports.getSearchResultsCount = function(userInput) {
                          ) NUMBERED_ROWS
                     WHERE ROW_NUM = 1`;
 
-        db.getTuple(sql, obj.params, resolve, reject);
+        getCollection(sql, obj.params, resolve, reject);
     });
 };
 
@@ -67,7 +67,7 @@ exports.getSearchResults = function(userInput) {
                      OFFSET ${resultLimits.start} ROWS
                      FETCH NEXT ${resultLimits.resultsPerPage} ROWS ONLY`;
 
-        db.getCollection(sql, obj.params, parseSearchResults(resolve), reject);
+        getCollection(sql, obj.params, parseSearchResults(resolve), reject);
     });
 };
 
@@ -134,10 +134,6 @@ function getStringInput(options, value) {
 }
 
 function getDobSqlWithParams(obj) {
-    if (obj.userInput.dobOrAge !== 'dob') {
-        return null;
-    }
-
     obj.val = obj.userInput.dobYear + '-' +
         utils.pad(obj.userInput.dobMonth) + '-' +
         utils.pad(obj.userInput.dobDay);
@@ -146,10 +142,6 @@ function getDobSqlWithParams(obj) {
 }
 
 function getAgeSqlWithParams(obj) {
-    if (obj.userInput.dobOrAge !== 'age') {
-        return null;
-    }
-
     let dateRange = utils.getDateRange(obj.userInput.age);
 
     let sql = '(BIRTH_DATE >= @from_date AND BIRTH_DATE <= @to_date)';

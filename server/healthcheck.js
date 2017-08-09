@@ -3,7 +3,7 @@ const db = require('./iisData');
 const checks = {
     db: () => {
         return new Promise((resolve, reject) => {
-            db.getTuple('SELECT 1 AS [ok]', null, resolve, reject);
+            db.getCollection('SELECT 1 AS [ok]', null, resolve, reject);
         });
     }
 };

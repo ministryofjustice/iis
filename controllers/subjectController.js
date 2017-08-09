@@ -1,6 +1,6 @@
 const logger = require('../log');
 const {sentence, capital, capitalWithAcronyms, sentenceWithAcronyms} = require('./helpers/textHelpers');
-const url = require('url');
+const {retainUrlQuery} = require('./helpers/urlHelpers');
 const {getSubject} = require('../data/subject');
 const content = require('../data/content');
 const audit = require('../data/audit');
@@ -26,7 +26,7 @@ exports.getSubject = function(req, res) {
         page,
         subjectData: {},
         noResultsText: content.view.subject[page],
-        returnQuery: url.parse(req.url).search ? url.parse(req.url).search : ''
+        returnQuery: retainUrlQuery(req.url)
     };
 
     return getSubject(id, dataRequiredForPage[page])

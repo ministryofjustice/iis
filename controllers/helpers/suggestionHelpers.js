@@ -28,7 +28,7 @@ function getSearchSuggestions(userInput) {
 function getSearchTermsFromInput(userInput) {
     let inputs = Object.assign({}, userInput);
 
-    if (inputs['dobOrAge'] === 'dob') {
+    if (inputs['dobYear']) {
         inputs['dob'] = [userInput['dobYear'], userInput['dobMonth'], userInput['dobDay']].join('-');
     }
 

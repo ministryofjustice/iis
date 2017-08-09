@@ -4,43 +4,29 @@ let content = require('./content.js');
 const MAX_AGE_RANGE = 10;
 
 module.exports = {
-
-    validate: function(obj, callback) {
-
-        if (obj.dobOrAge == 'age') {
-            return callback(validateAge(obj.age));
-        }
-
-        let err = {
-            title: content.errMsg.CANNOT_SUBMIT,
-            items: [{dobDay: 'Enter date of birth'}],
-            desc: content.errMsg.INVALID_DOB
-        };
-
-        let day = obj.dobDay;
-        let month = obj.dobMonth;
-        let year = obj.dobYear;
-
-        if (year.length !== 4) {
-            return callback({
-                title: content.errMsg.CANNOT_SUBMIT,
-                items: [{dobDay: 'Enter date of birth in the format DD/MM/YYYY'}],
-                desc: content.errMsg.INVALID_DOB
-            });
-        }
-
-        if (!isDate(day + '-' + month + '-' + year)) {
-            return callback(err);
-        }
-
-        let dob = new Date(year, month, day);
-        if (dob > Date.now()) {
-            return callback(err);
-        }
-
-        return callback(null);
-    }
+    validateDob,
+    validateAge
 };
+
+function validateDob(day, month, year) {
+
+    let err = {title: 'Enter a valid date of birth in the format DD/MM/YYYY'};
+
+    if(!day || !month || !year) {
+        return err;
+    }
+
+    if (year.length !== 4 || !isDate(day + '-' + month + '-' + year)) {
+        return err;
+    }
+
+    let dob = new Date(year, month, day);
+    if (dob > Date.now()) {
+        return {title: 'The date of birth cannot be in the future'};
+    }
+
+    return null;
+}
 
 function isDate(v) {
     // eslint-disable-next-line
@@ -48,16 +34,16 @@ function isDate(v) {
 }
 
 
-function validateAge(v) {
+function validateAge(age) {
     let err = {
         title: content.errMsg.CANNOT_SUBMIT,
-        items: [{agRange: 'Re-enter age or range'}],
+        items: [{ageRange: 'Re-enter age or range'}],
         desc: content.errMsg.INVALID_AGE
     };
 
-    if (!isAgeOrAgeRange(v.replace(/ /g, ''))) {
+    if (!isAgeOrAgeRange(age.replace(/ /g, ''))) {
 
-        if (v.indexOf('-') >= 0) {
+        if (age.indexOf('-') > 0) {
             err.desc = content.errMsg.INVALID_AGE_RANGE;
         }
 

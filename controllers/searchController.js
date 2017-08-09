@@ -1,20 +1,11 @@
 const content = require('../data/content');
 const logger = require('../log');
-const dob = require('../data/dob');
-const identifier = require('../data/identifier');
-const names = require('../data/names');
 const {getSearchResultsCount, getSearchResults} = require('../data/search');
 const utils = require('../data/utils');
 const audit = require('../data/audit');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
-const Case = require('case');
-const url = require('url');
-const moment = require('moment');
+const {validateDescriptionForm} = require('./helpers/formValidators');
 
-const {
-    objectKeysInArray,
-    itemsInQueryString
-} = require('./helpers/formHelpers');
 const {
     getInputtedFilters,
     removeAllFilters
@@ -24,7 +15,8 @@ const {
     mergeIntoQuery,
     toggleFromQueryItem,
     getUrlAsObject,
-    createUrl
+    createUrl,
+    retainUrlQuery
 } = require('./helpers/urlHelpers');
 const {
     getSearchSuggestions
@@ -33,83 +25,44 @@ const {
 const availableSearchOptions = exports.availableSearchOptions = {
     identifier: {
         fields: ['prisonNumber', 'pncNumber', 'croNumber'],
-        validator: identifier.validate,
         hints: []
     },
     names: {
         fields: ['forename', 'forename2', 'surname'],
-        validator: names.validate,
         hints: ['wildcard']
     },
     dob: {
-        fields: ['dobOrAge', 'dobDay', 'dobMonth', 'dobYear', 'age'],
-        validator: dob.validate,
+        fields: ['dobDay', 'dobMonth', 'dobYear', 'age'],
         hints: []
     }
 };
+
+const allAcceptableFields = Object.keys(availableSearchOptions).reduce((acceptableFields, searchOptionKey) => {
+    return acceptableFields.concat(...availableSearchOptions[searchOptionKey].fields);
+}, []);
+
+function isIdentifierSearch(userInput) {
+    const intersection = [...Object.keys(userInput)].filter(input => {
+        return availableSearchOptions.identifier.fields.includes(input);
+    });
+    return intersection.length > 0;
+}
 
 exports.getIndex = function(req, res) {
     logger.debug('GET /search');
 
     const error = req.query.error ? getDbErrorData(req.query.error) : null;
-
-    return res.render('search', {
-        content: content.view.search,
-        err: error
-    });
-};
-
-exports.postIndex = function(req, res) {
-
-    logger.debug('POST /search');
-    const userReturnedOptions = req.body.option;
-
-    if (!userReturnedOptions || userReturnedOptions.length === 0) {
-
-        logger.info('Search: No search option supplied', {userId: req.user.id});
-
-        let _err = {
-            title: content.errMsg.CANNOT_SUBMIT,
-            desc: content.errMsg.NO_OPTION_SELECTED
-        };
-
-        res.render('search', {
-            err: _err,
-            content: content.view.search
-        });
-        return;
-    }
-
-    const selectedOptions = objectKeysInArray(availableSearchOptions, userReturnedOptions);
-
-    return res.redirect(createUrl('/search/form', selectedOptions));
-};
-
-exports.getSearchForm = function(req, res) {
-    const searchItems = itemsInQueryString(req.query);
-    const anyUnsupportedItems = searchItems.some(item => !availableSearchOptions[item]);
-
-    if (anyUnsupportedItems) {
-        logger.warn('No such search option', {view: req.params.view});
-        return res.redirect('/search');
-    }
-
-    const hints = flatten(searchItems.map(item => availableSearchOptions[item].hints));
-    res.render('search/full-search', {
-        content: content.view.search,
-        searchItems,
-        hints
-    });
+    req.session.userInput = {};
+    return res.render('search/index', parseResultsPageData(req, 0, null, null, error));
 };
 
 exports.postSearchForm = function(req, res) {
-
     const userInput = userInputFromSearchForm(req.body);
-    const searchItems = itemsInQueryString(req.query).filter(item => availableSearchOptions[item]);
+    const validationError = inputValidates(userInput);
 
-    if (!inputValidates(searchItems, userInput)) {
+    if (validationError) {
         logger.info('Server side input validation used');
-        return res.redirect('/search');
+        return res.render('search/index', parseResultsPageData(req, 0, null, null, validationError));
     }
 
     req.session.visited = [];
@@ -128,7 +81,7 @@ exports.getResults = function(req, res) {
     audit.record('SEARCH', req.user.email, req.session.userInput);
 
     getSearchResultsCount(req.session.userInput)
-        .then(returnedRows => getSearchResultsAndRender(req, res)(returnedRows))
+        .then(returnedRows => getSearchResultsAndRender(req, res)(returnedRows[0]))
         .catch(error => {
             logger.error('Error during number of rows search: ' + error.message);
             const query = {error: error.code};
@@ -144,7 +97,7 @@ function getSearchResultsAndRender(req, res) {
     return function(rowCountData) {
         const rowCount = rowCountData.totalRows.value;
         if (rowCount === 0) {
-            return res.render('search/results', parseResultsPageData(req, rowCount));
+            return res.render('search/index', parseResultsPageData(req, rowCount));
         }
 
         if (!isValidPage(currentPage, rowCount)) {
@@ -152,7 +105,7 @@ function getSearchResultsAndRender(req, res) {
         }
 
         return getSearchResults(req.session.userInput).then(searchResult => {
-            return res.render('search/results', parseResultsPageData(req, rowCount, searchResult, currentPage));
+            return res.render('search/index', parseResultsPageData(req, rowCount, searchResult, currentPage));
         }).catch(error => {
             logger.error('Error during inmate search: ' + error.message);
             const query = {error: error.code};
@@ -161,50 +114,12 @@ function getSearchResultsAndRender(req, res) {
     };
 }
 
-exports.getEditSearch = function(req, res) {
-    const formItemSelected = req.query.formItem;
-
-    if (!formItemSelected || !Object.keys(availableSearchOptions).includes(formItemSelected) || !req.session.userInput) {
-        return res.redirect('/search');
-    }
-
-    const formContents = availableSearchOptions[formItemSelected].fields.reduce((formObject, formItem) => {
-        if (req.session.userInput[formItem]) {
-            return Object.assign({}, formObject, {[formItem]: req.session.userInput[formItem]});
-        }
-        return formObject;
-    }, {});
-
-    res.render('search/full-search', {
-        content: content.view.search,
-        searchItems: formItemSelected,
-        hints: availableSearchOptions[formItemSelected].hints,
-        formContents
-    });
-};
-
-exports.postEditSearch = function(req, res) {
-    const oldUserInput = Object.assign({}, req.session.userInput);
-    const newUserInput = userInputFromSearchForm(req.body);
-    const removeIfCurrentCriteria = removeAllFromSameCriteriaConstructor(oldUserInput, newUserInput);
-    const oldInputWithoutCurrentCriteria = Object.keys(oldUserInput).reduce(removeIfCurrentCriteria, {});
-
-    const searchItems = itemsInQueryString(req.query).filter(item => availableSearchOptions[item]);
-    if (!inputValidates(searchItems, newUserInput)) {
-        logger.info('Server side input validation used');
-        return res.redirect('/search');
-    }
-
-    req.session.userInput = Object.assign({}, oldInputWithoutCurrentCriteria, newUserInput);
-    res.redirect('/search/results');
-};
-
 exports.getSuggestions = function(req, res) {
     return res.render('search/suggestions', {
         content: content.view.suggestions,
-        returnQuery: url.parse(req.url).search ? url.parse(req.url).search : '',
-        suggestions: req.session.suggestions,
-        searchTerms: req.session.searchTerms
+        returnQuery: retainUrlQuery(req.url),
+        suggestions: getSearchSuggestions(req.session.userInput),
+        searchTerms: req.session.searchTerms             
     });
 };
 
@@ -213,26 +128,35 @@ exports.getSuggestion = function(req, res) {
     res.redirect('/search/results');
 };
 
-
-function parseResultsPageData(req, rowcount, data, page) {
-
-    req.session.suggestions = getSearchSuggestions(req.session.userInput);
-    req.session.searchTerms = getSearchTermsForView(req.session.userInput);
-
+function parseResultsPageData(req, rowCount, data, page, error) {
+    const searchedFor = getUserInput(req.session.userInput);
+  
     return {
         content: {
-            title: getPageTitle(rowcount)
+            title: 'HPA Prisoner Search'
         },
-        pagination: (rowcount > resultsPerPage ) ? utils.pagination(rowcount, page) : null,
+        rowCount,
+        pagination: (rowCount > resultsPerPage ) ? utils.pagination(rowCount, page) : null,
         data: addSelectionVisitedData(data, req.session) || [],
-        err: getPaginationErrors(req.query),
+        err: error || getPaginationErrors(req.query),
         filtersForView: getInputtedFilters(req.query, 'VIEW'),
         queryStrings: getQueryStringsForSearch(req.url),
-        suggestions: req.session.suggestions ? req.session.suggestions : null,
-        searchTerms: req.session.searchTerms,
+        formContents: searchedFor,
+        usePlaceholder: Object.keys(searchedFor).length === 0,
+        idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
+		    suggestions: getSearchSuggestions(req.session.userInput),
         moment: require('moment'),
         setCase: require('case')
     };
+}
+
+function getUserInput(userInput) {
+    return Object.keys(userInput).reduce((contents, field) => {
+        if(allAcceptableFields.includes(field)) {
+            return Object.assign({}, contents, {[field]: userInput[field]});
+        }
+        return contents;
+    }, {});
 }
 
 function getDbErrorData(errorCode) {
@@ -263,11 +187,16 @@ const composeFieldsForOptionReducer = requestBody => (collatedData, option) => {
     return collatedData;
 };
 
-const inputValidates = (searchItems, userInput) => {
-    return !searchItems.some(item => availableSearchOptions[item].validator(userInput, err => err));
-};
+const inputValidates = userInput => {
 
-const flatten = arr => Array.prototype.concat(...arr);
+    if(!Object.keys(userInput).length > 0) {
+        return {
+            title: 'Please enter a value for at least one field'
+        };
+    }
+
+    return isIdentifierSearch(userInput) ? null : validateDescriptionForm(userInput);
+};
 
 exports.postPagination = function(req, res) {
     const query = mergeIntoQuery(req.query, {page: req.body.pageNumber});
@@ -314,24 +243,6 @@ function getCurrentPage(query) {
     return Number.isNaN(page) ? 1 : page;
 }
 
-function getPageTitle(rowcount) {
-
-    let oResultsPageContent = content.view.results;
-
-    if (rowcount === 0) {
-        return [oResultsPageContent.title_no_results];
-    }
-
-    let title = oResultsPageContent.title.split(' _x_ ');
-    title[1] = `${rowcount} ${title[1]}`;
-
-    if (rowcount > 1) {
-        title[1] += 's';
-    }
-
-    return title;
-}
-
 function addSelectionVisitedData(data, session) {
     if (!data || !session.visited || session.visited.length === 0) {
         return data;
@@ -355,60 +266,19 @@ function addFiltersToUserInput(userInput, query) {
 
 function applySuggestionsToUserInput(userInput, query, session) {
 
-    if (!query.suggest || !query.field || !session.suggestions) return userInput;
+    if (!query.suggest || !query.field) return userInput;
 
-    const suggestions = session.suggestions[query.field].filter(suggestion =>
+    const suggestions = getSearchSuggestions(session.userInput);
+
+    const suggestionsToApply = suggestions[query.field].filter(suggestion =>
         suggestion.type === query.suggest
     );
 
-    if (!suggestions || suggestions.length === 0) return userInput;
+    if (!suggestionsToApply || suggestionsToApply.length === 0) return userInput;
 
-    return Object.assign({}, userInput, suggestions.reduce(newValues, {}));
+    return Object.assign({}, userInput, suggestionsToApply.reduce(newValues, {}));
 }
 
 function newValues(newValues, suggestion) {
     return Object.assign({}, newValues, {[suggestion.term]: suggestion.value});
-}
-
-
-function getSearchTermsForView(userInput) {
-
-    const searchTerms = (userInput['dobOrAge'] === 'dob') ? searchTermObjectWithDob(userInput) : {};
-
-    return Object.keys(userInput).filter(searchItem => content.termDisplayNames[searchItem])
-        .reduce(searchTermInCorrectCase(userInput), searchTerms);
-}
-
-const searchTermObjectWithDob = userInput => {
-    const value = [userInput['dobDay'], userInput['dobMonth'], userInput['dobYear']].join('/');
-    const itemName = content.termDisplayNames['dob'].name;
-
-    return searchTermObject('dob', itemName, false, value);
-};
-
-const searchTermInCorrectCase = userInput => (allTerms, searchTerm) => {
-
-    const searchCriteria = searchCriteriaForInputType(searchTerm);
-    const itemName = content.termDisplayNames[searchTerm].name;
-    const capitaliseName = content.termDisplayNames[searchTerm].textFormat === 'capitalise';
-    const termObject = searchTermObject(searchCriteria, itemName, capitaliseName, userInput[searchTerm]);
-
-    return Object.assign({}, allTerms, termObject);
-};
-
-const searchCriteriaForInputType = term => {
-    return Object.keys(availableSearchOptions).find(criteria => availableSearchOptions[criteria].fields.includes(term));
-};
-
-const searchTermObject = (searchCriteria, itemName, capitaliseValue, value) => {
-    const valueWithCase = capitaliseValue ? Case.capital(value) : value;
-    return {[itemName]: {searchCriteria, value: valueWithCase}};
-};
-
-const removeAllFromSameCriteriaConstructor = (existingUserInput, userInput) => (newObj, inputType) => {
-    const searchCriteria = searchCriteriaForInputType(Object.keys(userInput)[0]);
-    if (availableSearchOptions[searchCriteria].fields.includes(inputType)) {
-        return newObj;
-    }
-    return Object.assign({}, newObj, {[inputType]: existingUserInput[inputType]});
 }

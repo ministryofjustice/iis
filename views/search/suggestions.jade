@@ -78,15 +78,3 @@ block content
             p &nbsp
             div.form-group
                 a(href="/search") New search
-
-         div.column-one-third
-                    div.well.search-terms-container
-                        h3 Your current search terms
-                        div.search-terms
-                            each item, term  in searchTerms
-                                div.searchedTerm
-                                    span.hint.font-xsmall #{term}
-                                    |  #{item.value}
-                                    div
-                                        a(href="/search/edit?formItem=#{item.searchCriteria}") change
-

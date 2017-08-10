@@ -1,3 +1,5 @@
+const config = require('../server/config');
+
 const content = require('../data/content');
 const logger = require('../log');
 const {getSearchResultsCount, getSearchResults} = require('../data/search');
@@ -5,6 +7,8 @@ const utils = require('../data/utils');
 const audit = require('../data/audit');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 const {validateDescriptionForm} = require('./helpers/formValidators');
+
+const {getNomisResults, getNomisToken} = require('../data/nomisSearch');
 
 const {
     getInputtedFilters,
@@ -119,7 +123,7 @@ exports.getSuggestions = function(req, res) {
         content: content.view.suggestions,
         returnQuery: retainUrlQuery(req.url),
         suggestions: getSearchSuggestions(req.session.userInput),
-        searchTerms: req.session.searchTerms             
+        searchTerms: req.session.searchTerms
     });
 };
 
@@ -130,7 +134,7 @@ exports.getSuggestion = function(req, res) {
 
 function parseResultsPageData(req, rowCount, data, page, error) {
     const searchedFor = getUserInput(req.session.userInput);
-  
+
     return {
         content: {
             title: 'HPA Prisoner Search'
@@ -138,21 +142,38 @@ function parseResultsPageData(req, rowCount, data, page, error) {
         rowCount,
         pagination: (rowCount > resultsPerPage ) ? utils.pagination(rowCount, page) : null,
         data: addSelectionVisitedData(data, req.session) || [],
+        nomisData: getNomisData(req.session.userInput) || [],
         err: error || getPaginationErrors(req.query),
         filtersForView: getInputtedFilters(req.query, 'VIEW'),
         queryStrings: getQueryStringsForSearch(req.url),
         formContents: searchedFor,
         usePlaceholder: Object.keys(searchedFor).length === 0,
         idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
-		    suggestions: getSearchSuggestions(req.session.userInput),
+        suggestions: getSearchSuggestions(req.session.userInput),
         moment: require('moment'),
         setCase: require('case')
     };
 }
 
+function getNomisData(userInput) {
+
+    if (!config.nomis.enabled) {
+        console.log('nomis disabled');
+        return null;
+    }
+
+    const token = getNomisToken(); // todo get this at startup and refresh if expired
+
+    getNomisResults(userInput, token).then(nomisData => {
+        console.log(JSON.stringify(nomisData));
+        return nomisData;
+        // when to query nomis and where to show the results
+    });
+}
+
 function getUserInput(userInput) {
     return Object.keys(userInput).reduce((contents, field) => {
-        if(allAcceptableFields.includes(field)) {
+        if (allAcceptableFields.includes(field)) {
             return Object.assign({}, contents, {[field]: userInput[field]});
         }
         return contents;
@@ -189,7 +210,7 @@ const composeFieldsForOptionReducer = requestBody => (collatedData, option) => {
 
 const inputValidates = userInput => {
 
-    if(!Object.keys(userInput).length > 0) {
+    if (!Object.keys(userInput).length > 0) {
         return {
             title: 'Please enter a value for at least one field'
         };
@@ -244,6 +265,7 @@ function getCurrentPage(query) {
 }
 
 function addSelectionVisitedData(data, session) {
+
     if (!data || !session.visited || session.visited.length === 0) {
         return data;
     }

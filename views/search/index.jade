@@ -54,6 +54,12 @@ block content
                         each prisoner in data
                                +inmate(prisoner)
 
+                if nomisData
+                    div#searchResults
+                        p #{nomisData}
+                        each nomisPrisoner in nomisData
+                            p #{nomisPrisoner.nomsId}
+
                 if pagination
                     form(method="post")
                         input(type="hidden" name="_csrf" value="#{csrfToken}")

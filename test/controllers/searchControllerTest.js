@@ -15,6 +15,8 @@ proxyquire.noCallThru();
 const sinonStubPromise = require('sinon-stub-promise');
 sinonStubPromise(sinon);
 
+const config = require('../../server/config');
+
 describe('searchController', () => {
     let reqMock;
     let resMock;
@@ -29,6 +31,8 @@ describe('searchController', () => {
             url: 'http://something.com/search'
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
+
+        config.nomis.enabled = false;
     });
 
     afterEach(() => {
@@ -258,9 +262,9 @@ describe('searchController', () => {
                 const expectedPayload = {
                     content: { title: "HPA Prisoner Search" },
                     data: [],
+                    nomisData: [],
                     err: null,
                     filtersForView: {},
-
                     formContents: {
                         forename: "Matthew",
                         forename2: "James",
@@ -349,6 +353,7 @@ describe('searchController', () => {
                         'showNext': true
                     },
                     data: {forename: 'Matt'},
+                    nomisData: [],
                     err: null,
                     filtersForView: {},
                     queryStrings: {
@@ -396,6 +401,7 @@ describe('searchController', () => {
                         'showNext': true
                     },
                     data: {forename: 'Matt'},
+                    nomisData: [],
                     err: null,
                     filtersForView: {},
                     queryStrings: {
@@ -454,6 +460,7 @@ describe('searchController', () => {
                         {forename: 'Alistair', prisonNumber: '2', visited: false},
                         {forename: 'Zed', prisonNumber: '3', visited: true}
                     ],
+                    nomisData: [],
                     err: null,
                     filtersForView: {},
                     queryStrings: {
@@ -504,6 +511,7 @@ describe('searchController', () => {
                         'showNext': true
                     },
                     data: [],
+                    nomisData: [],
                     err: null,
                     filtersForView: {},
                     queryStrings: {
@@ -694,6 +702,7 @@ describe('searchController', () => {
                 });
 
                 it('should send appropriate data to view', () => {
+
                     reqMock.query.filters = ['Female', 'HDC'];
                     getResultsProxy()(reqMock, resMock);
 
@@ -706,6 +715,7 @@ describe('searchController', () => {
                             'showNext': true
                         },
                         data: {forename: 'Matt'},
+                        nomisData: [],
                         err: null,
                         filtersForView: {Female: true, HDC: true},
                         queryStrings: {

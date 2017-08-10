@@ -24,6 +24,17 @@ module.exports = {
         database: get('DB_NAME', 'iis-sandbox')
     },
 
+    nomis: {
+        enabled: get('NOMIS_ENABLED', 'true'),
+        user: get('NOMIS_USER', 'user'),
+        password: get('NOMIS_PASSWORD', 'password'),
+        apiUrl: get('NOMIS_API_URL', 'http://localhost:9090'),
+        timeout: {
+            response: 2000,
+            deadline: 2500
+        }
+    },
+
     https: production,
     staticResourceCacheDuration: 365 * oneDay,
     healthcheckInterval: Number(get('HEALTHCHECK_INTERVAL', 0)),

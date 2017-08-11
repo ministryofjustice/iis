@@ -27,7 +27,7 @@ block content
                     span.hint.font-xsmall
                         a#suggestions(href="/search/suggestions") Try these alternatives
 
-        div.column-two-thirds
+        div#resultsBody.column-two-thirds
             if err
                 include ./searchError
             if !usePlaceholder
@@ -83,3 +83,4 @@ block content
 block append scripts
     script(src="/public/javascripts/tabs.js?#{version}")
     script(src="/public/javascripts/clearSearch.js?#{version}")
+    script(src="/public/javascripts/searchValidation.js?#{version}")

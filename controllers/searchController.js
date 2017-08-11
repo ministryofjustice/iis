@@ -8,7 +8,8 @@ const audit = require('../data/audit');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 const {validateDescriptionForm} = require('./helpers/formValidators');
 
-const {getNomisResults, getNomisToken} = require('../data/nomisSearch');
+const {getNomisResults} = require('../data/nomisSearch');
+
 
 const {
     getInputtedFilters,
@@ -25,6 +26,7 @@ const {
 const {
     getSearchSuggestions
 } = require('./helpers/suggestionHelpers');
+
 
 const availableSearchOptions = exports.availableSearchOptions = {
     identifier: {
@@ -159,15 +161,24 @@ function getNomisData(userInput) {
 
     if (!config.nomis.enabled) {
         console.log('nomis disabled');
-        return null;
+        return {error: 'NOMIS access disabled'};
     }
 
-    const token = getNomisToken(); // todo get this at startup and refresh if expired
+    if (!config.nomis.token) {
+        console.log('No NOMIS token');
+        return {error: 'NOMIS token not set'};
+    }
 
-    getNomisResults(userInput, token).then(nomisData => {
-        console.log('nomis result');
+    getNomisResults(userInput, config.nomis.token).then(nomisData => {
+
+        console.log('nomis data?');
         console.log(nomisData);
+
         return nomisData;
+    }).catch(error => {
+        console.log('Failed to do query');
+        console.log(error);
+        return (error);
     });
 }
 

@@ -6,6 +6,9 @@ const config = require('./server/config');
 const app = require('./server/app');
 const healthcheck = require('./server/healthcheck');
 const {flattenMeta} = require('./server/misc');
+const {getNomisToken} = require('./data/nomisSearch');
+
+let nomisToken = null;
 
 if (config.healthcheckInterval) {
     reportHealthcheck();
@@ -14,6 +17,7 @@ if (config.healthcheckInterval) {
     function reportHealthcheck() {
         healthcheck(recordHealthResult);
     }
+
     function recordHealthResult(err, results) {
         if (err) {
             logger.error('healthcheck failed', err);
@@ -25,6 +29,21 @@ if (config.healthcheckInterval) {
         }
     }
 }
+
+if (config.nomis.enabled) {
+
+    console.log('start nomis session');
+
+    getNomisToken().then(token => {
+        config.nomis.token = token;
+    }).catch(error => {
+        console.log('Failed to get token');
+        console.log(error);
+        return (error);
+    });
+}
+
+
 
 app.listen(app.get('port'), function() {
     logger.info('IIS server listening on port ' + app.get('port'));

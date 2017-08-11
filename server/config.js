@@ -25,6 +25,7 @@ module.exports = {
     },
 
     nomis: {
+        token: null,
         enabled: get('NOMIS_ENABLED', 'true'),
         user: get('NOMIS_USER', 'user'),
         password: get('NOMIS_PASSWORD', 'password'),

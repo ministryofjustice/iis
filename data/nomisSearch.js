@@ -43,18 +43,18 @@ exports.getNomisResults = function(userInput, token) {
                     if (error) {
                         logger.error('Error querying NOMIS');
                         logger.error(error);
-                        resolve(null);
+                        return reject({error: 'NOMIS query access error'});
                     }
 
                     if (res.body) {
-                        resolve(translateResult(res.body));
+                        return resolve(translateResult(res.body));
                     }
 
-                    reject(`Invalid response: ${res}`);
+                    return reject({error: 'NOMIS response error'});
                 } catch (exception) {
                     logger.error('Exception querying NOMIS');
                     logger.error(exception);
-                    reject(exception);
+                    return reject({error: 'NOMIS processing error'});
                 }
             });
     });
@@ -72,18 +72,20 @@ exports.getNomisToken = function() {
                     if (error) {
                         logger.error('Error getting NOMIS token');
                         logger.error(error);
-                        resolve(null);
+                        return reject({error: 'NOMIS token access error'});
                     }
 
                     if (res.body) {
-                        resolve(res.body.token);
+                        console.log('token response');
+                        console.log(res.body.token);
+                        return resolve(res.body.token);
                     }
 
-                    reject(`Invalid response: ${res}`);
+                    return reject({error: 'NOMIS response error'});
                 } catch (exception) {
                     logger.error('Exception getting NOMIS token');
                     logger.error(exception);
-                    reject(exception);
+                    return reject({error: 'NOMIS processing error'});
                 }
             });
     });

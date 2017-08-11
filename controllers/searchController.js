@@ -165,9 +165,9 @@ function getNomisData(userInput) {
     const token = getNomisToken(); // todo get this at startup and refresh if expired
 
     getNomisResults(userInput, token).then(nomisData => {
-        console.log(JSON.stringify(nomisData));
+        console.log('nomis result');
+        console.log(nomisData);
         return nomisData;
-        // when to query nomis and where to show the results
     });
 }
 

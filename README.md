@@ -66,6 +66,14 @@ The following environment variables are used and values should be supplied for c
 * APPINSIGHTS_INSTRUMENTATIONKEY - Key for Azure application inisghts logger
 * APP_BASE_URL - Points to healthcheck endpoint?
 
+# NOMIS Integration environment variables
+
+* NOMIS_ENABLED - true to enable searches against the NOMIS API
+* NOMIS_USER - HPA user id for NOMIS API
+* NOMIS_PASSWORD - password for the above user
+* NOMIS_API_URL - host and port for the NOMIS API
+
+
 The following environment variables are used and a value MUST be supplied in production.
 
 * SESSION_SECRET - Secure session configuration

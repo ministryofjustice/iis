@@ -90,12 +90,3 @@ exports.getNomisToken = function() {
 };
 
 
-// todo
-// token expiry
-// connection errors
-// auth errors
-// empty results
-// results display
-// document env vars
-// stage env vars
-

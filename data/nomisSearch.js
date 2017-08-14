@@ -27,12 +27,20 @@ const userSpec = {
 const loginUrl = url.resolve(`${config.nomis.apiUrl}`, 'api/users/login');
 const queryUrl = url.resolve(`${config.nomis.apiUrl}`, 'api/v2/prisoners');
 
-exports.getNomisResults = function(userInput, token) {
+exports.getNomisResults = function(userInput) {
     return new Promise((resolve, reject) => {
+
+
+        const token = 'token'  ;      // todo acquire token here? refresh it here?
+
+        if (!token) {
+            console.log('No NOMIS token');
+            return reject({error: 'NOMIS token not set'});
+        }
 
         const nomisQuery = translateQuery(userInput);
 
-        if(isEmpty(nomisQuery)){
+        if (isEmpty(nomisQuery)) {
             return resolve([]);
         }
 
@@ -95,8 +103,8 @@ exports.getNomisToken = function() {
 
 // Really?
 function isEmpty(obj) {
-    for(let prop in obj) {
-        if(obj.hasOwnProperty(prop))
+    for (let prop in obj) {
+        if (obj.hasOwnProperty(prop))
             return false;
     }
     return true;

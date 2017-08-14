@@ -40,7 +40,7 @@ function middleNamesTerm(key, result) {
 }
 
 function nationalitiesTerm(key, result) {
-    return {nationality: result[key][0]};
+    return {nationality: result[key]};
 }
 
 function unchangedTerm(key, result) {

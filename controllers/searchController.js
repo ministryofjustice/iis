@@ -164,13 +164,7 @@ function getNomisData(userInput) {
         return {error: 'NOMIS access disabled'};
     }
 
-    if (!config.nomis.token) {
-        console.log('No NOMIS token');
-        // todo acquire token here? refresh it here?
-        return {error: 'NOMIS token not set'};
-    }
-
-    getNomisResults(userInput, config.nomis.token).then(nomisData => {
+    getNomisResults(userInput).then(nomisData => {
 
         console.log('nomis data?');
         console.log(nomisData);

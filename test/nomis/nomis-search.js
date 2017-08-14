@@ -17,7 +17,7 @@ describe('nomisSearch', () => {
 
             const userInput = {prisonNumber: '123'};
 
-            getNomisResults(userInput, 'token').then(nomisData => {
+            getNomisResults(userInput).then(nomisData => {
                 expect(nomisData).to.eql([]);
                 done();
             });
@@ -35,7 +35,7 @@ describe('nomisSearch', () => {
                 .query({firstName: 'john'})
                 .reply(200, nomisResponse, {'Content-Type': 'application/json'});
 
-            getNomisResults(userInput, 'token').then(nomisData => {
+            getNomisResults(userInput).then(nomisData => {
                 expect(nomisData).to.eql(expected);
                 done();
             });
@@ -52,7 +52,7 @@ describe('nomisSearch', () => {
                 .query({firstName: 'john'})
                 .replyWithError('something awful happened');
 
-            getNomisResults(userInput, 'token').then(nomisData => {
+            getNomisResults(userInput).then(nomisData => {
                 expect.fail();
             }).catch(error => {
                 expect(error).to.eql(expectedError);

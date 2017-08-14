@@ -18,9 +18,7 @@ describe('nomisResultTranslator', () => {
                 "additionalProperties": {},
                 "middleNames": "alan",
                 "gender": "male",
-                "nationalities": [
-                    "UK"
-                ],
+                "nationality": "UK",
                 "pncNumber": "123",
                 "croNumber": "456",
                 "paroleNumbers": "123,456",

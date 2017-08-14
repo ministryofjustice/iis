@@ -1,12 +1,57 @@
+const config = require('./config');
 const db = require('./iisData');
+const logger = require('../log.js');
+
+const superagent = require('superagent');
+const url = require('url');
 
 const checks = {
     db: () => {
         return new Promise((resolve, reject) => {
-            db.getCollection('SELECT 1 AS [ok]', null, resolve, reject);
+            db.getCollection('SELECT 1 AS [ok]', null, data=>{resolve('OK')}, reject);
         });
-    }
+    },
+    nomis: nomisApiCheck
 };
+
+function nomisApiCheck() {
+    return new Promise((resolve, reject) => {
+        if (!config.nomis.enabled) {
+            resolve('OK - not enabled');
+            return;
+        }
+
+        superagent
+            .get(url.resolve(`${config.nomis.apiUrl}`, '/api/v2/prisoners'))
+            .timeout({
+                response: 2000,
+                deadline: 2500,
+            })
+            .end((error, result) => {
+                try {
+                    if (error) {
+                        //logger.error(error, 'Error calling NOMIS REST service');
+
+                        // todo need a healthcheck endpoint. For now just expect 401
+                        if (error.status === 401) {
+                            return resolve('OK');
+                        }
+
+                        return reject(error);
+                    }
+
+                    if (result.status === 200) {
+                        return resolve('OK');
+                    }
+
+                    return reject(`Unexpected status: ${result.status}`);
+                } catch (exception) {
+                    logger.error(exception, 'Exception calling NOMIS REST service');
+                    return reject(exception);
+                }
+            });
+    });
+}
 
 module.exports = function healthcheck(callback) {
     let pending = 0;
@@ -17,16 +62,16 @@ module.exports = function healthcheck(callback) {
     Object.keys(checks).forEach(checkName => {
         pending += 1;
         checks[checkName]()
-            .then(() => {
-                results.checks[checkName] = 'ok';
+            .then((message) => {
+                results.checks[checkName] = message;
                 pending -= 1;
                 finalize();
             }).catch(error => {
-                results.healthy = false;
-                results.checks[checkName] = error.message;
-                pending -= 1;
-                finalize();
-            });
+            results.healthy = false;
+            results.checks[checkName] = error.message;
+            pending -= 1;
+            finalize();
+        });
     });
 
     function finalize() {

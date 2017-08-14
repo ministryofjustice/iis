@@ -166,6 +166,7 @@ function getNomisData(userInput) {
 
     if (!config.nomis.token) {
         console.log('No NOMIS token');
+        // todo acquire token here? refresh it here?
         return {error: 'NOMIS token not set'};
     }
 

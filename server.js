@@ -32,10 +32,11 @@ if (config.healthcheckInterval) {
 
 if (config.nomis.enabled) {
 
-    console.log('start nomis session');
+    console.log('starting nomis session');
 
     getNomisToken().then(token => {
-        config.nomis.token = token;
+        console.log(token);
+        // todo make this available to the app
     }).catch(error => {
         console.log('Failed to get token');
         console.log(error);

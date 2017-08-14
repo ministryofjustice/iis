@@ -80,8 +80,6 @@ exports.getNomisToken = function() {
                     }
 
                     if (res.body) {
-                        console.log('token response');
-                        console.log(res.body.token);
                         return resolve(res.body.token);
                     }
 
@@ -97,10 +95,9 @@ exports.getNomisToken = function() {
 
 // Really?
 function isEmpty(obj) {
-    for(var prop in obj) {
+    for(let prop in obj) {
         if(obj.hasOwnProperty(prop))
             return false;
     }
-
     return true;
 }

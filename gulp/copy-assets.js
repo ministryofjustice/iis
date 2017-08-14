@@ -12,6 +12,7 @@ gulp.task('copy-local-assets', function() {
       '!assets/javascripts/moreless{,/**/*}',
       '!assets/javascripts/admin{,/**/*}',
       '!assets/javascripts/tabs{,/**/*}',
+      '!assets/javascripts/validation{,/**/*}',
       'assets/**'])
   .pipe(gulp.dest('public'));
 });

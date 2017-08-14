@@ -262,7 +262,7 @@ describe('searchController', () => {
                 const expectedPayload = {
                     content: { title: "HPA Prisoner Search" },
                     data: [],
-                    nomisData: [],
+                    nomisData: {error: 'NOMIS access disabled'},
                     err: null,
                     filtersForView: {},
                     formContents: {
@@ -353,7 +353,7 @@ describe('searchController', () => {
                         'showNext': true
                     },
                     data: {forename: 'Matt'},
-                    nomisData: [],
+                    nomisData: {error: 'NOMIS access disabled'},
                     err: null,
                     filtersForView: {},
                     queryStrings: {
@@ -401,7 +401,7 @@ describe('searchController', () => {
                         'showNext': true
                     },
                     data: {forename: 'Matt'},
-                    nomisData: [],
+                    nomisData: {error: 'NOMIS access disabled'},
                     err: null,
                     filtersForView: {},
                     queryStrings: {
@@ -460,7 +460,7 @@ describe('searchController', () => {
                         {forename: 'Alistair', prisonNumber: '2', visited: false},
                         {forename: 'Zed', prisonNumber: '3', visited: true}
                     ],
-                    nomisData: [],
+                    nomisData: {error: 'NOMIS access disabled'},
                     err: null,
                     filtersForView: {},
                     queryStrings: {
@@ -511,7 +511,7 @@ describe('searchController', () => {
                         'showNext': true
                     },
                     data: [],
-                    nomisData: [],
+                    nomisData: {error: 'NOMIS access disabled'},
                     err: null,
                     filtersForView: {},
                     queryStrings: {
@@ -715,7 +715,7 @@ describe('searchController', () => {
                             'showNext': true
                         },
                         data: {forename: 'Matt'},
-                        nomisData: [],
+                        nomisData: {error: 'NOMIS access disabled'},
                         err: null,
                         filtersForView: {Female: true, HDC: true},
                         queryStrings: {

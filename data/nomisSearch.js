@@ -32,6 +32,10 @@ exports.getNomisResults = function(userInput, token) {
 
         const nomisQuery = translateQuery(userInput);
 
+        if(isEmpty(nomisQuery)){
+            return resolve([]);
+        }
+
         superagent
             .get(queryUrl)
             .query(nomisQuery)
@@ -91,4 +95,12 @@ exports.getNomisToken = function() {
     });
 };
 
+// Really?
+function isEmpty(obj) {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            return false;
+    }
 
+    return true;
+}

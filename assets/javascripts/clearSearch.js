@@ -5,6 +5,8 @@ $(document).ready(function() {
         $('#idForm, #descriptionForm')
             .trigger('reset')
             .find('input').each(clearValueAttributeIfNotHidden);
+
+        $('#clearSearch').blur();
     });
 });
 

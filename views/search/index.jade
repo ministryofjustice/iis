@@ -19,14 +19,6 @@ block content
         div.column-one-third
             include ./searchForm
 
-            if suggestions
-                |  &nbsp;
-                div.help-container.form-hint
-                    span.hint.font-xsmall Not found what you're looking for?
-                    div
-                    span.hint.font-xsmall
-                        a#suggestions(href="/search/suggestions") Try these alternatives
-
         div#resultsBody.column-two-thirds
             if err
                 include ./searchError
@@ -76,6 +68,13 @@ block content
                                     span.inactive Next
                                 else
                                     a(href="/search/results#{queryStrings.nextPage}") Next
+
+                if suggestions
+                    |  &nbsp;
+                    div.help-container.form-hint
+                        span.hint Not found what you're looking for?
+                            =" "
+                            a#suggestions(href="/search/suggestions") Try these alternatives
             else
                 p#noPrisoners
                     |Can't see prisoners? Try using the search ;-)

@@ -1,11 +1,11 @@
 'use strict';
 
-const logger = require('../log');
+const logger = require('../../log');
 
 module.exports = {
 
     connect: function() {
-        const config = require('./config');
+        const config = require('../../server/config');
         const Connection = require('tedious').Connection;
 
         let connection = new Connection({

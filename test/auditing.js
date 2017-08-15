@@ -8,7 +8,7 @@ let common = require('./common');
 const audit = require('../data/audit');
 let app = require("../server/app");
 
-let db = require('../server/db');
+let db = require('../data/dataAccess/db');
 let search = require("../data/search");
 
 const proxyquire = require('proxyquire');
@@ -50,7 +50,7 @@ describe('Audit', () => {
 
     const record = (addRow = addRowStub) => {
         return proxyquire('../data/audit', {
-            '../server/auditData': {
+            './dataAccess/auditData': {
                 'addRow': addRow,
             }
         }).record;

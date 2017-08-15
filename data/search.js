@@ -1,7 +1,7 @@
 'use strict';
 
 const utils = require('./utils');
-const {getCollection} = require('../server/iisData');
+const {getCollection} = require('./dataAccess/iisData');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 const TYPES = require('tedious').TYPES;
 

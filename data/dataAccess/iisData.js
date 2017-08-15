@@ -4,7 +4,7 @@ const {
     disconnect
 } = require('./db');
 const util = require('util');
-const logger = require('../log.js');
+const logger = require('../../log.js');
 
 module.exports = {
     getCollection: function(sql, params, successCallback, errorCallback) {

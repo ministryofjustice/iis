@@ -64,9 +64,8 @@ block content
                             | #{setCase.capital(subject.summary.religion)}
 
 
-
                 span#saveLink
-                    a(href="/print?prisonNo=#{subject.summary.prisonNumber}") Save as PDF
+                    a(href="/print/#{subject.summary.prisonNumber}#{returnQuery}") Save as PDF
             div.column-one-third
                 if subject.summary.prisonNumber || subject.summary.parole.paroleNumbers || subject.summary.pncNumber || subject.summary.croNumber
                     ul.list.well.refs-box

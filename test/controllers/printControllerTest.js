@@ -52,7 +52,8 @@ describe('printController', () => {
             body: {
                 printOption: ['summary', 'offencesInCustody']
             },
-            query: {prisonNo: '12345678', fields: ['summary', 'custodyOffences']},
+            query: {fields: ['summary', 'custodyOffences']},
+            params: {prisonNo: '12345678'},
             user: {email: 'x@y.com'}
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy(), writeHead: sandbox.spy()};
@@ -65,7 +66,9 @@ describe('printController', () => {
     describe('getPrintForm', () => {
         it('should render the print form page if id is passed in with url', () => {
             reqMock = {
-                query: {prisonNo: '12345678'}
+                query: {},
+                params: {prisonNo: '12345678'},
+                url: 'http://something.com/subject/blah?page=2'
             };
 
             getController().getPrintForm(reqMock, resMock);
@@ -74,13 +77,16 @@ describe('printController', () => {
                 content: content.view.print,
                 prisonNumber: '12345678',
                 name: {forename: 'Matthew', surname: 'Whitfield'},
-                err: null
+                err: null,
+                returnQuery: '?page=2'
             });
         });
 
         it('should render with ui error if user error is passed in, with no name', () => {
             reqMock = {
-                query: {prisonNo: '12345678', err: 'noneSelected'}
+                query: {err: 'noneSelected'},
+                params: {prisonNo: '12345678'},
+                url: 'http://something.com/subject/blah?page=2'
             };
 
             getController().getPrintForm(reqMock, resMock);
@@ -89,13 +95,16 @@ describe('printController', () => {
                 content: content.view.print,
                 prisonNumber: '12345678',
                 name: {forename: 'Matthew', surname: 'Whitfield'},
-                err: {title: content.view.print.noneSelected}
+                err: {title: content.view.print.noneSelected},
+                returnQuery: '?page=2'
             });
         });
 
         it('should render with db error and no name if db error in query', () => {
             reqMock = {
-                query: {prisonNo: '12345678', err: 'db'}
+                query: {err: 'db'},
+                params: {prisonNo: '12345678'},
+                url: 'http://something.com/subject/blah?page=2'
             };
 
             getController().getPrintForm(reqMock, resMock);
@@ -104,13 +113,15 @@ describe('printController', () => {
                 content: content.view.print,
                 prisonNumber: '12345678',
                 name: null,
-                err: {title: content.pdf.dbError.title, desc: content.pdf.dbError.desc}
+                err: {title: content.pdf.dbError.title, desc: content.pdf.dbError.desc},
+                returnQuery: '?page=2'
             });
         });
 
         it('should return to search page if no prison number passed in', () => {
             reqMock = {
-                query: {}
+                query: {},
+                params:{}
             };
 
             getController().getPrintForm(reqMock, resMock);
@@ -127,12 +138,13 @@ describe('printController', () => {
                 body: {
                     printOption: allItems
                 },
-                query: {prisonNo: '12345678'},
+                query: {},
+                params: {prisonNo: '12345678'},
                 user: {email: 'x@y.com'},
             };
 
-            const expectedUrl = '/print/pdf?prisonNo=12345678' +
-                '&fields=summary' +
+            const expectedUrl = '/print/12345678/pdf?' +
+                'fields=summary' +
                 '&fields=sentencing' +
                 '&fields=courtHearings' +
                 '&fields=movements' +
@@ -163,11 +175,12 @@ describe('printController', () => {
                 body: {
                     printOption: ['summary', 'offencesInCustody', 'matt']
                 },
-                query: {prisonNo: '12345678'},
+                query: {},
+                params: {prisonNo: '12345678'},
                 user: {email: 'x@y.com'},
             };
 
-            const expectedUrl = '/print/pdf?prisonNo=12345678&fields=summary&fields=offencesInCustody';
+            const expectedUrl = '/print/12345678/pdf?fields=summary&fields=offencesInCustody';
 
             getController().postPrintForm(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
@@ -177,8 +190,10 @@ describe('printController', () => {
         it('should return to print form if no items are selected', () => {
             reqMock = {
                 body: {},
-                query: {prisonNo: '12345678'},
+                query: {},
+                params: {prisonNo: '12345678'},
                 user: {email: 'x@y.com'},
+                url: 'http://something.com/subject/blah?page=2'
             };
 
             getController().postPrintForm(reqMock, resMock);
@@ -186,7 +201,8 @@ describe('printController', () => {
                 prisonNumber: '12345678',
                 name: null,
                 err: {title: 'Please select at least one item to print'},
-                name: {forename: 'Matthew', surname: 'Whitfield' }
+                name: {forename: 'Matthew', surname: 'Whitfield' },
+                returnQuery: '?page=2'
             });
         });
     });
@@ -195,7 +211,8 @@ describe('printController', () => {
 
         it('should redirect to search form if nothing in query string', () => {
             reqMock = {
-                query: {}
+                query: {},
+                params: {prisonNo: '12345678'}
             };
             getController().getPdf(reqMock, resMock);
             expect(resMock.redirect).to.have.callCount(1);
@@ -204,7 +221,8 @@ describe('printController', () => {
 
         it('should get the data for the fields in the query string', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: allItems}
+                query: {fields: allItems},
+                params: {prisonNo: '12345678'}
             };
             getController().getPdf(reqMock, resMock);
             expect(subjectStub).to.have.callCount(1);
@@ -213,7 +231,8 @@ describe('printController', () => {
 
         it('should call createPdf if all data requests resolve successfully', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
+                query: {fields: ['summary', 'addresses']},
+                params: {prisonNo: '12345678'}
             };
             return getController().getPdf(reqMock, resMock).then(() => {
                 expect(createPdfStub).to.have.callCount(1);
@@ -222,7 +241,8 @@ describe('printController', () => {
 
         it('should pass in the data to createpdf', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
+                query: {fields: ['summary', 'addresses']},
+                params: {prisonNo: '12345678'}
             };
 
             const expectedPrintItems = ['summary', 'addresses'];
@@ -245,7 +265,8 @@ describe('printController', () => {
 
         it('should get name and id details even if subject is not requested', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['offences', 'addresses']}
+                query: {fields: ['offences', 'addresses']},
+                params: {prisonNo: '12345678'}
             };
 
             const expectedPrintItems = ['offences', 'addresses'];
@@ -268,7 +289,8 @@ describe('printController', () => {
 
         it('should work if only 1 item is requested', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: 'addresses'}
+                query: {fields: 'addresses'},
+                params: {prisonNo: '12345678'}
             };
 
             const expectedPrintItems = ['addresses'];
@@ -291,7 +313,8 @@ describe('printController', () => {
 
         it('should not call createPdf if any data requests resolve unsuccessfully', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
+                query: {fields: ['summary', 'addresses']},
+                params: {prisonNo: '12345678'}
             };
 
             const subjectStub = sandbox.stub().returnsPromise().rejects();
@@ -302,13 +325,14 @@ describe('printController', () => {
 
         it('should redirect to print page if any data requests resolve unsuccessfully', () => {
             reqMock = {
-                query: {prisonNo: '12345678', fields: ['summary', 'addresses']}
+                query: {fields: ['summary', 'addresses']},
+                params: {prisonNo: '12345678'}
             };
 
             const subjectStub = sandbox.stub().returnsPromise().rejects();
             return getController({subject: subjectStub}).getPdf(reqMock, resMock).then(() => {
                 expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/print?prisonNo=12345678&err=db');
+                expect(resMock.redirect).to.have.been.calledWith('/print/12345678?err=db');
             });
         });
     });

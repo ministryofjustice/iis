@@ -3,10 +3,11 @@ extends layout
 block content
 
     div.backLinkContainer
-        a.link-back(href="/subject/#{prisonNumber}") Back to subject details
+        a.link-back(href="/subject/#{prisonNumber}/summary#{returnQuery}") Back to subject details
 
     if err
         include ./search/searchError
+
 
     div.grid-row
         div.column-two-thirds

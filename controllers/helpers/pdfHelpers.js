@@ -154,17 +154,25 @@ function getSubjectValue(items, key) {
 
 function sentenceSummaryContent(doc, items) {
 
-    subSection(doc, 'Last recorded establishment');
-    pad(doc, Case.capital(items.establishment));
+    if (items.establishment) {
+        subSection(doc, 'Last recorded establishment');
+        pad(doc, Case.capital(items.establishment));
+    }
 
-    subSection(doc, 'Last recorded category');
-    categoryContent(doc, [items.category]);
+    if (items.category) {
+        subSection(doc, 'Last recorded category');
+        categoryContent(doc, [items.category]);
+    }
 
-    subSection(doc, 'Court Hearing');
-    courtHearingsContent(doc, [items.courtHearing]);
+    if (items.courtHearing) {
+        subSection(doc, 'Court Hearing');
+        courtHearingsContent(doc, [items.courtHearing]);
+    }
 
-    subSection(doc, 'Effective Sentence');
-    sentenceHistoryContent(doc, [items.effectiveSentence]);
+    if (items.effectiveSentence) {
+        subSection(doc, 'Effective Sentence');
+        sentenceHistoryContent(doc, [items.effectiveSentence]);
+    }
 }
 
 function sentenceHistoryContent(doc, items) {

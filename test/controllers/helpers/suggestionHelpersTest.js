@@ -59,11 +59,19 @@ describe('suggestionHelpers', () => {
         value: '28-32'
     };
 
-    const suggestChangeDobToAge = {
+    const suggestClearDobFields = [{
         type: 'convertToAgeRange',
-        term: 'dobOrAge',
-        value: 'age'
-    };
+        term: 'dobDay',
+        value: ''
+    },{
+        type: 'convertToAgeRange',
+        term: 'dobMonth',
+        value: ''
+    },{
+        type: 'convertToAgeRange',
+        term: 'dobYear',
+        value: ''
+    }];
 
     describe('getSearchSuggestion', () => {
 
@@ -114,7 +122,7 @@ describe('suggestionHelpers', () => {
         it('should suggest changing dob to age range', () => {
 
             const userInput = {dobOrAge: 'dob', dobDay: '01', dobMonth: '08', dobYear: '1987'};
-            const expected = {dob: [suggestConvertToAgeRange, suggestChangeDobToAge]};
+            const expected = {dob: [suggestConvertToAgeRange].concat(suggestClearDobFields)};
 
             expect(getSearchSuggestions(userInput)).to.eql(expected);
         });

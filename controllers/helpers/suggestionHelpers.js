@@ -88,8 +88,16 @@ const searchSuggestions = {
         suggest: dobToAgeRange
     }, {
         type: 'convertToAgeRange',
-        term: 'dobOrAge',
-        suggest: val => 'age'
+        term: 'dobDay',
+        suggest: val => ''
+    }, {
+        type: 'convertToAgeRange',
+        term: 'dobMonth',
+        suggest: val => ''
+    }, {
+        type: 'convertToAgeRange',
+        term: 'dobYear',
+        suggest: val => ''
     }]
 };
 

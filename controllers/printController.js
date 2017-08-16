@@ -6,6 +6,7 @@ const {
     itemsInQueryString
 } = require('./helpers/formHelpers');
 const {getSubject} = require('../data/subject');
+const {retainUrlQuery} = require('./helpers/urlHelpers');
 const pdf = require('./helpers/pdfHelpers');
 const audit = require('../data/audit');
 const Case = require('case');
@@ -79,21 +80,24 @@ const availablePrintOptions = {
 
 exports.getPrintForm = (req, res) => {
     logger.debug('GET /print');
-    const {prisonNo, err} = req.query;
+
+    const prisonNo = req.params.prisonNo;
+    const err = req.query.err;
 
     if(!prisonNo) {
         logger.debug('no prison number');
         return res.redirect('/search');
     }
-    renderFormPage(res, prisonNo, err);
+    renderFormPage(req, res, prisonNo, err);
 };
 
-function renderFormPage(res, prisonNo, err) {
+function renderFormPage(req, res, prisonNo, err) {
     const renderData = {
         content: content.view.print,
         prisonNumber: prisonNo,
         name: null,
-        err: err ? getDisplayError(err) : null
+        err: err ? getDisplayError(err) : null,
+        returnQuery: retainUrlQuery(req.url)
     };
 
     if(!err || err !== 'db') return getNameAndRender(res, renderData);
@@ -121,10 +125,10 @@ function renderWithoutName(res, renderData) {
 exports.postPrintForm = (req, res) => {
     logger.debug('POST /print');
 
-    const prisonNo = req.query.prisonNo;
+    const prisonNo = req.params.prisonNo;
     if (!req.body.printOption) {
         logger.warn('No print items selected');
-        return renderFormPage(res, prisonNo, 'noneSelected');
+        return renderFormPage(req, res, prisonNo, 'noneSelected');
     }
 
     const userReturnedOptions = Array.isArray(req.body.printOption) ? req.body.printOption : [req.body.printOption];
@@ -132,17 +136,16 @@ exports.postPrintForm = (req, res) => {
 
     const selectedOptions = objectKeysInArray(availablePrintOptions, userReturnedOptions);
     const query = {
-        prisonNo: req.query.prisonNo,
         fields: selectedOptions
     };
 
-    const redirectUrl = url.format({pathname: '/print/pdf', query});
+    const redirectUrl = url.format({pathname: `/print/${req.params.prisonNo}/pdf`, query});
     return res.redirect(redirectUrl);
 };
 
 exports.getPdf = function(req, res) {
 
-    const prisonNumber = req.query.prisonNo;
+    const prisonNumber = req.params.prisonNo;
     if (!prisonNumber || !req.query.fields) {
         logger.debug('no prison number or query fields');
         return res.redirect('/search');
@@ -171,15 +174,12 @@ const getDataFunctionsToCall = printItems => {
 
 function showDbError(error, prisonNo, res) {
 
-    console.error(error);
-
     logger.error('Error during data collection for pdf ', error);
 
     const query = {
-        prisonNo,
         err: 'db'
     };
-    const redirectUrl = url.format({pathname: '/print', query});
+    const redirectUrl = url.format({pathname: `/print/${prisonNo}`, query});
     return res.redirect(redirectUrl);
 }
 

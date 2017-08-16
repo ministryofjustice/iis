@@ -21,41 +21,40 @@ describe('searchController', () => {
     });
 
     describe('healthcheck', () => {
-        let getTupleStub = sandbox.stub().returns(null);
+        const dbCheckStub = sinon.stub().returnsPromise().resolves([{totalRows: {value: 0}}]);
 
-        const healthcheckProxy = (getTuple = getTupleStub) => {
+        const healthcheckProxy = (dbCheck = dbCheckStub) => {
             return proxyquire('../../server/healthcheck', {
-                './iisData': {
-                    'getTuple': getTuple
+                '../data/healthcheck': {
+                    'dbCheck': dbCheck
                 }
             });
         };
 
         it('should return healthy if db resolves promise', () => {
 
-            const expectedResult = {
-                healthy: true,
-                checks: {db: 'ok'}
-            };
+            return healthcheckProxy()(callback).then(() => {
 
-            const getTupleStub = sandbox.stub().callsArgWith(2, {});
+                const calledWith = callback.getCalls()[0].args[1];
 
-            return healthcheckProxy(getTupleStub)(callback);
-            expect(callback).to.have.callCount(1);
-            expect(callback).to.be.calledWith(null, expectedResult);
+                expect(callback).to.have.callCount(1);
+                expect(calledWith.healthy).to.eql(true);
+                expect(calledWith.checks.db).to.eql('ok');
+            });
         });
 
         it('should return unhealthy if db rejects promise', () => {
-            const expectedResult = {
-                healthy: false,
-                checks: {db: 'problem'}
-            };
 
-            const getTupleStub = sandbox.stub().callsArgWith(3, 'problem');
+            const dbCheckStubReject = sinon.stub().returnsPromise().rejects({message: 'rubbish'});
 
-            return healthcheckProxy(getTupleStub)(callback);
-            expect(callback).to.have.callCount(1);
-            expect(callback).to.be.calledWith(null, expectedResult);
+            return healthcheckProxy(dbCheckStubReject)(callback).then(() => {
+
+                const calledWith = callback.getCalls()[0].args[1];
+
+                expect(callback).to.have.callCount(1);
+                expect(calledWith.healthy).to.eql(false);
+                expect(calledWith.checks.db).to.eql('rubbish');
+            });
         });
     });
 });

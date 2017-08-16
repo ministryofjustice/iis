@@ -16,8 +16,8 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.get('/', getPrintForm);
-router.post('/', postPrintForm);
-router.get('/pdf', getPdf);
+router.get('/:prisonNo', getPrintForm);
+router.post('/:prisonNo', postPrintForm);
+router.get('/:prisonNo/pdf', getPdf);
 
 module.exports = router;

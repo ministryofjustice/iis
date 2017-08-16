@@ -1,7 +1,7 @@
 const logger = require('../log');
-const db = require('../server/auditData');
+const db = require('./dataAccess/auditData');
 const TYPES = require('tedious').TYPES;
-const {getCollection} = require('../server/iisData');
+const {getCollection} = require('./dataAccess/iisData');
 const utils = require('../data/utils');
 
 const keys = ['LOG_IN', 'DISCLAIMER_ACCEPTED', 'SEARCH', 'VIEW', 'PRINT'];

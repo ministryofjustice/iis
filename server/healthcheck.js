@@ -1,18 +1,10 @@
-const config = require('./config');
-const db = require('./iisData');
-const logger = require('../log.js');
+const {dbCheck} = require('../data/healthcheck');
 
-const superagent = require('superagent');
-const url = require('url');
-
-const checks = {
-    db: () => {
-        return new Promise((resolve, reject) => {
-            db.getCollection('SELECT 1 AS [ok]', null, data=>{resolve('OK')}, reject);
-        });
-    },
-    nomis: nomisApiCheck
-};
+function db() {
+    return dbCheck()
+        .then(() => ({name: 'db', status: 'ok', message: 'ok'}))
+        .catch(err => ({name: 'db', status: 'ERROR', message: err.message}));
+}
 
 function nomisApiCheck() {
     return new Promise((resolve, reject) => {
@@ -54,45 +46,47 @@ function nomisApiCheck() {
 }
 
 module.exports = function healthcheck(callback) {
-    let pending = 0;
-    const results = {
-        healthy: true,
-        checks: {}
-    };
-    Object.keys(checks).forEach(checkName => {
-        pending += 1;
-        checks[checkName]()
-            .then((message) => {
-                results.checks[checkName] = message;
-                pending -= 1;
-                finalize();
-            }).catch(error => {
-            results.healthy = false;
-            results.checks[checkName] = error.message;
-            pending -= 1;
-            finalize();
+    const checks = [db];
+
+    return Promise
+        .all(checks.map(fn => fn()))
+        .then(checkResults => {
+            const allOk = checkResults.every(item => item.status === 'ok');
+            const result = {
+                healthy: allOk,
+                checks: checkResults.reduce(gatherCheckInfo, {})
+            };
+            callback(null, addAppInfo(result));
         });
-    });
-
-    function finalize() {
-        if (pending) {
-            return;
-        }
-
-        results.uptime = process.uptime();
-
-        try {
-            results.build = require('../build-info.json');
-        } catch (ex) {
-            // no build info to show
-        }
-
-        try {
-            results.version = require('../package.json').version;
-        } catch (ex) {
-            // no version info to show
-        }
-
-        callback(null, results);
-    }
 };
+
+function gatherCheckInfo(total, currentValue) {
+    return Object.assign({}, total, {[currentValue.name]: currentValue.message});
+}
+
+function addAppInfo(result) {
+    const buildInfo = {
+        uptime: process.uptime(),
+        build: getBuild(),
+        version: getVersion()
+    };
+
+    return Object.assign({}, result, buildInfo);
+}
+
+function getVersion() {
+    try {
+        return require('../package.json').version;
+    } catch (ex) {
+        return null;
+    }
+}
+
+function getBuild() {
+    try {
+        return require('../build-info.json');
+    } catch (ex) {
+        return null;
+    }
+}
+

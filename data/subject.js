@@ -1,5 +1,5 @@
 const TYPES = require('tedious').TYPES;
-const db = require('../server/iisData');
+const db = require('./dataAccess/iisData');
 const logger = require('../log');
 
 const dataAccessOptions = {

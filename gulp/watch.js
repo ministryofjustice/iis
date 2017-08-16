@@ -19,5 +19,6 @@ gulp.task('watch-client-js', () => gulp.watch([
     './assets/javascripts/search/**',
     './assets/javascripts/moreless/**',
     './assets/javascripts/admin/**',
-    './assets/javascripts/tabs/**'
+    './assets/javascripts/tabs/**',
+    './assets/javascripts/validation/**'
 ], {cwd: './'}, ['webpack']));

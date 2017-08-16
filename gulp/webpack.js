@@ -7,7 +7,8 @@ gulp.task('webpack', [
     'webpackMoreless',
     'webpackReveal',
     'webpackAdmin',
-    'webpackTabs'
+    'webpackTabs',
+    'webpackValidation'
 ]);
 
 gulp.task('webpackMoreless', function() {
@@ -87,6 +88,30 @@ gulp.task('webpackTabs', function() {
         .pipe(webpackStream({
             output: {
                 filename: 'tabs.js'
+            },
+            module: {
+                rules: [{
+                    loader: 'babel-loader',
+                    exclude: [/node_modules/],
+                    query: {
+                        presets: [['es2015', {'loose': true}]]
+                    }
+                }]
+            },
+            externals: {
+                //  require("jquery") is external and available
+                //  on the global var jQuery
+                jquery: 'jQuery'
+            }
+        }, webpack2))
+        .pipe(gulp.dest('./public/javascripts'));
+});
+
+gulp.task('webpackValidation', function() {
+    return gulp.src('./assets/javascripts/validation/index.js')
+        .pipe(webpackStream({
+            output: {
+                filename: 'searchValidation.js'
             },
             module: {
                 rules: [{

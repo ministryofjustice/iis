@@ -3,7 +3,7 @@ const {
     addParams
 } = require('./db');
 
-const logger = require('../log');
+const logger = require('../../log');
 
 const Request = require('tedious').Request;
 

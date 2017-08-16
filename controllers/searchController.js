@@ -124,8 +124,7 @@ exports.getSuggestions = function(req, res) {
     return res.render('search/suggestions', {
         content: content.view.suggestions,
         returnQuery: retainUrlQuery(req.url),
-        suggestions: getSearchSuggestions(req.session.userInput),
-        searchTerms: req.session.searchTerms
+        suggestions: getSearchSuggestions(req.session.userInput)
     });
 };
 
@@ -151,7 +150,7 @@ function parseResultsPageData(req, rowCount, data, page, error) {
         formContents: searchedFor,
         usePlaceholder: Object.keys(searchedFor).length === 0,
         idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
-        suggestions: getSearchSuggestions(req.session.userInput),
+		suggestions: getSearchSuggestions(req.session.userInput),
         moment: require('moment'),
         setCase: require('case')
     };

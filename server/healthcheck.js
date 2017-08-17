@@ -1,52 +1,22 @@
-const {dbCheck} = require('../data/healthcheck');
+const {
+    dbCheck,
+    nomisApiCheck
+} = require('../data/healthcheck');
 
 function db() {
     return dbCheck()
-        .then(() => ({name: 'db', status: 'ok', message: 'ok'}))
+        .then(() => ({name: 'db', status: 'ok', message: 'OK'}))
         .catch(err => ({name: 'db', status: 'ERROR', message: err.message}));
 }
 
-function nomisApiCheck() {
-    return new Promise((resolve, reject) => {
-        if (!config.nomis.enabled) {
-            resolve('OK - not enabled');
-            return;
-        }
-
-        superagent
-            .get(url.resolve(`${config.nomis.apiUrl}`, '/api/v2/prisoners'))
-            .timeout({
-                response: 2000,
-                deadline: 2500,
-            })
-            .end((error, result) => {
-                try {
-                    if (error) {
-                        //logger.error(error, 'Error calling NOMIS REST service');
-
-                        // todo need a healthcheck endpoint. For now just expect 401
-                        if (error.status === 401) {
-                            return resolve('OK');
-                        }
-
-                        return reject(error);
-                    }
-
-                    if (result.status === 200) {
-                        return resolve('OK');
-                    }
-
-                    return reject(`Unexpected status: ${result.status}`);
-                } catch (exception) {
-                    logger.error(exception, 'Exception calling NOMIS REST service');
-                    return reject(exception);
-                }
-            });
-    });
+function nomis() {
+    return nomisApiCheck()
+        .then(result => ({name: 'nomis', status: 'ok', message: result}))
+        .catch(err => ({name: 'nomis', status: 'ERROR', message: err}));
 }
 
 module.exports = function healthcheck(callback) {
-    const checks = [db];
+    const checks = [db, nomis];
 
     return Promise
         .all(checks.map(fn => fn()))
@@ -61,6 +31,10 @@ module.exports = function healthcheck(callback) {
 };
 
 function gatherCheckInfo(total, currentValue) {
+
+   // console.log(currentValue);
+   // console.log(currentValue.message);
+
     return Object.assign({}, total, {[currentValue.name]: currentValue.message});
 }
 

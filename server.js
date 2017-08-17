@@ -8,8 +8,6 @@ const healthcheck = require('./server/healthcheck');
 const {flattenMeta} = require('./server/misc');
 const {getNomisToken} = require('./data/nomisSearch');
 
-let nomisToken = null;
-
 if (config.healthcheckInterval) {
     reportHealthcheck();
     setInterval(reportHealthcheck, config.healthcheckInterval * 60 * 1000);
@@ -43,8 +41,6 @@ if (config.nomis.enabled) {
         return (error);
     });
 }
-
-
 
 app.listen(app.get('port'), function() {
     logger.info('IIS server listening on port ' + app.get('port'));

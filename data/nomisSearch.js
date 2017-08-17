@@ -6,12 +6,8 @@ const logger = require('../log.js');
 const superagent = require('superagent');
 const url = require('url');
 
-const {
-    translateQuery
-} = require('./nomis/queryTranslator');
-const {
-    translateResult
-} = require('./nomis/resultTranslator');
+const {translateQuery} = require('./nomis/queryTranslator');
+const {translateResult} = require('./nomis/resultTranslator');
 
 
 const timeoutSpec = {
@@ -31,7 +27,7 @@ exports.getNomisResults = function(userInput) {
     return new Promise((resolve, reject) => {
 
 
-        const token = 'token'  ;      // todo acquire token here? refresh it here?
+        const token = 'token';      // todo acquire token here? refresh it here?
 
         if (!token) {
             console.log('No NOMIS token');
@@ -104,8 +100,9 @@ exports.getNomisToken = function() {
 // Really?
 function isEmpty(obj) {
     for (let prop in obj) {
-        if (obj.hasOwnProperty(prop))
+        if (obj.hasOwnProperty(prop)) {
             return false;
+        }
     }
     return true;
 }

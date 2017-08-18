@@ -9,6 +9,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 const sandbox = sinon.sandbox.create();
+const TYPES = require('tedious').TYPES;
 
 describe('Subject data', function() {
 
@@ -43,6 +44,16 @@ describe('Subject data', function() {
         }
     }];
 
+    let getCollectionStub = sandbox.stub().callsArgWith(2, standardResponse);
+
+    const subjectProxy = (getCollection = getCollectionStub) => {
+        return proxyquire('../data/subject', {
+            './dataAccess/iisData': {
+                'getCollection': getCollection,
+            }
+        });
+    };
+
     const expectedReturnValue = {
         prisonNumber: "AB111111",
         summary:{
@@ -70,18 +81,7 @@ describe('Subject data', function() {
         }]
     };
 
-    let getCollectionStub = sandbox.stub().callsArgWith(2, standardResponse);
-    let getTupleStub = sandbox.stub().returns(null);
 
-    const subjectProxy = (getCollection = getCollectionStub,
-                          getTuple = getTupleStub) => {
-        return proxyquire('../data/subject', {
-            './dataAccess/iisData': {
-                'getCollection': getCollection,
-                'getTuple': getTuple
-            }
-        });
-    };
 
     afterEach(() => {
         sandbox.reset();
@@ -162,6 +162,104 @@ describe('Subject data', function() {
                 'JSON_QUERY(OFFENCES) AS offences, ' +
                 'JSON_QUERY(SENTENCING) AS sentencing');
             sandbox.reset();
+        });
+    });
+
+    describe('getSubjectsForComparison', () => {
+
+        it('should call getCollection', () => {
+            subjectProxy().getSubjectsForComparison(['AB111111', 'AB111112']);
+            expect(getCollectionStub).to.have.callCount(1);
+        });
+
+        it('should pass in the correct sql', () => {
+
+            const expectedSql = `SELECT JSON_QUERY(PERSONAL_DETAILS) AS summary, JSON_QUERY(ADDRESSES) AS addresses, JSON_QUERY(ALIASES) AS aliases
+               FROM HPA.PRISONER_DETAILS
+               WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER_0 OR PK_PRISON_NUMBER = @PK_PRISON_NUMBER_1
+               FOR JSON PATH`;
+
+            subjectProxy().getSubjectsForComparison(['AB111111', 'AB111112']);
+            const sql = getCollectionStub.getCalls()[0].args[0];
+            expect(sql).to.eql(expectedSql);
+        });
+
+        it('should pass in the correct sql if only one prionNumber passed in', () => {
+
+            const expectedSql = `SELECT JSON_QUERY(PERSONAL_DETAILS) AS summary, JSON_QUERY(ADDRESSES) AS addresses, JSON_QUERY(ALIASES) AS aliases
+               FROM HPA.PRISONER_DETAILS
+               WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER_0
+               FOR JSON PATH`;
+
+            subjectProxy().getSubjectsForComparison(['AB111111']);
+            const sql = getCollectionStub.getCalls()[0].args[0];
+            expect(sql).to.eql(expectedSql);
+        });
+
+        it('should pass in the correct sql if > 2 prison numbers passed in', () => {
+
+            const expectedSql = `SELECT JSON_QUERY(PERSONAL_DETAILS) AS summary, JSON_QUERY(ADDRESSES) AS addresses, JSON_QUERY(ALIASES) AS aliases
+               FROM HPA.PRISONER_DETAILS
+               WHERE PK_PRISON_NUMBER = @PK_PRISON_NUMBER_0 OR PK_PRISON_NUMBER = @PK_PRISON_NUMBER_1 OR PK_PRISON_NUMBER = @PK_PRISON_NUMBER_2
+               FOR JSON PATH`;
+
+            subjectProxy().getSubjectsForComparison(['AB111111', 'AB111112', 'AB111113']);
+            const sql = getCollectionStub.getCalls()[0].args[0];
+            expect(sql).to.eql(expectedSql);
+        });
+
+        it('should pass in the correct parameters', () => {
+
+            const expectedParams = [{
+                column: `PK_PRISON_NUMBER_0`,
+                type: TYPES.VarChar,
+                value: 'AB111111'
+            },
+            {
+                column: `PK_PRISON_NUMBER_1`,
+                type: TYPES.VarChar,
+                value: 'AB111112'
+            }];
+
+            subjectProxy().getSubjectsForComparison(['AB111111', 'AB111112']);
+            const params = getCollectionStub.getCalls()[0].args[1];
+            expect(params).to.eql(expectedParams);
+        });
+
+        it('should pass in the correct parameters if 1 prison number passed in', () => {
+
+            const expectedParams = [{
+                column: `PK_PRISON_NUMBER_0`,
+                type: TYPES.VarChar,
+                value: 'AB111111'
+            }];
+
+            subjectProxy().getSubjectsForComparison(['AB111111']);
+            const params = getCollectionStub.getCalls()[0].args[1];
+            expect(params).to.eql(expectedParams);
+        });
+
+        it('should pass in the correct parameters for > 2 prisonNumbers', () => {
+
+            const expectedParams = [{
+                column: `PK_PRISON_NUMBER_0`,
+                type: TYPES.VarChar,
+                value: 'AB111111'
+            },
+            {
+                column: `PK_PRISON_NUMBER_1`,
+                type: TYPES.VarChar,
+                value: 'AB111112'
+            },
+            {
+                column: `PK_PRISON_NUMBER_2`,
+                type: TYPES.VarChar,
+                value: 'AB111113'
+            }];
+
+            subjectProxy().getSubjectsForComparison(['AB111111', 'AB111112', 'AB111113']);
+            const params = getCollectionStub.getCalls()[0].args[1];
+            expect(params).to.eql(expectedParams);
         });
     });
 

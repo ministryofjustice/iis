@@ -143,7 +143,7 @@ function parseResultsPageData(req, rowCount, data, page, error) {
         formContents: searchedFor,
         usePlaceholder: Object.keys(searchedFor).length === 0,
         idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
-		suggestions: getSearchSuggestions(req.session.userInput),
+        suggestions: getSearchSuggestions(req.session.userInput),
         moment: require('moment'),
         setCase: require('case')
     };

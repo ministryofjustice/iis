@@ -26,6 +26,7 @@ const admin = require('../routes/admin');
 const search = require('../routes/search');
 const subject = require('../routes/subject');
 const print = require('../routes/print');
+const comparison = require('../routes/comparison');
 
 const content = require('../data/content.js');
 const config = require('../server/config');
@@ -176,6 +177,7 @@ if (!testMode) {
 app.use('/search/', search);
 app.use('/subject/', subject);
 app.use('/print/', print);
+app.use('/comparison/', comparison);
 
 app.use('/admin/', admin);
 

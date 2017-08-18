@@ -279,3 +279,12 @@ div.search-terms a {
     color: #6f777b;
     background: url(#{$path}/prison-cell.png) top center no-repeat;
 }
+
+.compare-section {
+    margin-top: 20px;
+    padding-top: 10px;
+}
+
+#comparisonHeader a:visited {
+    color: $govuk-blue;
+}

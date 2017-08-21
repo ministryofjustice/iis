@@ -144,6 +144,7 @@ function parseResultsPageData(req, rowCount, data, page, error) {
         usePlaceholder: Object.keys(searchedFor).length === 0,
         idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
         suggestions: getSearchSuggestions(req.session.userInput),
+        shortList: Array.isArray(req.query.shortList) ? req.query.shortList : [req.query.shortList],
         moment: require('moment'),
         setCase: require('case')
     };
@@ -210,6 +211,13 @@ exports.postFilters = function(req, res) {
     const newQueryObject = toggleFromQueryItem(req, 'filters', filterPressed, 'referrer');
 
     newQueryObject.page = '1';
+
+    res.redirect(createUrl('/search/results', newQueryObject));
+};
+
+exports.postAddToShortlist = function(req, res) {
+    const prisonNumberAdded = req.body.addToShortlist;
+    const newQueryObject = toggleFromQueryItem(req, 'shortlist', prisonNumberAdded, 'referrer');
 
     res.redirect(createUrl('/search/results', newQueryObject));
 };

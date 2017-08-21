@@ -19,9 +19,9 @@ block content
             ul.tab-wrapper
                 li.tab.tab
                     if usePlaceholder
-                        a(href="/search") HPA
+                        a#hpaTab(href="/search") HPA
                     else
-                        a(href="/search/results") HPA
+                        a#hpaTab(href="/search/results") HPA
                 li.tab.tab-selected NOMIS
 
 
@@ -34,9 +34,20 @@ block content
             if !usePlaceholder
                 h2.heading-large#contentTitle
                     if data && data.length === 1
-                        |1 NOMIS prisoner
+                        |1 prisoner from NOMIS
                     else
-                        |#{data.length} NOMIS prisoners
+                        |#{data.length} prisoners from NOMIS
+
+                if filtersForView && (data.length > 1 || (filtersForView.Male || filtersForView.Female))
+                    div#filters
+                        fieldset.well
+                            legend.font-xsmall Search filters
+                            div(role="list")
+                                form(method="post" action='/search/nomis/results/filters')
+                                    input(type="hidden" name="_csrf" value="#{csrfToken}")
+                                    input#male.filtering-option.font-xsmall(name="filter", type="submit", value="Male" class=filtersForView.Male ? "filtering-option-active" : "")
+                                    input#female.filtering-option.font-xsmall(name="filter", type="submit", value="Female" class=filtersForView.Female ? "filtering-option-active" : "")
+
 
                 if data && data != 0
                     div#searchResults

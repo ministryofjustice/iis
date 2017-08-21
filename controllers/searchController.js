@@ -169,7 +169,7 @@ exports.getNomisResults = function(req, res) {
     }
 
     // todo - this happens every time even if the userinput hasn't changed
-    audit.record('SEARCH_NOMIS', req.user.email, req.session.userInput);
+    // audit.record('SEARCH_NOMIS', req.user.email, req.session.userInput);
 
     searchNomis(req.session.userInput).then(nomisData => {
         return res.render('search/nomis', parseNomisData(req, nomisData));

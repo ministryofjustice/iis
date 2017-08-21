@@ -20,10 +20,8 @@ block content
             ul.tab-wrapper
                 li.tab.tab-selected HPA
                 li.tab
-                    if usePlaceholder
-                        a(href="/search/nomis") NOMIS
-                    else
-                        a(href="/search/nomis/results") NOMIS
+                    if !usePlaceholder
+                        a#nomisTab(href="/search/nomis/results") NOMIS
 
         div.column-one-third
             include ./searchForm
@@ -34,9 +32,9 @@ block content
             if !usePlaceholder
                 h2.heading-large#contentTitle
                     if rowCount === 1
-                        |#{rowCount} HPA prisoner
+                        |#{rowCount} prisoner from HPA
                     else
-                        |#{rowCount} HPA prisoners
+                        |#{rowCount} prisoners from HPA
 
                 if filtersForView && (data.length > 1 || (filtersForView.Male || filtersForView.Female || filtersForView.HDC || filtersForView.Lifer))
                     div#filters

@@ -144,7 +144,7 @@ function parseResultsPageData(req, rowCount, data, page, error) {
         usePlaceholder: Object.keys(searchedFor).length === 0,
         idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
         suggestions: getSearchSuggestions(req.session.userInput),
-        shortList: Array.isArray(req.query.shortList) ? req.query.shortList : [req.query.shortList],
+        shortList: getShortList(req),
         moment: require('moment'),
         setCase: require('case')
     };
@@ -157,6 +157,21 @@ function getUserInput(userInput) {
         }
         return contents;
     }, {});
+}
+
+function getShortList(req) {
+
+    if(!req.query.shortList) {
+        return null;
+    }
+
+    const shortList = Array.isArray(req.query.shortList) ? req.query.shortList : [req.query.shortList];
+
+    return {
+        prisonNumbers: shortList,
+        href: `/comparison/${shortList.join(',')}`,
+        latestName: req.query.shortListName || null
+    };
 }
 
 function getDbErrorData(errorCode) {
@@ -216,10 +231,13 @@ exports.postFilters = function(req, res) {
 };
 
 exports.postAddToShortlist = function(req, res) {
-    const prisonNumberAdded = req.body.addToShortlist;
-    const newQueryObject = toggleFromQueryItem(req, 'shortlist', prisonNumberAdded, 'referrer');
+    const prisonNumberAdded = req.body.addToShortList;
+    const nameAdded = req.body.addToShortListName;
 
-    res.redirect(createUrl('/search/results', newQueryObject));
+    const newQueryObject = toggleFromQueryItem(req, 'shortList', prisonNumberAdded, 'referrer');
+    const objWithName = nameAdded ? Object.assign({}, newQueryObject, {shortListName: nameAdded}) : newQueryObject;
+
+    res.redirect(createUrl('/search/results', objWithName));
 };
 
 const getPaginationErrors = query => {

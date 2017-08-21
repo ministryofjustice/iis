@@ -16,12 +16,27 @@ mixin inmate(item)
 
             form(method="post" action="/search/addToShortlist")
                 input(type="hidden" name="_csrf" value="#{csrfToken}")
-                input(type="hidden" name="addToShortlist" value="#{item.prisonNumber}")
+                input(type="hidden" name="addToShortList" value="#{item.prisonNumber}")
+                input(type="hidden" name="addToShortListName" value="#{setCase.capital(item.firstName +' '+item.lastName)}")
                 input(type="submit" value="Add to shortlist" class="link" id="addToShortlist")
         block
 
 block content
     div.grid-row
+
+        if shortList && shortList.prisonNumbers.length > 0
+            div.column-full
+                div#notice.c-align
+                    if shortList.latestName
+                        |#{shortList.latestName} added to the shortlist.&nbsp;
+                    else
+                        |Prisoner added to the shortlist.&nbsp;
+                    if shortList.prisonNumbers.length === 1
+                        |Add further prisoners to compare
+                    else
+                        a(href="#{shortList.href}") Compare #{shortList.length} prisoners
+
+
         div.column-one-third
             include ./searchForm
 

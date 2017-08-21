@@ -462,14 +462,30 @@ describe('searchController', () => {
                 });
             });
 
+            it('should not pass the shortList to the view', () => {
+                getResultsProxy()(reqMock, resMock);
+                const payload = resMock.render.getCalls()[0].args[1];
+                expect(payload.shortList).to.be.eql(null);
+            });
+
             context('When shortList is in the query', () => {
+
+                it('should pass the latest name into the view', () => {
+                    reqMock.query.shortListName = 'Matthew Whitfield';
+                    const expectedShortListName = 'Matthew Whitfield';
+
+                    getResultsProxy()(reqMock, resMock);
+                    const payload = resMock.render.getCalls()[0].args[1];
+                    expect(payload.shortList.latestName).to.be.eql(expectedShortListName);
+                });
+
                 it('should pass the shortList to the view in an array', () => {
                     reqMock.query.shortList = 'AB111111';
                     const expectedShortList = ['AB111111'];
 
                     getResultsProxy()(reqMock, resMock);
                     const payload = resMock.render.getCalls()[0].args[1];
-                    expect(payload.shortList).to.be.eql(expectedShortList);
+                    expect(payload.shortList.prisonNumbers).to.be.eql(expectedShortList);
 
                 });
 
@@ -479,8 +495,16 @@ describe('searchController', () => {
 
                     getResultsProxy()(reqMock, resMock);
                     const payload = resMock.render.getCalls()[0].args[1];
-                    expect(payload.shortList).to.be.eql(expectedShortList);
+                    expect(payload.shortList.prisonNumbers).to.be.eql(expectedShortList);
 
+                });
+
+                it('should pass the href of the comparison page', () => {
+                    reqMock.query.shortList = ['AB111111', 'AB111112'];
+                    getResultsProxy()(reqMock, resMock);
+
+                    const payload = resMock.render.getCalls()[0].args[1];
+                    expect(payload.shortList.href).to.be.eql('/comparison/AB111111,AB111112');
                 });
             });
 
@@ -696,13 +720,14 @@ describe('searchController', () => {
                 reqMock = {
                     body: {
                         pageNumber: '8',
-                        addToShortlist: 'Male'
+                        addToShortListName: 'Matthew Whitfield',
+                        addToShortList: 'Male'
                     },
                     get: (item) => 'http://something.com/search/results'
                 };
                 postAddToShortlist(reqMock, resMock);
                 expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/search/results?shortlist=Male');
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?shortList=Male&shortListName=Matthew%20Whitfield');
 
             });
 
@@ -710,9 +735,9 @@ describe('searchController', () => {
                 reqMock = {
                     body: {
                         pageNumber: '8',
-                        addToShortlist: 'Male'
+                        addToShortList: 'Male'
                     },
-                    get: (item) => 'http://something.com/search/results?shortlist=Male'
+                    get: (item) => 'http://something.com/search/results?shortList=Male'
                 };
                 postAddToShortlist(reqMock, resMock);
                 expect(resMock.redirect).to.have.callCount(1);
@@ -723,13 +748,13 @@ describe('searchController', () => {
                 reqMock = {
                     body: {
                         pageNumber: '8',
-                        addToShortlist: 'Female'
+                        addToShortList: 'Female'
                     },
-                    get: (item) => 'http://something.com/search/results?shortlist=Male'
+                    get: (item) => 'http://something.com/search/results?shortList=Male'
                 };
                 postAddToShortlist(reqMock, resMock);
                 expect(resMock.redirect).to.have.callCount(1);
-                expect(resMock.redirect).to.have.been.calledWith('/search/results?shortlist=Male&shortlist=Female');
+                expect(resMock.redirect).to.have.been.calledWith('/search/results?shortList=Male&shortList=Female');
             });
         });
     });

@@ -16,6 +16,12 @@ mixin inmate(item)
 
 block content
     div.grid-row
+        div.column-full
+            ul.tab-wrapper
+                li.tab.tab-selected Search
+                li.tab
+                    a(href="/search/nomis") Nomis
+
         div.column-one-third
             include ./searchForm
 
@@ -45,12 +51,6 @@ block content
                     div#searchResults
                         each prisoner in data
                                +inmate(prisoner)
-
-                if nomisData
-                    div#searchResults
-                        p #{nomisData}
-                        each nomisPrisoner in nomisData
-                            p #{nomisPrisoner.nomsId}
 
                 if pagination
                     form(method="post")

@@ -45,6 +45,22 @@ describe('nomisQueryTranslator', () => {
         expect(translateQuery(userInput)).to.eql(expected);
     });
 
+    it('should remove wildcard characters because nomis api does auto wildcard', () => {
+        const userInput = {
+            forename: '%first',
+            forename2: 'mid%dle',
+            surname: 'last%'
+        };
+
+        const expected = {
+            firstName: 'first',
+            middleNames: 'middle',
+            lastName: 'last'
+        };
+
+        expect(translateQuery(userInput)).to.eql(expected);
+    });
+
     it('should leave terms the same where no change needed', () => {
         const userInput = {
             pncNumber: '123',

@@ -23,7 +23,7 @@ function nomisApiCheck() {
         }
 
         superagent
-            .get(url.resolve(`${config.nomis.apiUrl}`, '/api/v2/prisoners'))
+            .get(url.resolve(`${config.nomis.apiUrl}`, '/api/info/health'))
             .timeout({
                 response: 2000,
                 deadline: 2500
@@ -31,13 +31,7 @@ function nomisApiCheck() {
             .end((error, result) => {
                 try {
                     if (error) {
-                        // logger.error(error, 'Error calling NOMIS REST service');
-
-                        // todo need a healthcheck endpoint. For now just expect 401
-                        if (error.status === 401) {
-                            return resolve('OK');
-                        }
-
+                        logger.error(error, 'Error calling NOMIS REST service');
                         return reject(error.status);
                     }
 

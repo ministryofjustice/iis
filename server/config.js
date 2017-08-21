@@ -25,14 +25,15 @@ module.exports = {
     },
 
     nomis: {
-        enabled: get('NOMIS_ENABLED', 'true'),
+        enabled: get('NOMIS_ENABLED', true),
         user: get('NOMIS_USER', 'user'),
         password: get('NOMIS_PASSWORD', 'password'),
         apiUrl: get('NOMIS_API_URL', 'http://localhost:9090'),
         timeout: {
             response: 2000,
             deadline: 2500
-        }
+        },
+        tokenRetries: get('NOMIS_TOKEN_RETRIES', 1)
     },
 
     https: production,

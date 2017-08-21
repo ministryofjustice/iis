@@ -22,7 +22,9 @@ module.exports = {
 
     dbErrorCodeMessages: {
         ETIMEOUT: 'The search timed out. Try a more specific query',
-        emptySubmission: 'Please enter a value for at least one field'
+        emptySubmission: 'Please enter a value for at least one field',
+        ECONNREFUSED: 'There was a communication error',
+        NOMIS401: 'Could not connect to the NOMIS API'
     },
 
     view: {

@@ -8,7 +8,7 @@ const audit = require('../data/audit');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 const {validateDescriptionForm} = require('./helpers/formValidators');
 
-const {getNomisResults} = require('../data/nomisSearch');
+const {searchNomis} = require('../data/nomisSearch');
 
 
 const {
@@ -111,12 +111,35 @@ function getSearchResultsAndRender(req, res) {
         }
 
         return getSearchResults(req.session.userInput).then(searchResult => {
-            return res.render('search/index', parseResultsPageData(req, rowCount, searchResult, currentPage));
-        }).catch(error => {
-            logger.error('Error during inmate search: ' + error.message);
-            const query = {error: error.code};
-            return res.redirect(createUrl('/search', query));
-        });
+                return res.render('search/index', parseResultsPageData(req, rowCount, searchResult, currentPage, null));
+            }).catch(error => {
+                logger.error('Error during inmate search: ' + error.message);
+                const query = {error: error.code};
+                return res.redirect(createUrl('/search', query));
+            })
+    };
+}
+
+function parseResultsPageData(req, rowCount, data, page, error) {
+
+    const searchedFor = getUserInput(req.session.userInput);
+
+    return {
+        content: {
+            title: 'HPA Prisoner Search'
+        },
+        rowCount,
+        pagination: (rowCount > resultsPerPage ) ? utils.pagination(rowCount, page) : null,
+        data: addSelectionVisitedData(data, req.session) || [],
+        err: error || getPaginationErrors(req.query),
+        filtersForView: getInputtedFilters(req.query, 'VIEW'),
+        queryStrings: getQueryStringsForSearch(req.url),
+        formContents: searchedFor,
+        usePlaceholder: Object.keys(searchedFor).length === 0,
+        idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
+        suggestions: getSearchSuggestions(req.session.userInput),
+        moment: require('moment'),
+        setCase: require('case')
     };
 }
 
@@ -133,47 +156,42 @@ exports.getSuggestion = function(req, res) {
     res.redirect('/search/results');
 };
 
-function parseResultsPageData(req, rowCount, data, page, error) {
+exports.getNomisResults = function(req, res){
+
+    logger.info('GET /search/nomis');
+    if (!req.headers.referer) {
+        return res.redirect('/search');
+    }
+
+    // todo audit?
+    // todo paging?
+    // todo filters?
+    // todo suggestions?
+
+    searchNomis(req.session.userInput).then(nomisData => {
+        return res.render('search/nomis', parseNomisData(req, nomisData));
+    }).catch(error => {
+        logger.error('Error during nomis search: ' + error.message);
+        const query = {error: error.code};
+        return res.redirect(createUrl('/search', query));
+    });
+}
+
+function parseNomisData(req, nomisData) {
+
     const searchedFor = getUserInput(req.session.userInput);
 
     return {
         content: {
-            title: 'HPA Prisoner Search'
+            title: 'NOMIS Prisoner Search'
         },
-        rowCount,
-        pagination: (rowCount > resultsPerPage ) ? utils.pagination(rowCount, page) : null,
-        data: addSelectionVisitedData(data, req.session) || [],
-        nomisData: getNomisData(req.session.userInput) || [],
-        err: error || getPaginationErrors(req.query),
-        filtersForView: getInputtedFilters(req.query, 'VIEW'),
-        queryStrings: getQueryStringsForSearch(req.url),
+        data: nomisData,
         formContents: searchedFor,
         usePlaceholder: Object.keys(searchedFor).length === 0,
         idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
-		suggestions: getSearchSuggestions(req.session.userInput),
         moment: require('moment'),
         setCase: require('case')
     };
-}
-
-function getNomisData(userInput) {
-
-    if (!config.nomis.enabled) {
-        console.log('nomis disabled');
-        return {error: 'NOMIS access disabled'};
-    }
-
-    getNomisResults(userInput).then(nomisData => {
-
-        console.log('nomis data?');
-        console.log(nomisData);
-
-        return nomisData;
-    }).catch(error => {
-        console.log('Failed to do query');
-        console.log(error);
-        return (error);
-    });
 }
 
 function getUserInput(userInput) {

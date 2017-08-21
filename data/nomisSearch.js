@@ -23,21 +23,78 @@ const userSpec = {
 const loginUrl = url.resolve(`${config.nomis.apiUrl}`, 'api/users/login');
 const queryUrl = url.resolve(`${config.nomis.apiUrl}`, 'api/v2/prisoners');
 
-exports.getNomisResults = function(userInput) {
+module.exports = {
+    searchNomis,
+    getNomisResults,
+    getNomisToken,
+    clearToken
+};
+
+let token;
+let retries = config.nomis.tokenRetries;
+
+function clearToken() {
+    token = null;
+}
+
+function reduceRetries() {
+    retries--;
+}
+
+function resetRetries() {
+    retries = config.nomis.tokenRetries;
+}
+
+function searchNomis(userInput) {
+
+    logger.info('Searching NOMIS');
+
+    if (!config.nomis.enabled) {
+        return new Promise((resolve, reject) => {
+            logger.warn('NOMIS search is disabled');
+            return resolve('disabled');
+        });
+    }
+
+    if (!token) {
+        return getNomisToken().then(newToken => {
+            token = newToken;
+            return doSearch(userInput);
+        });
+    }
+
+    return doSearch(userInput);
+}
+
+function doSearch(userInput) {
+    return getNomisResults(token, userInput)
+        .then(result => {
+            resetRetries();
+            return result;
+        })
+        .catch(error => {
+            if (error.status === 401 && retries > 0) {
+                logger.error('NOMIS 401 error - retrying');
+                clearToken();
+                reduceRetries();
+                return searchNomis(userInput);
+            }
+            if (error.status === 401) {
+                logger.error('NOMIS 401 error - failed after retries');
+                const errorWithCode = {message: 'Authentication failure', code: 'NOMIS401'};
+                throw(errorWithCode);
+            }
+            throw error;
+        });
+}
+
+function getNomisResults(token, userInput) {
     return new Promise((resolve, reject) => {
-
-
-        const token = 'token';      // todo acquire token here? refresh it here?
-
-        if (!token) {
-            console.log('No NOMIS token');
-            return reject({error: 'NOMIS token not set'});
-        }
 
         const nomisQuery = translateQuery(userInput);
 
         if (isEmpty(nomisQuery)) {
-            return resolve([]);
+            return reject({code: 'emptySubmission'});
         }
 
         superagent
@@ -49,27 +106,32 @@ exports.getNomisResults = function(userInput) {
             .end((error, res) => {
                 try {
                     if (error) {
-                        logger.error('Error querying NOMIS');
-                        logger.error(error);
-                        return reject({error: 'NOMIS query access error'});
+                        logger.error('Error querying NOMIS: ' + error);
+                        return reject(error);
                     }
 
                     if (res.body) {
                         return resolve(translateResult(res.body));
                     }
 
-                    return reject({error: 'NOMIS response error'});
+                    return reject(error);
+
                 } catch (exception) {
-                    logger.error('Exception querying NOMIS');
-                    logger.error(exception);
-                    return reject({error: 'NOMIS processing error'});
+                    logger.error('Exception querying NOMIS: ' + exception);
+                    return reject(exception);
                 }
             });
     });
-};
+}
 
-exports.getNomisToken = function() {
+function getNomisToken() {
     return new Promise((resolve, reject) => {
+
+        if (!config.nomis.enabled) {
+            logger.warn('NOMIS integration disabled');
+            return reject('NOMIS integration disabled');
+        }
+
         superagent
             .post(loginUrl)
             .set('content-type', 'application/json')
@@ -78,26 +140,24 @@ exports.getNomisToken = function() {
             .end((error, res) => {
                 try {
                     if (error) {
-                        logger.error('Error getting NOMIS token');
-                        logger.error(error);
-                        return reject({error: 'NOMIS token access error'});
+                        logger.error('Error getting NOMIS token: ' + error);
+                        return reject(error);
                     }
 
                     if (res.body) {
                         return resolve(res.body.token);
                     }
 
-                    return reject({error: 'NOMIS response error'});
+                    return reject(error);
+
                 } catch (exception) {
-                    logger.error('Exception getting NOMIS token');
-                    logger.error(exception);
-                    return reject({error: 'NOMIS processing error'});
+                    logger.error('Exception getting NOMIS token: ' + exception);
+                    return reject(exception);
                 }
             });
     });
-};
+}
 
-// Really?
 function isEmpty(obj) {
     for (let prop in obj) {
         if (obj.hasOwnProperty(prop)) {

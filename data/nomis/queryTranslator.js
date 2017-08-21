@@ -33,15 +33,15 @@ const convert = searchTerms => (inputs, key) => {
 
 
 function forenameTerm(key, searchTerms) {
-    return {firstName: searchTerms[key]};
+    return {firstName: removeWildcards(searchTerms[key])};
 }
 
 function forename2Term(key, searchTerms) {
-    return {middleNames: searchTerms[key]};
+    return {middleNames: removeWildcards(searchTerms[key])};
 }
 
 function surnameTerm(key, searchTerms) {
-    return {lastName: searchTerms[key]};
+    return {lastName: removeWildcards(searchTerms[key])};
 }
 
 function unchangedTerm(key, searchTerms) {
@@ -75,4 +75,8 @@ function translateAgeRange(age) {
 
 function ageToDob(age) {
     return new moment().subtract(age, 'years').format('YYYY-MM-DD');
+}
+
+function removeWildcards(word){
+    return word.replace('%', '');
 }

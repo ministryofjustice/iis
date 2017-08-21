@@ -1,0 +1,50 @@
+extends ../layout
+mixin inmate(item)
+    div.nomisContainer
+        div.nomisDetails
+            span(class='bold-medium').capitalise-text #{setCase.capital(item.firstName +' '+ (item.middleName)) +' '+ setCase.upper(item.lastName) +' '}
+            if item.dob
+                span(class='bold-medium') &middot; #{moment(item.dob).format('DD/MM/YYYY')}
+            if item.isAlias
+                span.block Matched on alias: #{setCase.capital(item.aliasFirst + ' ' + item.aliasLast)}
+            if item.nomsId
+                span.nomsId.block.text-secondary NOMIS ID #{item.nomsId}
+            if item.receptionDate
+                span.firstReceptionDate.block.text-secondary First reception #{moment(item.receptionDate).format('DD/MM/YYYY')}
+        block
+
+block content
+    div.grid-row
+        div.column-full
+            ul.tab-wrapper
+                li.tab.tab
+                    a(href="/search/results") Search
+                li.tab.tab-selected Nomis
+
+
+        div.column-one-third
+            include ./searchForm
+
+        div#resultsBody.column-two-thirds
+            if err
+                include ./searchError
+            if !usePlaceholder
+                h2.heading-large#contentTitle
+                    if data.length === 1
+                        |1 prisoner
+                    else
+                        |#{data.length} prisoners
+
+                if data && data != 0
+                    div#searchResults
+                        each prisoner in data
+                               +inmate(prisoner)
+
+            else
+                p#noPrisoners
+                    |Can't see prisoners? Try using the search ;-)
+
+block append scripts
+    script(src="/public/javascripts/tabs.js?#{version}")
+    script(src="/public/javascripts/clearSearch.js?#{version}")
+    script(src="/public/javascripts/searchValidation.js?#{version}")

@@ -119,7 +119,8 @@ function getNomisResults(token, userInput) {
                         return resolve(translateResult(res.body));
                     }
 
-                    return reject(error);
+                    logger.error('Invalid nomis search response');
+                    return reject({message: 'invalid search response', status: 500});
 
                 } catch (exception) {
                     logger.error('Exception querying NOMIS: ' + exception);
@@ -149,11 +150,12 @@ function getNomisToken() {
                         return reject(error);
                     }
 
-                    if (res.body) {
+                    if (res.body && res.body.token) {
                         return resolve(res.body.token);
                     }
 
-                    return reject(error);
+                    logger.error('Invalid nomis token response');
+                    return reject({message: 'invalid token response', status: 500});
 
                 } catch (exception) {
                     logger.error('Exception getting NOMIS token: ' + exception);

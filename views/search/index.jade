@@ -34,9 +34,9 @@ block content
             if !usePlaceholder
                 h2.heading-large#contentTitle
                     if rowCount === 1
-                        |#{rowCount} prisoner
+                        |#{rowCount} HPA prisoner
                     else
-                        |#{rowCount} prisoners
+                        |#{rowCount} HPA prisoners
 
                 if filtersForView && (data.length > 1 || (filtersForView.Male || filtersForView.Female || filtersForView.HDC || filtersForView.Lifer))
                     div#filters

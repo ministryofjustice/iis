@@ -288,3 +288,21 @@ div.search-terms a {
 #comparisonHeader a:visited {
     color: $govuk-blue;
 }
+
+input.link{
+    background:none;
+    border:none;
+    padding-left: 0px;
+    color: $link-colour;
+    font-family: "nta", Arial, sans-serif;
+    font-size: 16px;
+    text-align: left;
+    cursor: pointer;
+}
+input.link:hover{
+    color: $link-hover-colour;
+}
+
+#addToShortlist {
+    padding-left: 19px;
+}

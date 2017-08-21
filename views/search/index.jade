@@ -9,9 +9,15 @@ mixin inmate(item)
                 if item.isAlias
                     span.block Matched on alias: #{setCase.capital(item.aliasFirst + ' ' + item.aliasLast)}
                 if item.prisonNumber
-                    span.prisonNumber.block.text-secondary Prison no. #{item.prisonNumber}
-                if item.receptionDate
-                    span.firstReceptionDate.block.text-secondary First reception #{moment(item.receptionDate).format('DD/MM/YYYY')}
+                    span.prisonNumber.block.text-secondary
+                        | Prison no. #{item.prisonNumber}
+                        if item.receptionDate
+                            |  &bull; Reception #{moment(item.receptionDate).format('DD/MM/YYYY')}
+
+            form(method="post" action="/search/addToShortlist")
+                input(type="hidden" name="_csrf" value="#{csrfToken}")
+                input(type="hidden" name="addToShortlist" value="#{item.prisonNumber}")
+                input(type="submit" value="Add to shortlist" class="link" id="addToShortlist")
         block
 
 block content

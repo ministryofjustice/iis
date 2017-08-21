@@ -1,0 +1,60 @@
+extends ../layout
+block content
+    h1.heading-large #{subjects.length} Prisoners
+
+    div
+        div.grid-row
+            each subject in subjects
+                div(id="comparisonHeader" class =  subjects.length > 2 ? 'column-one-third' : 'column-one-half')
+                    span.bold-medium #{setCase.capital(subject.summary.firstName)} #{subject.summary.lastName}
+                    span.block #{moment(subject.summary.dob).format('DD/MM/YYYY')}
+                    if subjects.length > 1
+                        a(href="#{subject.removePath}") Remove from shortlist
+
+        section.compare-section
+            h2.heading-small Background
+            div.grid-row
+                each subject in subjects
+                    div(id="comparisonBackground" class =  subjects.length > 2 ? 'column-one-third' : 'column-one-half')
+                        ul.list
+                            if subject.summary.sex
+                                li #{subject.summary.sex === 'M' ? 'Male' : 'Female'}
+                            if subject.summary.ethnicity
+                                li #{subject.summary.ethnicity}
+                            if subject.summary.birthCountry
+                                li Born in #{subject.summary.birthCountry}
+                            if subject.summary.nationality
+                                li National of #{subject.summary.nationality}
+                            if subject.summary.religion
+                                li #{subject.summary.religion}
+
+        section.compare-section
+            h2.heading-small Aliases
+            div.grid-row
+                each subject in subjects
+                    div(id="comparisonAliases" class =  subjects.length > 2 ? 'column-one-third' : 'column-one-half')
+                        if subject.aliases
+                            ul.list
+                                each alias in subject.aliases
+                                    li
+                                        if alias.first
+                                            |#{setCase.capital(alias.first)}
+                                        if alias.last
+                                            |&nbsp;#{setCase.capital(alias.last)}
+                                        if alias.birthDate
+                                            |, #{moment(alias.birthDate).format('DD/MM/YYYY')}
+
+        section.compare-section
+            h2.heading-small Addresses
+            div.grid-row
+                each subject in subjects
+                    div(id="comparisonAddressesr" class =  subjects.length > 2 ? 'column-one-third' : 'column-one-half')
+                        if subject.addresses
+                            ul.list
+                                each address in subject.addresses
+                                    if address.street
+                                        | #{setCase.capital(address.street)}
+                                    if address.town
+                                        |, &nbsp;#{setCase.capital(address.town)}
+                                    if address.county
+                                        |, #{setCase.capital(address.county)}

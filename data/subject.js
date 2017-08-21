@@ -21,7 +21,6 @@ const dataAccessOptions = {
 
 exports.getSubject = function(prisonNumber, dataRequired = ['summary']) {
 
-    logger.debug('Subject info search');
     const params = [
         {column: 'PK_PRISON_NUMBER', type: TYPES.VarChar, value: prisonNumber}
     ];
@@ -35,6 +34,20 @@ exports.getSubject = function(prisonNumber, dataRequired = ['summary']) {
 
     return new Promise((resolve, reject) => {
         db.getCollection(sql, params, resolveJsonResponse(resolve), reject);
+    });
+};
+
+exports.getSubjectsForComparison = function(prisonNumbers, dataRequired = ['summary', 'addresses', 'aliases']) {
+
+    let sql = `SELECT ${getSelectString(dataRequired)}
+               FROM HPA.PRISONER_DETAILS
+               WHERE ${getWhereStringFor(prisonNumbers)}
+               FOR JSON PATH`;
+
+    logger.debug('Subject info search for comparison', sql);
+
+    return new Promise((resolve, reject) => {
+        db.getCollection(sql, getParametersFor(prisonNumbers), resolveJsonResponse(resolve), reject);
     });
 };
 
@@ -61,3 +74,20 @@ const valueOfJsonSegment = responseSegment => {
         return segmentString;
     }, '');
 };
+
+function getWhereStringFor(prisonNumbers) {
+    return prisonNumbers.reduce((sql, prisonNumber, index) => {
+        const string = index === 0 ?
+            `PK_PRISON_NUMBER = @PK_PRISON_NUMBER_${index}` :
+            ` OR PK_PRISON_NUMBER = @PK_PRISON_NUMBER_${index}`;
+
+        return sql.concat(string);
+
+    }, '');
+}
+
+function getParametersFor(prisonNumbers) {
+    return prisonNumbers.map((prisonNumber, index) => {
+        return {column: `PK_PRISON_NUMBER_${index}`, type: TYPES.VarChar, value: prisonNumber};
+    });
+}

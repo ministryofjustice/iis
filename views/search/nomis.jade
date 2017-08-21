@@ -18,8 +18,11 @@ block content
         div.column-full
             ul.tab-wrapper
                 li.tab.tab
-                    a(href="/search/results") Search
-                li.tab.tab-selected Nomis
+                    if usePlaceholder
+                        a(href="/search") HPA
+                    else
+                        a(href="/search/results") HPA
+                li.tab.tab-selected NOMIS
 
 
         div.column-one-third
@@ -30,7 +33,7 @@ block content
                 include ./searchError
             if !usePlaceholder
                 h2.heading-large#contentTitle
-                    if data.length === 1
+                    if data && data.length === 1
                         |1 prisoner
                     else
                         |#{data.length} prisoners

@@ -84,6 +84,7 @@ exports.getResults = function(req, res) {
 
     req.session.userInput = addFiltersToUserInput(req.session.userInput, req.query);
 
+    // todo - this happens every time even if the userinput hasn't changed
     audit.record('SEARCH', req.user.email, req.session.userInput);
 
     getSearchResultsCount(req.session.userInput)
@@ -111,12 +112,12 @@ function getSearchResultsAndRender(req, res) {
         }
 
         return getSearchResults(req.session.userInput).then(searchResult => {
-                return res.render('search/index', parseResultsPageData(req, rowCount, searchResult, currentPage, null));
-            }).catch(error => {
-                logger.error('Error during inmate search: ' + error.message);
-                const query = {error: error.code};
-                return res.redirect(createUrl('/search', query));
-            })
+            return res.render('search/index', parseResultsPageData(req, rowCount, searchResult, currentPage, null));
+        }).catch(error => {
+            logger.error('Error during inmate search: ' + error.message);
+            const query = {error: error.code};
+            return res.redirect(createUrl('/search', query));
+        })
     };
 }
 
@@ -156,17 +157,19 @@ exports.getSuggestion = function(req, res) {
     res.redirect('/search/results');
 };
 
-exports.getNomisResults = function(req, res){
+exports.getNomis = function(req, res) {
+    return res.render('search/nomis', emptyNomisPage);
+};
 
-    logger.info('GET /search/nomis');
+exports.getNomisResults = function(req, res) {
+    logger.info('GET /search/nomis/results');
+
     if (!req.headers.referer) {
-        return res.redirect('/search');
+        return res.redirect('/search/nomis', emptyNomisPage);
     }
 
-    // todo audit?
-    // todo paging?
-    // todo filters?
-    // todo suggestions?
+    // todo - this happens every time even if the userinput hasn't changed
+    audit.record('SEARCH_NOMIS', req.user.email, req.session.userInput);
 
     searchNomis(req.session.userInput).then(nomisData => {
         return res.render('search/nomis', parseNomisData(req, nomisData));
@@ -175,7 +178,13 @@ exports.getNomisResults = function(req, res){
         const query = {error: error.code};
         return res.redirect(createUrl('/search', query));
     });
-}
+};
+
+emptyNomisPage = {
+    content: {
+        title: 'NOMIS Prisoner Search'
+    }, usePlaceholder: true
+};
 
 function parseNomisData(req, nomisData) {
 

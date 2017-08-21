@@ -27,7 +27,8 @@ module.exports = {
     searchNomis,
     getNomisResults,
     getNomisToken,
-    clearToken
+    clearToken,
+    onlyPrisonNumber
 };
 
 let token;
@@ -90,6 +91,10 @@ function doSearch(userInput) {
 
 function getNomisResults(token, userInput) {
     return new Promise((resolve, reject) => {
+
+        if(onlyPrisonNumber(userInput)){
+            return resolve([]);
+        }
 
         const nomisQuery = translateQuery(userInput);
 
@@ -156,6 +161,17 @@ function getNomisToken() {
                 }
             });
     });
+}
+
+function onlyPrisonNumber(userInput){
+
+    const searchTerms = ['forename', 'forename2', 'surname', 'dobYear', 'age', 'pncNumber', 'croNumber'];
+
+    const otherTerm = Object.keys(userInput).some(v => {
+        return searchTerms.includes(v);
+    });
+
+    return !otherTerm && Object.keys(userInput).includes('prisonNumber');
 }
 
 function isEmpty(obj) {

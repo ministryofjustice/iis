@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $('#clearSearch').on('click', function() {
-        event.preventDefault();
+        //event.preventDefault();
 
         $('#idForm, #descriptionForm')
             .trigger('reset')

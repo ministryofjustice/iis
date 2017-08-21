@@ -9,6 +9,7 @@ const {
     postSearchForm,
 	getSuggestions,
     getSuggestion,
+    getNomis,
     getNomisResults
 } = require('../controllers/searchController');
 
@@ -29,6 +30,7 @@ router.post('/results/filters', postFilters);
 router.post('/results/search', postSearchForm);
 router.get('/suggestions', getSuggestions);
 router.get('/suggestion', getSuggestion);
-router.get('/nomis', getNomisResults);
+router.get('/nomis', getNomis);
+router.get('/nomis/results', getNomisResults);
 
 module.exports = router;

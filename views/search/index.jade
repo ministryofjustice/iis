@@ -18,9 +18,12 @@ block content
     div.grid-row
         div.column-full
             ul.tab-wrapper
-                li.tab.tab-selected Search
+                li.tab.tab-selected HPA
                 li.tab
-                    a(href="/search/nomis") Nomis
+                    if usePlaceholder
+                        a(href="/search/nomis") NOMIS
+                    else
+                        a(href="/search/nomis/results") NOMIS
 
         div.column-one-third
             include ./searchForm

@@ -1,5 +1,5 @@
 const {
-    searchNomis, getNomisResults, getNomisToken, clearToken
+    searchNomis, getNomisResults, getNomisToken, clearToken, onlyPrisonNumber
 } = require('../../data/nomisSearch');
 
 const config = require('../../server/config');
@@ -37,12 +37,22 @@ describe('nomisSearch', () => {
 
         it('should return error if no searchable query terms', (done) => {
 
-            const userInput = {prisonNumber: '123'};
+            const userInput = {notSearchable: '123'};
 
             getNomisResults('token', userInput).then(nomisData => {
                 expect.fail();
             }).catch(error => {
                 expect(error.code).to.eql('emptySubmission');
+                done();
+            });
+        });
+
+        it('should return empty if only prison number', (done) => {
+
+            const userInput = {prisonNumber: '123'};
+
+            getNomisResults('token', userInput).then(nomisData => {
+                expect(nomisData).to.eql([]);
                 done();
             });
         });
@@ -172,6 +182,21 @@ describe('nomisSearch', () => {
                 expect(nomisData).to.eql(expected);
                 done();
             });
+        });
+    });
+
+    describe('onlyPrisonNumber', () => {
+
+        it('should be true when prisonNumber is only search term', () => {
+            expect(onlyPrisonNumber({prisonNumber: '1'})).to.be.true;
+        });
+
+        it('should be false when prisonNumber is not present', () => {
+            expect(onlyPrisonNumber({notPrisonNumber: '1'})).to.be.false;
+        });
+
+        it('should be false when prisonNumber and another term present', () => {
+            expect(onlyPrisonNumber({prisonNumber: '1', surname: '2'})).to.be.false;
         });
     });
 

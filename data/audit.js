@@ -4,7 +4,7 @@ const TYPES = require('tedious').TYPES;
 const {getCollection} = require('./dataAccess/iisData');
 const utils = require('../data/utils');
 
-const keys = ['LOG_IN', 'DISCLAIMER_ACCEPTED', 'SEARCH', 'VIEW', 'PRINT'];
+const keys = ['LOG_IN', 'DISCLAIMER_ACCEPTED', 'SEARCH', 'VIEW', 'PRINT', 'SEARCH_NOMIS'];
 
 exports.record = function record(key, user, data) {
 

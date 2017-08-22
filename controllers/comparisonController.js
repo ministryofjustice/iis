@@ -3,9 +3,12 @@ const MAX_PRISONERS_FOR_COMPARISON = 3;
 const {capital} = require('./helpers/textHelpers');
 const {createUrl, retainUrlQuery} = require('./helpers/urlHelpers');
 const logger = require('../log');
+const audit = require('../data/audit');
 
 exports.getComparison = function(req, res) {
     const idsToCompare = req.params.prisonNumbers.split(',');
+
+    audit.record('COMPARISON', req.user.email, idsToCompare);
 
     getSubjectsForComparison(idsToCompare)
         .then(result => res.render('comparison/index', parseResult(req.url, result)))

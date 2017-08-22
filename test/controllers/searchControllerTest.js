@@ -313,7 +313,7 @@ describe('searchController', () => {
             it('should pass appropriate data to view', () => {
                 getResultsProxy(getRowsStub)(reqMock, resMock);
 
-                const expectedData = {forename: 'Matt'};
+                const expectedData = [{forename: 'Matt', shortListed: false, visited: false}];
                 const expectedCount = 20;
 
                 const payload = resMock.render.getCalls()[0].args[1];
@@ -406,9 +406,9 @@ describe('searchController', () => {
                 getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
 
                 const expectedData = [
-                    {forename: 'Matt', prisonNumber: '1', visited: true},
-                    {forename: 'Alistair', prisonNumber: '2', visited: false},
-                    {forename: 'Zed', prisonNumber: '3', visited: true}
+                    {forename: 'Matt', prisonNumber: '1', visited: true, shortListed: false},
+                    {forename: 'Alistair', prisonNumber: '2', visited: false, shortListed: false},
+                    {forename: 'Zed', prisonNumber: '3', visited: true, shortListed: false}
                 ];
 
                 const payload = resMock.render.getCalls()[0].args[1];
@@ -471,6 +471,7 @@ describe('searchController', () => {
             context('When shortList is in the query', () => {
 
                 it('should pass the latest name into the view', () => {
+                    reqMock.query.shortList = 'AB111111';
                     reqMock.query.shortListName = 'Matthew Whitfield';
                     const expectedShortListName = 'Matthew Whitfield';
 
@@ -505,6 +506,28 @@ describe('searchController', () => {
 
                     const payload = resMock.render.getCalls()[0].args[1];
                     expect(payload.shortList.href).to.be.eql('/comparison/AB111111,AB111112');
+                });
+
+                it('should attach shortlist information to results', () => {
+                    reqMock.query.shortList = ['AB111111', 'AB111112'];
+
+                    const receivedData = [
+                        {prisonNumber: 'AB111111', forename: 'Matt'},
+                        {prisonNumber: 'AB111112', forename: 'Alistair'},
+                        {prisonNumber: 'AB111113', forename: 'Zed'},
+                    ];
+
+                    getInmatesStub = sandbox.stub().returnsPromise().resolves(receivedData);
+                    getResultsProxy(getRowsStub, getInmatesStub)(reqMock, resMock);
+
+                    const expectedData = [
+                        {forename: 'Matt', prisonNumber: 'AB111111', shortListed: true, visited: false},
+                        {forename: 'Alistair', prisonNumber: 'AB111112', shortListed: true, visited: false},
+                        {forename: 'Zed', prisonNumber: 'AB111113', shortListed: false, visited: false}
+                    ];
+
+                    const payload = resMock.render.getCalls()[0].args[1];
+                    expect(payload.data).to.be.eql(expectedData);
                 });
             });
 

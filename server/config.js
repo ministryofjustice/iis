@@ -33,7 +33,7 @@ module.exports = {
             response: 2000,
             deadline: 2500
         },
-        tokenRetries: get('NOMIS_TOKEN_RETRIES', 1)
+        errorRetries: get('NOMIS_ERROR_RETRIES', 2)
     },
 
     https: production,

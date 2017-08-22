@@ -57,7 +57,7 @@ function isIdentifierSearch(userInput) {
 exports.getIndex = function(req, res) {
     logger.debug('GET /search');
 
-    const error = req.query.error ? getDbErrorData(req.query.error) : null;
+    const error = req.query.error ? getErrorData(req.query.error) : null;
     req.session.userInput = {};
     return res.render('search/index', parseResultsPageData(req, 0, null, null, error));
 };
@@ -212,20 +212,20 @@ function getUserInput(userInput) {
     }, {});
 }
 
-function getDbErrorData(errorCode) {
+function getErrorData(errorCode) {
     return {
         title: getMessageToDisplayFor(errorCode),
-        desc: content.errMsg.DB_ERROR_DESC
+        desc: content.errMsg.COMMS_ERROR_DESC
     };
 }
 
 function getMessageToDisplayFor(errorCode) {
 
-    let message = content.dbErrorCodeMessages[errorCode];
+    let message = content.errorCodeMessages[errorCode];
     if (message) return message;
 
-    logger.error('content.dbErrorCodeMessages has no message for', {error: errorCode});
-    return content.errMsg.DB_ERROR;
+    logger.error('content.errorCodeMessages has no message for', {error: errorCode});
+    return content.errMsg.COMMS_ERROR;
 }
 
 const userInputFromSearchForm = requestBody => {

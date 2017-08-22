@@ -149,25 +149,7 @@ describe('nomisSearch', () => {
             });
         });
 
-        it('should report error when nomis query error', (done) => {
-
-            const userInput = {forename: 'john'};
-
-            tokenResponse(201, 'sometoken');
-            searchResponse('sometoken', {firstName: 'john'}, 404, 'blah');
-
-            searchNomis(userInput).then(nomisData => {
-                expect.fail();
-            }).catch(error => {
-                expect(error.status).to.eql(404);
-                done();
-            });
-        });
-
-
         it('should refresh token when 401', (done) => {
-
-            config.nomis.tokenRetries = 2;
 
             const userInput = {forename: 'john'};
             const expected = [{"firstName": "john"}];
@@ -183,6 +165,25 @@ describe('nomisSearch', () => {
                 done();
             });
         });
+
+        it('should report error when nomis query error', (done) => {
+
+            const userInput = {forename: 'john'};
+
+            tokenResponse(201, 'sometoken');
+            searchResponse('sometoken', {firstName: 'john'}, 404, 'blah');
+            searchResponse('sometoken', {firstName: 'john'}, 404, 'blah');
+
+            searchNomis(userInput).then(nomisData => {
+                expect.fail();
+            }).catch(error => {
+                expect(error.code).to.eql('NOMIS');
+                done();
+            });
+        });
+
+
+
     });
 
     describe('onlyPrisonNumber', () => {

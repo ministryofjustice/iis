@@ -6,8 +6,8 @@ module.exports = {
         LOGIN_ERROR: 'Unable to sign in, try again',
         LOGIN_ERROR_DESC: 'All fields are required. Password is case-sensitive',
         LOGIN_ERROR_DISCLAIMER: 'You must confirm that you understand the disclaimer',
-        DB_ERROR: 'Unable to talk to the database',
-        DB_ERROR_DESC: 'Please try again',
+        COMMS_ERROR: 'Unable to talk to the data source',
+        COMMS_ERROR_DESC: 'Please try again',
         CANNOT_SUBMIT: 'There was a problem submitting the form',
         NO_OPTION_SELECTED: 'Invalid selection',
         INVALID_ID: 'The identifier you\'ve entered doesn\'t look right',
@@ -20,11 +20,11 @@ module.exports = {
         INVALID_PAGE: 'The page you requested does not exist'
     },
 
-    dbErrorCodeMessages: {
+    errorCodeMessages: {
         ETIMEOUT: 'The search timed out. Try a more specific query',
         emptySubmission: 'Please enter a value for at least one field',
         ECONNREFUSED: 'There was a communication error',
-        NOMIS401: 'Could not connect to the NOMIS API'
+        NOMIS: 'There was an error communicating with NOMIS'
     },
 
     view: {

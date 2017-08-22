@@ -32,7 +32,7 @@ module.exports = {
 };
 
 let token;
-let retries = config.nomis.tokenRetries;
+let retries = config.nomis.errorRetries;
 
 function clearToken() {
     token = null;
@@ -43,7 +43,7 @@ function reduceRetries() {
 }
 
 function resetRetries() {
-    retries = config.nomis.tokenRetries;
+    retries = config.nomis.errorRetries;
 }
 
 function searchNomis(userInput) {
@@ -74,25 +74,26 @@ function doSearch(userInput) {
             return result;
         })
         .catch(error => {
-            if (error.status === 401 && retries > 0) {
+
+            if(retries <= 0 ) {
+                logger.error('NOMIS error: ' + error);
+                throw {code: 'NOMIS'};
+            }
+
+            if (error.status === 401) {
                 logger.error('NOMIS 401 error - retrying');
                 clearToken();
-                reduceRetries();
-                return searchNomis(userInput);
             }
-            if (error.status === 401) {
-                logger.error('NOMIS 401 error - failed after retries');
-                const errorWithCode = {message: 'Authentication failure', code: 'NOMIS401'};
-                throw(errorWithCode);
-            }
-            throw error;
+
+            reduceRetries();
+            return searchNomis(userInput);
         });
 }
 
 function getNomisResults(token, userInput) {
     return new Promise((resolve, reject) => {
 
-        if(onlyPrisonNumber(userInput)){
+        if(onlyPrisonNumber(userInput)) {
             return resolve([]);
         }
 
@@ -165,7 +166,7 @@ function getNomisToken() {
     });
 }
 
-function onlyPrisonNumber(userInput){
+function onlyPrisonNumber(userInput) {
 
     const searchTerms = ['forename', 'forename2', 'surname', 'dobYear', 'age', 'pncNumber', 'croNumber'];
 

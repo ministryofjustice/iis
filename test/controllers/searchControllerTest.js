@@ -51,7 +51,7 @@ describe('searchController', () => {
             reqMock.query.error = 'ETIMEOUT';
             const expectedError = {
                 title: 'The search timed out. Try a more specific query',
-                desc: content.errMsg.DB_ERROR_DESC
+                desc: content.errMsg.COMMS_ERROR_DESC
             };
 
             getIndex(reqMock, resMock);

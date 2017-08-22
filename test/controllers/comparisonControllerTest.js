@@ -34,7 +34,8 @@ describe('Comparison controller', function() {
         reqMock = {
             params: {
                 prisonNumbers: 'AB111111,AB111112'
-            }
+            },
+            url: 'http://something.com/search'
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
     });
@@ -63,7 +64,7 @@ describe('Comparison controller', function() {
         it('should pass the results of the query to the view', () => {
             comparisonControllerProxy().getComparison(reqMock, resMock);
             const payload = resMock.render.getCalls()[0].args[1];
-            
+
             expect(payload.subjects.summary).to.eql(standardResponse.summary);
         });
 

@@ -1,5 +1,9 @@
 extends ../layout
 block content
+
+    div.back-link-container
+        a.link-back(href="/search/results#{returnQuery}") Back to prisoners
+
     h1.heading-large #{subjects.length} Prisoners
 
     div

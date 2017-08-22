@@ -1,10 +1,9 @@
 div#formHolder
-    h1.heading-medium Search
     ul#formTab
         li(class = idSearch || usePlaceholder ? "active" : undefined)
-            a#idFormLink.tab(data-tab="idForm") Unique ID
+            a#idFormLink.tab(data-tab="idForm" href="#") Unique ID
         li(class = !idSearch && !usePlaceholder ? "active" : undefined)
-            a#otherFormLink.tab(data-tab="altForm") Name/age
+            a#otherFormLink.tab(data-tab="altForm" href="#") Name/age
     div.formIdentifiers.tabPanel(data-panel="idForm" class = idSearch || usePlaceholder ?  undefined : "initiallyHidden")
         form(id="idForm" method="post" action='/search/results/search')
             input(type="hidden" name="_csrf" value="#{csrfToken}")

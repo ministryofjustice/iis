@@ -17,8 +17,8 @@ mixin inmate(item)
             form(method="post" action="/search/addToShortlist")
                 input(type="hidden" name="_csrf" value="#{csrfToken}")
                 input(type="hidden" name="addToShortList" value="#{item.prisonNumber}")
-                input(type="hidden" name="addToShortListName" value="#{setCase.capital(item.firstName +' '+item.lastName)}")
-                input(type="submit" value="Add to shortlist" class="link" id="addToShortlist")
+                input(type="hidden" name="addToShortListName" value="#{!item.shortListed ? setCase.capital(item.firstName +' '+item.lastName)+' added to' : setCase.capital(item.firstName +' '+item.lastName)+' removed from'}")
+                input(type="submit" value="#{item.shortListed ? 'Remove from shortlist' : 'Add to shortlist'}" class="link" id="addToShortlist")
         block
 
 block content
@@ -28,7 +28,7 @@ block content
             div.column-full
                 div#notice.c-align
                     if shortList.latestName
-                        |#{shortList.latestName} added to the shortlist.&nbsp;
+                        |#{shortList.latestName} the shortlist.&nbsp;
                     else
                         |Prisoner added to the shortlist.&nbsp;
                     if shortList.prisonNumbers.length === 1

@@ -112,7 +112,8 @@ function getSearchResultsAndRender(req, res) {
         }
 
         return getSearchResults(req.session.userInput).then(searchResult => {
-            return res.render('search/index', parseResultsPageData(req, rowCount, searchResult, currentPage, null));
+            const results = !searchResult || Array.isArray(searchResult) ? searchResult : [searchResult];
+            return res.render('search/index', parseResultsPageData(req, rowCount, results, currentPage));
         }).catch(error => {
             logger.error('Error during inmate search: ' + error.message);
             const query = {error: error.code};
@@ -121,9 +122,10 @@ function getSearchResultsAndRender(req, res) {
     };
 }
 
-function parseResultsPageData(req, rowCount, data, page, error) {
-
+function parseResultsPageData(req, rowCount, searchResults, page, error) {
     const searchedFor = getUserInput(req.session.userInput);
+    const shortList = getShortList(req);
+    const data = createDataObjects(searchResults, req.session, shortList);
 
     return {
         content: {
@@ -131,7 +133,7 @@ function parseResultsPageData(req, rowCount, data, page, error) {
         },
         rowCount,
         pagination: (rowCount > resultsPerPage ) ? utils.pagination(rowCount, page) : null,
-        data: addSelectionVisitedData(data, req.session) || [],
+        data,
         err: error || getPaginationErrors(req.query),
         filtersForView: getInputtedFilters(req.query, 'VIEW'),
         queryStrings: getQueryStringsForSearch(req.url),
@@ -139,6 +141,7 @@ function parseResultsPageData(req, rowCount, data, page, error) {
         usePlaceholder: Object.keys(searchedFor).length === 0,
         idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
         suggestions: getSearchSuggestions(req.session.userInput),
+        shortList,
         moment: require('moment'),
         setCase: require('case')
     };
@@ -188,7 +191,7 @@ emptyNomisPage = {
 
 function parseNomisData(req, nomisData) {
 
-    const searchedFor = getUserInput(req.session.userInput);
+
 
     return {
         content: {
@@ -203,6 +206,19 @@ function parseNomisData(req, nomisData) {
     };
 }
 
+function createDataObjects(searchResults, session, shortList) {
+
+    if(!searchResults) {
+        return [];
+    }
+
+    return searchResults.map(inmate => {
+        inmate.visited = session.visited ? session.visited.includes(inmate.prisonNumber) : false;
+        inmate.shortListed = shortList ? shortList.prisonNumbers.includes(inmate.prisonNumber) : false;
+        return inmate;
+    });
+}
+
 function getUserInput(userInput) {
     return Object.keys(userInput).reduce((contents, field) => {
         if (allAcceptableFields.includes(field)) {
@@ -210,6 +226,22 @@ function getUserInput(userInput) {
         }
         return contents;
     }, {});
+}
+
+
+function getShortList(req) {
+
+    if(!req.query.shortList) {
+        return null;
+    }
+
+    const shortList = Array.isArray(req.query.shortList) ? req.query.shortList : [req.query.shortList];
+
+    return {
+        prisonNumbers: shortList,
+        href: `/comparison/${shortList.join(',')}`,
+        latestName: req.query.shortListName || null
+    };
 }
 
 function getErrorData(errorCode) {
@@ -268,6 +300,16 @@ exports.postFilters = function(req, res) {
     res.redirect(createUrl('/search/results', newQueryObject));
 };
 
+exports.postAddToShortlist = function(req, res) {
+    const prisonNumberAdded = req.body.addToShortList;
+    const nameAdded = req.body.addToShortListName;
+
+    const newQueryObject = toggleFromQueryItem(req, 'shortList', prisonNumberAdded, 'referrer');
+    const objWithName = nameAdded ? Object.assign({}, newQueryObject, {shortListName: nameAdded}) : newQueryObject;
+
+    res.redirect(createUrl('/search/results', objWithName));
+};
+
 const getPaginationErrors = query => {
     if (query.invalidPage) {
         return {
@@ -294,18 +336,6 @@ function isValidPage(page, rowCount) {
 function getCurrentPage(query) {
     const page = query ? Number(query.page) : 1;
     return Number.isNaN(page) ? 1 : page;
-}
-
-function addSelectionVisitedData(data, session) {
-
-    if (!data || !session.visited || session.visited.length === 0) {
-        return data;
-    }
-
-    return data.map(inmate => {
-        inmate.visited = session.visited.includes(inmate.prisonNumber);
-        return inmate;
-    });
 }
 
 function addFiltersToUserInput(userInput, query) {

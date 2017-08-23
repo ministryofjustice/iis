@@ -251,8 +251,9 @@ div.search-terms a {
     width: 100%;
 }
 #formHolder {
-    border-right: 2px solid #bfc1c3;
-    padding-right: 5%;
+    padding: 5%;
+    margin-top: 30px;
+    background-color: #f8f8f8;
 }
 #formTab {
     margin-bottom: 15px;
@@ -265,6 +266,7 @@ div.search-terms a {
 #formTab li a{
     padding: 10px;
     display: block;
+    cursor: pointer;
 }
 #formTab li.active a{
     font-weight: bold;
@@ -332,4 +334,33 @@ div.search-terms a {
 
 .nomsId {
     text-decoration: none;
+}
+
+input.link{
+    background:none;
+    border:none;
+    padding-left: 0px;
+    color: $link-colour;
+    font-family: "nta", Arial, sans-serif;
+    font-size: 16px;
+    text-align: left;
+    cursor: pointer;
+}
+input.link:hover{
+    color: $link-hover-colour;
+}
+
+#addToShortlist {
+    padding-left: 19px;
+}
+
+#notice {
+    background-color: $turquoise;
+    color: #fff;
+    padding: 10px 0 8px 0;
+    margin-top: 20px;
+}
+
+#notice a {
+    color: #fff;
 }

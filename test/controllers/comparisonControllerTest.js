@@ -16,6 +16,7 @@ describe('Comparison controller', function() {
 
     let reqMock;
     let resMock;
+    let auditStub;
 
     const standardResponse = [{summary: {prisonNumber: 'AB111111'}}, {summary: {prisonNumber: 'AB111112'}}];
     const getSubjectsForComparisonStub = sinon.stub().returnsPromise().resolves(standardResponse);
@@ -24,6 +25,9 @@ describe('Comparison controller', function() {
         return proxyquire('../../controllers/comparisonController', {
             '../data/subject': {
                 'getSubjectsForComparison': getSubjectsForComparison,
+            },
+            '../data/audit': {
+                'record': auditStub
             }
         });
     };
@@ -34,7 +38,9 @@ describe('Comparison controller', function() {
         reqMock = {
             params: {
                 prisonNumbers: 'AB111111,AB111112'
-            }
+            },
+            url: 'http://something.com/search',
+            user: {email: 'x@y.com'}
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
     });
@@ -63,7 +69,7 @@ describe('Comparison controller', function() {
         it('should pass the results of the query to the view', () => {
             comparisonControllerProxy().getComparison(reqMock, resMock);
             const payload = resMock.render.getCalls()[0].args[1];
-            
+
             expect(payload.subjects.summary).to.eql(standardResponse.summary);
         });
 
@@ -81,6 +87,11 @@ describe('Comparison controller', function() {
             expect(payload.subjects[0].removePath).to.eql('/comparison/AB111112,AB111113');
             expect(payload.subjects[1].removePath).to.eql('/comparison/AB111111,AB111113');
             expect(payload.subjects[2].removePath).to.eql('/comparison/AB111111,AB111112');
+        });
+
+        it('should pass the appropriate data to audit', () => {
+            comparisonControllerProxy().getComparison(reqMock, resMock);
+            expect(auditStub).to.be.calledWith('COMPARISON', 'x@y.com', ['AB111111','AB111112']);
         });
     });
 });

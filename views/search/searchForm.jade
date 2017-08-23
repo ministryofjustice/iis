@@ -2,9 +2,9 @@ div#formHolder
     h1.heading-medium
     ul#formTab
         li(class = idSearch || usePlaceholder ? "active" : undefined)
-            a#idFormLink.tab(data-tab="idForm") Unique ID
+            a#idFormLink.tab(data-tab="idForm" href="#") Unique ID
         li(class = !idSearch && !usePlaceholder ? "active" : undefined)
-            a#otherFormLink.tab(data-tab="altForm") Name/age
+            a#otherFormLink.tab(data-tab="altForm" href="#") Name/age
     div.formIdentifiers.tabPanel(data-panel="idForm" class = idSearch || usePlaceholder ?  undefined : "initiallyHidden")
         form(id="idForm" method="post" action='/search/results/search')
             input(type="hidden" name="_csrf" value="#{csrfToken}")
@@ -18,4 +18,4 @@ div#formHolder
             include ./dob.jade
             button.button#submitNonId Search
     div.padTop
-        a#clearSearch(href="/search") Clear search
+        a#clearSearch(href="/search") New search

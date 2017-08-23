@@ -1,18 +1,25 @@
 const {getSubjectsForComparison} = require('../data/subject');
 const MAX_PRISONERS_FOR_COMPARISON = 3;
 const {capital} = require('./helpers/textHelpers');
+const {createUrl, retainUrlQuery} = require('./helpers/urlHelpers');
+const logger = require('../log');
+const audit = require('../data/audit');
 
 exports.getComparison = function(req, res) {
     const idsToCompare = req.params.prisonNumbers.split(',');
 
-    getSubjectsForComparison(idsToCompare)
-        .then(result => res.render('comparison/index', parseResult(result)))
-        .catch(() => {
+    audit.record('COMPARISON', req.user.email, idsToCompare);
 
+    getSubjectsForComparison(idsToCompare)
+        .then(result => res.render('comparison/index', parseResult(req.url, result)))
+        .catch(error => {
+            logger.error('Error during comparison search: ' + error.message);
+            const query = {error: error.code};
+            return res.redirect(createUrl('/search', query));
         });
 };
 
-function parseResult(result) {
+function parseResult(url, result) {
 
     const limitedSubjects = result.slice(0, MAX_PRISONERS_FOR_COMPARISON);
     const subjects = addRemoveLinksFor(limitedSubjects);
@@ -21,6 +28,7 @@ function parseResult(result) {
         content: {title: 'Prisoner Comparison'},
         subjects,
         moment: require('moment'),
+        returnQuery: retainUrlQuery(url),
         setCase: {capital}
     };
 }

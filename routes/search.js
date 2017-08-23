@@ -11,6 +11,7 @@ const {
     getSuggestion,
     getNomis,
     getNomisResults
+    postAddToShortlist,
 } = require('../controllers/searchController');
 
 // eslint-disable-next-line
@@ -32,5 +33,6 @@ router.get('/suggestions', getSuggestions);
 router.get('/suggestion', getSuggestion);
 router.get('/nomis', getNomis);
 router.get('/nomis/results', getNomisResults);
+router.post('/addToShortlist', postAddToShortlist);
 
 module.exports = router;

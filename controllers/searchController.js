@@ -193,6 +193,7 @@ emptyNomisPage = {
 function parseNomisData(req, nomisData) {
     const searchedFor = getUserInput(req.session.userInput);
     const searchTerms = getSearchTermsForView(req.session.userInput);
+    const shortList = getShortList(req);
 
     return {
         content: {
@@ -200,10 +201,12 @@ function parseNomisData(req, nomisData) {
         },
         rowCount: nomisData.length,
         data: nomisData,
+        queryStrings: getQueryStringsForSearch(req.url),
         formContents: searchedFor,
         searchTerms: searchTerms,
         usePlaceholder: Object.keys(searchedFor).length === 0,
         idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
+        shortList,
         moment: require('moment'),
         setCase: require('case')
     };

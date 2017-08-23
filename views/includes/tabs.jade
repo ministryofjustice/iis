@@ -11,7 +11,7 @@ mixin tabs(pageOn, queryString, comparisonLength, compareHref)
                 if nomisEnabled
                     li.tab(class = pageOn === 'NOMIS' ? "tab-selected nomis" : "tab")
                         if pageOn !== 'NOMIS'
-                            a#nomisTab(href="/search/nomis/results") NOMIS
+                            a#nomisTab(href='/search/nomis/results' + queryString) NOMIS
                         else
                             |NOMIS
 

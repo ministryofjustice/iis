@@ -18,17 +18,7 @@ mixin inmate(item)
 block content
     div.grid-row
 
-        if shortList && shortList.prisonNumbers.length > 0
-            div.column-full
-                div#notice.c-align
-                    if shortList.latestName
-                        | #{shortList.latestName} the shortlist.&nbsp;
-                    else
-                        | Prisoner added to the shortlist.&nbsp;
-                    if shortList.prisonNumbers.length === 1
-                        | Add further prisoners to compare
-                    else
-                        a(href="#{shortList.href}#{queryStrings.thisPage}") Compare #{shortList.length} prisoners
+
 
         if !usePlaceholder
             div.column-full

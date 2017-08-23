@@ -252,7 +252,6 @@ div.search-terms a {
 }
 #formHolder {
     padding: 5%;
-    margin-top: 30px;
     background-color: #f8f8f8;
 }
 #formTab {
@@ -372,10 +371,46 @@ input.link:hover{
     color: #fff;
     padding: 10px 0 8px 0;
     margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 #notice a {
     color: #fff;
+}
+
+.tab-wrapper {
+    float: left;
+    width: 100%;
+    border-bottom: 5px solid #005ea5;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.tab-selected {
+    border-bottom: none;
+    padding: 13px 20px 10px 20px;
+    background-color: #005ea5;
+    color: #fff;
+    font-weight: bold;
+}
+
+.tab {
+    display: inline-block;
+    border-left: none;
+    border-bottom: none;
+    float: left;
+    margin-left: 15px;
+}
+
+.tab a {
+    text-decoration: none;
+    padding: 13px 10px 10px 10px;
+    display: block;
+}
+
+.tabText {
+    display: block;
+    padding: 13px 10px 10px 10px;
 }
 
 #searchBox {

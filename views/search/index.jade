@@ -1,4 +1,5 @@
 extends ../layout
+include ../includes/tabs
 mixin inmate(item)
     div.inmateDetails(class=item.visited ? 'visited' : '')
         a(href="/subject/#{item.prisonNumber}/summary#{queryStrings.thisPage}")
@@ -43,6 +44,13 @@ block content
                     if nomisEnabled
                         li.tab
                             a#nomisTab(href="/search/nomis/results") NOMIS
+        if data && data.length !== 0
+            div.column-full
+                +tabs('HPA',
+                    queryStrings.thisPage,
+                    shortList ? shortList.prisonNumbers.length : 0,
+                    shortList ? shortList.href : null
+                )
 
         div.column-one-third
             include ./searchForm
@@ -66,7 +74,7 @@ block content
                                     input#hasDdc.filtering-option.font-xsmall(name="filter", type="submit", value="HDC" class=filtersForView.HDC ? "filtering-option-active" : "")
                                     input#isLifer.filtering-option.font-xsmall(name="filter", type="submit", value="Lifer" class=filtersForView.Lifer ? "filtering-option-active" : "")
 
-                if data && data != 0
+                if data && data.length !== 0
                     div#searchResults
                         each prisoner in data
                                +inmate(prisoner)

@@ -10,8 +10,8 @@ const {
 	getSuggestions,
     getSuggestion,
     getNomis,
-    getNomisResults
-    postAddToShortlist,
+    getNomisResults,
+    postAddToShortlist
 } = require('../controllers/searchController');
 
 // eslint-disable-next-line

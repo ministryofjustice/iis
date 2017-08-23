@@ -296,21 +296,34 @@ div.search-terms a {
     width: 100%;
     border-bottom: 5px solid #005ea5;
     margin-top: 20px;
-    margin-bottom: 8px;
+    margin-bottom: 40px;
+}
+
+.tab-wrapper.nomis {
+    border-color: $orange;
 }
 
 .tab {
     display: inline-block;
     border-left: none;
     border-bottom: none;
+}
 
+#resultTabs .tab{
+    float: left;
+    margin-left: 15px;
 }
 
 .tab-selected {
     border-bottom: none;
-    padding: 13px 10px 10px 10px;
-    background-color: #005ea5;
+    padding: 13px 20px 10px 20px;
+    background-color: $govuk-blue;
     color: #fff;
+    font-weight: bold;
+}
+
+.nomis.tab-selected {
+    background-color: $orange;
 }
 
 .tab a {
@@ -324,11 +337,11 @@ div.search-terms a {
     text-decoration: none;
     display: block;
     padding: 20px 15px 20px 0;
-    border-bottom: 2px solid #bfc1c3;
+    border-bottom: 2px solid $grey-2;
 }
 
 .nomisDetails {
-    border-left: 4px solid #005ea5;
+    border-left: 4px solid $orange;
     padding-left: 15px;
 }
 
@@ -363,4 +376,14 @@ input.link:hover{
 
 #notice a {
     color: #fff;
+}
+
+#searchBox {
+    padding: 5%;
+    background-color: $grey-4;
+    margin-top: 30px;
+}
+
+#searchBox #search-terms li {
+    margin-bottom: 15px;
 }

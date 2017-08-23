@@ -7,8 +7,8 @@ const utils = require('../data/utils');
 const audit = require('../data/audit');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 const {validateDescriptionForm} = require('./helpers/formValidators');
-
 const {searchNomis} = require('../data/nomisSearch');
+const Case = require('case');
 
 
 const {
@@ -186,19 +186,24 @@ exports.getNomisResults = function(req, res) {
 emptyNomisPage = {
     content: {
         title: 'NOMIS Prisoner Search'
-    }, usePlaceholder: true
+    },
+    usePlaceholder: true
 };
 
 function parseNomisData(req, nomisData) {
+    const searchedFor = getUserInput(req.session.userInput);
+    const searchTerms = getSearchTermsForView(req.session.userInput);
 
-
+    console.log(searchTerms);
 
     return {
         content: {
             title: 'NOMIS Prisoner Search'
         },
+        rowCount: nomisData.length,
         data: nomisData,
         formContents: searchedFor,
+        searchTerms: searchTerms,
         usePlaceholder: Object.keys(searchedFor).length === 0,
         idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
         moment: require('moment'),
@@ -366,3 +371,33 @@ function applySuggestionsToUserInput(userInput, query, session) {
 function newValues(newValues, suggestion) {
     return Object.assign({}, newValues, {[suggestion.term]: suggestion.value});
 }
+
+
+function getSearchTermsForView(userInput) {
+
+    const searchTerms = (userInput['dobYear']) ? searchTermObjectWithDob(userInput) : {};
+
+    return Object.keys(userInput).filter(searchItem => content.termDisplayNames[searchItem])
+        .reduce(searchTermInCorrectCase(userInput), searchTerms);
+}
+
+const searchTermObjectWithDob = userInput => {
+    const value = [userInput['dobDay'], userInput['dobMonth'], userInput['dobYear']].join('/');
+    const itemName = content.termDisplayNames['dob'].name;
+
+    return searchTermObject(itemName, false, value);
+};
+
+const searchTermInCorrectCase = userInput => (allTerms, searchTerm) => {
+
+    const itemName = content.termDisplayNames[searchTerm].name;
+    const capitaliseName = content.termDisplayNames[searchTerm].textFormat === 'capitalise';
+    const termObject = searchTermObject(itemName, capitaliseName, userInput[searchTerm]);
+
+    return Object.assign({}, allTerms, termObject);
+};
+
+const searchTermObject = (itemName, capitaliseValue, value) => {
+    const valueWithCase = capitaliseValue ? Case.capital(value) : value;
+    return {[itemName]: valueWithCase};
+};

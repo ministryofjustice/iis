@@ -8,46 +8,41 @@ mixin inmate(item)
             if item.isAlias
                 span.block Matched on alias: #{setCase.capital(item.aliasFirst + ' ' + item.aliasLast)}
             if item.nomsId
-                span.nomsId.block.text-secondary NOMIS ID #{item.nomsId}
-            if item.receptionDate
-                span.firstReceptionDate.block.text-secondary First reception #{moment(item.receptionDate).format('DD/MM/YYYY')}
+                span.nomsId.block.text-secondary
+                    | Nomis no. #{item.nomsId}
+                    if item.receptionDate
+                        |  &bull; Reception #{moment(item.receptionDate).format('DD/MM/YYYY')}
         block
 
 block content
     div.grid-row
-        div.column-full
-            ul.tab-wrapper
-                li.tab.tab
-                    if usePlaceholder
-                        a#hpaTab(href="/search") HPA
-                    else
-                        a#hpaTab(href="/search/results") HPA
-                li.tab.tab-selected NOMIS
 
+        if !usePlaceholder
+            div.column-full
+                ul#resultTabs.tab-wrapper.nomis
+                    li.tab.tab.nomis
+                        if usePlaceholder
+                            a#hpaTab(href="/search") HPA
+                        else
+                            a#hpaTab(href="/search/results") HPA
+                    li.tab.tab-selected.nomis NOMIS
 
         div.column-one-third
-            include ./searchForm
+            div#searchBox
+                ul#search-terms
+                    each value, term  in searchTerms
+                        li #{value}
+                            br
+                            span.hint.font-xsmall #{term}
+                div
+                    a(href="/search/results") Change search
 
         div#resultsBody.column-two-thirds
             if err
                 include ./searchError
             if !usePlaceholder
-                h2.heading-large#contentTitle
-                    if data && data.length === 1
-                        |1 prisoner from NOMIS
-                    else
-                        |#{data.length} prisoners from NOMIS
-
-                if filtersForView && (data.length > 1 || (filtersForView.Male || filtersForView.Female))
-                    div#filters
-                        fieldset.well
-                            legend.font-xsmall Search filters
-                            div(role="list")
-                                form(method="post" action='/search/nomis/results/filters')
-                                    input(type="hidden" name="_csrf" value="#{csrfToken}")
-                                    input#male.filtering-option.font-xsmall(name="filter", type="submit", value="Male" class=filtersForView.Male ? "filtering-option-active" : "")
-                                    input#female.filtering-option.font-xsmall(name="filter", type="submit", value="Female" class=filtersForView.Female ? "filtering-option-active" : "")
-
+                if rowCount === 0
+                    h2.heading-large#contentTitle No prisoners found
 
                 if data && data != 0
                     div#searchResults
@@ -60,5 +55,4 @@ block content
 
 block append scripts
     script(src="/public/javascripts/tabs.js?#{version}")
-    script(src="/public/javascripts/clearSearch.js?#{version}")
     script(src="/public/javascripts/searchValidation.js?#{version}")

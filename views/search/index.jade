@@ -36,13 +36,13 @@ block content
                     else
                         a(href="#{shortList.href}#{queryStrings.thisPage}") Compare #{shortList.length} prisoners
 
-
-        div.column-full
-            ul.tab-wrapper
-                li.tab.tab-selected HPA
-                li.tab
-                    if !usePlaceholder
-                        a#nomisTab(href="/search/nomis/results") NOMIS
+        if !usePlaceholder
+            div.column-full
+                ul#resultTabs.tab-wrapper
+                    li.tab.tab-selected HPA
+                    li.tab
+                        if !usePlaceholder
+                            a#nomisTab(href="/search/nomis/results") NOMIS
 
         div.column-one-third
             include ./searchForm
@@ -51,11 +51,8 @@ block content
             if err
                 include ./searchError
             if !usePlaceholder
-                h2.heading-large#contentTitle
-                    if rowCount === 1
-                        |#{rowCount} prisoner from HPA
-                    else
-                        |#{rowCount} prisoners from HPA
+                if rowCount === 0
+                    h2.heading-large#contentTitle No prisoners found
 
                 if filtersForView && (data.length > 1 || (filtersForView.Male || filtersForView.Female || filtersForView.HDC || filtersForView.Lifer))
                     div#filters

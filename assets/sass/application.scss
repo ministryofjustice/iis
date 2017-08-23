@@ -251,8 +251,9 @@ div.search-terms a {
     width: 100%;
 }
 #formHolder {
-    border-right: 2px solid #bfc1c3;
-    padding-right: 5%;
+    padding: 5%;
+    margin-top: 30px;
+    background-color: #f8f8f8;
 }
 #formTab {
     margin-bottom: 15px;
@@ -265,6 +266,7 @@ div.search-terms a {
 #formTab li a{
     padding: 10px;
     display: block;
+    cursor: pointer;
 }
 #formTab li.active a{
     font-weight: bold;

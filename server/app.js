@@ -106,6 +106,11 @@ if (production) {
     });
 }
 
+// Feature switches
+if (config.nomis.enabled){
+    app.locals.nomisEnabled = true;
+}
+
 //  Static Resources Configuration
 const cacheControl = {maxAge: config.staticResourceCacheDuration * 1000};
 

@@ -40,8 +40,8 @@ block content
             div.column-full
                 ul#resultTabs.tab-wrapper
                     li.tab.tab-selected HPA
-                    li.tab
-                        if !usePlaceholder
+                    if nomisEnabled
+                        li.tab
                             a#nomisTab(href="/search/nomis/results") NOMIS
 
         div.column-one-third

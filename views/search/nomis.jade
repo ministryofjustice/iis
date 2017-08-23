@@ -1,4 +1,5 @@
 extends ../layout
+include ../includes/tabs
 mixin inmate(item)
     div.nomisContainer
         div.nomisDetails
@@ -19,10 +20,12 @@ block content
 
         if !usePlaceholder
             div.column-full
-                ul#resultTabs.tab-wrapper.nomis
-                    li.tab.tab.nomis
-                        a#hpaTab(href="/search/results") HPA
-                    li.tab.tab-selected.nomis NOMIS
+                +tabs('NOMIS',
+                '',
+                shortList ? shortList.prisonNumbers.length : 0,
+                shortList ? shortList.href : null,
+                true
+                )
 
         div.column-one-third
             div#searchBox

@@ -39,17 +39,11 @@ block content
 
         if !usePlaceholder
             div.column-full
-                ul#resultTabs.tab-wrapper
-                    li.tab.tab-selected HPA
-                    if nomisEnabled
-                        li.tab
-                            a#nomisTab(href="/search/nomis/results") NOMIS
-        if data && data.length !== 0
-            div.column-full
                 +tabs('HPA',
-                    queryStrings.thisPage,
-                    shortList ? shortList.prisonNumbers.length : 0,
-                    shortList ? shortList.href : null
+                queryStrings.thisPage,
+                shortList ? shortList.prisonNumbers.length : 0,
+                shortList ? shortList.href : null,
+                true
                 )
 
         div.column-one-third

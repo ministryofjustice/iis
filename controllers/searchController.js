@@ -194,8 +194,6 @@ function parseNomisData(req, nomisData) {
     const searchedFor = getUserInput(req.session.userInput);
     const searchTerms = getSearchTermsForView(req.session.userInput);
 
-    console.log(searchTerms);
-
     return {
         content: {
             title: 'NOMIS Prisoner Search'

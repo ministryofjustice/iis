@@ -56,9 +56,10 @@ block content
                         if subject.addresses
                             ul.list
                                 each address in subject.addresses
-                                    if address.street
-                                        | #{setCase.capital(address.street)}
-                                    if address.town
-                                        |, &nbsp;#{setCase.capital(address.town)}
-                                    if address.county
-                                        |, #{setCase.capital(address.county)}
+                                    li
+                                        if address.street
+                                            | #{setCase.capital(address.street)}
+                                        if address.town
+                                            |, &nbsp;#{setCase.capital(address.town)}
+                                        if address.county
+                                            |, #{setCase.capital(address.county)}

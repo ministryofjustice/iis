@@ -1,10 +1,8 @@
 extends ../layout
 block content
 
-    div.back-link-container
-        a.link-back(href="/search/results#{returnQuery}") Back to prisoners
-
-    h1.heading-large #{subjects.length} Prisoners
+    include ../includes/tabs
+    +tabs('Comparison', returnQuery, subjects.length)
 
     div
         div.grid-row
@@ -12,8 +10,7 @@ block content
                 div(id="comparisonHeader" class =  subjects.length > 2 ? 'column-one-third' : 'column-one-half')
                     span.bold-medium #{setCase.capital(subject.summary.firstName)} #{subject.summary.lastName}
                     span.block #{moment(subject.summary.dob).format('DD/MM/YYYY')}
-                    if subjects.length > 1
-                        a(href="#{subject.removePath}") Remove from shortlist
+                    a(href="#{subject.removePath}") Remove from shortlist
 
         section.compare-section
             h2.heading-small Background

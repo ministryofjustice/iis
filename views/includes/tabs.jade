@@ -1,0 +1,17 @@
+mixin tabs(pageOn, queryString, comparisonLength, compareHref)
+    div.grid-row
+        div.column-full
+            ul.tab-wrapper
+                li.tab(class = pageOn === 'HPA' ? "tab-selected" : "tab")
+                    if pageOn !== 'HPA'
+                        a(href='/search/results'+queryString) HPA
+                    else
+                        |HPA
+
+                li.tab(class = pageOn === 'Comparison' ? "tab-selected" : "tab")
+                    if pageOn !== 'Comparison' && compareHref
+                        a(href=compareHref + queryString) Comparison (#{comparisonLength})
+                    else
+                        span(class = pageOn !== 'Comparison' ? 'tabText' : undefined) Comparison (#{comparisonLength})
+
+

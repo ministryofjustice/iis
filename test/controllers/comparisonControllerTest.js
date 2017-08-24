@@ -40,7 +40,8 @@ describe('Comparison controller', function() {
                 prisonNumbers: 'AB111111,AB111112'
             },
             url: 'http://something.com/search',
-            user: {email: 'x@y.com'}
+            user: {email: 'x@y.com'},
+            query: {filter: 'M', shortList: 'AB111111', shortListName: 'Matt'}
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
     });
@@ -71,6 +72,21 @@ describe('Comparison controller', function() {
             const payload = resMock.render.getCalls()[0].args[1];
 
             expect(payload.subjects.summary).to.eql(standardResponse.summary);
+        });
+
+        it('should pass the return path with short list items removed', () => {
+            comparisonControllerProxy().getComparison(reqMock, resMock);
+            const payload = resMock.render.getCalls()[0].args[1];
+
+            expect(payload.returnClearShortListQuery).to.eql('/search/results?filter=M');
+        });
+
+        it('should pass the return path with short list items removed if already none in query', () => {
+            reqMock.query = {filter: 'F'};
+            comparisonControllerProxy().getComparison(reqMock, resMock);
+            const payload = resMock.render.getCalls()[0].args[1];
+
+            expect(payload.returnClearShortListQuery).to.eql('/search/results?filter=F');
         });
 
         it('should pass hrefs with each subject for removal', () => {

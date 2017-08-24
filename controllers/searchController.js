@@ -132,7 +132,7 @@ function parseResultsPageData(req, rowCount, searchResults, page, error) {
     const searchedFor = getUserInput(req.session.userInput);
     const shortList = getShortList(req);
     const data = createDataObjects(searchResults, req.session, shortList);
-console.log(shortList)
+
     return {
         content: {
             title: 'HPA Prisoner Search'

@@ -7,16 +7,19 @@ block content
     div
         div.grid-row
             each subject in subjects
-                div(id="comparisonHeader" class =  subjects.length > 2 ? 'column-one-third' : 'column-one-half')
+                div(id="comparisonHeader" class = subjects.length > 2 ? 'column-one-third' : 'column-one-half')
                     span.bold-medium #{setCase.capital(subject.summary.firstName)} #{subject.summary.lastName}
                     span.block #{moment(subject.summary.dob).format('DD/MM/YYYY')}
-                    a(href="#{subject.removePath}") Remove from shortlist
+                    if subjects.length > 1
+                        a(href="#{subject.removePath}#{returnQuery}") Remove from shortlist
+                    else
+                        a(href="#{returnClearShortListQuery}") Remove from shortlist
 
         section.compare-section
             h2.heading-small Background
             div.grid-row
                 each subject in subjects
-                    div(id="comparisonBackground" class =  subjects.length > 2 ? 'column-one-third' : 'column-one-half')
+                    div(id="comparisonBackground" class = subjects.length > 2 ? 'column-one-third' : 'column-one-half')
                         ul.list
                             if subject.summary.sex
                                 li #{subject.summary.sex === 'M' ? 'Male' : 'Female'}
@@ -33,7 +36,7 @@ block content
             h2.heading-small Aliases
             div.grid-row
                 each subject in subjects
-                    div(id="comparisonAliases" class =  subjects.length > 2 ? 'column-one-third' : 'column-one-half')
+                    div(id="comparisonAliases" class = subjects.length > 2 ? 'column-one-third' : 'column-one-half')
                         if subject.aliases
                             ul.list
                                 each alias in subject.aliases

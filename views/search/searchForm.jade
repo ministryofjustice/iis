@@ -1,9 +1,9 @@
-div#formHolder
+div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
     ul#formTab
         li(class = idSearch || usePlaceholder ? "active" : undefined)
-            a#idFormLink.tab(data-tab="idForm" href="#") Unique ID
+            a#idFormLink.searchTab(data-tab="idForm" href="#") Unique ID
         li(class = !idSearch && !usePlaceholder ? "active" : undefined)
-            a#otherFormLink.tab(data-tab="altForm" href="#") Name/age
+            a#otherFormLink.searchTab(data-tab="altForm" href="#") Name/age
     div.formIdentifiers.tabPanel(data-panel="idForm" class = idSearch || usePlaceholder ?  undefined : "initiallyHidden")
         form(id="idForm" method="post" action='/search/results/search')
             input(type="hidden" name="_csrf" value="#{csrfToken}")

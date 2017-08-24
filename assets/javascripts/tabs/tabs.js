@@ -6,7 +6,7 @@ let panels;
 exports.init = function(container) {
     $('.initiallyHidden').removeClass('initiallyHidden').addClass('js-hidden').attr('aria-hidden', 'true');
 
-    tabs = $(container).find('.tab');
+    tabs = $(container).find('.searchTab');
     panels = $(container).find('.tabPanel');
 
     $(tabs).each((index, value) => {

@@ -37,7 +37,7 @@ block content
                     else
                         a(href="#{shortList.href}#{queryStrings.thisPage}") Compare #{shortList.length} prisoners
 
-        if data && data.length !== 0
+        if !usePlaceholder
             div.column-full
                 +tabs('HPA',
                     queryStrings.thisPage,

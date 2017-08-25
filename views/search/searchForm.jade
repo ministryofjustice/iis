@@ -1,20 +1,21 @@
 div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
     ul#formTab
-        li(class = idSearch || usePlaceholder ? "active" : undefined)
-            a#idFormLink.searchTab(data-tab="idForm" href="#") Unique ID
-        li(class = !idSearch && !usePlaceholder ? "active" : undefined)
+        li(class = !idSearch || usePlaceholder ? "active" : undefined)
             a#otherFormLink.searchTab(data-tab="altForm" href="#") Name/age
-    div.formIdentifiers.tabPanel(data-panel="idForm" class = idSearch || usePlaceholder ?  undefined : "initiallyHidden")
-        form(id="idForm" method="post" action='/search/results/search')
-            input(type="hidden" name="_csrf" value="#{csrfToken}")
-            include ./identifier.jade
-            button.button#submitId Search
+        li(class = idSearch && !usePlaceholder ? "active" : undefined)
+            a#idFormLink.searchTab(data-tab="idForm" href="#") Unique ID
 
-    div.formAlternative.tabPanel(data-panel="altForm" class = !idSearch && !usePlaceholder ? undefined : "initiallyHidden")
+    div.formAlternative.tabPanel(data-panel="altForm" class = !idSearch || usePlaceholder ? undefined : "initiallyHidden")
         form(id="descriptionForm" method="post" action='/search/results/search')
             input(type="hidden" name="_csrf" value="#{csrfToken}")
             include ./names.jade
             include ./dob.jade
             button.button#submitNonId Search
+
+    div.formIdentifiers.tabPanel(data-panel="idForm" class = idSearch && !usePlaceholder ? undefined : "initiallyHidden")
+        form(id="idForm" method="post" action='/search/results/search')
+            input(type="hidden" name="_csrf" value="#{csrfToken}")
+            include ./identifier.jade
+            button.button#submitId Search
     div.padTop
         a#clearSearch(href="/search") New search

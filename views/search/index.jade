@@ -53,17 +53,25 @@ block content
                 include ./searchError
             if !usePlaceholder
 
-                if filtersForView && (data.length > 1 || (filtersForView.Male || filtersForView.Female || filtersForView.HDC || filtersForView.Lifer))
-                    div#filters
-                        fieldset.well
-                            legend.font-xsmall Search filters
-                            div(role="list")
-                                form(method="post" action='/search/results/filters')
-                                    input(type="hidden" name="_csrf" value="#{csrfToken}")
-                                    input#male.filtering-option.font-xsmall(name="filter", type="submit", value="Male" class=filtersForView.Male ? "filtering-option-active" : "")
-                                    input#female.filtering-option.font-xsmall(name="filter", type="submit", value="Female" class=filtersForView.Female ? "filtering-option-active" : "")
-                                    input#hasDdc.filtering-option.font-xsmall(name="filter", type="submit", value="HDC" class=filtersForView.HDC ? "filtering-option-active" : "")
-                                    input#isLifer.filtering-option.font-xsmall(name="filter", type="submit", value="Lifer" class=filtersForView.Lifer ? "filtering-option-active" : "")
+                div.grid-row
+                    div.column-one-half
+                        h2.heading-large#contentTitle
+                            if rowCount === 1
+                                |#{rowCount} prisoner
+                            else
+                                |#{rowCount} prisoners
+
+                    div.column-one-half
+                        if filtersForView && (data.length > 1 || (filtersForView.Male || filtersForView.Female || filtersForView.HDC || filtersForView.Lifer))
+                            div#filters
+                                fieldset
+                                    div(role="list")
+                                        form(method="post" action='/search/results/filters')
+                                            input(type="hidden" name="_csrf" value="#{csrfToken}")
+                                            input#male.filtering-option.font-xsmall(name="filter", type="submit", value="Male" class=filtersForView.Male ? "filtering-option-active" : "")
+                                            input#female.filtering-option.font-xsmall(name="filter", type="submit", value="Female" class=filtersForView.Female ? "filtering-option-active" : "")
+                                            input#hasDdc.filtering-option.font-xsmall(name="filter", type="submit", value="HDC" class=filtersForView.HDC ? "filtering-option-active" : "")
+                                            input#isLifer.filtering-option.font-xsmall(name="filter", type="submit", value="Lifer" class=filtersForView.Lifer ? "filtering-option-active" : "")
 
                 if data && data.length !== 0
                     div#searchResults

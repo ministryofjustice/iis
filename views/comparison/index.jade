@@ -32,34 +32,40 @@ block content
                             if subject.summary.religion
                                 li #{subject.summary.religion}
 
-        section.compare-section
-            h2.heading-small Aliases
-            div.grid-row
-                each subject in subjects
-                    div(id="comparisonAliases" class = subjects.length > 2 ? 'column-one-third' : 'column-one-half')
-                        if subject.aliases
-                            ul.list
-                                each alias in subject.aliases
-                                    li
-                                        if alias.first
-                                            |#{setCase.capital(alias.first)}
-                                        if alias.last
-                                            |&nbsp;#{setCase.capital(alias.last)}
-                                        if alias.birthDate
-                                            |, #{moment(alias.birthDate).format('DD/MM/YYYY')}
+        if showAliases
+            section.compare-section
+                h2.heading-small Aliases
+                div.grid-row
+                    each subject in subjects
+                        div(id="comparisonAliases" class = subjects.length > 2 ? 'column-one-third' : 'column-one-half')
+                            if subject.aliases
+                                ul.list
+                                    each alias in subject.aliases
+                                        li
+                                            if alias.first
+                                                |#{setCase.capital(alias.first)}
+                                            if alias.last
+                                                |&nbsp;#{setCase.capital(alias.last)}
+                                            if alias.birthDate
+                                                |, #{moment(alias.birthDate).format('DD/MM/YYYY')}
 
-        section.compare-section
-            h2.heading-small Addresses
-            div.grid-row
-                each subject in subjects
-                    div(id="comparisonAddressesr" class =  subjects.length > 2 ? 'column-one-third' : 'column-one-half')
-                        if subject.addresses
-                            ul.list
-                                each address in subject.addresses
-                                    li
-                                        if address.street
-                                            | #{setCase.capital(address.street)}
-                                        if address.town
-                                            |, &nbsp;#{setCase.capital(address.town)}
-                                        if address.county
-                                            |, #{setCase.capital(address.county)}
+        if showAddresses
+            section.compare-section
+                h2.heading-small Addresses
+                div.grid-row
+                    each subject in subjects
+                        div(id="comparisonAddresses" class =  subjects.length > 2 ? 'column-one-third' : 'column-one-half')
+                            if subject.addresses
+                                ul.list
+                                    each address in subject.addresses
+                                        li
+                                            if address.street
+                                                | #{setCase.capital(address.street)}
+                                            if address.street && address.town
+                                                |, &nbsp;
+                                            if address.town
+                                                |#{setCase.capital(address.town)}
+                                            if (address.street || address.town) && address.county
+                                                |, &nbsp;
+                                            if address.county
+                                                |#{setCase.capital(address.county)}

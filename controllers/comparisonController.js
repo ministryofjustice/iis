@@ -31,7 +31,9 @@ function parseResult(req, result) {
         moment: require('moment'),
         returnQuery: retainUrlQuery(req.url),
         returnClearShortListQuery: removeShortListFrom(req.query),
-        setCase: {capital}
+        setCase: {capital},
+        showAliases: anyContain('aliases', subjects),
+        showAddresses: anyContain('addresses', subjects),
     };
 }
 
@@ -58,4 +60,10 @@ function removeShortListFrom(queryObj) {
         return object;
     }, {});
     return createUrl('/search/results', urlObject);
+}
+
+function anyContain(field, subjects) {
+    return subjects.some(subject => {
+        return subject[field] && subject[field].length > 0;
+    });
 }

@@ -42,8 +42,13 @@ block content
             if err
                 include ./searchError
             if !usePlaceholder
-                if rowCount === 0
-                    h2.heading-large#contentTitle No prisoners found
+                div.grid-row
+                    div.column-one-half
+                        h2.heading-large#contentTitle
+                            if rowCount === 1
+                                | #{rowCount} prisoner
+                            else
+                                | #{rowCount} prisoners
 
                 if data && data != 0
                     div#searchResults

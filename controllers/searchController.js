@@ -194,6 +194,7 @@ function parseNomisData(req, nomisData) {
     const searchedFor = getUserInput(req.session.userInput);
     const searchTerms = getSearchTermsForView(req.session.userInput);
     const shortList = getShortList(req);
+    const data = createDataObjects(searchResults, req.session, shortList);
 
     return {
         content: {

@@ -40,7 +40,8 @@ describe('Comparison controller', function() {
                 prisonNumbers: 'AB111111,AB111112'
             },
             url: 'http://something.com/search',
-            user: {email: 'x@y.com'}
+            user: {email: 'x@y.com'},
+            query: {filter: 'M', shortList: 'AB111111', shortListName: 'Matt'}
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
     });
@@ -73,6 +74,21 @@ describe('Comparison controller', function() {
             expect(payload.subjects.summary).to.eql(standardResponse.summary);
         });
 
+        it('should pass the return path with short list items removed', () => {
+            comparisonControllerProxy().getComparison(reqMock, resMock);
+            const payload = resMock.render.getCalls()[0].args[1];
+
+            expect(payload.returnClearShortListQuery).to.eql('/search/results?filter=M');
+        });
+
+        it('should pass the return path with short list items removed if already none in query', () => {
+            reqMock.query = {filter: 'F'};
+            comparisonControllerProxy().getComparison(reqMock, resMock);
+            const payload = resMock.render.getCalls()[0].args[1];
+
+            expect(payload.returnClearShortListQuery).to.eql('/search/results?filter=F');
+        });
+
         it('should pass hrefs with each subject for removal', () => {
             reqMock.params.prisonNumbers = 'AB111111,AB111112,AB111113';
             const threeResponse = [
@@ -92,6 +108,46 @@ describe('Comparison controller', function() {
         it('should pass the appropriate data to audit', () => {
             comparisonControllerProxy().getComparison(reqMock, resMock);
             expect(auditStub).to.be.calledWith('COMPARISON', 'x@y.com', ['AB111111','AB111112']);
+        });
+
+        it('should not showAliases if none of the results contain aliases', () => {
+            comparisonControllerProxy().getComparison(reqMock, resMock);
+            const payload = resMock.render.getCalls()[0].args[1];
+
+            expect(payload.showAliases).to.eql(false);
+        });
+
+        it('should showAliases if any of the results contain aliases', () => {
+            const aliasResponse = [
+                {summary: {prisonNumber: 'AB111111'}},
+                {summary: {prisonNumber: 'AB111112'}, aliases: ['a']}
+            ];
+            const aliasStub = sinon.stub().returnsPromise().resolves(aliasResponse);
+
+            comparisonControllerProxy(aliasStub).getComparison(reqMock, resMock);
+            const payload = resMock.render.getCalls()[0].args[1];
+
+            expect(payload.showAliases).to.eql(true);
+        });
+
+        it('should not showAddresses if none of the results contain addresses', () => {
+            comparisonControllerProxy().getComparison(reqMock, resMock);
+            const payload = resMock.render.getCalls()[0].args[1];
+
+            expect(payload.showAddresses).to.eql(false);
+        });
+
+        it('should showAddresses if any of the results contain addresses', () => {
+            const addressResponse = [
+                {summary: {prisonNumber: 'AB111111'}, addresses: ['a']},
+                {summary: {prisonNumber: 'AB111112'}, addresses: ['a']}
+            ];
+            const addressStub = sinon.stub().returnsPromise().resolves(addressResponse);
+
+            comparisonControllerProxy(addressStub).getComparison(reqMock, resMock);
+            const payload = resMock.render.getCalls()[0].args[1];
+
+            expect(payload.showAddresses).to.eql(true);
         });
     });
 });

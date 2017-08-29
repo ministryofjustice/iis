@@ -4,6 +4,7 @@ const {capital} = require('./helpers/textHelpers');
 const {createUrl, retainUrlQuery} = require('./helpers/urlHelpers');
 const logger = require('../log');
 const audit = require('../data/audit');
+const PATH = '/comparison/';
 
 exports.getComparison = function(req, res) {
     const idsToCompare = req.params.prisonNumbers.split(',');
@@ -11,7 +12,7 @@ exports.getComparison = function(req, res) {
     audit.record('COMPARISON', req.user.email, idsToCompare);
 
     getSubjectsForComparison(idsToCompare)
-        .then(result => res.render('comparison/index', parseResult(req.url, result)))
+        .then(result => res.render('comparison/index', parseResult(req, result)))
         .catch(error => {
             logger.error('Error during comparison search: ' + error.message);
             const query = {error: error.code};
@@ -19,7 +20,7 @@ exports.getComparison = function(req, res) {
         });
 };
 
-function parseResult(url, result) {
+function parseResult(req, result) {
 
     const limitedSubjects = result.slice(0, MAX_PRISONERS_FOR_COMPARISON);
     const subjects = addRemoveLinksFor(limitedSubjects);
@@ -28,8 +29,11 @@ function parseResult(url, result) {
         content: {title: 'Prisoner Comparison'},
         subjects,
         moment: require('moment'),
-        returnQuery: retainUrlQuery(url),
-        setCase: {capital}
+        returnQuery: retainUrlQuery(req.url),
+        returnClearShortListQuery: removeShortListFrom(req.query),
+        setCase: {capital},
+        showAliases: anyContain('aliases', subjects),
+        showAddresses: anyContain('addresses', subjects),
     };
 }
 
@@ -46,3 +50,20 @@ const subjectWithRemoveHref = (path, allPrisonNumbers) => subject => {
 
     return Object.assign({}, subject, {removePath: pathString});
 };
+
+function removeShortListFrom(queryObj) {
+    const shortListItems = ['shortList', 'shortListName'];
+    const urlObject = Object.keys(queryObj).reduce((object, item) => {
+        if (!shortListItems.includes(item)) {
+            return Object.assign({}, object, {[item]: queryObj[item]});
+        }
+        return object;
+    }, {});
+    return createUrl('/search/results', urlObject);
+}
+
+function anyContain(field, subjects) {
+    return subjects.some(subject => {
+        return subject[field] && subject[field].length > 0;
+    });
+}

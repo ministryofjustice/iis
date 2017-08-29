@@ -287,6 +287,11 @@ div.search-terms a {
     padding-top: 10px;
 }
 
+#comparisonAddresses ul li{
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
 #comparisonHeader a:visited {
     color: $govuk-blue;
 }
@@ -364,6 +369,7 @@ input.link{
     text-align: left;
     cursor: pointer;
 }
+
 input.link:hover{
     color: $link-hover-colour;
 }
@@ -392,4 +398,8 @@ input.link:hover{
 
 #searchBox #search-terms li {
     margin-bottom: 15px;
+}
+
+#contentTitle {
+    margin-top: 15px;
 }

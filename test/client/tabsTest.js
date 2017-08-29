@@ -11,10 +11,10 @@ const initialPage = '<html>' +
     '<div id="holder">' +
     '<ul>' +
     '<li class="active">' +
-    '<a id="tab1" class="tab" data-tab="panel1">Tab 1</a>' +
+    '<a id="tab1" class="searchTab" data-tab="panel1">Tab 1</a>' +
     '</li>' +
     '<li>' +
-    '<a id="tab2" class="tab" data-tab="panel2">Tab 2</a>' +
+    '<a id="tab2" class="searchTab" data-tab="panel2">Tab 2</a>' +
     '</li>' +
     '</ul>' +
     '<div id="panel1" class="tabPanel initiallyHidden" data-panel="panel1"></div>' +

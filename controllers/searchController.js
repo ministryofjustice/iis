@@ -127,6 +127,7 @@ function parseResultsPageData(req, rowCount, searchResults, page, error) {
     const shortList = getShortList(req);
     const data = createDataObjects(searchResults, req.session, shortList);
 
+
     return {
         content: {
             title: 'HPA Prisoner Search'
@@ -194,7 +195,6 @@ function parseNomisData(req, nomisData) {
     const searchedFor = getUserInput(req.session.userInput);
     const searchTerms = getSearchTermsForView(req.session.userInput);
     const shortList = getShortList(req);
-    const data = createDataObjects(searchResults, req.session, shortList);
 
     return {
         content: {

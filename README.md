@@ -72,6 +72,7 @@ The following environment variables are used and values should be supplied for c
 * NOMIS_USER - HPA user id for NOMIS API
 * NOMIS_PASSWORD - password for the above user
 * NOMIS_API_URL - host and port for the NOMIS API
+* NOMIS_ERROR_RETRIES - number of times to retry requests on NOMIS API error before returning error 
 
 
 The following environment variables are used and a value MUST be supplied in production.

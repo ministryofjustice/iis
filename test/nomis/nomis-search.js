@@ -10,12 +10,12 @@ const expect = chai.expect;
 const agent = require('superagent');
 const nock = require('nock');
 
-function searchResponse(token, query, status, response) {
+function searchResponse(token, query, status, response, headers) {
     nock('http://localhost:9090')
         .matchHeader('Authorization', token)
         .get('/api/v2/prisoners')
         .query(query)
-        .reply(status, response);
+        .reply(status, response, headers);
 }
 
 function tokenResponse(status, token) {
@@ -60,8 +60,8 @@ describe('nomisSearch', () => {
         it('should return the correctly formatted nomis response', (done) => {
 
             const userInput = {forename: 'john'};
-            const expected = [{"firstName": "john"}];
-            searchResponse('token', {firstName: 'john'}, 200, [{"firstName": "john"}]);
+            const expected = {"count": 2, "results": [{"firstName": "john"}]};
+            searchResponse('token', {firstName: 'john'}, 200, [{"firstName": "john"}], {"Total-Records": "2"});
 
             getNomisResults('token', userInput).then(nomisData => {
                 expect(nomisData).to.eql(expected);
@@ -103,10 +103,10 @@ describe('nomisSearch', () => {
         it('should acquire token on first query', (done) => {
 
             const userInput = {forename: 'john'};
-            const expected = [{"firstName": "john"}];
+            const expected = {"count": 2, "results": [{"firstName": "john"}]};
 
             tokenResponse(201, 'sometoken');
-            searchResponse('sometoken', {firstName: 'john'}, 200, [{"firstName": "john"}]);
+            searchResponse('sometoken', {firstName: 'john'}, 200, [{"firstName": "john"}], {"Total-Records": "2"});
 
             searchNomis(userInput).then(nomisData => {
                 expect(nomisData).to.eql(expected);
@@ -117,12 +117,12 @@ describe('nomisSearch', () => {
         it('should reuse the existing token on second query', (done) => {
 
             const userInput = {forename: 'john'};
-            const expected = [{"firstName": "john"}];
+            const expected = {"count": 2, "results": [{"firstName": "john"}]};
 
             tokenResponse(201, 'sometoken');
             tokenResponse(201, 'othertoken-notused');
-            searchResponse('sometoken', {firstName: 'john'}, 200, [{"firstName": "john"}]);
-            searchResponse('sometoken', {firstName: 'john'}, 200, [{"firstName": "john"}]);
+            searchResponse('sometoken', {firstName: 'john'}, 200, [{"firstName": "john"}], {"Total-Records": "2"});
+            searchResponse('sometoken', {firstName: 'john'}, 200, [{"firstName": "john"}], {"Total-Records": "2"});
 
             searchNomis(userInput).then(nomisData => {
                 expect(nomisData).to.eql(expected);
@@ -152,13 +152,13 @@ describe('nomisSearch', () => {
         it('should refresh token when 401', (done) => {
 
             const userInput = {forename: 'john'};
-            const expected = [{"firstName": "john"}];
+            const expected = {"count": 2, "results": [{"firstName": "john"}]};
 
             tokenResponse(201, 'firstToken');
             searchResponse('firstToken', {firstName: 'john'}, 401, '');
 
             tokenResponse(201, 'secondToken');
-            searchResponse('secondToken', {firstName: 'john'}, 200, [{"firstName": "john"}]);
+            searchResponse('secondToken', {firstName: 'john'}, 200, [{"firstName": "john"}], {"Total-Records": "2"});
 
             searchNomis(userInput).then(nomisData => {
                 expect(nomisData).to.eql(expected);

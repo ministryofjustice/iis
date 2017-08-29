@@ -119,7 +119,7 @@ function getNomisResults(token, userInput) {
                     }
 
                     if (res.body) {
-                        return resolve(translateResult(res.body));
+                        return resolve(parseResponse(res));
                     }
 
                     logger.error('Invalid nomis search response');
@@ -131,6 +131,16 @@ function getNomisResults(token, userInput) {
                 }
             });
     });
+}
+
+function parseResponse(res){
+
+    const count = res.get('Total-Records');
+
+    return {
+        'count': count ? parseInt(count) : 0,
+        'results': translateResult(res.body)
+    };
 }
 
 function getNomisToken() {

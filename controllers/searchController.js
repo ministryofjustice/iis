@@ -200,8 +200,8 @@ function parseNomisData(req, nomisData) {
         content: {
             title: 'NOMIS Prisoner Search'
         },
-        rowCount: nomisData.length,
-        data: nomisData,
+        rowCount: nomisData.count,
+        data: nomisData.results,
         queryStrings: getQueryStringsForSearch(req.url),
         formContents: searchedFor,
         searchTerms: searchTerms,

@@ -108,6 +108,8 @@ function getNomisResults(token, userInput) {
             .query(nomisQuery)
             .set('Authorization', token)
             .set('Accept', 'application/json')
+            .set('Sort-Fields', config.nomis.sorting)
+            .set('Record-Limit', config.nomis.maxResults)
             .timeout(timeoutSpec)
             .end((error, res) => {
                 try {

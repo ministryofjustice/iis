@@ -33,7 +33,9 @@ module.exports = {
             response: 2000,
             deadline: 2500
         },
-        errorRetries: get('NOMIS_ERROR_RETRIES', 2)
+        errorRetries: get('NOMIS_ERROR_RETRIES', 2),
+        sorting: 'lastName,firstName,dateOfBirth',
+        maxResults: 1000
     },
 
     https: production,

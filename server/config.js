@@ -35,7 +35,8 @@ module.exports = {
         },
         errorRetries: get('NOMIS_ERROR_RETRIES', 2),
         sorting: 'lastName,firstName,dateOfBirth',
-        maxResults: 1000
+        maxResults: 1000,
+        nomisResultsPerPage: 10
     },
 
     https: production,

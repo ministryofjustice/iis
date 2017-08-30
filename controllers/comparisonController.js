@@ -1,10 +1,11 @@
 const {getSubjectsForComparison} = require('../data/subject');
 const MAX_PRISONERS_FOR_COMPARISON = 3;
 const {capital} = require('./helpers/textHelpers');
-const {createUrl, retainUrlQuery} = require('./helpers/urlHelpers');
+const {createUrl, retainUrlQuery, removeValue} = require('./helpers/urlHelpers');
 const logger = require('../log');
 const audit = require('../data/audit');
 const PATH = '/comparison/';
+const url = require('url');
 
 exports.getComparison = function(req, res) {
     const idsToCompare = req.params.prisonNumbers.split(',');
@@ -23,43 +24,47 @@ exports.getComparison = function(req, res) {
 function parseResult(req, result) {
 
     const limitedSubjects = result.slice(0, MAX_PRISONERS_FOR_COMPARISON);
-    const subjects = addRemoveLinksFor(limitedSubjects);
+    const returnQuery = retainUrlQuery(req.url);
+    const subjects = addRemoveLinksFor(limitedSubjects, req.query);
+    const returnClearShortListQuery = createUrl('/search/results', removeTermsFrom(req.query, ['shortList', 'shortListName']));
 
     return {
         content: {title: 'Prisoner Comparison'},
         subjects,
+        returnQuery,
+        returnClearShortListQuery,
         moment: require('moment'),
-        returnQuery: retainUrlQuery(req.url),
-        returnClearShortListQuery: removeShortListFrom(req.query),
         setCase: {capital},
         showAliases: anyContain('aliases', subjects),
         showAddresses: anyContain('addresses', subjects),
     };
 }
 
-function addRemoveLinksFor(subjects) {
+function addRemoveLinksFor(subjects, query) {
     const path = '/comparison/';
     const allPrisonNumbers = subjects.map(subject => subject.summary.prisonNumber);
 
-    return subjects.map(subjectWithRemoveHref(path, allPrisonNumbers));
+    return subjects.map(subjectWithRemoveHref(path, allPrisonNumbers, query));
 }
 
-const subjectWithRemoveHref = (path, allPrisonNumbers) => subject => {
+const subjectWithRemoveHref = (path, allPrisonNumbers, query) => subject => {
     const prisonNumbersToSearch = allPrisonNumbers.filter(number => number !== subject.summary.prisonNumber);
     const pathString = path.concat(prisonNumbersToSearch.join(','));
 
-    return Object.assign({}, subject, {removePath: pathString});
+    const queryWithoutPrisonNumber = removeValue(query, 'shortList', subject.summary.prisonNumber);
+    const queryWithoutName = removeTermsFrom(queryWithoutPrisonNumber, ['shortListName']);
+
+    return Object.assign({}, subject, {removePath: pathString.concat(url.format({query: queryWithoutName}))});
 };
 
-function removeShortListFrom(queryObj) {
-    const shortListItems = ['shortList', 'shortListName'];
-    const urlObject = Object.keys(queryObj).reduce((object, item) => {
-        if (!shortListItems.includes(item)) {
+
+function removeTermsFrom(queryObj, terms) {
+    return Object.keys(queryObj).reduce((object, item) => {
+        if (!terms.includes(item)) {
             return Object.assign({}, object, {[item]: queryObj[item]});
         }
         return object;
     }, {});
-    return createUrl('/search/results', urlObject);
 }
 
 function anyContain(field, subjects) {

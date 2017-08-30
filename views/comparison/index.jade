@@ -11,7 +11,7 @@ block content
                     span.bold-medium #{setCase.capital(subject.summary.firstName)} #{subject.summary.lastName}
                     span.block #{moment(subject.summary.dob).format('DD/MM/YYYY')}
                     if subjects.length > 1
-                        a(href="#{subject.removePath}#{returnQuery}") Remove from shortlist
+                        a(href="#{subject.removePath}") Remove from shortlist
                     else
                         a(href="#{returnClearShortListQuery}") Remove from shortlist
 

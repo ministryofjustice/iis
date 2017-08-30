@@ -4,6 +4,7 @@ module.exports = {
     getQueryStringsForSearch,
     mergeIntoQuery,
     toggleFromQueryItem,
+    removeValue,
     getUrlAsObject,
     createUrl,
     retainUrlQuery
@@ -26,25 +27,42 @@ function mergeIntoQuery(queryObject, objectToMergeIn) {
     return Object.assign({}, queryObject, objectToMergeIn);
 }
 
-// if item exists in query remove it. Else add it
-function toggleFromQueryItem(req, queryItem, itemToAddOrRemove, referrer = false) {
+function removeValue(query, term, value) {
+    if (containsValue(query, term, value)) {
+        return deleteValue(query, term, value);
+    }
+    return query;
+}
+
+function toggleFromQueryItem(req, term, value, referrer = false) {
+
     const query = !referrer ? req.query : getUrlAsObject(req.get('referrer')).query;
 
-    if(!query[queryItem]) {
-        return mergeIntoQuery(query, {[queryItem]: itemToAddOrRemove});
+    if(containsValue(query, term, value)){
+        return deleteValue(query, term, value)
+    } else {
+        return addValue(query, term, value)
     }
+}
 
-    if(typeof query[queryItem] === 'string') {
-        query[queryItem] = [query[queryItem]];
+function containsValue(query, term, value){
+    return query[term] && asArray(query[term]).includes(value);
+}
+
+function deleteValue(query, term, value) {
+    if(asArray(query[term]).includes(value)) {
+        const index = asArray(query[term]).indexOf(value);
+        return mergeIntoQuery(query, {[term]: deleteFromArray(asArray(query[term]), index)});
     }
+}
 
-    if(query[queryItem].includes(itemToAddOrRemove)) {
-        const index = query[queryItem].indexOf(itemToAddOrRemove);
-        return mergeIntoQuery(query, {[queryItem]: deleteFromArray(query[queryItem], index)});
-    }
+function addValue(query, term, value) {
+    const item = query[term] ? [...asArray(query[term]), value] : value;
+    return mergeIntoQuery(query, {[term]: item});
+}
 
-    const item = [...query[queryItem], itemToAddOrRemove];
-    return mergeIntoQuery(query, {[queryItem]: item});
+function asArray(possibleArray){
+    return typeof possibleArray === 'string' ? [possibleArray] : possibleArray;
 }
 
 const deleteFromArray = (array, index) => array.slice(0, index).concat(array.slice(index+1));

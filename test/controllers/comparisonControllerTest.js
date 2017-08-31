@@ -91,6 +91,7 @@ describe('Comparison controller', function() {
 
         it('should pass hrefs with each subject for removal', () => {
             reqMock.params.prisonNumbers = 'AB111111,AB111112,AB111113';
+            reqMock.query = {filter: 'M', shortList: ['AB111111', 'AB111112', 'AB111113'], shortListName: 'Matt'}
             const threeResponse = [
                 {summary: {prisonNumber: 'AB111111'}},
                 {summary: {prisonNumber: 'AB111112'}},
@@ -100,9 +101,9 @@ describe('Comparison controller', function() {
 
             comparisonControllerProxy(get3SubjectsForComparisonStub).getComparison(reqMock, resMock);
             const payload = resMock.render.getCalls()[0].args[1];
-            expect(payload.subjects[0].removePath).to.eql('/comparison/AB111112,AB111113');
-            expect(payload.subjects[1].removePath).to.eql('/comparison/AB111111,AB111113');
-            expect(payload.subjects[2].removePath).to.eql('/comparison/AB111111,AB111112');
+            expect(payload.subjects[0].removePath).to.eql('/comparison/AB111112,AB111113?filter=M&shortList=AB111112&shortList=AB111113');
+            expect(payload.subjects[1].removePath).to.eql('/comparison/AB111111,AB111113?filter=M&shortList=AB111111&shortList=AB111113');
+            expect(payload.subjects[2].removePath).to.eql('/comparison/AB111111,AB111112?filter=M&shortList=AB111111&shortList=AB111112');
         });
 
         it('should pass the appropriate data to audit', () => {

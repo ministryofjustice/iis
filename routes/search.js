@@ -9,7 +9,7 @@ const {
     postSearchForm,
 	getSuggestions,
     getSuggestion,
-    postAddToShortlist,
+    postAddToShortlist
 } = require('../controllers/searchController');
 
 // eslint-disable-next-line

@@ -21,7 +21,9 @@ function validateDob(day, month, year) {
     }
 
     let dob = new Date(year, month, day);
-    if (dob > Date.now()) {
+
+
+    if (dob > new Date()) {
         return {title: 'The date of birth cannot be in the future'};
     }
 

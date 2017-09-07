@@ -319,3 +319,7 @@ function applySuggestionsToUserInput(userInput, query, session) {
 function newValues(newValues, suggestion) {
     return Object.assign({}, newValues, {[suggestion.term]: suggestion.value});
 }
+
+function asArray(possibleArray){
+    return typeof possibleArray === 'string' ? [possibleArray] : possibleArray;
+}

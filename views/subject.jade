@@ -3,7 +3,10 @@ extends layout
 block content
 
     div.back-link-container
-        a.link-back(href="/search/results#{returnQuery}") Back to prisoners
+        if returnToShortlist
+            a.link-back(href="#{shortlistHref}#{returnQuery}") Back to shortlist
+        else
+            a.link-back(href="/search/results#{returnQuery}") Back to prisoners
 
     if err
         div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")

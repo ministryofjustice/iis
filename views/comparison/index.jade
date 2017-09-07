@@ -8,7 +8,10 @@ block content
         div.grid-row
             each subject in subjects
                 div(id="comparisonHeader" class = subjects.length > 2 ? 'column-one-third' : 'column-one-half')
-                    span.bold-medium #{setCase.capital(subject.summary.firstName)} #{subject.summary.lastName}
+                    - var middleName = subject.summary.middleName ? setCase.capital(subject.summary.middleName) + ' ' : ''
+                    - var fullName = setCase.capital(subject.summary.firstName) + ' ' + middleName + subject.summary.lastName
+                    a.bold-medium(href="/subject/#{subject.summary.prisonNumber}/summary#{returnQuery}")
+                        span #{fullName}
                     span.block #{moment(subject.summary.dob).format('DD/MM/YYYY')}
                     if subjects.length > 1
                         a(href="#{subject.removePath}") Remove from shortlist

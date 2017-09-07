@@ -250,7 +250,7 @@ exports.postAddToShortlist = function(req, res) {
 
     if(req.body.viewShortlist){
         const theQuery = getUrlAsObject(req.get('referrer')).query;
-        const shortlistHref = `/comparison/${theQuery.shortList.join(',')}`;
+        const shortlistHref = `/comparison/${asArray(theQuery.shortList).join(',')}`;
         res.redirect(createUrl(shortlistHref, theQuery));
     }
 

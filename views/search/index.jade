@@ -2,7 +2,7 @@ extends ../layout
 include ../includes/tabs
 mixin inmate(item)
     div.inmateDetails(class=item.visited ? 'visited' : '')
-        a(href="/subject/#{item.prisonNumber}/summary#{queryStrings.thisPage}")
+        a.inmateBlock(href="/subject/#{item.prisonNumber}/summary#{queryStrings.thisPage}")
             span.inmateContainer
                 span(class=item.visited ? '' : 'bold-medium').capitalise-text #{setCase.capital(item.firstName +' '+ (item.middleName)) +' '+ item.lastName +' '}
                 if item.dob
@@ -25,6 +25,8 @@ mixin inmate(item)
                         input(type="submit" value="Remove from shortlist" class="link" id="addToShortlist")
                     else if !shortList || shortList.prisonNumbers.length < 3
                         input(type="submit" value="Add to shortlist" class="link" id="addToShortlist")
+                    else
+                        input(type="submit" value="Shortlist full - compare #{shortList.prisonNumbers.length} prisoners" class="link" id="addToShortlist" name="viewShortlist")
 
         block
 
@@ -41,7 +43,7 @@ block content
                     if shortList.prisonNumbers.length === 1
                         |Add further prisoners to compare
                     else
-                        a(href="#{shortList.href}#{queryStrings.thisPage}") Compare #{shortList.length} prisoners
+                        a(href="#{shortList.href}#{queryStrings.thisPage}") Compare #{shortList.prisonNumbers.length} prisoners
 
         if !usePlaceholder
             div.column-full

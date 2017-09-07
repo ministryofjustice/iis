@@ -51,6 +51,9 @@ block content
                                                 |&nbsp;#{setCase.capital(alias.last)}
                                             if alias.birthDate
                                                 |, #{moment(alias.birthDate).format('DD/MM/YYYY')}
+                            else
+                                ul.list
+                                    li None
 
         if showAddresses
             section.compare-section
@@ -59,22 +62,23 @@ block content
                     each subject in subjects
                         div(id="comparisonAddresses" class =  subjects.length > 2 ? 'column-one-third' : 'column-one-half')
                             if subject.addresses
-                                - var addressTypesToShow = ['Next of kin', 'Discharge', 'Home']
                                 ul.list
                                     each address in subject.addresses
-                                        if addressTypesToShow.includes(address.type)
-                                            li
-                                                | #{setCase.capital(address.type)}:
+                                        li
+                                            | #{setCase.capital(address.type)}:
+                                            =" "
+                                            if address.street
+                                                | #{setCase.capital(address.street)}
+                                            if address.street && address.town
+                                                |,
                                                 =" "
-                                                if address.street
-                                                    | #{setCase.capital(address.street)}
-                                                if address.street && address.town
-                                                    |,
-                                                    =" "
-                                                if address.town
-                                                    |#{setCase.capital(address.town)}
-                                                if (address.street || address.town) && address.county
-                                                    |,
-                                                    =" "
-                                                if address.county
-                                                    |#{setCase.capital(address.county)}
+                                            if address.town
+                                                |#{setCase.capital(address.town)}
+                                            if (address.street || address.town) && address.county
+                                                |,
+                                                =" "
+                                            if address.county
+                                                |#{setCase.capital(address.county)}
+                            else
+                                ul.list
+                                    li None

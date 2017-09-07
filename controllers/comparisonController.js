@@ -13,7 +13,7 @@ exports.getComparison = function(req, res) {
     audit.record('COMPARISON', req.user.email, idsToCompare);
 
     getSubjectsForComparison(idsToCompare)
-        .then(result => res.render('comparison/index', parseResult(req, result)))
+        .then(result => res.render('comparison/index', parseResult(idsToCompare, req, result)))
         .catch(error => {
             logger.error('Error during comparison search: ' + error.message);
             const query = {error: error.code};
@@ -21,12 +21,18 @@ exports.getComparison = function(req, res) {
         });
 };
 
-function parseResult(req, result) {
+function parseResult(idsToCompare, req, result) {
 
     const limitedSubjects = result.slice(0, MAX_PRISONERS_FOR_COMPARISON);
     const returnQuery = retainUrlQuery(req.url);
-    const subjects = addRemoveLinksFor(limitedSubjects, req.query);
     const returnClearShortListQuery = createUrl('/search/results', removeTermsFrom(req.query, ['shortList', 'shortListName']));
+
+
+    const orderedSubjects = idsToCompare.map(id => {
+        return limitedSubjects.find(subject => subject.summary.prisonNumber === id);
+    });
+
+    const subjects = addRemoveLinksFor(orderedSubjects, req.query);
 
     return {
         content: {title: 'Prisoner Comparison'},

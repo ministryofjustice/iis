@@ -1,6 +1,6 @@
 const logger = require('../log');
 const {sentence, capital, capitalWithAcronyms, sentenceWithAcronyms} = require('./helpers/textHelpers');
-const {retainUrlQuery} = require('./helpers/urlHelpers');
+const {getUrlAsObject, retainUrlQuery} = require('./helpers/urlHelpers');
 const {getSubject} = require('../data/subject');
 const content = require('../data/content');
 const audit = require('../data/audit');
@@ -15,7 +15,11 @@ const dataRequiredForPage = {
     sentences: ['sentencing']
 };
 
+
 exports.getSubject = function(req, res) {
+
+    const returnToShortlist = isShortlistView(req);
+    const shortlistHref = returnToShortlist ? getShortlistHref(req) : '';
 
     const {page, id} = req.params;
     saveVisited(req.session, id);
@@ -26,7 +30,9 @@ exports.getSubject = function(req, res) {
         page,
         subjectData: {},
         noResultsText: content.view.subject[page],
-        returnQuery: retainUrlQuery(req.url)
+        returnQuery: retainUrlQuery(req.url),
+        returnToShortlist,
+        shortlistHref
     };
 
     return getSubject(id, dataRequiredForPage[page])
@@ -39,13 +45,25 @@ exports.getSubject = function(req, res) {
         });
 };
 
+function isShortlistView(req){
+    const referrer = ''+req.get('referrer');
+    return referrer && referrer.indexOf('/comparison') !== -1;
+}
+
+function getShortlistHref( req){
+    const theQuery = getUrlAsObject(req.get('referrer')).query;
+    return `/comparison/${asArray(theQuery.shortList).join(',')}`;
+}
+
 function renderPage(data) {
-    const {res, page, subjectData, noResultsText, returnQuery} = data;
+    const {res, page, subjectData, noResultsText, returnQuery, returnToShortlist, shortlistHref} = data;
 
     res.render('subject/' + page, {
         subject: subjectData,
         content: content.view.subject,
         returnQuery,
+        returnToShortlist,
+        shortlistHref,
         nav: getNavigation(page),
         noResultsText,
         moment: require('moment'),
@@ -88,4 +106,8 @@ function saveVisited(session, item) {
     } else {
         session.visited = [item];
     }
+}
+
+function asArray(possibleArray){
+    return typeof possibleArray === 'string' ? [possibleArray] : possibleArray;
 }

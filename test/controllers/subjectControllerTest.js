@@ -20,7 +20,8 @@ describe('subjectController', () => {
             user: {email: 'x@y.com'},
             params: {id: 'id1', page: 'aliases'},
             session: {},
-            url: 'http://something.com/search/results?page=2&filters=Female'
+            url: 'http://something.com/search/results?page=2&filters=Female',
+            get: function(string){return '';}
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
 

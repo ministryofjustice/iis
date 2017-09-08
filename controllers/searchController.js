@@ -247,6 +247,13 @@ exports.postFilters = function(req, res) {
 };
 
 exports.postAddToShortlist = function(req, res) {
+
+    if(req.body.viewShortlist){
+        const theQuery = getUrlAsObject(req.get('referrer')).query;
+        const shortlistHref = `/comparison/${asArray(theQuery.shortList).join(',')}`;
+        res.redirect(createUrl(shortlistHref, theQuery));
+    }
+
     const prisonNumberAdded = req.body.addToShortList;
     const nameAdded = req.body.addToShortListName;
 
@@ -311,4 +318,8 @@ function applySuggestionsToUserInput(userInput, query, session) {
 
 function newValues(newValues, suggestion) {
     return Object.assign({}, newValues, {[suggestion.term]: suggestion.value});
+}
+
+function asArray(possibleArray){
+    return typeof possibleArray === 'string' ? [possibleArray] : possibleArray;
 }

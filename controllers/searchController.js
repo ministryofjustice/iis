@@ -4,7 +4,7 @@ const {getSearchResultsCount, getSearchResults} = require('../data/search');
 const utils = require('../data/utils');
 const audit = require('../data/audit');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
-const {validateDescriptionForm} = require('./helpers/formValidators');
+const {validateDescriptionForm, validateAddressForm} = require('./helpers/formValidators');
 
 const {
     getInputtedFilters,
@@ -34,6 +34,10 @@ const availableSearchOptions = exports.availableSearchOptions = {
     dob: {
         fields: ['dobDay', 'dobMonth', 'dobYear', 'age'],
         hints: []
+    },
+    address: {
+        fields: ['address'],
+        hints: []
     }
 };
 
@@ -44,6 +48,13 @@ const allAcceptableFields = Object.keys(availableSearchOptions).reduce((acceptab
 function isIdentifierSearch(userInput) {
     const intersection = [...Object.keys(userInput)].filter(input => {
         return availableSearchOptions.identifier.fields.includes(input);
+    });
+    return intersection.length > 0;
+}
+
+function isAddressSearch(userInput) {
+    const intersection = [...Object.keys(userInput)].filter(input => {
+        return availableSearchOptions.address.fields.includes(input);
     });
     return intersection.length > 0;
 }
@@ -146,6 +157,8 @@ function parseResultsPageData(req, rowCount, searchResults, page, error) {
         formContents: searchedFor,
         usePlaceholder: Object.keys(searchedFor).length === 0,
         idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
+        nameSearch: availableSearchOptions.names.fields.includes(Object.keys(searchedFor)[0]),
+        otherSearch: availableSearchOptions.address.fields.includes(Object.keys(searchedFor)[0]),
         suggestions: getSearchSuggestions(req.session.userInput),
         shortList,
         moment: require('moment'),
@@ -226,7 +239,15 @@ const inputValidates = userInput => {
         };
     }
 
-    return isIdentifierSearch(userInput) ? null : validateDescriptionForm(userInput);
+    if(isIdentifierSearch(userInput)) {
+        return null;
+    }
+
+    if(isAddressSearch(userInput)) {
+        return validateAddressForm(userInput);
+    }
+
+    return validateDescriptionForm(userInput);
 };
 
 exports.postPagination = function(req, res) {

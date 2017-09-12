@@ -113,8 +113,8 @@ module.exports = {
         }).pop();
     },
 
-    cleanAddressSearch: function(input){
-        const search = input.replace(/([.,])/g,' ').replace(/(['])/g,'');
+    cleanAddressSearch: function(input) {
+        const search = input.replace(/([.,])/g, ' ').replace(/(['])/g, '');
 
         const searchTerms = search.split(' ').filter(term => term.trim());
 

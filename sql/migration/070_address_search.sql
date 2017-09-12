@@ -85,7 +85,7 @@ GO
 -- Import raw address data with initial cleanup
 INSERT INTO HPA.ADDRESS_LOOKUP
     SELECT
-        PK_ADDRESS AS FK_ADDRESS,
+        PK_ADDRESS    AS FK_ADDRESS,
         PRISON_NUMBER AS PRISON_NUMBER,
         UPPER(
             REPLACE(
@@ -93,14 +93,14 @@ INSERT INTO HPA.ADDRESS_LOOKUP
                     REPLACE(STREET, ',', ' '),
                     '''', ''),
                 '.', ' ')
-        )          AS STREET,
+        )             AS STREET,
         UPPER(
             REPLACE(
                 REPLACE(
                     REPLACE(TOWN, ',', ' '),
                     '''', ''),
                 '.', ' ')
-        )          AS TOWN,
+        )             AS TOWN,
         POSTCODE,
         NULL
     FROM HPA.ADDRESSES;
@@ -197,11 +197,16 @@ CREATE FULLTEXT CATALOG HPA_FTS
 WITH ACCENT_SENSITIVITY = OFF;
 GO
 
--- Create full text index
+-- Create full text index but don't start population
 CREATE FULLTEXT INDEX
     ON HPA.ADDRESS_LOOKUP (ADDRESS_TEXT)
 KEY INDEX PK_ADDRESS_LOOKUP
 ON HPA_FTS
-WITH STOPLIST OFF;
+WITH STOPLIST OFF, CHANGE_TRACKING OFF, NO POPULATION;
+GO
+
+-- Start full text index population AT A TIME OF LOW SYSTEM USAGE EG OUT OF HOURS
+ALTER FULLTEXT INDEX ON HPA.ADDRESS_LOOKUP
+START FULL POPULATION;
 GO
 

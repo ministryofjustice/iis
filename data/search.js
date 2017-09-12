@@ -161,7 +161,7 @@ function getAddressSqlWithParams(obj) {
 
     const addressTerms = utils.cleanAddressSearch(obj.userInput.address);
 
-    let sql = `PRISON_NUMBER IN (SELECT PRISON_NUMBER FROM HPA.ADDRESS_LOOKUP WHERE CONTAINS(ADDRESS_TEXT, 'NEAR((${addressTerms}), ${distance}, TRUE)'))`;
+    let sql = `PRISON_NUMBER IN (SELECT DISTINCT PRISON_NUMBER FROM HPA.ADDRESS_LOOKUP WHERE CONTAINS(ADDRESS_TEXT, 'NEAR((${addressTerms}), ${distance}, TRUE)'))`;
     return {
         sql,
         params: []

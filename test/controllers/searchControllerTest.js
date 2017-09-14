@@ -73,16 +73,17 @@ describe('searchController', () => {
     });
 
     describe('postSearchForm', () => {
-        let descriptionValidatorStub;
+        let validatorStub;
 
         beforeEach(() => {
-            descriptionValidatorStub = sandbox.stub().returns(null);
+            validatorStub = sandbox.stub().returns(null);
         });
 
-        const postSearchFormProxy = (descriptionValidator = descriptionValidatorStub) => {
+        const postSearchFormProxy = (descriptionValidator = addressValidator = validatorStub) => {
             return proxyquire('../../controllers/searchController', {
                 './helpers/formValidators': {
-                    'validateDescriptionForm': descriptionValidator
+                    'validateDescriptionForm': descriptionValidator,
+                    'validateAddressForm' : addressValidator
                 }
             }).postSearchForm;
         };
@@ -90,10 +91,9 @@ describe('searchController', () => {
         it('should redirect to search results if no validation error returned', () => {
             reqMock = {
                 body: {
+                    searchFormType: 'nameAge',
                     forename: 'Matthew',
-                    forename2: 'James',
-                    surname: 'Whitfield',
-                    prisonNumber: ''
+                    surname: 'Whitfield'
                 },
                 session: {
                     userInput: {}
@@ -109,10 +109,9 @@ describe('searchController', () => {
         it('should set the userInput on the session ', () => {
             reqMock = {
                 body: {
+                    searchFormType: 'nameAge',
                     forename: 'Matthew',
-                    forename2: 'James',
-                    surname: 'Whitfield',
-                    prisonNumber: '666'
+                    surname: 'Whitfield'
                 },
                 query: {0: 'names', 1: 'identifier'},
                 session: {
@@ -122,16 +121,18 @@ describe('searchController', () => {
             };
 
             postSearchFormProxy()(reqMock, resMock);
-            expect(reqMock.session.userInput).to.eql(reqMock.body);
+            expect(reqMock.session.userInput).to.eql({
+                forename: 'Matthew',
+                surname: 'Whitfield'
+            });
         });
 
         it('should ignore items in query string that do not exist', () => {
             reqMock = {
                 body: {
+                    searchFormType: 'nameAge',
                     forename: 'Matthew',
-                    forename2: 'James',
-                    surname: 'Whitfield',
-                    prisonNumber: '666'
+                    surname: 'Whitfield'
                 },
                 query: {0: 'names', 1: 'identifier', 2: 'incorrect'},
                 session: {
@@ -141,7 +142,29 @@ describe('searchController', () => {
             };
 
             postSearchFormProxy()(reqMock, resMock);
-            expect(reqMock.session.userInput).to.eql(reqMock.body);
+            expect(reqMock.session.userInput).to.eql({
+                forename: 'Matthew',
+                surname: 'Whitfield'
+            });
+        });
+
+        it('should only use the fields from the selected search type ', () => {
+            reqMock = {
+                body: {
+                    searchFormType: 'other',
+                    forename: 'Matthew',
+                    surname: 'Whitfield',
+                    address: 'address input'
+                },
+                query: {0: 'names', 1: 'identifier'},
+                session: {
+                    userInput: {}
+                },
+                url: 'http://something.com/search'
+            };
+
+            postSearchFormProxy()(reqMock, resMock);
+            expect(reqMock.session.userInput).to.eql({address: 'address input'});
         });
 
         it('should render search with validation error if any of the inputs do not validate', () => {
@@ -149,8 +172,8 @@ describe('searchController', () => {
 
             reqMock = {
                 body: {
+                    searchFormType: 'nameAge',
                     forename: 'Matthew',
-                    forename2: 'James',
                     surname: 'Whitfield'
                 },
                 query: {0: 'names'},
@@ -171,10 +194,9 @@ describe('searchController', () => {
         it('should reset the visited results', () => {
             reqMock = {
                 body: {
+                    searchFormType: 'nameAge',
                     forename: 'Matthew',
-                    forename2: 'James',
-                    surname: 'Whitfield',
-                    prisonNumber: '666'
+                    surname: 'Whitfield'
                 },
                 query: {0: 'names', 1: 'identifier', 2: 'incorrect'},
                 session: {
@@ -205,7 +227,6 @@ describe('searchController', () => {
                 session: {
                     userInput: {
                         forename: 'Matthew',
-                        forename2: 'James',
                         surname: 'Whitfield'
                     }
                 },
@@ -291,7 +312,6 @@ describe('searchController', () => {
                 getResultsProxy()(reqMock, resMock);
                 expect(auditStub).to.be.calledWith('SEARCH', 'x@y.com', {
                     forename: 'Matthew',
-                    forename2: 'James',
                     page: 1,
                     surname: 'Whitfield'
                 });
@@ -345,7 +365,6 @@ describe('searchController', () => {
 
                 const expectedFormContents = {
                     forename: "Matthew",
-                    forename2: "James",
                     surname: "Whitfield"
                 };
 
@@ -538,7 +557,6 @@ describe('searchController', () => {
 
                     const expectedUserInput = {
                         forename: 'Matthew',
-                        forename2: 'James',
                         surname: 'Whitfield',
                         page: 1,
                     };
@@ -552,7 +570,6 @@ describe('searchController', () => {
 
                     const expectedUserInput = {
                         forename: 'Matthew',
-                        forename2: 'James',
                         surname: 'Whitfield',
                         page: 1,
                         gender: ['F']
@@ -567,7 +584,6 @@ describe('searchController', () => {
 
                     const expectedUserInput = {
                         forename: 'Matthew',
-                        forename2: 'James',
                         surname: 'Whitfield',
                         page: 1,
                         gender: ['F', 'M']
@@ -582,7 +598,6 @@ describe('searchController', () => {
 
                     const expectedUserInput = {
                         forename: 'Matthew',
-                        forename2: 'James',
                         surname: 'Whitfield',
                         page: 1,
                         hasHDC: [true]
@@ -597,7 +612,6 @@ describe('searchController', () => {
 
                     const expectedUserInput = {
                         forename: 'Matthew',
-                        forename2: 'James',
                         surname: 'Whitfield',
                         page: 1,
                         isLifer: [true]
@@ -613,7 +627,6 @@ describe('searchController', () => {
 
                     const expectedUserInput = {
                         forename: 'Matthew',
-                        forename2: 'James',
                         surname: 'Whitfield',
                         page: 1,
                         gender: ['M']
@@ -629,7 +642,6 @@ describe('searchController', () => {
 
                     const expectedUserInput = {
                         forename: 'Matthew',
-                        forename2: 'James',
                         surname: 'Whitfield',
                         page: 1,
                         gender: ['F']
@@ -646,7 +658,6 @@ describe('searchController', () => {
 
                     const expectedUserInput = {
                         forename: 'Matthew',
-                        forename2: 'James',
                         surname: 'Whitfield',
                         page: 1,
                         hasHDC: [true]

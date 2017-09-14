@@ -23,38 +23,25 @@ const {
 } = require('./helpers/suggestionHelpers');
 
 const availableSearchOptions = exports.availableSearchOptions = {
-    identifier: {
-        fields: ['prisonNumber', 'pncNumber', 'croNumber'],
-        hints: []
-    },
-    names: {
-        fields: ['forename', 'forename2', 'surname'],
-        hints: ['wildcard']
-    },
-    dob: {
-        fields: ['dobDay', 'dobMonth', 'dobYear', 'age'],
-        hints: []
-    },
-    address: {
-        fields: ['address'],
-        hints: []
-    }
+    identifier: ['prisonNumber', 'pncNumber', 'croNumber'],
+    nameAge: ['forename', 'surname', 'dobDay', 'dobMonth', 'dobYear', 'age'],
+    other: ['address']
 };
 
 const allAcceptableFields = Object.keys(availableSearchOptions).reduce((acceptableFields, searchOptionKey) => {
-    return acceptableFields.concat(...availableSearchOptions[searchOptionKey].fields);
+    return acceptableFields.concat(...availableSearchOptions[searchOptionKey]);
 }, []);
 
 function isIdentifierSearch(userInput) {
     const intersection = [...Object.keys(userInput)].filter(input => {
-        return availableSearchOptions.identifier.fields.includes(input);
+        return availableSearchOptions.identifier.includes(input);
     });
     return intersection.length > 0;
 }
 
 function isAddressSearch(userInput) {
     const intersection = [...Object.keys(userInput)].filter(input => {
-        return availableSearchOptions.address.fields.includes(input);
+        return availableSearchOptions.other.includes(input);
     });
     return intersection.length > 0;
 }
@@ -156,9 +143,9 @@ function parseResultsPageData(req, rowCount, searchResults, page, error) {
         queryStrings: getQueryStringsForSearch(req.url),
         formContents: searchedFor,
         usePlaceholder: Object.keys(searchedFor).length === 0,
-        idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
-        nameSearch: availableSearchOptions.names.fields.includes(Object.keys(searchedFor)[0]),
-        otherSearch: availableSearchOptions.address.fields.includes(Object.keys(searchedFor)[0]),
+        idSearch: availableSearchOptions.identifier.includes(Object.keys(searchedFor)[0]),
+        nameSearch: availableSearchOptions.nameAge.includes(Object.keys(searchedFor)[0]),
+        otherSearch: availableSearchOptions.other.includes(Object.keys(searchedFor)[0]),
         suggestions: getSearchSuggestions(req.session.userInput),
         shortList,
         moment: require('moment'),
@@ -168,7 +155,7 @@ function parseResultsPageData(req, rowCount, searchResults, page, error) {
 
 function createDataObjects(searchResults, session, shortList) {
 
-    if(!searchResults) {
+    if (!searchResults) {
         return [];
     }
 
@@ -181,7 +168,7 @@ function createDataObjects(searchResults, session, shortList) {
 
 function getUserInput(userInput) {
     return Object.keys(userInput).reduce((contents, field) => {
-        if(allAcceptableFields.includes(field)) {
+        if (allAcceptableFields.includes(field)) {
             return Object.assign({}, contents, {[field]: userInput[field]});
         }
         return contents;
@@ -190,7 +177,7 @@ function getUserInput(userInput) {
 
 function getShortList(req) {
 
-    if(!req.query.shortList) {
+    if (!req.query.shortList) {
         return null;
     }
 
@@ -220,30 +207,30 @@ function getMessageToDisplayFor(errorCode) {
 }
 
 const userInputFromSearchForm = requestBody => {
-    const getReturnedFields = composeFieldsForOptionReducer(requestBody);
-    return Object.keys(availableSearchOptions).reduce(getReturnedFields, {});
-};
 
-const composeFieldsForOptionReducer = requestBody => (collatedData, option) => {
-    const returnedFields = availableSearchOptions[option].fields.filter(field => requestBody[field]);
+    const allowedfields = availableSearchOptions[requestBody.searchFormType].filter(field => requestBody[field]);
 
-    returnedFields.forEach(field => collatedData[field] = requestBody[field].trim());
+    const collatedData = {};
+
+    allowedfields.forEach(field => collatedData[field] = requestBody[field].trim());
+
     return collatedData;
 };
 
+
 const inputValidates = userInput => {
 
-    if(!Object.keys(userInput).length > 0) {
+    if (!Object.keys(userInput).length > 0) {
         return {
             title: 'Please enter a value for at least one field'
         };
     }
 
-    if(isIdentifierSearch(userInput)) {
+    if (isIdentifierSearch(userInput)) {
         return null;
     }
 
-    if(isAddressSearch(userInput)) {
+    if (isAddressSearch(userInput)) {
         return validateAddressForm(userInput);
     }
 
@@ -269,7 +256,7 @@ exports.postFilters = function(req, res) {
 
 exports.postAddToShortlist = function(req, res) {
 
-    if(req.body.viewShortlist){
+    if (req.body.viewShortlist) {
         const theQuery = getUrlAsObject(req.get('referrer')).query;
         const shortlistHref = `/comparison/${asArray(theQuery.shortList).join(',')}`;
         res.redirect(createUrl(shortlistHref, theQuery));
@@ -341,6 +328,6 @@ function newValues(newValues, suggestion) {
     return Object.assign({}, newValues, {[suggestion.term]: suggestion.value});
 }
 
-function asArray(possibleArray){
+function asArray(possibleArray) {
     return typeof possibleArray === 'string' ? [possibleArray] : possibleArray;
 }

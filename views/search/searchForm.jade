@@ -11,10 +11,10 @@ div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
 
                 div.multiple-choice(data-target="nameAgeForm")
                     if namesOpen
-                        input#nameAge(type="radio" checked name="radio-contact-group" value="nameAge" aria-controls="nameAgeForm")
+                        input#nameAge(type="radio" checked name="searchFormType" value="nameAge" aria-controls="nameAgeForm")
                         label(for="nameAge") Name/age
                     else
-                        input#nameAge(type="radio" name="radio-contact-group" value="nameAge" aria-controls="nameAgeForm")
+                        input#nameAge(type="radio" name="searchFormType" value="nameAge" aria-controls="nameAgeForm")
                         label(for="nameAge") Name/age
 
                 div#nameAgeForm.panel.panel-border-narrow
@@ -23,10 +23,10 @@ div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
 
                 div.multiple-choice(data-target="identifierForm")
                     if idsOpen
-                        input#identifier(type="radio" checked name="radio-contact-group" value="identifier" aria-controls="identifierForm")
+                        input#identifier(type="radio" checked name="searchFormType" value="identifier" aria-controls="identifierForm")
                         label(for="identifier") Unique identifier
                     else
-                        input#identifier(type="radio" name="radio-contact-group" value="identifier" aria-controls="identifierForm")
+                        input#identifier(type="radio" name="searchFormType" value="identifier" aria-controls="identifierForm")
                         label(for="identifier") Unique identifier
 
                 div#identifierForm.panel.panel-border-narrow(aria-expanded="true")
@@ -34,10 +34,10 @@ div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
 
                 div.multiple-choice(data-target="otherForm")
                     if otherOpen
-                        input#other(type="radio" checked name="radio-contact-group" value="other" aria-controls="otherForm")
+                        input#other(type="radio" checked name="searchFormType" value="other" aria-controls="otherForm")
                         label(for="other") Other
                     else
-                        input#other(type="radio" name="radio-contact-group" value="other" aria-controls="otherForm")
+                        input#other(type="radio" name="searchFormType" value="other" aria-controls="otherForm")
                         label(for="other") Other
 
                 div#otherForm.panel.panel-border-narrow
@@ -49,30 +49,3 @@ div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
         div.padTop
             a#clearSearch(href="/search") New search
 
-
-
-
-
-
-
-
-//div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
-//    ul#formTab
-//        li(class = !idSearch || usePlaceholder ? "active" : undefined)
-//            a#otherFormLink.searchTab(data-tab="altForm" href="#") Name/age
-//        li(class = idSearch && !usePlaceholder ? "active" : undefined)
-//            a#idFormLink.searchTab(data-tab="idForm" href="#") Unique ID
-//
-//    div.formAlternative.tabPanel(data-panel="altForm" class = !idSearch || usePlaceholder ? undefined : "initiallyHidden")
-//
-//            include ./names.jade
-//            include ./dob.jade
-//            button.button#submitNonId Search
-//
-//    div.formIdentifiers.tabPanel(data-panel="idForm" class = idSearch && !usePlaceholder ? undefined : "initiallyHidden")
-//        form(id="idForm" method="post" action='/search/results/search')
-//            input(type="hidden" name="_csrf" value="#{csrfToken}")
-//            include ./identifier.jade
-//            button.button#submitId Search
-//    div.padTop
-//        a#clearSearch(href="/search") New search

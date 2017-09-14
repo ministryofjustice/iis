@@ -8,10 +8,11 @@ mixin tabs(pageOn, queryString, comparisonLength, compareHref)
                     else
                         |HPA
 
-                li#comparisonTab.tab(class = pageOn === 'Comparison' ? "tab-selected" : "tab")
-                    if pageOn !== 'Comparison' && compareHref
-                        a(href=compareHref + queryString) Comparison (#{comparisonLength})
-                    else
-                        span(class = pageOn !== 'Comparison' ? 'tabText' : undefined) Comparison (#{comparisonLength})
+                if comparisonEnabled
+                    li#comparisonTab.tab(class = pageOn === 'Comparison' ? "tab-selected" : "tab")
+                        if pageOn !== 'Comparison' && compareHref
+                            a(href=compareHref + queryString) Comparison (#{comparisonLength})
+                        else
+                            span(class = pageOn !== 'Comparison' ? 'tabText' : undefined) Comparison (#{comparisonLength})
 
 

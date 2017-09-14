@@ -41,5 +41,10 @@ module.exports = {
 
     searchResultsPerPage: get('SEARCH_RESULTS_PER_PAGE', 10),
 
-    administrators: get('ADMINISTRATORS', 'joe@example.com').replace(/ /g, '').split(',')
+    administrators: get('ADMINISTRATORS', 'joe@example.com').replace(/ /g, '').split(','),
+
+    features: {
+        comparison: get('COMPARISON_ENABLED', true),
+        addressSearch:  get('ADDRESS_SEARCH_ENABLED', false)
+    }
 };

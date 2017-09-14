@@ -22,6 +22,9 @@ const {
     getSearchSuggestions
 } = require('./helpers/suggestionHelpers');
 
+const comparisonEnabled = require('../server/config').features.comparison;
+const addressEnabled = require('../server/config').features.addressSearch;
+
 const availableSearchOptions = exports.availableSearchOptions = {
     identifier: ['prisonNumber', 'pncNumber', 'croNumber'],
     nameAge: ['forename', 'surname', 'dobDay', 'dobMonth', 'dobYear', 'age'],
@@ -131,6 +134,8 @@ function parseResultsPageData(req, rowCount, searchResults, page, error) {
     const shortList = getShortList(req);
     const data = createDataObjects(searchResults, req.session, shortList);
 
+
+
     return {
         content: {
             title: 'HPA Prisoner Search'
@@ -149,7 +154,9 @@ function parseResultsPageData(req, rowCount, searchResults, page, error) {
         suggestions: getSearchSuggestions(req.session.userInput),
         shortList,
         moment: require('moment'),
-        setCase: require('case')
+        setCase: require('case'),
+        comparisonEnabled,
+        addressEnabled
     };
 }
 

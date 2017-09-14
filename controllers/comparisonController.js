@@ -43,6 +43,7 @@ function parseResult(idsToCompare, req, result) {
         setCase: {capital},
         showAliases: anyContain('aliases', subjects),
         showAddresses: anyContain('addresses', subjects),
+        comparisonEnabled: true
     };
 }
 

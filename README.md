@@ -65,6 +65,7 @@ The following environment variables are used and values should be supplied for c
 * HEALTHCHECK_INTERVAL - how often to run the passive healthcheck and output to logs, in minutes
 * APPINSIGHTS_INSTRUMENTATIONKEY - Key for Azure application inisghts logger
 * APP_BASE_URL - Points to healthcheck endpoint?
+* COMPARISON_ENABLED - set to false to disable the comparison feature
 
 The following environment variables are used and a value MUST be supplied in production.
 

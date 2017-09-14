@@ -32,16 +32,17 @@ div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
                 div#identifierForm.panel.panel-border-narrow(aria-expanded="true")
                     include ./identifier.jade
 
-                div.multiple-choice(data-target="otherForm")
-                    if otherOpen
-                        input#other(type="radio" checked name="searchFormType" value="other" aria-controls="otherForm")
-                        label(for="other") Other
-                    else
-                        input#other(type="radio" name="searchFormType" value="other" aria-controls="otherForm")
-                        label(for="other") Other
+                if addressEnabled
+                    div.multiple-choice(data-target="otherForm")
+                        if otherOpen
+                            input#other(type="radio" checked name="searchFormType" value="other" aria-controls="otherForm")
+                            label(for="other") Other
+                        else
+                            input#other(type="radio" name="searchFormType" value="other" aria-controls="otherForm")
+                            label(for="other") Other
 
-                div#otherForm.panel.panel-border-narrow
-                    include ./other.jade
+                    div#otherForm.panel.panel-border-narrow
+                        include ./other.jade
 
         div.form-group
             button.button#submit Search

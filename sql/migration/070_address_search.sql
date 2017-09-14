@@ -2,7 +2,7 @@
 DROP TABLE HPA.ADDRESSES;
 GO
 
--- Also drop the old OIC table which was superceded
+-- Also drop the old OIC table which was superseded
 DROP TABLE HPA.OFFENCES_IN_CUSTODY;
 GO
 

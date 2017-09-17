@@ -18,4 +18,4 @@ div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
             include ./identifier.jade
             button.button#submitId Search
     div.padTop
-        a#clearSearch(href="/search") New search
+        a#clearSearch(href="/search#{queryStrings.shortList}") New search

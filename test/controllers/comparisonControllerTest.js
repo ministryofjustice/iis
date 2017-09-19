@@ -41,7 +41,8 @@ describe('Comparison controller', function() {
             },
             url: 'http://something.com/search',
             user: {email: 'x@y.com'},
-            query: {filter: 'M', shortList: 'AB111111', shortListName: 'Matt'}
+            query: {filter: 'M', shortList: 'AB111111', shortListName: 'Matt'},
+            session: {userInput: 'test'}
         };
         resMock = {render: sandbox.spy(), redirect: sandbox.spy(), status: sandbox.spy()};
     });

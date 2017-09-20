@@ -77,13 +77,22 @@ exports.postSearchForm = function(req, res) {
     req.session.userInput = userInput;
 
     if (theQuery.shortList) {
-        const resultsWithShortlist = '/search/results' + url.format({query: theQuery});
-        console.log(resultsWithShortlist);
+        const queryStrings = getQueryStrings(req, theQuery);
+        const resultsWithShortlist = '/search/results' + url.format({query: queryStrings});
         return res.redirect(resultsWithShortlist);
     }
 
     res.redirect('/search/results');
 };
+
+function getQueryStrings(req, theQuery) {
+
+    if(req.body.newsearch && theQuery.shortList) {
+        return {shortList: theQuery.shortList};
+    }
+
+    return theQuery;
+}
 
 exports.getResults = function(req, res) {
     logger.info('GET /search/results');

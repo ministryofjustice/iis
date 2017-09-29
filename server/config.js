@@ -47,6 +47,6 @@ module.exports = {
 
     features: {
         comparison: get('COMPARISON_ENABLED', true),
-        addressSearch:  get('ADDRESS_SEARCH_ENABLED', true)
+        addressSearch: get('ADDRESS_SEARCH_ENABLED', true)
     }
 };

@@ -2,6 +2,7 @@
 div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
     form(id="descriptionForm" method="post" action='/search/results/search')
         input(type="hidden" name="_csrf" value="#{csrfToken}")
+        input(type="hidden" name="newsearch" value="true")
 
         div.form-group
             fieldset

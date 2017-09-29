@@ -163,7 +163,8 @@ describe('searchController', () => {
                 session: {
                     userInput: {}
                 },
-                url: 'http://something.com/search'
+                url: 'http://something.com/search',
+                get: function() {return '';}
             };
 
             postSearchFormProxy()(reqMock, resMock);

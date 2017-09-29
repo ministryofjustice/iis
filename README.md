@@ -66,6 +66,7 @@ The following environment variables are used and values should be supplied for c
 * APPINSIGHTS_INSTRUMENTATIONKEY - Key for Azure application inisghts logger
 * APP_BASE_URL - Points to healthcheck endpoint?
 * COMPARISON_ENABLED - set to false to disable the comparison feature
+* ADDRESS_SEARCH_ENABLED - set to false to disable the address search feature
 
 The following environment variables are used and a value MUST be supplied in production.
 

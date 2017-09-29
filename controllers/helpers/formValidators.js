@@ -1,8 +1,10 @@
 const {validateDob, validateAge} = require('../../data/dob');
 const {validateName} = require('../../data/names');
+const utils = require('../../data/utils');
 
 module.exports = {
-    validateDescriptionForm
+    validateDescriptionForm,
+    validateAddressForm
 };
 
 function validateDescriptionForm(userInput) {
@@ -42,6 +44,18 @@ function validateDescriptionForm(userInput) {
         if(validationErrors) {
             return validationErrors;
         }
+    }
+
+    return null;
+}
+
+
+function validateAddressForm(userInput) {
+
+    const search = utils.cleanAddressSearch(userInput.address);
+
+    if (search.split(' ').length < 2) {
+        return {title: 'Enter at least 2 address elements'};
     }
 
     return null;

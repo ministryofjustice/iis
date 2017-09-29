@@ -111,5 +111,13 @@ module.exports = {
             text = text.replace(regex, Case.upper(acronym));
             return text;
         }).pop();
+    },
+
+    cleanAddressSearch: function(input) {
+        const search = input.replace(/([.,])/g, ' ').replace(/(['])/g, '');
+
+        const searchTerms = search.split(' ').filter(term => term.trim());
+
+        return searchTerms.join(', ');
     }
 };

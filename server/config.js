@@ -43,8 +43,10 @@ module.exports = {
 
     administrators: get('ADMINISTRATORS', 'joe@example.com').replace(/ /g, '').split(','),
 
+    addressSearchDistance: 5,
+
     features: {
         comparison: get('COMPARISON_ENABLED', true),
-        addressSearch: get('ADDRESS_SEARCH_ENABLED', false)
+        addressSearch: get('ADDRESS_SEARCH_ENABLED', true)
     }
 };

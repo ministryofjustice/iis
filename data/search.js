@@ -5,6 +5,8 @@ const {getCollection} = require('./dataAccess/iisData');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 const TYPES = require('tedious').TYPES;
 
+const distance = require('../server/config').addressSearchDistance;
+
 const getSearchOperatorSql = {
     prisonNumber: getStringSqlWithParams('PRISON_NUMBER'),
     pncNumber: getStringSqlWithParams('PNC_NUMBER'),
@@ -16,7 +18,8 @@ const getSearchOperatorSql = {
     age: getAgeSqlWithParams,
     gender: getGenderSqlWithParams,
     hasHDC: getFilterSql('HAS_HDC'),
-    isLifer: getFilterSql('IS_LIFER')
+    isLifer: getFilterSql('IS_LIFER'),
+    address: getAddressSqlWithParams
 };
 
 exports.getSearchResultsCount = function(userInput) {
@@ -151,6 +154,17 @@ function getAgeSqlWithParams(obj) {
             {column: 'from_date', type: TYPES.VarChar, value: dateRange[0]},
             {column: 'to_date', type: TYPES.VarChar, value: dateRange[1]}
         ]
+    };
+}
+
+function getAddressSqlWithParams(obj) {
+
+    const addressTerms = utils.cleanAddressSearch(obj.userInput.address);
+
+    let sql = `PRISON_NUMBER IN (SELECT DISTINCT PRISON_NUMBER FROM HPA.ADDRESS_LOOKUP WHERE CONTAINS(ADDRESS_TEXT, 'NEAR((${addressTerms}), ${distance}, TRUE)'))`;
+    return {
+        sql,
+        params: []
     };
 }
 

@@ -241,6 +241,18 @@ describe('Search', () => {
             });
         });
 
+        it('should populate address if passed in', () => {
+            const result = inmateProxy()({address: '1 high street'});
+
+            return result.then((data) => {
+                const sql = getCollectionStub.getCalls()[0].args[0];
+                const params = getCollectionStub.getCalls()[0].args[1];
+
+                expect(sql).to.contain('WHERE CONTAINS(ADDRESS_TEXT');
+                expect(sql).to.contain('NEAR((1, high, street)');
+            });
+        });
+
         it('should combine where statements', () => {
             const result = inmateProxy()({prisonNumber: '77777777', forename: 'Dave'});
 

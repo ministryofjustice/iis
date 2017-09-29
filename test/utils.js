@@ -102,4 +102,22 @@ describe('Utility methods', function() {
             .to.equal('This code was done by a beardy guy, chilling in a barnyard.')
     });
 
+    describe('cleanAddressSearch', () => {
+
+        it('should split on spaces and join terms with commas', function() {
+            expect(utils.cleanAddressSearch('a b ccc ccc')).to.equal('a, b, ccc, ccc');
+        });
+
+        it('should change comma to space and join terms with commas', function() {
+            expect(utils.cleanAddressSearch('a,b ccc,ccc')).to.equal('a, b, ccc, ccc');
+        });
+
+        it('should change period to space and join terms with commas', function() {
+            expect(utils.cleanAddressSearch('a.b ccc.ccc')).to.equal('a, b, ccc, ccc');
+        });
+
+        it('should remove quotes and join terms with commas', function() {
+            expect(utils.cleanAddressSearch(`a'b ccc'ccc`)).to.equal('ab, cccccc');
+        });
+    });
 });

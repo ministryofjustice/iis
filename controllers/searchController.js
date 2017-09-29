@@ -4,7 +4,7 @@ const {getSearchResultsCount, getSearchResults} = require('../data/search');
 const utils = require('../data/utils');
 const audit = require('../data/audit');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
-const {validateDescriptionForm} = require('./helpers/formValidators');
+const {validateDescriptionForm, validateAddressForm} = require('./helpers/formValidators');
 
 const url = require('url');
 
@@ -28,27 +28,25 @@ const comparisonEnabled = require('../server/config').features.comparison;
 const addressEnabled = require('../server/config').features.addressSearch;
 
 const availableSearchOptions = exports.availableSearchOptions = {
-    identifier: {
-        fields: ['prisonNumber', 'pncNumber', 'croNumber'],
-        hints: []
-    },
-    names: {
-        fields: ['forename', 'forename2', 'surname'],
-        hints: ['wildcard']
-    },
-    dob: {
-        fields: ['dobDay', 'dobMonth', 'dobYear', 'age'],
-        hints: []
-    }
+    identifier: ['prisonNumber', 'pncNumber', 'croNumber'],
+    nameAge: ['forename', 'surname', 'dobDay', 'dobMonth', 'dobYear', 'age'],
+    other: ['address']
 };
 
 const allAcceptableFields = Object.keys(availableSearchOptions).reduce((acceptableFields, searchOptionKey) => {
-    return acceptableFields.concat(...availableSearchOptions[searchOptionKey].fields);
+    return acceptableFields.concat(...availableSearchOptions[searchOptionKey]);
 }, []);
 
 function isIdentifierSearch(userInput) {
     const intersection = [...Object.keys(userInput)].filter(input => {
-        return availableSearchOptions.identifier.fields.includes(input);
+        return availableSearchOptions.identifier.includes(input);
+    });
+    return intersection.length > 0;
+}
+
+function isAddressSearch(userInput) {
+    const intersection = [...Object.keys(userInput)].filter(input => {
+        return availableSearchOptions.other.includes(input);
     });
     return intersection.length > 0;
 }
@@ -170,7 +168,9 @@ function parseResultsPageData(req, rowCount, searchResults, page, error) {
         queryStrings,
         formContents: searchedFor,
         usePlaceholder: Object.keys(searchedFor).length === 0,
-        idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
+        idSearch: availableSearchOptions.identifier.includes(Object.keys(searchedFor)[0]),
+        nameSearch: availableSearchOptions.nameAge.includes(Object.keys(searchedFor)[0]),
+        otherSearch: availableSearchOptions.other.includes(Object.keys(searchedFor)[0]),
         suggestions: getSearchSuggestions(req.session.userInput),
         shortList,
         moment: require('moment'),
@@ -234,16 +234,16 @@ function getMessageToDisplayFor(errorCode) {
 }
 
 const userInputFromSearchForm = requestBody => {
-    const getReturnedFields = composeFieldsForOptionReducer(requestBody);
-    return Object.keys(availableSearchOptions).reduce(getReturnedFields, {});
-};
 
-const composeFieldsForOptionReducer = requestBody => (collatedData, option) => {
-    const returnedFields = availableSearchOptions[option].fields.filter(field => requestBody[field]);
+    const allowedfields = availableSearchOptions[requestBody.searchFormType].filter(field => requestBody[field]);
 
-    returnedFields.forEach(field => collatedData[field] = requestBody[field].trim());
+    const collatedData = {};
+
+    allowedfields.forEach(field => collatedData[field] = requestBody[field].trim());
+
     return collatedData;
 };
+
 
 const inputValidates = userInput => {
 
@@ -253,7 +253,15 @@ const inputValidates = userInput => {
         };
     }
 
-    return isIdentifierSearch(userInput) ? null : validateDescriptionForm(userInput);
+    if (isIdentifierSearch(userInput)) {
+        return null;
+    }
+
+    if (isAddressSearch(userInput)) {
+        return validateAddressForm(userInput);
+    }
+
+    return validateDescriptionForm(userInput);
 };
 
 exports.postPagination = function(req, res) {

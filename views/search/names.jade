@@ -6,13 +6,6 @@ block search-page
         input.form-control.initialFocus#forename(type="text", name="forename", maxlength="13" value="#{formContents && formContents.forename ? formContents.forename : ''}")
 
     div.form-group
-        label(for="forename2")
-            span.form-label Middle name or initial
-
-        input.form-control#forename2(type="text", name="forename2", maxlength="13" value="#{formContents && formContents.forename2 ? formContents.forename2 : ''}")
-
-
-    div.form-group
         label(for="surname")
             span.form-label Surname
 

@@ -6,6 +6,8 @@ const audit = require('../data/audit');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 const {validateDescriptionForm, validateAddressForm} = require('./helpers/formValidators');
 
+const url = require('url');
+
 const {
     getInputtedFilters,
     removeAllFilters
@@ -58,6 +60,9 @@ exports.getIndex = function(req, res) {
 };
 
 exports.postSearchForm = function(req, res) {
+
+    const theQuery = getUrlAsObject(req.get('referrer')).query;
+
     const userInput = userInputFromSearchForm(req.body);
     const validationError = inputValidates(userInput);
 
@@ -68,8 +73,24 @@ exports.postSearchForm = function(req, res) {
 
     req.session.visited = [];
     req.session.userInput = userInput;
+
+    if (theQuery.shortList) {
+        const queryStrings = getQueryStrings(req, theQuery);
+        const resultsWithShortlist = '/search/results' + url.format({query: queryStrings});
+        return res.redirect(resultsWithShortlist);
+    }
+
     res.redirect('/search/results');
 };
+
+function getQueryStrings(req, theQuery) {
+
+    if(req.body.newsearch && theQuery.shortList) {
+        return {shortList: theQuery.shortList};
+    }
+
+    return theQuery;
+}
 
 exports.getResults = function(req, res) {
     logger.info('GET /search/results');
@@ -133,8 +154,7 @@ function parseResultsPageData(req, rowCount, searchResults, page, error) {
     const searchedFor = getUserInput(req.session.userInput);
     const shortList = getShortList(req);
     const data = createDataObjects(searchResults, req.session, shortList);
-
-
+    const queryStrings = getQueryStringsForSearch(req.url);
 
     return {
         content: {
@@ -145,7 +165,7 @@ function parseResultsPageData(req, rowCount, searchResults, page, error) {
         data,
         err: error || getPaginationErrors(req.query),
         filtersForView: getInputtedFilters(req.query, 'VIEW'),
-        queryStrings: getQueryStringsForSearch(req.url),
+        queryStrings,
         formContents: searchedFor,
         usePlaceholder: Object.keys(searchedFor).length === 0,
         idSearch: availableSearchOptions.identifier.includes(Object.keys(searchedFor)[0]),

@@ -98,7 +98,8 @@ describe('searchController', () => {
                 session: {
                     userInput: {}
                 },
-                url: 'http://something.com/search'
+                url: 'http://something.com/search',
+                get: function() {return '';}
             };
 
             postSearchFormProxy()(reqMock, resMock);
@@ -117,7 +118,8 @@ describe('searchController', () => {
                 session: {
                     userInput: {}
                 },
-                url: 'http://something.com/search'
+                url: 'http://something.com/search',
+                get: function() {return '';}
             };
 
             postSearchFormProxy()(reqMock, resMock);
@@ -138,7 +140,8 @@ describe('searchController', () => {
                 session: {
                     userInput: {}
                 },
-                url: 'http://something.com/search'
+                url: 'http://something.com/search',
+                get: function() {return '';}
             };
 
             postSearchFormProxy()(reqMock, resMock);
@@ -180,7 +183,8 @@ describe('searchController', () => {
                 session: {
                     userInput: {}
                 },
-                url: 'http://something.com/search'
+                url: 'http://something.com/search',
+                get: function() {return '';}
             };
 
             postSearchFormProxy(descriptionValidatorStub)(reqMock, resMock);
@@ -201,7 +205,8 @@ describe('searchController', () => {
                 query: {0: 'names', 1: 'identifier', 2: 'incorrect'},
                 session: {
                     visited: ['id1']
-                }
+                },
+                get: function() {return '';}
             };
 
             postSearchFormProxy()(reqMock, resMock);

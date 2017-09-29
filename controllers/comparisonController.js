@@ -24,7 +24,8 @@ exports.getComparison = function(req, res) {
 function parseResult(idsToCompare, req, result) {
 
     const limitedSubjects = result.slice(0, MAX_PRISONERS_FOR_COMPARISON);
-    const returnQuery = retainUrlQuery(req.url);
+    const returnQuery =  retainUrlQuery(req.url);
+    const returnPath =  getReturnPath(req);
     const returnClearShortListQuery = createUrl('/search/results', removeTermsFrom(req.query, ['shortList', 'shortListName']));
 
 
@@ -38,6 +39,7 @@ function parseResult(idsToCompare, req, result) {
         content: {title: 'Prisoner Comparison'},
         subjects,
         returnQuery,
+        returnPath,
         returnClearShortListQuery,
         moment: require('moment'),
         setCase: {capital},
@@ -45,6 +47,23 @@ function parseResult(idsToCompare, req, result) {
         showAddresses: anyContain('addresses', subjects),
         comparisonEnabled: true
     };
+}
+
+function getReturnPath(req){
+    if(isEmpty(req.session.userInput)){
+        return '/search';
+    } else {
+        return '/search/results';
+    }
+}
+
+function isEmpty(obj) {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            return false;
+    }
+
+    return JSON.stringify(obj) === JSON.stringify({});
 }
 
 function addRemoveLinksFor(subjects, query) {

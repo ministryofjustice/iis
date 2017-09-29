@@ -8,6 +8,7 @@ div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
     div.formAlternative.tabPanel(data-panel="altForm" class = !idSearch || usePlaceholder ? undefined : "initiallyHidden")
         form(id="descriptionForm" method="post" action='/search/results/search')
             input(type="hidden" name="_csrf" value="#{csrfToken}")
+            input(type="hidden" name="newsearch" value="true")
             include ./names.jade
             include ./dob.jade
             button.button#submitNonId Search
@@ -18,4 +19,4 @@ div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
             include ./identifier.jade
             button.button#submitId Search
     div.padTop
-        a#clearSearch(href="/search") New search
+        a#clearSearch(href="/search#{queryStrings.shortList}") New search

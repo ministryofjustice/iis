@@ -22,7 +22,7 @@ mixin inmate(item)
                 - var fullName = setCase.capital(item.firstName + ' ' + middleName + item.lastName)
                 input(type="hidden" name="addToShortListName" value="#{!item.shortListed ? fullName+' added to' : fullName+' removed from'}")
 
-                if comparisonEnabled && data.length > 1
+                if comparisonEnabled && data.length >= 1
                     if item.shortListed
                         input(type="submit" value="Remove from shortlist" class="link" id="addToShortlist")
                     else if !shortList || shortList.prisonNumbers.length < 3

@@ -6,6 +6,8 @@ const audit = require('../data/audit');
 const resultsPerPage = require('../server/config').searchResultsPerPage;
 const {validateDescriptionForm} = require('./helpers/formValidators');
 
+const url = require('url');
+
 const {
     getInputtedFilters,
     removeAllFilters
@@ -60,6 +62,9 @@ exports.getIndex = function(req, res) {
 };
 
 exports.postSearchForm = function(req, res) {
+
+    const theQuery = getUrlAsObject(req.get('referrer')).query;
+
     const userInput = userInputFromSearchForm(req.body);
     const validationError = inputValidates(userInput);
 
@@ -70,8 +75,24 @@ exports.postSearchForm = function(req, res) {
 
     req.session.visited = [];
     req.session.userInput = userInput;
+
+    if (theQuery.shortList) {
+        const queryStrings = getQueryStrings(req, theQuery);
+        const resultsWithShortlist = '/search/results' + url.format({query: queryStrings});
+        return res.redirect(resultsWithShortlist);
+    }
+
     res.redirect('/search/results');
 };
+
+function getQueryStrings(req, theQuery) {
+
+    if(req.body.newsearch && theQuery.shortList) {
+        return {shortList: theQuery.shortList};
+    }
+
+    return theQuery;
+}
 
 exports.getResults = function(req, res) {
     logger.info('GET /search/results');
@@ -135,8 +156,7 @@ function parseResultsPageData(req, rowCount, searchResults, page, error) {
     const searchedFor = getUserInput(req.session.userInput);
     const shortList = getShortList(req);
     const data = createDataObjects(searchResults, req.session, shortList);
-
-
+    const queryStrings = getQueryStringsForSearch(req.url);
 
     return {
         content: {
@@ -147,7 +167,7 @@ function parseResultsPageData(req, rowCount, searchResults, page, error) {
         data,
         err: error || getPaginationErrors(req.query),
         filtersForView: getInputtedFilters(req.query, 'VIEW'),
-        queryStrings: getQueryStringsForSearch(req.url),
+        queryStrings,
         formContents: searchedFor,
         usePlaceholder: Object.keys(searchedFor).length === 0,
         idSearch: availableSearchOptions.identifier.fields.includes(Object.keys(searchedFor)[0]),
@@ -162,7 +182,7 @@ function parseResultsPageData(req, rowCount, searchResults, page, error) {
 
 function createDataObjects(searchResults, session, shortList) {
 
-    if(!searchResults) {
+    if (!searchResults) {
         return [];
     }
 
@@ -175,7 +195,7 @@ function createDataObjects(searchResults, session, shortList) {
 
 function getUserInput(userInput) {
     return Object.keys(userInput).reduce((contents, field) => {
-        if(allAcceptableFields.includes(field)) {
+        if (allAcceptableFields.includes(field)) {
             return Object.assign({}, contents, {[field]: userInput[field]});
         }
         return contents;
@@ -184,7 +204,7 @@ function getUserInput(userInput) {
 
 function getShortList(req) {
 
-    if(!req.query.shortList) {
+    if (!req.query.shortList) {
         return null;
     }
 
@@ -227,7 +247,7 @@ const composeFieldsForOptionReducer = requestBody => (collatedData, option) => {
 
 const inputValidates = userInput => {
 
-    if(!Object.keys(userInput).length > 0) {
+    if (!Object.keys(userInput).length > 0) {
         return {
             title: 'Please enter a value for at least one field'
         };
@@ -255,7 +275,7 @@ exports.postFilters = function(req, res) {
 
 exports.postAddToShortlist = function(req, res) {
 
-    if(req.body.viewShortlist){
+    if (req.body.viewShortlist) {
         const theQuery = getUrlAsObject(req.get('referrer')).query;
         const shortlistHref = `/comparison/${asArray(theQuery.shortList).join(',')}`;
         res.redirect(createUrl(shortlistHref, theQuery));
@@ -327,6 +347,6 @@ function newValues(newValues, suggestion) {
     return Object.assign({}, newValues, {[suggestion.term]: suggestion.value});
 }
 
-function asArray(possibleArray){
+function asArray(possibleArray) {
     return typeof possibleArray === 'string' ? [possibleArray] : possibleArray;
 }

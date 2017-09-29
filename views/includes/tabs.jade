@@ -1,10 +1,10 @@
-mixin tabs(pageOn, queryString, comparisonLength, compareHref)
+mixin tabs(pageOn, queryString, comparisonLength, compareHref, hpaHref)
     div.grid-row
         div.column-full
             ul.tab-wrapper
                 li#hpaTab.tab(class = pageOn === 'HPA' ? "tab-selected" : "tab")
                     if pageOn !== 'HPA'
-                        a(href='/search/results'+queryString) HPA
+                        a(href=hpaHref+queryString) HPA
                     else
                         |HPA
 

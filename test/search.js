@@ -248,7 +248,7 @@ describe('Search', () => {
                 const sql = getCollectionStub.getCalls()[0].args[0];
                 const params = getCollectionStub.getCalls()[0].args[1];
 
-                expect(sql).to.contain('WHERE CONTAINS(ADDRESS_TEXT');
+                expect(sql).to.contain('CONTAINS(ADDRESS_TEXT');
                 expect(sql).to.contain('NEAR((1, high, street)');
             });
         });

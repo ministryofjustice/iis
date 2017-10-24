@@ -49,5 +49,8 @@ div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
             button.button#submit Search
 
         div.padTop
-            a#clearSearch(href="/search#{queryStrings.shortList}") New search
+            if queryStrings.shortList
+                a#clearSearch(href="/search#{queryStrings.shortList}") New search
+            else
+                a#clearSearch(href="/search") New search
 

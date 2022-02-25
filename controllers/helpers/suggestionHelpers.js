@@ -47,7 +47,7 @@ const suggestionsFor = inputs => (allSuggestions, searchTerm) => {
     const suggestions = searchSuggestions[searchTerm].map(suggestion => {
         const value = suggestion.suggest(inputs[searchTerm]);
         const {type, term} = suggestion;
-        return {type, term, value}
+        return {type, term, value};
     }).filter(suggestion => suggestion.value !== null);
 
     return suggestions.length === 0 ? allSuggestions : Object.assign({}, allSuggestions, {[searchTerm]: suggestions});
@@ -125,7 +125,7 @@ function ageToAgeRange(age) {
     if (age.includes('-')) return null;
     const start = age - 2;
     const end = +age + 2;
-    return `${start}-${end}`
+    return `${start}-${end}`;
 }
 
 function dobToAgeRange(dob) {

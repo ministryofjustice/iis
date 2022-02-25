@@ -3,7 +3,6 @@ const PDFTable = require('voilab-pdf-table');
 const content = require('../../data/content');
 const Case = require('./textHelpers');
 const moment = require('moment');
-const logger = require('../../log');
 
 module.exports = {
     createPdf,
@@ -315,6 +314,7 @@ function offenceContent(doc, items) {
         return {
             date: moment(date).format('DD/MM/YYYY'),
             offenceCode: `Offence code ${code}`,
+            // eslint-disable-next-line camelcase
             establishment: establishment ? `${Case.sentenceWithAcronyms(establishment)}` : `${establishment_code}`
         };
     });
@@ -329,8 +329,9 @@ function custodyOffenceContent(doc, items) {
         subSection(doc, `${moment(item.date).format('DD/MM/YYYY')}, ${Case.sentenceWithAcronyms(item.establishment)}`);
         doc.text(`${Case.sentence(item.outcome)} - ${Case.sentenceWithAcronyms(item.charge)}`);
 
-        if (item.punishments)
-            punishmentContent(doc, item.punishments);
+        if (item.punishments) {
+punishmentContent(doc, item.punishments);
+}
     });
 }
 

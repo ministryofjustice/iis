@@ -4,7 +4,6 @@ const {capital} = require('./helpers/textHelpers');
 const {createUrl, retainUrlQuery, removeValue} = require('./helpers/urlHelpers');
 const logger = require('../log');
 const audit = require('../data/audit');
-const PATH = '/comparison/';
 const url = require('url');
 
 exports.getComparison = function(req, res) {
@@ -24,9 +23,10 @@ exports.getComparison = function(req, res) {
 function parseResult(idsToCompare, req, result) {
 
     const limitedSubjects = result.slice(0, MAX_PRISONERS_FOR_COMPARISON);
-    const returnQuery =  retainUrlQuery(req.url);
-    const returnPath =  getReturnPath(req);
-    const returnClearShortListQuery = createUrl('/search/results', removeTermsFrom(req.query, ['shortList', 'shortListName']));
+    const returnQuery = retainUrlQuery(req.url);
+    const returnPath = getReturnPath(req);
+    const returnClearShortListQuery =
+        createUrl('/search/results', removeTermsFrom(req.query, ['shortList', 'shortListName']));
 
 
     const orderedSubjects = idsToCompare.map(id => {
@@ -49,8 +49,8 @@ function parseResult(idsToCompare, req, result) {
     };
 }
 
-function getReturnPath(req){
-    if(isEmpty(req.session.userInput)){
+function getReturnPath(req) {
+    if(isEmpty(req.session.userInput)) {
         return '/search';
     } else {
         return '/search/results';
@@ -58,9 +58,10 @@ function getReturnPath(req){
 }
 
 function isEmpty(obj) {
-    for(var prop in obj) {
-        if(obj.hasOwnProperty(prop))
-            return false;
+    for(let prop in obj) {
+        if(obj.hasOwnProperty(prop)) {
+return false;
+}
     }
 
     return JSON.stringify(obj) === JSON.stringify({});

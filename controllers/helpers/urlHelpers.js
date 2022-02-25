@@ -45,9 +45,9 @@ function toggleFromQueryItem(req, term, value, referrer = false) {
     const query = !referrer ? req.query : getUrlAsObject(req.get('referrer')).query;
 
     if (containsValue(query, term, value)) {
-        return deleteValue(query, term, value)
+        return deleteValue(query, term, value);
     } else {
-        return addValue(query, term, value)
+        return addValue(query, term, value);
     }
 }
 

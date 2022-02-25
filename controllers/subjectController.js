@@ -45,12 +45,12 @@ exports.getSubject = function(req, res) {
         });
 };
 
-function isShortlistView(req){
+function isShortlistView(req) {
     const referrer = ''+req.get('referrer');
     return referrer && referrer.indexOf('/comparison') !== -1;
 }
 
-function getShortlistHref( req){
+function getShortlistHref( req) {
     const theQuery = getUrlAsObject(req.get('referrer')).query;
     return `/comparison/${asArray(theQuery.shortList).join(',')}`;
 }
@@ -108,6 +108,6 @@ function saveVisited(session, item) {
     }
 }
 
-function asArray(possibleArray){
+function asArray(possibleArray) {
     return typeof possibleArray === 'string' ? [possibleArray] : possibleArray;
 }

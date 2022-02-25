@@ -15,7 +15,8 @@
     "lint": "eslint . --cache --max-warnings 0",
     "record-build-info": "node ./bin/record-build-info",
     "wait-for-deploy": "node ./bin/wait-for-deploy",
-    "prepublish": ""
+    "prepublish": "",
+    "clean": "rm -rf public govuk_modules .port.tmp *.log build uploads test-results.xml"
   },
   "repository": {
     "type": "git",

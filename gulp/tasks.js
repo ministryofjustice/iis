@@ -17,7 +17,6 @@ gulp.task('dev', function (done) {
 
 gulp.task('build', function (done) {
     runSequence(
-        'clean',
         'generate-assets',done)
 });
 

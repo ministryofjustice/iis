@@ -11,7 +11,6 @@ gulp.task('default', function (done) {
 gulp.task('dev', function (done) {
     runSequence(
         'build',
-        'test',
         'watch',
         'server', done)
 });
@@ -37,14 +36,3 @@ gulp.task('watch', function (done) {
         'watch-client-js',
         'watch-tests', done)
 });
-
-gulp.task('silent-test', function (done) {
-    runSequence(
-        'logs-off',
-        'test', done)
-});
-
-gulp.task('logs-off', function () {
-    process.env.NODE_ENV = 'test';
-});
-

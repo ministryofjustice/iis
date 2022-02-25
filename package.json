@@ -10,7 +10,7 @@
   "scripts": {
     "postinstall": "gulp",
     "start": "gulp && node .",
-    "test": "NODE_ENV=dev mocha --recursive test",
+    "test": "NODE_ENV=test mocha --recursive test",
     "snyk-protect": "snyk protect",
     "lint": "eslint . --cache --max-warnings 0",
     "record-build-info": "node ./bin/record-build-info",

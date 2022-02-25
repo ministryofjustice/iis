@@ -11,7 +11,6 @@ gulp.task('default', function (done) {
 gulp.task('dev', function (done) {
     runSequence(
         'build',
-        'lint',
         'test',
         'watch',
         'server', done)
@@ -37,12 +36,6 @@ gulp.task('watch', function (done) {
         'watch-assets',
         'watch-client-js',
         'watch-tests', done)
-});
-
-gulp.task('lint', function (done) {
-    runSequence(
-        'lint-client',
-        'lint-server', done)
 });
 
 gulp.task('silent-test', function (done) {

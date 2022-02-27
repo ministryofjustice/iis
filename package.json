@@ -14,8 +14,7 @@
     "snyk-protect": "snyk protect",
     "lint": "gulp lint",
     "record-build-info": "node ./bin/record-build-info",
-    "wait-for-deploy": "node ./bin/wait-for-deploy",
-    "prepublish": "npm run snyk-protect"
+    "wait-for-deploy": "node ./bin/wait-for-deploy"
   },
   "repository": {
     "type": "git",

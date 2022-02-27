@@ -1,0 +1,16 @@
+version: '3.1'
+services:
+  iis-db:
+    build: ./sql
+    networks:
+      - hmpps
+    container_name: iis-db
+    restart: always
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: NotVerySecretPa55word_SA_01
+      IIS_USER_PASSWORD: NotVerySecretPa55word_IIS_01
+
+networks: 
+  hmpps:

@@ -1,15 +1,10 @@
 'use strict';
 
 let gulp = require('gulp');
-let sass = require('gulp-sass');
+let sass = require('gulp-sass')(require('sass'));
 let sourcemaps = require('gulp-sourcemaps');
 let sassVariables = require('gulp-sass-variables');
 let rename = require('gulp-rename');
-
-gulp.task('sass', [
-    'standard-sass',
-    'sass-old-ie',
-]);
 
 gulp.task('standard-sass', function () {
   return gulp.src('assets/sass/*.scss')
@@ -36,5 +31,7 @@ gulp.task('sass-old-ie', function () {
     .pipe(gulp.dest('public/stylesheets/'));
 });
 
-
-
+gulp.task('sass', gulp.series(
+    'standard-sass',
+    'sass-old-ie',
+));

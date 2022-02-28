@@ -9,7 +9,7 @@
   },
   "scripts": {
     "postinstall": "gulp",
-    "start": "gulp && node .",
+    "start": "./build.sh && gulp && node .",
     "test": "NODE_ENV=test mocha --recursive test",
     "snyk-protect": "snyk protect",
     "lint": "eslint . --cache --max-warnings 0",

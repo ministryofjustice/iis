@@ -3,10 +3,10 @@ block search-page
         label(for="forename")
             span.form-label First name or initial
 
-        input.form-control.initialFocus#forename(type="text", name="forename", maxlength="13" value="#{formContents && formContents.forename ? formContents.forename : ''}")
+        input.form-control.initialFocus#forename(type="text", name="forename", maxlength="13" value=formContents && formContents.forename ? formContents.forename : '')
 
     div.form-group
         label(for="surname")
             span.form-label Surname
 
-        input.form-control#surname(type="text", name="surname", maxlength="26" value="#{formContents && formContents.surname ? formContents.surname : ''}")
+        input.form-control#surname(type="text", name="surname", maxlength="26" value=formContents && formContents.surname ? formContents.surname : '')

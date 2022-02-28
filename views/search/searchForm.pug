@@ -1,7 +1,7 @@
 
 div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
     form(id="descriptionForm" method="post" action='/search/results/search')
-        input(type="hidden" name="_csrf" value="#{csrfToken}")
+        input(type="hidden" name="_csrf" value=`${csrfToken}`)
         input(type="hidden" name="newsearch" value="true")
 
         div.form-group
@@ -50,7 +50,7 @@ div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
 
         div.padTop
             if queryStrings.shortList
-                a#clearSearch(href="/search#{queryStrings.shortList}") New search
+                a#clearSearch(href=`/search${queryStrings.shortList}`) New search
             else
                 a#clearSearch(href="/search") New search
 

@@ -2,7 +2,7 @@ extends ../layout
 include ../includes/tabs
 mixin inmate(item)
     div.inmateDetails(class=item.visited ? 'visited' : '')
-        a.inmateBlock(href="/subject/#{item.prisonNumber}/summary#{queryStrings.thisPage}")
+        a.inmateBlock(href=`/subject/${item.prisonNumber}/summary${queryStrings.thisPage}`)
             span.inmateContainer
                 span(class=item.visited ? '' : 'bold-medium').capitalise-text #{setCase.capital(item.firstName +' '+ (item.middleName)) +' '+ item.lastName +' '}
                 if item.dob
@@ -16,11 +16,11 @@ mixin inmate(item)
                             |  &bull; Reception #{moment(item.receptionDate).format('DD/MM/YYYY')}
 
             form(method="post" action="/search/addToShortlist")
-                input(type="hidden" name="_csrf" value="#{csrfToken}")
-                input(type="hidden" name="addToShortList" value="#{item.prisonNumber}")
+                input(type="hidden" name="_csrf" value=`${csrfToken}`)
+                input(type="hidden" name="addToShortList" value=`${item.prisonNumber}`)
                 - var middleName = item.middleName ? item.middleName + ' ' : ''
                 - var fullName = setCase.capital(item.firstName + ' ' + middleName + item.lastName)
-                input(type="hidden" name="addToShortListName" value="#{!item.shortListed ? fullName+' added to' : fullName+' removed from'}")
+                input(type="hidden" name="addToShortListName" value=`${!item.shortListed ? fullName+' added to' : fullName+' removed from'}`)
 
                 if comparisonEnabled && data.length >= 1
                     if item.shortListed
@@ -28,7 +28,7 @@ mixin inmate(item)
                     else if !shortList || shortList.prisonNumbers.length < 3
                         input(type="submit" value="Add to shortlist" class="link" id="addToShortlist")
                     else
-                        input(type="submit" value="Shortlist full - compare #{shortList.prisonNumbers.length} prisoners" class="link" id="addToShortlist" name="viewShortlist")
+                        input(type="submit" value=`Shortlist full - compare ${shortList.prisonNumbers.length} prisoners` class="link" id="addToShortlist" name="viewShortlist")
 
         block
 
@@ -45,7 +45,7 @@ block content
                     if shortList.prisonNumbers.length === 1
                         |Add further prisoners to compare
                     else
-                        a(href="#{shortList.href}#{queryStrings.thisPage}") Compare #{shortList.prisonNumbers.length} prisoners
+                        a(href=`${shortList.href}${queryStrings.thisPage}`) Compare #{shortList.prisonNumbers.length} prisoners
 
         if !usePlaceholder
             div.column-full
@@ -77,7 +77,7 @@ block content
                                 fieldset
                                     div(role="list")
                                         form(method="post" action='/search/results/filters')
-                                            input(type="hidden" name="_csrf" value="#{csrfToken}")
+                                            input(type="hidden" name="_csrf" value=`${csrfToken}`)
                                             input#male.filtering-option.font-xsmall(name="filter", type="submit", value="Male" class=filtersForView.Male ? "filtering-option-active" : "")
                                             input#female.filtering-option.font-xsmall(name="filter", type="submit", value="Female" class=filtersForView.Female ? "filtering-option-active" : "")
                                             input#hasDdc.filtering-option.font-xsmall(name="filter", type="submit", value="HDC" class=filtersForView.HDC ? "filtering-option-active" : "")
@@ -90,14 +90,14 @@ block content
 
                 if pagination
                     form(method="post")
-                        input(type="hidden" name="_csrf" value="#{csrfToken}")
+                        input(type="hidden" name="_csrf" value=`${csrfToken}`)
                         div.form-group.c-align
                             - var page = pagination.currPage;
                                 span#paginationPrev
                                     if !pagination.showPrev
                                         span.inactive Previous
                                     else
-                                        a(href="/search/results#{queryStrings.prevPage}") Previous
+                                        a(href=`/search/results${queryStrings.prevPage}`) Previous
                                     |  &nbsp;
 
                             span
@@ -109,7 +109,7 @@ block content
                                 if !pagination.showNext
                                     span.inactive Next
                                 else
-                                    a(href="/search/results#{queryStrings.nextPage}") Next
+                                    a(href=`/search/results${queryStrings.nextPage}`) Next
 
                 if suggestions
                     |  &nbsp;

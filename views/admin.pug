@@ -16,7 +16,7 @@ block content
                 th Date of last action
         tbody
             each item in latestAccess
-                tr.filterableRow(data-id="#{item.user}")
+                tr.filterableRow(data-id=`${item.user}`)
                     td #{item.user}
                     td #{item.lastActionDate}
 

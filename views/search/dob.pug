@@ -1,0 +1,25 @@
+div.form-group
+    span.form-label Date of birth
+    div.form-date
+        div.form-group.form-group-day
+            label.form-label(for="dobDay") Day
+            input.form-control.initialFocus#dobDay(name="dobDay", type="number", pattern="[0-9]*", min="0" max="31", aria-describedby="dob-hint" value=formContents && formContents.dobDay ? formContents.dobDay : '')
+
+        div.form-group.form-group-month
+            label.form-label(for="dobMonth") Month
+            input.form-control#dobMonth(name="dobMonth", type="number", pattern="[0-9]*", min="0", max="12" value=formContents && formContents.dobMonth ? formContents.dobMonth : '')
+
+        div.form-group.form-group-year
+            label.form-label(for="dobYear") Year
+            input.form-control#dobYear(name="dobYear", type="number", pattern="[0-9]*", min="1900", max="#{new Date().getFullYear()}" value=formContents && formContents.dobYear ? formContents.dobYear : '')
+
+
+div.form-group
+     div#age_container
+        label(for="age")
+            span.form-label Or, enter an age or age range
+            span.form-hint For example, 32-34
+
+        input.form-control.form-control-1-4#age(name="age", type="text", min="10" max="99" value=formContents && formContents.age ? formContents.age : '')
+
+

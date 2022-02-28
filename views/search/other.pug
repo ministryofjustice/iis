@@ -4,4 +4,4 @@ block search-page
             span.form-label Enter any combination of street, town, postcode, eg
             span.form-hint 22b Baker Street W1
 
-        input.form-control.initialFocus#address(type="text", name="address", maxlength="100" value="#{formContents && formContents.address ? formContents.address : ''}")
+        input.form-control.initialFocus#address(type="text", name="address", maxlength="100" value=formContents && formContents.address ? formContents.address : '')

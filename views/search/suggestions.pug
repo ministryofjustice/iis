@@ -2,7 +2,7 @@ extends ../layout
 
 block content
     div.back-link-container
-        a.link-back(href="/search/results#{returnQuery}") Back to prisoners
+        a.link-back(href=`/search/results${returnQuery}`) Back to prisoners
 
     if err
         include ./searchError
@@ -15,7 +15,7 @@ block content
                     - var suggestion = suggestions['dob'][0]
                     div.search-suggestion
                         h2.heading-medium
-                            a(href="/search/suggestion?field=dob&suggest=#{suggestion.type}") Change the date of birth to an age range:
+                            a(href=`/search/suggestion?field=dob&suggest=${suggestion.type}`) Change the date of birth to an age range:
                             span#dobAgeRangeSuggestion  #{suggestion.value}
                         p.form-hint
                             | Reason: A common way to create an alias is to change the DOB by 1 day or 1 year.
@@ -26,7 +26,7 @@ block content
                     - var suggestion = suggestions['age'][0]
                     div.search-suggestion
                         h2.heading-medium
-                            a(href="/search/suggestion?field=age&suggest=#{suggestion.type}") Change the age to an age range:
+                            a(href=`/search/suggestion?field=age&suggest=${suggestion.type}`) Change the age to an age range:
                             span#ageAgeRangeSuggestion  #{suggestion.value}
                         p.form-hint
                             | Reason: A common way to create an alias is to change the DOB by 1 day or 1 year.
@@ -38,7 +38,7 @@ block content
                         if suggestion.type == 'addWildcard'
                             div.search-suggestion
                                 h2.heading-medium
-                                    a(href="/search/suggestion?field=surname&suggest=#{suggestion.type}") Add a wildcard to the surname:
+                                    a(href=`/search/suggestion?field=surname&suggest=${suggestion.type}`) Add a wildcard to the surname:
                                     span#surnameWildcardSuggestion  #{suggestion.value}
                                 p.form-hint
                                     | Reason: Some establishments when using LIDS added more information after a surname
@@ -46,7 +46,7 @@ block content
                         if suggestion.type == 'addShorterWildcard'
                             div.search-suggestion
                                 h2.heading-medium
-                                    a(href="/search/suggestion?field=surname&suggest=#{suggestion.type}") Shorten the surname by 2 characters and add a wildcard:
+                                    a(href=`/search/suggestion?field=surname&suggest=${suggestion.type}`) Shorten the surname by 2 characters and add a wildcard:
                                     span#surnameShortWildcardSuggestion  #{suggestion.value}
                                 p.form-hint
                                     | Reason: An exact surname search for example for STEELE will miss and records where
@@ -57,7 +57,7 @@ block content
                         if suggestion.type == 'useInitial'
                             div.search-suggestion
                                 h2.heading-medium
-                                    a(href="/search/suggestion?field=forename&suggest=#{suggestion.type}") Search using an initial only in first name:
+                                    a(href=`/search/suggestion?field=forename&suggest=${suggestion.type}`) Search using an initial only in first name:
                                     span#forenameInitialSuggestion  #{suggestion.value}
                                 p.form-hint
                                     | Reason: An exact forename search for names which can be shortened could miss records e.g.
@@ -68,7 +68,7 @@ block content
                     - var last = suggestions['firstLast'][1]
                     div.search-suggestion
                         h2.heading-medium
-                            a(href="/search/suggestion?field=firstLast&suggest=#{first.type}") Swap surname and forename:
+                            a(href=`/search/suggestion?field=firstLast&suggest=${first.type}`) Swap surname and forename:
                             span#nameSwapSuggestion  #{first.value}, #{last.value}
                         p.form-hint
                             | Reason: Where a prisoner has a forename and surname which could be interchangeable - e.g.

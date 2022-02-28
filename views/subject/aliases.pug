@@ -5,13 +5,13 @@ block subject-details
         div.column-two-thirds
             if (subject.aliases && subject.aliases.length !== 0)
                 each val, index in subject.aliases
-                        div(id="alias#{index}").grid-row.list-row.alias.aliasSearch.listItem
+                        div(id=`alias${index}`).grid-row.list-row.alias.aliasSearch.listItem
                             div.column-full.left-border
                                 div.aliasSearch
-                                    div(id="alias#{index}-name")
+                                    div(id=`alias${index}-name`)
                                         | #{setCase.capital(val.first + ' ' + val.middle + ' ' + val.last)}
                                     if (val.birthDate)
-                                        div(id="alias#{index}-dob") Born on: #{moment(val.birthDate).format('DD/MM/YYYY')}
+                                        div(id=`alias${index}-dob`) Born on: #{moment(val.birthDate).format('DD/MM/YYYY')}
 
             else
                 span= noResultsText

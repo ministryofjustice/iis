@@ -3,7 +3,7 @@ extends layout
 block content
 
     div.backLinkContainer
-        a.link-back(href="/subject/#{prisonNumber}/summary#{returnQuery}") Back to subject details
+        a.link-back(href=`/subject/${prisonNumber}/summary${returnQuery}`) Back to subject details
 
     if err
         include ./search/searchError
@@ -24,7 +24,7 @@ block content
                     fieldset
                         legend.visually-hidden= content.heading
 
-                        input(type="hidden" name="_csrf" value="#{csrfToken}")
+                        input(type="hidden" name="_csrf" value=`${csrfToken}`)
 
                         div.multiple-choice
                             input#summary(name="printOption", type="checkbox", value="summary")

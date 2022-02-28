@@ -13,7 +13,6 @@ const path = require('path');
 
 const passport = require('passport');
 const OAuth2Strategy = require('passport-oauth2').Strategy;
-const request = require('request');
 
 const helmet = require('helmet');
 const csurf = require('csurf');
@@ -47,7 +46,7 @@ app.set('trust proxy', true);
 
 // View Engine Configuration
 app.set('views', path.join(__dirname, '..', 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 // Server Configuration
 app.set('port', process.env.PORT || 3000);

@@ -2,13 +2,6 @@
 
 let gulp = require('gulp');
 
-gulp.task('copy-govuk-modules', [
-    'copy-toolkit',
-    'copy-template-assets',
-    'copy-elements-sass',
-    'copy-template'
-]);
-
 gulp.task('copy-toolkit', function () {
     return gulp.src(['node_modules/govuk_frontend_toolkit/**'])
         .pipe(gulp.dest('./govuk_modules/govuk_frontend_toolkit/'))
@@ -28,3 +21,10 @@ gulp.task('copy-elements-sass', function () {
     return gulp.src(['node_modules/govuk-elements-sass/public/sass/**'])
         .pipe(gulp.dest('./govuk_modules/govuk-elements-sass/'))
 });
+
+gulp.task('copy-govuk-modules', gulp.series(
+    'copy-toolkit',
+    'copy-template-assets',
+    'copy-elements-sass',
+    'copy-template'
+));

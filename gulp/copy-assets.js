@@ -2,11 +2,6 @@
 
 let gulp = require('gulp');
 
-gulp.task('copy-assets', [
-    'copy-local-assets',
-    'copy-gov-assets',
-]);
-
 gulp.task('copy-local-assets', function() {
   return gulp.src(['!assets/sass{,/**/*}',
       '!assets/javascripts/moreless{,/**/*}',
@@ -21,3 +16,8 @@ gulp.task('copy-gov-assets', function() {
     return gulp.src(['govuk_modules/govuk_template/assets/stylesheets/govuk-template-ie8.css'])
         .pipe(gulp.dest('public/stylesheets'));
 });
+
+gulp.task('copy-assets', gulp.series(
+    'copy-local-assets',
+    'copy-gov-assets',
+));

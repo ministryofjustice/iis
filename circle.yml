@@ -11,7 +11,7 @@ dependencies:
     - npm run postinstall
 test:
   override:
-    - gulp build set-test-env unittestreport
+    - npm run test -- --reporter mocha-junit-reporter
     - npm run snyk-protect
   post:
     - mv test-results.xml $CIRCLE_TEST_REPORTS/test-results.xml

@@ -3,14 +3,6 @@ const webpack2 = require('webpack');
 
 const gulp = require('gulp');
 
-gulp.task('webpack', [
-    'webpackMoreless',
-    'webpackReveal',
-    'webpackAdmin',
-    'webpackTabs',
-    'webpackValidation'
-]);
-
 gulp.task('webpackMoreless', function() {
     return gulp.src(['./assets/javascripts/moreless/moreless.js', './assets/javascripts/moreless/longlist.js'])
         .pipe(webpackStream({
@@ -130,3 +122,11 @@ gulp.task('webpackValidation', function() {
         }, webpack2))
         .pipe(gulp.dest('./public/javascripts'));
 });
+
+gulp.task('webpack', gulp.series(
+    'webpackMoreless',
+    'webpackReveal',
+    'webpackAdmin',
+    'webpackTabs',
+    'webpackValidation'
+));

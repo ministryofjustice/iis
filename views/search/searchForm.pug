@@ -19,8 +19,8 @@ div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
                         label(for="nameAge") Name/age
 
                 div#nameAgeForm.panel.panel-border-narrow
-                    include ./names.jade
-                    include ./dob.jade
+                    include ./names.pug
+                    include ./dob.pug
 
                 div.multiple-choice(data-target="identifierForm")
                     if idsOpen
@@ -31,7 +31,7 @@ div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
                         label(for="identifier") Unique identifier
 
                 div#identifierForm.panel.panel-border-narrow(aria-expanded="true")
-                    include ./identifier.jade
+                    include ./identifier.pug
 
                 if addressEnabled
                     div.multiple-choice(data-target="otherForm")
@@ -43,7 +43,7 @@ div#formHolder(class = usePlaceholder ? "marginTop" : undefined)
                             label(for="other") Other
 
                     div#otherForm.panel.panel-border-narrow
-                        include ./other.jade
+                        include ./other.pug
 
         div.form-group
             button.button#submit Search

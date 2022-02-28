@@ -14,7 +14,7 @@
     "snyk-protect": "snyk protect",
     "lint": "eslint . --cache --max-warnings 0",
     "record-build-info": "node ./bin/record-build-info",
-    "wait-for-deploy": "node ./bin/wait-for-deploy"
+    "wait-for-deploy": "node ./bin/wait-for-deploy",
     "clean": "rm -rf public govuk_modules .port.tmp *.log build uploads test-results.xml"
   },
   "repository": {
@@ -62,7 +62,6 @@
     "gulp-sass-variables": "^1.2.0",
     "gulp-sourcemaps": "^3.0.0",
     "helmet": "^3.5.0",
-    "jade": "^1.11.0",
     "jquery": "^3.6.0",
     "moment": "^2.29.1",
     "on-finished": "^2.4.1",
@@ -73,7 +72,7 @@
     "pdfmake": "^0.2.4",
     "pg": "^8.7.3",
     "poll-endpoint-for": "0.0.7",
-    "pug": "2.0.2",
+    "pug": "3.0.2",
     "prompt": "^1.2.2",
     "request-promise": "^4.1.1",
     "require-dir": "^1.2.0",

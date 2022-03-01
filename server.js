@@ -8,24 +8,24 @@ const healthcheck = require('./server/healthcheck');
 const {flattenMeta} = require('./server/misc');
 
 if (config.healthcheckInterval) {
-    reportHealthcheck();
-    setInterval(reportHealthcheck, config.healthcheckInterval * 60 * 1000);
+  reportHealthcheck();
+  setInterval(reportHealthcheck, config.healthcheckInterval * 60 * 1000);
 
-    function reportHealthcheck() {
-        healthcheck(recordHealthResult);
+  function reportHealthcheck() {
+    healthcheck(recordHealthResult);
+  }
+  function recordHealthResult(err, results) {
+    if (err) {
+      logger.error('healthcheck failed', err);
+      return;
     }
-    function recordHealthResult(err, results) {
-        if (err) {
-            logger.error('healthcheck failed', err);
-            return;
-        }
-        logger.info('healthcheck', results);
-        if (results.healthy && appInsights) {
-            appInsights.client.trackEvent('healthy', flattenMeta(results));
-        }
+    logger.info('healthcheck', results);
+    if (results.healthy && appInsights) {
+      appInsights.client.trackEvent('healthy', flattenMeta(results));
     }
+  }
 }
 
 app.listen(app.get('port'), function() {
-    logger.info('IIS server listening on port ' + app.get('port'));
+  logger.info('IIS server listening on port ' + app.get('port'));
 });

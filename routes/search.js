@@ -1,25 +1,25 @@
 'use strict';
-let express = require('express');
+const express = require('express');
 
 const {
-    getIndex,
-    getResults,
-    postPagination,
-    postFilters,
-    postSearchForm,
-	getSuggestions,
-    getSuggestion,
-    postAddToShortlist
+  getIndex,
+  getResults,
+  postPagination,
+  postFilters,
+  postSearchForm,
+  getSuggestions,
+  getSuggestion,
+  postAddToShortlist
 } = require('../controllers/searchController');
 
 // eslint-disable-next-line
 let router = express.Router();
 
 router.use(function(req, res, next) {
-    if (typeof req.csrfToken === 'function') {
-        res.locals.csrfToken = req.csrfToken();
-    }
-    next();
+  if (typeof req.csrfToken === 'function') {
+    res.locals.csrfToken = req.csrfToken();
+  }
+  next();
 });
 
 router.get('/', getIndex);

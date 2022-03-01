@@ -6,7 +6,7 @@ const express = require('express');
 let router = express.Router();
 
 router.get('/', (req, res) => {
-    res.redirect(/search/);
+  res.redirect(/search/);
 });
 router.get('/:prisonNumbers', getComparison);
 

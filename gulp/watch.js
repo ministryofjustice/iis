@@ -8,7 +8,7 @@ gulp.task('watch-sass', function () {
 
 gulp.task('watch-assets', function () {
     return gulp.watch(['./assets/images/**', './assets/javascripts/**'],
-        {cwd: './'}, ['lint-client', 'copy-assets'])
+        {cwd: './'}, ['lint-client',])
 });
 
 gulp.task('watch-tests', function () {

@@ -42,7 +42,7 @@ jobs:
             - run:
                 name: unit tests
                 command: |
-                    npm run test -- --reporter mocha-junit-reporter --exit
+                    npm run test -- --exit
                     npm run snyk-protect
             - store_test_results:
                 path: test_results
@@ -67,7 +67,7 @@ jobs:
                     git commit -m "Deployment of build $CIRCLE_BUILD_NUM" -m "$CI_MESSAGE" -m "From gitref $CIRCLE_SHA1"
             - deploy:
                   name: Deploy to Dev Environment
-                  command: git push --force origin HEAD:deploy-to-stage
+                  command: git push --force origin HEAD:azure
 
 workflows:
     version: 2

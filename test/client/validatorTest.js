@@ -9,7 +9,6 @@ chai.use(sinonChai);
 
 proxyquire.noCallThru();
 const sandbox = sinon.sandbox.create();
-let searchValidator;
 
 const initialPage = '<html>' +
     '<div id="resultsBody">' +

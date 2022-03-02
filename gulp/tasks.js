@@ -6,10 +6,10 @@ require("./watch");
 
 gulp.task(
     "watch",
-    gulp.series("watch-sass", "watch-assets", "watch-client-js", "watch-tests")
+    gulp.series("watch-assets", "watch-client-js", "watch-tests")
 );
 
-gulp.task("generate-assets", gulp.series("sass", "webpack"));
+gulp.task("generate-assets", gulp.series("webpack"));
 
 gulp.task("build", gulp.series("generate-assets"));
 

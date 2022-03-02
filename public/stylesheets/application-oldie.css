@@ -1,5 +1,5 @@
-.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
-.form-group:after, .form-group-error:after, .breadcrumbs ol:after {
+.breadcrumbs ol:after, .form-group-error:after, .form-section:after,
+.form-group:after, fieldset:after, .panel:after, .notice:after, #content:after, .grid-row:after {
   content: "";
   display: block;
   clear: both;
@@ -17,22 +17,22 @@
   margin: 0 -15px;
 }
 
-.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
-.form-group:after, .form-group-error:after, .breadcrumbs ol:after {
+.breadcrumbs ol:after, .form-group-error:after, .form-section:after,
+.form-group:after, fieldset:after, .panel:after, .notice:after, #content:after, .grid-row:after {
   content: "";
   display: block;
   clear: both;
 }
 
-.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
-.form-group:after, .form-group-error:after, .breadcrumbs ol:after {
+.breadcrumbs ol:after, .form-group-error:after, .form-section:after,
+.form-group:after, fieldset:after, .panel:after, .notice:after, #content:after, .grid-row:after {
   content: "";
   display: block;
   clear: both;
 }
 
-.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
-.form-group:after, .form-group-error:after, .breadcrumbs ol:after {
+.breadcrumbs ol:after, .form-group-error:after, .form-section:after,
+.form-group:after, fieldset:after, .panel:after, .notice:after, #content:after, .grid-row:after {
   content: "";
   display: block;
   clear: both;
@@ -50,15 +50,15 @@
   margin: 0 -15px;
 }
 
-.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
-.form-group:after, .form-group-error:after, .breadcrumbs ol:after {
+.breadcrumbs ol:after, .form-group-error:after, .form-section:after,
+.form-group:after, fieldset:after, .panel:after, .notice:after, #content:after, .grid-row:after {
   content: "";
   display: block;
   clear: both;
 }
 
-.grid-row:after, #content:after, .notice:after, .panel:after, fieldset:after, .form-section:after,
-.form-group:after, .form-group-error:after, .breadcrumbs ol:after {
+.breadcrumbs ol:after, .form-group-error:after, .form-section:after,
+.form-group:after, fieldset:after, .panel:after, .notice:after, #content:after, .grid-row:after {
   content: "";
   display: block;
   clear: both;
@@ -231,7 +231,7 @@ legend {
 .column-third,
 .column-one-third {
   float: left;
-  width: 33.33333%;
+  width: 33.3333333333%;
   padding: 0 15px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -240,7 +240,7 @@ legend {
 
 .column-two-thirds {
   float: left;
-  width: 66.66667%;
+  width: 66.6666666667%;
   padding: 0 15px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -263,7 +263,7 @@ main {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.31579;
+  line-height: 1.3157894737;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -272,7 +272,7 @@ main {
   font-weight: 400;
   text-transform: none;
   font-size: 53px;
-  line-height: 1.03774;
+  line-height: 1.0377358491;
   font-size: 80px;
   line-height: 1;
 }
@@ -284,7 +284,7 @@ main {
   font-size: 32px;
   line-height: 1.09375;
   font-size: 48px;
-  line-height: 1.04167;
+  line-height: 1.0416666667;
 }
 
 .font-large {
@@ -292,9 +292,9 @@ main {
   font-weight: 400;
   text-transform: none;
   font-size: 24px;
-  line-height: 1.04167;
+  line-height: 1.0416666667;
   font-size: 36px;
-  line-height: 1.11111;
+  line-height: 1.1111111111;
 }
 
 .font-medium {
@@ -314,7 +314,7 @@ main {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.31579;
+  line-height: 1.3157894737;
 }
 
 .font-xsmall {
@@ -322,7 +322,7 @@ main {
   font-weight: 400;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.14286;
+  line-height: 1.1428571429;
   font-size: 16px;
   line-height: 1.25;
 }
@@ -332,7 +332,7 @@ main {
   font-weight: 700;
   text-transform: none;
   font-size: 53px;
-  line-height: 1.03774;
+  line-height: 1.0377358491;
   font-size: 80px;
   line-height: 1;
 }
@@ -344,7 +344,7 @@ main {
   font-size: 32px;
   line-height: 1.09375;
   font-size: 48px;
-  line-height: 1.04167;
+  line-height: 1.0416666667;
 }
 
 .bold-large {
@@ -352,9 +352,9 @@ main {
   font-weight: 700;
   text-transform: none;
   font-size: 24px;
-  line-height: 1.04167;
+  line-height: 1.0416666667;
   font-size: 36px;
-  line-height: 1.11111;
+  line-height: 1.1111111111;
 }
 
 .bold-medium {
@@ -374,7 +374,7 @@ main {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.31579;
+  line-height: 1.3157894737;
 }
 
 .bold-xsmall {
@@ -382,7 +382,7 @@ main {
   font-weight: 700;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.14286;
+  line-height: 1.1428571429;
   font-size: 16px;
   line-height: 1.25;
 }
@@ -398,22 +398,21 @@ main {
   font-size: 32px;
   line-height: 1.09375;
   font-size: 48px;
-  line-height: 1.04167;
+  line-height: 1.0416666667;
   display: block;
   margin-top: 0.46875em;
   margin-bottom: 0.9375em;
   margin-top: 0.625em;
   margin-bottom: 1.25em;
 }
-
 .heading-xlarge .heading-secondary {
   font-family: "nta", Arial, sans-serif;
   font-weight: 400;
   text-transform: none;
   font-size: 20px;
-  line-height: 1.11111;
+  line-height: 1.1111111111;
   font-size: 27px;
-  line-height: 1.11111;
+  line-height: 1.1111111111;
   display: block;
   padding-top: 8px;
   padding-bottom: 7px;
@@ -428,16 +427,15 @@ main {
   font-weight: 700;
   text-transform: none;
   font-size: 24px;
-  line-height: 1.04167;
+  line-height: 1.0416666667;
   font-size: 36px;
-  line-height: 1.11111;
+  line-height: 1.1111111111;
   display: block;
-  margin-top: 1.04167em;
-  margin-bottom: 0.41667em;
+  margin-top: 1.0416666667em;
+  margin-bottom: 0.4166666667em;
   margin-top: 1.25em;
-  margin-bottom: 0.55556em;
+  margin-bottom: 0.5555555556em;
 }
-
 .heading-large .heading-secondary {
   font-family: "nta", Arial, sans-serif;
   font-weight: 400;
@@ -467,7 +465,7 @@ main {
   margin-top: 1.25em;
   margin-bottom: 0.5em;
   margin-top: 1.875em;
-  margin-bottom: 0.83333em;
+  margin-bottom: 0.8333333333em;
 }
 
 .heading-small {
@@ -477,19 +475,19 @@ main {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.31579;
+  line-height: 1.3157894737;
   display: block;
   margin-top: 0.625em;
   margin-bottom: 0.3125em;
-  margin-top: 1.05263em;
+  margin-top: 1.0526315789em;
 }
 
 p,
 .body-text {
   margin-top: 0.3125em;
   margin-bottom: 1.25em;
-  margin-top: 0.26316em;
-  margin-bottom: 1.05263em;
+  margin-top: 0.2631578947em;
+  margin-bottom: 1.0526315789em;
 }
 
 .body-text {
@@ -539,7 +537,7 @@ p,
   font-weight: 400;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.14286;
+  line-height: 1.1428571429;
   font-size: 16px;
   line-height: 1.25;
   margin-top: 15px;
@@ -550,14 +548,12 @@ p,
   border-bottom: 1px solid #0b0c0c;
   background: url("/public/imagesicon-arrow-left.png") no-repeat 0 4px;
 }
-
 .link-back:link, .link-back:visited, .link-back:hover,
 .link-back a.link-back:focus, .link-back:active {
   color: #0b0c0c;
 }
-
 .link-back::before {
-  content: '';
+  content: "";
   display: block;
   width: 0;
   height: 0;
@@ -574,7 +570,7 @@ p,
   color: #0b0c0c;
   background-color: #f8f8f8;
   text-shadow: 0 1px #fff;
-  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
   font-size: 14px;
   direction: ltr;
   text-align: left;
@@ -606,14 +602,12 @@ hr {
 .notice {
   position: relative;
 }
-
 .notice .icon {
   position: absolute;
   left: 0;
   top: 50%;
   margin-top: -17px;
 }
-
 .notice strong {
   display: block;
   padding-left: 65px;
@@ -623,8 +617,8 @@ hr {
 .data {
   margin-top: 0.3125em;
   margin-bottom: 1.25em;
-  margin-top: 0.26316em;
-  margin-bottom: 1.05263em;
+  margin-top: 0.2631578947em;
+  margin-bottom: 1.0526315789em;
 }
 
 .data-item {
@@ -637,7 +631,7 @@ hr {
   position: relative;
   display: -moz-inline-stack;
   display: inline-block;
-  padding: .526315em .789473em .263157em;
+  padding: 0.526315em 0.789473em 0.263157em;
   border: none;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -660,45 +654,37 @@ hr {
   box-sizing: border-box;
   vertical-align: top;
 }
-
 .button:visited {
   background-color: #00823b;
 }
-
 .button:hover, .button:focus {
   background-color: #00692f;
 }
-
 .button:active {
   top: 2px;
   -webkit-box-shadow: 0 0 0 #00823b;
   -moz-box-shadow: 0 0 0 #00823b;
   box-shadow: 0 0 0 #00823b;
 }
-
-.button.disabled, .button[disabled="disabled"], .button[disabled] {
+.button.disabled, .button[disabled=disabled], .button[disabled] {
   zoom: 1;
   filter: alpha(opacity=50);
   opacity: 0.5;
 }
-
-.button.disabled:hover, .button[disabled="disabled"]:hover, .button[disabled]:hover {
+.button.disabled:hover, .button[disabled=disabled]:hover, .button[disabled]:hover {
   cursor: default;
   background-color: #00823b;
 }
-
-.button.disabled:active, .button[disabled="disabled"]:active, .button[disabled]:active {
+.button.disabled:active, .button[disabled=disabled]:active, .button[disabled]:active {
   top: 0;
   -webkit-box-shadow: 0 2px 0 #003618;
   -moz-box-shadow: 0 2px 0 #003618;
   box-shadow: 0 2px 0 #003618;
   border-bottom: 2px solid #003618;
 }
-
-.button:link, .button:hover, .button:focus, .button:visited {
+.button:link, .button:link:focus, .button:hover, .button:focus, .button:visited {
   color: #fff;
 }
-
 .button:before {
   content: "";
   height: 110%;
@@ -709,16 +695,13 @@ hr {
   top: 0;
   left: 0;
 }
-
 .button:active:before {
   top: -10%;
   height: 120%;
 }
-
-.button[type="submit"], .button[type="reset"], .button[type="button"] {
+.button[type=submit], .button[type=reset], .button[type=button] {
   filter: chroma(color=#0b0c0c);
 }
-
 .button[type=submit].button {
   filter: none;
 }
@@ -732,11 +715,11 @@ hr {
   outline: 3px solid #ffbf47;
 }
 
-.button[disabled="disabled"] {
+.button[disabled=disabled] {
   background: #00823b;
 }
 
-.button[disabled="disabled"]:focus {
+.button[disabled=disabled]:focus {
   outline: none;
 }
 
@@ -752,12 +735,11 @@ hr {
   background-image: url("/public/imagesicon-pointer.png");
   background-repeat: no-repeat;
   background-position: 100% 50%;
-  padding: 0.36842em 2.15789em 0.21053em 0.84211em;
+  padding: 0.3684210526em 2.1578947368em 0.2105263158em 0.8421052632em;
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .button-start,
-  .button-get-started {
+.button-get-started {
     background-image: url("/public/imagesicon-pointer-2x.png");
     background-size: 30px 19px;
   }
@@ -774,8 +756,7 @@ hr {
   height: 27px;
   background-image: url("/public/imagesicon-calendar.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-calendar {
     background-image: url("/public/imagesicon-calendar-2x.png");
     background-size: 100%;
@@ -787,8 +768,7 @@ hr {
   height: 39px;
   background-image: url("/public/imagesicon-file-download.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-file-download {
     background-image: url("/public/imagesicon-file-download-2x.png");
     background-size: 100%;
@@ -800,8 +780,7 @@ hr {
   height: 35px;
   background-image: url("/public/imagesicon-important.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-important {
     background-image: url("/public/imagesicon-important-2x.png");
     background-size: 100%;
@@ -813,8 +792,7 @@ hr {
   height: 27px;
   background-image: url("/public/imagesicon-information.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-information {
     background-image: url("/public/imagesicon-information-2x.png");
     background-size: 100%;
@@ -826,8 +804,7 @@ hr {
   height: 36px;
   background-image: url("/public/imagesicon-locator.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-locator {
     background-image: url("/public/imagesicon-locator-2x.png");
     background-size: 100%;
@@ -839,8 +816,7 @@ hr {
   height: 19px;
   background-image: url("/public/imagesicon-pointer.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-pointer {
     background-image: url("/public/imagesicon-pointer-2x.png");
     background-size: 100%;
@@ -852,8 +828,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-pointer-black.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-pointer-black {
     background-image: url("/public/imagesicon-pointer-black-2x.png");
     background-size: 100%;
@@ -865,8 +840,7 @@ hr {
   height: 22px;
   background-image: url("/public/imagesicon-search.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-search {
     background-image: url("/public/imagesicon-search-2x.png");
     background-size: 100%;
@@ -878,8 +852,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-steps/icon-step-1.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-step-1 {
     background-image: url("/public/imagesicon-steps/icon-step-1-2x.png");
     background-size: 100%;
@@ -891,8 +864,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-steps/icon-step-2.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-step-2 {
     background-image: url("/public/imagesicon-steps/icon-step-2-2x.png");
     background-size: 100%;
@@ -904,8 +876,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-steps/icon-step-3.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-step-3 {
     background-image: url("/public/imagesicon-steps/icon-step-3-2x.png");
     background-size: 100%;
@@ -917,8 +888,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-steps/icon-step-4.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-step-4 {
     background-image: url("/public/imagesicon-steps/icon-step-4-2x.png");
     background-size: 100%;
@@ -930,8 +900,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-steps/icon-step-5.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-step-5 {
     background-image: url("/public/imagesicon-steps/icon-step-5-2x.png");
     background-size: 100%;
@@ -943,8 +912,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-steps/icon-step-6.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-step-6 {
     background-image: url("/public/imagesicon-steps/icon-step-6-2x.png");
     background-size: 100%;
@@ -956,8 +924,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-steps/icon-step-7.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-step-7 {
     background-image: url("/public/imagesicon-steps/icon-step-7-2x.png");
     background-size: 100%;
@@ -969,8 +936,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-steps/icon-step-8.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-step-8 {
     background-image: url("/public/imagesicon-steps/icon-step-8-2x.png");
     background-size: 100%;
@@ -982,8 +948,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-steps/icon-step-9.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-step-9 {
     background-image: url("/public/imagesicon-steps/icon-step-9-2x.png");
     background-size: 100%;
@@ -995,8 +960,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-steps/icon-step-10.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-step-10 {
     background-image: url("/public/imagesicon-steps/icon-step-10-2x.png");
     background-size: 100%;
@@ -1008,8 +972,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-steps/icon-step-11.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-step-11 {
     background-image: url("/public/imagesicon-steps/icon-step-11-2x.png");
     background-size: 100%;
@@ -1021,8 +984,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-steps/icon-step-12.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-step-12 {
     background-image: url("/public/imagesicon-steps/icon-step-12-2x.png");
     background-size: 100%;
@@ -1034,8 +996,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-steps/icon-step-13.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-step-13 {
     background-image: url("/public/imagesicon-steps/icon-step-13-2x.png");
     background-size: 100%;
@@ -1047,8 +1008,7 @@ hr {
   height: 23px;
   background-image: url("/public/imagesicon-steps/icon-step-14.png");
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .icon-step-14 {
     background-image: url("/public/imagesicon-steps/icon-step-14-2x.png");
     background-size: 100%;
@@ -1111,7 +1071,6 @@ table {
   border-spacing: 0;
   width: 100%;
 }
-
 table th,
 table td {
   font-family: "nta", Arial, sans-serif;
@@ -1120,29 +1079,24 @@ table td {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.31579;
-  padding: 0.63158em 1.05263em 0.47368em 0;
+  line-height: 1.3157894737;
+  padding: 0.6315789474em 1.0526315789em 0.4736842105em 0;
   text-align: left;
   border-bottom: 1px solid #bfc1c3;
 }
-
 table thead th {
   font-weight: 700;
 }
-
 table td:last-child,
 table th:last-child {
   padding-right: 0;
 }
-
 table .numeric {
   text-align: right;
 }
-
 table td.numeric {
   font-family: "ntatabularnumbers", "nta", Arial, sans-serif;
 }
-
 table caption {
   text-align: left;
 }
@@ -1152,21 +1106,19 @@ table caption {
   font-weight: 700;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.14286;
+  line-height: 1.1428571429;
   font-size: 16px;
   line-height: 1.25;
 }
-
 .table-font-xsmall td {
   font-family: "nta", Arial, sans-serif;
   font-weight: 400;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.14286;
+  line-height: 1.1428571429;
   font-size: 16px;
   line-height: 1.25;
 }
-
 .table-font-xsmall th,
 .table-font-xsmall td {
   padding: 0.75em 1.25em 0.5625em 0;
@@ -1176,16 +1128,14 @@ details {
   display: block;
   clear: both;
 }
-
 details summary {
   display: inline-block;
   color: #005ea5;
   cursor: pointer;
   position: relative;
-  margin-bottom: 0.26316em;
+  margin-bottom: 0.2631578947em;
   padding-left: 25px;
 }
-
 details summary:before {
   content: "";
   position: absolute;
@@ -1203,19 +1153,15 @@ details summary:before {
   border-width: 7px 0 7px 12.124px;
   border-left-color: inherit;
 }
-
 details summary:hover {
   color: #2b8cc4;
 }
-
 details summary:focus {
   outline: 3px solid #ffbf47;
 }
-
 details summary::-webkit-details-marker {
   display: none;
 }
-
 details[open] > summary:before {
   display: block;
   width: 0;
@@ -1227,11 +1173,9 @@ details[open] > summary:before {
   border-width: 12.124px 7px 0 7px;
   border-top-color: inherit;
 }
-
 details .summary {
   text-decoration: underline;
 }
-
 details .arrow {
   display: none;
 }
@@ -1243,14 +1187,12 @@ details .arrow {
   clear: both;
   border-left-style: solid;
   border-color: #bfc1c3;
-  padding: 0.78947em;
-  margin-bottom: 0.78947em;
+  padding: 0.7894736842em;
+  margin-bottom: 0.7894736842em;
 }
-
 .panel :first-child {
   margin-top: 0;
 }
-
 .panel :only-child,
 .panel :last-child {
   margin-bottom: 0;
@@ -1288,7 +1230,6 @@ details .arrow {
 fieldset {
   width: 100%;
 }
-
 fieldset.after-error-summary {
   margin-top: -15px;
   margin-top: -30px;
@@ -1342,7 +1283,7 @@ textarea {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.31579;
+  line-height: 1.3157894737;
 }
 
 .form-label-bold {
@@ -1352,7 +1293,7 @@ textarea {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.31579;
+  line-height: 1.3157894737;
 }
 
 .form-block {
@@ -1371,7 +1312,7 @@ textarea {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.31579;
+  line-height: 1.3157894737;
   display: block;
   color: #6f777b;
   font-weight: normal;
@@ -1395,7 +1336,7 @@ textarea {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.31579;
+  line-height: 1.3157894737;
   width: 100%;
   padding: 5px 4px 4px;
   border: 2px solid #0b0c0c;
@@ -1459,7 +1400,6 @@ select:focus::-ms-value {
   margin-bottom: 10px;
   float: left;
 }
-
 .multiple-choice input {
   position: absolute;
   cursor: pointer;
@@ -1469,7 +1409,6 @@ select:focus::-ms-value {
   height: 38px;
   z-index: 1;
 }
-
 .multiple-choice label {
   cursor: pointer;
   padding: 8px 10px 9px 12px;
@@ -1480,7 +1419,6 @@ select:focus::-ms-value {
   padding-top: 7px;
   padding-bottom: 7px;
 }
-
 .multiple-choice [type=radio] + label::before {
   content: "";
   border: 2px solid;
@@ -1494,7 +1432,6 @@ select:focus::-ms-value {
   -moz-border-radius: 50%;
   border-radius: 50%;
 }
-
 .multiple-choice [type=radio] + label::after {
   content: "";
   border: 10px solid;
@@ -1510,7 +1447,6 @@ select:focus::-ms-value {
   filter: alpha(opacity=0);
   opacity: 0;
 }
-
 .multiple-choice [type=checkbox] + label::before {
   content: "";
   border: 2px solid;
@@ -1521,7 +1457,6 @@ select:focus::-ms-value {
   top: 0;
   left: 0;
 }
-
 .multiple-choice [type=checkbox] + label::after {
   content: "";
   border: solid;
@@ -1542,36 +1477,30 @@ select:focus::-ms-value {
   filter: alpha(opacity=0);
   opacity: 0;
 }
-
 .multiple-choice [type=radio]:focus + label::before {
   -webkit-box-shadow: 0 0 0 4px #ffbf47;
   -moz-box-shadow: 0 0 0 4px #ffbf47;
   box-shadow: 0 0 0 4px #ffbf47;
 }
-
 .multiple-choice [type=checkbox]:focus + label::before {
   -webkit-box-shadow: 0 0 0 3px #ffbf47;
   -moz-box-shadow: 0 0 0 3px #ffbf47;
   box-shadow: 0 0 0 3px #ffbf47;
 }
-
 .multiple-choice input:checked + label::after {
   zoom: 1;
   filter: alpha(opacity=100);
   opacity: 1;
 }
-
 .multiple-choice input:disabled {
   cursor: default;
 }
-
 .multiple-choice input:disabled + label {
   zoom: 1;
   filter: alpha(opacity=50);
   opacity: 0.5;
   cursor: default;
 }
-
 .multiple-choice:last-child, .multiple-choice:last-of-type {
   margin-bottom: 0;
 }
@@ -1599,16 +1528,13 @@ input[type=number] {
   margin-bottom: 0;
   clear: none;
 }
-
 .form-date .form-group label {
   display: block;
   padding-bottom: 2px;
 }
-
 .form-date .form-group input {
   width: 100%;
 }
-
 .form-date .form-group-year {
   width: 70px;
 }
@@ -1632,7 +1558,7 @@ input[type=number] {
   font-size: 16px;
   line-height: 1.25;
   font-size: 19px;
-  line-height: 1.31579;
+  line-height: 1.3157894737;
   color: #b10e1e;
   display: block;
   clear: both;
@@ -1656,27 +1582,21 @@ input[type=number] {
   margin-bottom: 30px;
   padding: 20px 15px 15px;
 }
-
 .error-summary:focus {
   outline: 3px solid #ffbf47;
 }
-
 .error-summary .error-summary-heading {
   margin-top: 0;
 }
-
 .error-summary p {
   margin-bottom: 10px;
 }
-
 .error-summary .error-summary-list {
   padding-left: 0;
 }
-
 .error-summary .error-summary-list li {
   margin-bottom: 5px;
 }
-
 .error-summary .error-summary-list a {
   color: #b10e1e;
   font-weight: bold;
@@ -1687,13 +1607,12 @@ input[type=number] {
   padding-top: 0.75em;
   padding-bottom: 0.75em;
 }
-
 .breadcrumbs li {
   font-family: "nta", Arial, sans-serif;
   font-weight: 400;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.14286;
+  line-height: 1.1428571429;
   font-size: 16px;
   line-height: 1.25;
   float: left;
@@ -1705,20 +1624,17 @@ input[type=number] {
   margin-bottom: 0.4em;
   padding-left: 0.9em;
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .breadcrumbs li {
     background-image: url("/public/imagesseparator-2x.png");
     background-size: 6px 11px;
   }
 }
-
 .breadcrumbs li:first-child {
   background-image: none;
   margin-left: 0;
   padding-left: 0;
 }
-
 .breadcrumbs a {
   color: #0b0c0c;
 }
@@ -1728,7 +1644,6 @@ input[type=number] {
   padding-bottom: 10px;
   border-bottom: 1px solid #bfc1c3;
 }
-
 .phase-banner p {
   display: table;
   margin: 0;
@@ -1737,11 +1652,10 @@ input[type=number] {
   font-weight: 400;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.14286;
+  line-height: 1.1428571429;
   font-size: 16px;
   line-height: 1.25;
 }
-
 .phase-banner .phase-tag {
   display: -moz-inline-stack;
   display: inline-block;
@@ -1751,7 +1665,7 @@ input[type=number] {
   font-weight: 700;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.14286;
+  line-height: 1.1428571429;
   font-size: 16px;
   line-height: 1.25;
   text-transform: uppercase;
@@ -1760,7 +1674,6 @@ input[type=number] {
   color: #fff;
   background-color: #005ea5;
 }
-
 .phase-banner span {
   display: table-cell;
   vertical-align: baseline;
@@ -1772,7 +1685,6 @@ input[type=number] {
   padding-bottom: 10px;
   border-bottom: 1px solid #bfc1c3;
 }
-
 .phase-banner-alpha p,
 .phase-banner-beta p {
   display: table;
@@ -1782,11 +1694,10 @@ input[type=number] {
   font-weight: 400;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.14286;
+  line-height: 1.1428571429;
   font-size: 16px;
   line-height: 1.25;
 }
-
 .phase-banner-alpha .phase-tag,
 .phase-banner-beta .phase-tag {
   display: -moz-inline-stack;
@@ -1797,7 +1708,7 @@ input[type=number] {
   font-weight: 700;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.14286;
+  line-height: 1.1428571429;
   font-size: 16px;
   line-height: 1.25;
   text-transform: uppercase;
@@ -1806,7 +1717,6 @@ input[type=number] {
   color: #fff;
   background-color: #005ea5;
 }
-
 .phase-banner-alpha span,
 .phase-banner-beta span {
   display: table-cell;
@@ -1822,7 +1732,7 @@ input[type=number] {
   font-weight: 700;
   text-transform: none;
   font-size: 14px;
-  line-height: 1.14286;
+  line-height: 1.1428571429;
   font-size: 16px;
   line-height: 1.25;
   text-transform: uppercase;
@@ -2126,7 +2036,7 @@ div.search-terms a {
   background-color: #f8f8f8;
 }
 
-#formHolder input[type="text"] {
+#formHolder input[type=text] {
   width: 95%;
   background: #fff;
 }

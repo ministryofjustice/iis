@@ -20868,63 +20868,63 @@ var _require2 = __webpack_require__(143),
 var utils = __webpack_require__(144);
 
 module.exports = {
-    validateDescriptionForm: validateDescriptionForm,
-    validateAddressForm: validateAddressForm
+  validateDescriptionForm: validateDescriptionForm,
+  validateAddressForm: validateAddressForm
 };
 
 function validateDescriptionForm(userInput) {
-    var dobDay = userInput.dobDay,
-        dobMonth = userInput.dobMonth,
-        dobYear = userInput.dobYear;
+  var dobDay = userInput.dobDay,
+      dobMonth = userInput.dobMonth,
+      dobYear = userInput.dobYear;
 
 
-    if (dobDay || dobMonth || dobYear) {
-        var validationErrors = validateDob(dobDay, dobMonth, dobYear);
-        if (validationErrors) {
-            return validationErrors;
-        }
+  if (dobDay || dobMonth || dobYear) {
+    var validationErrors = validateDob(dobDay, dobMonth, dobYear);
+    if (validationErrors) {
+      return validationErrors;
     }
+  }
 
-    if (userInput.age) {
-        var _validationErrors = validateAge(userInput.age);
-        if (_validationErrors) {
-            return _validationErrors;
-        }
+  if (userInput.age) {
+    var _validationErrors = validateAge(userInput.age);
+    if (_validationErrors) {
+      return _validationErrors;
     }
+  }
 
-    if (userInput.surname) {
-        var _validationErrors2 = validateName(userInput.surname);
-        if (_validationErrors2) {
-            return _validationErrors2;
-        }
+  if (userInput.surname) {
+    var _validationErrors2 = validateName(userInput.surname);
+    if (_validationErrors2) {
+      return _validationErrors2;
     }
+  }
 
-    if (userInput.forename) {
-        var _validationErrors3 = validateName(userInput.forename);
-        if (_validationErrors3) {
-            return _validationErrors3;
-        }
+  if (userInput.forename) {
+    var _validationErrors3 = validateName(userInput.forename);
+    if (_validationErrors3) {
+      return _validationErrors3;
     }
+  }
 
-    if (userInput.forename2) {
-        var _validationErrors4 = validateName(userInput.forename2);
-        if (_validationErrors4) {
-            return _validationErrors4;
-        }
+  if (userInput.forename2) {
+    var _validationErrors4 = validateName(userInput.forename2);
+    if (_validationErrors4) {
+      return _validationErrors4;
     }
+  }
 
-    return null;
+  return null;
 }
 
 function validateAddressForm(userInput) {
 
-    var search = utils.cleanAddressSearch(userInput.address);
+  var search = utils.cleanAddressSearch(userInput.address);
 
-    if (search.split(' ').length < 2) {
-        return { title: 'Enter at least 2 address elements' };
-    }
+  if (search.split(' ').length < 2) {
+    return { title: 'Enter at least 2 address elements' };
+  }
 
-    return null;
+  return null;
 }
 
 /***/ }),
@@ -21010,138 +21010,138 @@ function removeError() {
 
 module.exports = {
 
-    errMsg: {
-        LOGIN_ERROR: 'Unable to sign in, try again',
-        LOGIN_ERROR_DESC: 'All fields are required. Password is case-sensitive',
-        LOGIN_ERROR_DISCLAIMER: 'You must confirm that you understand the disclaimer',
-        DB_ERROR: 'Unable to talk to the database',
-        DB_ERROR_DESC: 'Please try again',
-        CANNOT_SUBMIT: 'There was a problem submitting the form',
-        NO_OPTION_SELECTED: 'Invalid selection',
-        INVALID_ID: 'The identifier you\'ve entered doesn\'t look right',
-        ATLEAST_ONE_REQUIRED: 'Please enter a value for at least one field',
-        LETTERS_ONLY: 'A name mustn\'t contain space, numbers or special characters',
-        INVALID_DOB: 'Invalid date of birth',
-        INVALID_AGE: 'Age must be a whole number',
-        INVALID_AGE_RANGE: 'Invalid age range. Age ranges should be be no larger than 10 years.',
-        TRY_AGAIN: 'Try again',
-        INVALID_PAGE: 'The page you requested does not exist'
+  errMsg: {
+    LOGIN_ERROR: 'Unable to sign in, try again',
+    LOGIN_ERROR_DESC: 'All fields are required. Password is case-sensitive',
+    LOGIN_ERROR_DISCLAIMER: 'You must confirm that you understand the disclaimer',
+    DB_ERROR: 'Unable to talk to the database',
+    DB_ERROR_DESC: 'Please try again',
+    CANNOT_SUBMIT: 'There was a problem submitting the form',
+    NO_OPTION_SELECTED: 'Invalid selection',
+    INVALID_ID: 'The identifier you\'ve entered doesn\'t look right',
+    ATLEAST_ONE_REQUIRED: 'Please enter a value for at least one field',
+    LETTERS_ONLY: 'A name mustn\'t contain space, numbers or special characters',
+    INVALID_DOB: 'Invalid date of birth',
+    INVALID_AGE: 'Age must be a whole number',
+    INVALID_AGE_RANGE: 'Invalid age range. Age ranges should be be no larger than 10 years.',
+    TRY_AGAIN: 'Try again',
+    INVALID_PAGE: 'The page you requested does not exist'
+  },
+
+  dbErrorCodeMessages: {
+    ETIMEOUT: 'The search timed out. Try a more specific query',
+    emptySubmission: 'Please enter a value for at least one field'
+  },
+
+  view: {
+    error: { title: 'Error' },
+    notfound: { title: 'Not found' },
+
+    disclaimer: { title: 'Usage' },
+
+    feedback: { title: 'Feedback' },
+
+    search: {
+      title: 'What information do you have on the subject?',
+      body: 'Select all that apply'
     },
 
-    dbErrorCodeMessages: {
-        ETIMEOUT: 'The search timed out. Try a more specific query',
-        emptySubmission: 'Please enter a value for at least one field'
+    changepassword: {
+      title: 'Contact administrator',
+      body: 'Send an email to whatever@digital.justice.gov.uk from the email address registered with IIS'
     },
 
-    view: {
-        error: { title: 'Error' },
-        notfound: { title: 'Not found' },
+    identifier: { title: 'Enter at least one unique identifier' },
 
-        disclaimer: { title: 'Usage' },
+    names: { title: 'Enter at least one name' },
 
-        feedback: { title: 'Feedback' },
+    dob: { title: 'Enter subject\'s date of birth or age/range' },
 
-        search: {
-            title: 'What information do you have on the subject?',
-            body: 'Select all that apply'
-        },
-
-        changepassword: {
-            title: 'Contact administrator',
-            body: 'Send an email to whatever@digital.justice.gov.uk from the email address registered with IIS'
-        },
-
-        identifier: { title: 'Enter at least one unique identifier' },
-
-        names: { title: 'Enter at least one name' },
-
-        dob: { title: 'Enter subject\'s date of birth or age/range' },
-
-        results: {
-            title: 'Your search returned _x_ prisoner',
-            title_no_results: 'Your search did not return any results'
-        },
-
-        subject: {
-            title: 'Prisoner details',
-            aliases: 'Prisoner has no aliases',
-            offencesincustody: 'Prisoner has no offences in custody',
-            movements: 'Prisoner has no movements',
-            hdcinfo: 'Prisoner has no HDC information',
-            hdcrecall: 'Prisoner has no HDC recall history',
-            offences: 'Prisoner has no offences',
-            addresses: 'Prisoner has no addresses',
-            sentences: 'Prisoner has no sentence history'
-        },
-
-        suggestions: {
-            title: 'Suggestions & tips'
-        },
-
-        print: {
-            body: 'Select all that apply',
-            noneSelected: 'Please select at least one item to print'
-        }
-    },
-    pdf: {
-        disclaimer: 'The information in this document is official sensitive and should not be shared with anyone ' + 'who does not have a valid reason to see it. Inappropriate use of the data may lead to disciplinary action ' + 'and/or legal proceedings. The information has been produced from the Historic Prisoner Application ' + 'database (formerly IIS) and the data should be used in conjunction with policy, legislation and codes ' + 'which applied at the time of entry. Please note that HMPPS/MoJ will not accept responsibility for errors ' + 'in the system.',
-        subject: {
-            prisonNumber: 'Prison number',
-            personIdentifier: 'Person identifier',
-            paroleRefList: 'Parole reference list',
-            pnc: 'PNC',
-            cro: 'CRO',
-            dob: 'Date of birth',
-            countryOfBirth: 'Country of birth',
-            maritalStatus: 'Marital status',
-            ethnicity: 'Ehnicity',
-            nationality: 'Nationality',
-            religion: 'Religion',
-            sex: 'Gender',
-            age: 'Age'
-        },
-        subject2: {
-            prisonNumber: 'Prison number',
-            paroleNumbers: 'Parole reference list',
-            pncNumber: 'PNC',
-            croNumber: 'CRO',
-            dob: 'Date of birth',
-            birthCountry: 'Country of birth',
-            maritalStatus: 'Marital status',
-            ethnicity: 'Ehnicity',
-            nationality: 'Nationality',
-            religion: 'Religion',
-            sex: 'Gender',
-            age: 'Age',
-            receptionDate: 'Date of first reception',
-            name: 'Name',
-            identifier: 'Identifier'
-        },
-        dbError: {
-            title: 'There was a problem getting the data from the database',
-            desc: 'Please try again'
-        }
+    results: {
+      title: 'Your search returned _x_ prisoner',
+      title_no_results: 'Your search did not return any results'
     },
 
-    termDisplayNames: {
-        prisonNumber: { name: 'Prison number' },
-        pncNumber: { name: 'PNC number' },
-        croNumber: { name: 'CRO number' },
-        forename: {
-            name: 'First name',
-            textFormat: 'capitalise'
-        },
-        forename2: {
-            name: 'Middle name',
-            textFormat: 'capitalise'
-        },
-        surname: {
-            name: 'Last name',
-            textFormat: 'capitalise'
-        },
-        age: { name: 'Age' },
-        dob: { name: 'Date of birth' }
+    subject: {
+      title: 'Prisoner details',
+      aliases: 'Prisoner has no aliases',
+      offencesincustody: 'Prisoner has no offences in custody',
+      movements: 'Prisoner has no movements',
+      hdcinfo: 'Prisoner has no HDC information',
+      hdcrecall: 'Prisoner has no HDC recall history',
+      offences: 'Prisoner has no offences',
+      addresses: 'Prisoner has no addresses',
+      sentences: 'Prisoner has no sentence history'
+    },
+
+    suggestions: {
+      title: 'Suggestions & tips'
+    },
+
+    print: {
+      body: 'Select all that apply',
+      noneSelected: 'Please select at least one item to print'
     }
+  },
+  pdf: {
+    disclaimer: 'The information in this document is official sensitive and should not be shared with anyone ' + 'who does not have a valid reason to see it. Inappropriate use of the data may lead to disciplinary action ' + 'and/or legal proceedings. The information has been produced from the Historic Prisoner Application ' + 'database (formerly IIS) and the data should be used in conjunction with policy, legislation and codes ' + 'which applied at the time of entry. Please note that HMPPS/MoJ will not accept responsibility for errors ' + 'in the system.',
+    subject: {
+      prisonNumber: 'Prison number',
+      personIdentifier: 'Person identifier',
+      paroleRefList: 'Parole reference list',
+      pnc: 'PNC',
+      cro: 'CRO',
+      dob: 'Date of birth',
+      countryOfBirth: 'Country of birth',
+      maritalStatus: 'Marital status',
+      ethnicity: 'Ehnicity',
+      nationality: 'Nationality',
+      religion: 'Religion',
+      sex: 'Gender',
+      age: 'Age'
+    },
+    subject2: {
+      prisonNumber: 'Prison number',
+      paroleNumbers: 'Parole reference list',
+      pncNumber: 'PNC',
+      croNumber: 'CRO',
+      dob: 'Date of birth',
+      birthCountry: 'Country of birth',
+      maritalStatus: 'Marital status',
+      ethnicity: 'Ehnicity',
+      nationality: 'Nationality',
+      religion: 'Religion',
+      sex: 'Gender',
+      age: 'Age',
+      receptionDate: 'Date of first reception',
+      name: 'Name',
+      identifier: 'Identifier'
+    },
+    dbError: {
+      title: 'There was a problem getting the data from the database',
+      desc: 'Please try again'
+    }
+  },
+
+  termDisplayNames: {
+    prisonNumber: { name: 'Prison number' },
+    pncNumber: { name: 'PNC number' },
+    croNumber: { name: 'CRO number' },
+    forename: {
+      name: 'First name',
+      textFormat: 'capitalise'
+    },
+    forename2: {
+      name: 'Middle name',
+      textFormat: 'capitalise'
+    },
+    surname: {
+      name: 'Last name',
+      textFormat: 'capitalise'
+    },
+    age: { name: 'Age' },
+    dob: { name: 'Date of birth' }
+  }
 };
 
 /***/ }),
@@ -21155,73 +21155,73 @@ var content = __webpack_require__(141);
 var MAX_AGE_RANGE = 10;
 
 module.exports = {
-    validateDob: validateDob,
-    validateAge: validateAge
+  validateDob: validateDob,
+  validateAge: validateAge
 };
 
 function validateDob(day, month, year) {
 
-    var err = { title: 'Enter a valid date of birth in the format DD/MM/YYYY' };
+  var err = { title: 'Enter a valid date of birth in the format DD/MM/YYYY' };
 
-    if (!day || !month || !year) {
-        return err;
-    }
+  if (!day || !month || !year) {
+    return err;
+  }
 
-    if (year.length !== 4 || !isDate(day + '-' + month + '-' + year)) {
-        return err;
-    }
+  if (year.length !== 4 || !isDate(day + '-' + month + '-' + year)) {
+    return err;
+  }
 
-    var dob = new Date(year, month, day);
+  var dob = new Date(year, month, day);
 
-    if (dob > new Date()) {
-        return { title: 'The date of birth cannot be in the future' };
-    }
+  if (dob > new Date()) {
+    return { title: 'The date of birth cannot be in the future' };
+  }
 
-    return null;
+  return null;
 }
 
 function isDate(v) {
-    // eslint-disable-next-line
-    return (/^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/.test(v)
-    );
+  // eslint-disable-next-line
+  return (/^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/.test(v)
+  );
 }
 
 function validateAge(age) {
-    var err = {
-        title: content.errMsg.CANNOT_SUBMIT,
-        items: [{ ageRange: 'Re-enter age or range' }],
-        desc: content.errMsg.INVALID_AGE
-    };
+  var err = {
+    title: content.errMsg.CANNOT_SUBMIT,
+    items: [{ ageRange: 'Re-enter age or range' }],
+    desc: content.errMsg.INVALID_AGE
+  };
 
-    if (!isAgeOrAgeRange(age.replace(/ /g, ''))) {
+  if (!isAgeOrAgeRange(age.replace(/ /g, ''))) {
 
-        if (age.indexOf('-') > 0) {
-            err.desc = content.errMsg.INVALID_AGE_RANGE;
-        }
-
-        return err;
+    if (age.indexOf('-') > 0) {
+      err.desc = content.errMsg.INVALID_AGE_RANGE;
     }
 
-    return null;
+    return err;
+  }
+
+  return null;
 }
 
 function isAgeOrAgeRange(v) {
-    // eslint-disable-next-line
-    if (!/^[1-9][0-9]$|^[1][0-9][0-9]$|^[1-9][0-9]-[1-9][0-9]|^[1-9][0-9]-[1][0-9][0-9]|^[1][0-9][0-9]-[1][0-9][0-9]$/.test(v)) {
-        return false;
-    }
+  // eslint-disable-next-line
+  if (!/^[1-9][0-9]$|^[1][0-9][0-9]$|^[1-9][0-9]-[1-9][0-9]|^[1-9][0-9]-[1][0-9][0-9]|^[1][0-9][0-9]-[1][0-9][0-9]$/.test(v)) {
+    return false;
+  }
 
-    if (v.indexOf('-') === -1) {
-        return true;
-    }
+  if (v.indexOf('-') === -1) {
+    return true;
+  }
 
-    v = v.split('-');
+  v = v.split('-');
 
-    if (v[0] >= v[1]) {
-        return false;
-    }
+  if (v[0] >= v[1]) {
+    return false;
+  }
 
-    return v[1] - v[0] <= MAX_AGE_RANGE;
+  return v[1] - v[0] <= MAX_AGE_RANGE;
 }
 
 /***/ }),
@@ -21232,18 +21232,18 @@ function isAgeOrAgeRange(v) {
 
 
 module.exports = {
-    validateName: validateName
+  validateName: validateName
 };
 
 function validateName(string) {
-    var error = { title: 'A name mustn\'t contain space, numbers or special characters' };
+  var error = { title: 'A name mustn\'t contain space, numbers or special characters' };
 
-    return isString(string) ? null : error;
+  return isString(string) ? null : error;
 }
 
 function isString(v) {
-    return (/^[\sA-Za-z%_'-]+$/.test(v)
-    );
+  return (/^[\sA-Za-z%_'-]+$/.test(v)
+  );
 }
 
 /***/ }),
@@ -21263,92 +21263,92 @@ var acronyms = ['ARD', 'ARP', 'CRC', 'CJA', 'DTO', 'EPP', 'GOAD', 'HDC', 'HMP', 
 
 module.exports = {
 
-    pad: function pad(n) {
-        return n < 10 ? '0' + parseInt(n) : n;
-    },
+  pad: function pad(n) {
+    return n < 10 ? '0' + parseInt(n) : n;
+  },
 
-    padPrisonNumber: function padPrisonNumber(v) {
-        var spaces = '';
+  padPrisonNumber: function padPrisonNumber(v) {
+    var spaces = '';
 
-        for (var i = 0; i < PRISON_NUMBER_LENGTH - v.length; i++) {
-            spaces += ' ';
-        }
-
-        return v.length < PRISON_NUMBER_LENGTH ? spaces + v : v;
-    },
-
-    wildcardify: function wildcardify(value, minValue) {
-        if (value.toString().length === minValue) {
-            return value;
-        }
-        return '%'.concat(value, '%');
-    },
-
-    getAgeFromDOB: function getAgeFromDOB(dateInGDSFormat) {
-        var dob = moment(dateInGDSFormat, 'DD/MM/YYYY');
-        return moment().diff(dob, 'years', false);
-    },
-
-    getDateRange: function getDateRange(age) {
-        if (age.indexOf('-') === -1) {
-            var _startDate = this.getCurrentTime().subtract(age, 'years').subtract(1, 'years').add(1, 'days').format('YYYYMMDD');
-
-            var _endDate = this.getCurrentTime().subtract(age, 'years').format('YYYYMMDD');
-            return [_startDate, _endDate];
-        }
-
-        var ages = age.split('-');
-        var startDate = this.getCurrentTime().subtract(ages[1], 'years').subtract(1, 'years').add(1, 'days').format('YYYYMMDD');
-
-        var endDate = this.getCurrentTime().subtract(ages[0], 'years').format('YYYYMMDD');
-        return [startDate, endDate];
-    },
-
-    pagination: function pagination(rowCount, currPage) {
-        currPage = currPage ? currPage : 1;
-
-        var totalPages = Math.ceil(rowCount / resultsPerPage);
-        var showPrev = currPage - 1 == 0 ? false : true;
-        var showNext = currPage == totalPages ? false : true;
-
-        return {
-            totalPages: totalPages,
-            currPage: currPage,
-            showPrev: showPrev,
-            showNext: showNext
-        };
-    },
-
-    getCurrentTime: function getCurrentTime() {
-        return moment();
-    },
-
-    getFormattedDateFromString: function getFormattedDateFromString(dateAsIISDateFormat) {
-        return dateAsIISDateFormat == '18991231' ? null : moment(dateAsIISDateFormat, 'YYYYMMDD').format('DD/MM/YYYY');
-    },
-
-    getPathFromURL: function getPathFromURL(v) {
-        return url.parse(v).path;
-    },
-
-    acronymsToUpperCase: function acronymsToUpperCase(text) {
-        return acronyms.map(function (acronym) {
-            var pattern = '\\b(' + acronym + ')\\b';
-            var regex = new RegExp(pattern, 'gi');
-            text = text.replace(regex, Case.upper(acronym));
-            return text;
-        }).pop();
-    },
-
-    cleanAddressSearch: function cleanAddressSearch(input) {
-        var search = input.replace(/([.,])/g, ' ').replace(/(['])/g, '');
-
-        var searchTerms = search.split(' ').filter(function (term) {
-            return term.trim();
-        });
-
-        return searchTerms.join(', ');
+    for (var i = 0; i < PRISON_NUMBER_LENGTH - v.length; i++) {
+      spaces += ' ';
     }
+
+    return v.length < PRISON_NUMBER_LENGTH ? spaces + v : v;
+  },
+
+  wildcardify: function wildcardify(value, minValue) {
+    if (value.toString().length === minValue) {
+      return value;
+    }
+    return '%'.concat(value, '%');
+  },
+
+  getAgeFromDOB: function getAgeFromDOB(dateInGDSFormat) {
+    var dob = moment(dateInGDSFormat, 'DD/MM/YYYY');
+    return moment().diff(dob, 'years', false);
+  },
+
+  getDateRange: function getDateRange(age) {
+    if (age.indexOf('-') === -1) {
+      var _startDate = this.getCurrentTime().subtract(age, 'years').subtract(1, 'years').add(1, 'days').format('YYYYMMDD');
+
+      var _endDate = this.getCurrentTime().subtract(age, 'years').format('YYYYMMDD');
+      return [_startDate, _endDate];
+    }
+
+    var ages = age.split('-');
+    var startDate = this.getCurrentTime().subtract(ages[1], 'years').subtract(1, 'years').add(1, 'days').format('YYYYMMDD');
+
+    var endDate = this.getCurrentTime().subtract(ages[0], 'years').format('YYYYMMDD');
+    return [startDate, endDate];
+  },
+
+  pagination: function pagination(rowCount, currPage) {
+    currPage = currPage ? currPage : 1;
+
+    var totalPages = Math.ceil(rowCount / resultsPerPage);
+    var showPrev = currPage - 1 == 0 ? false : true;
+    var showNext = currPage == totalPages ? false : true;
+
+    return {
+      totalPages: totalPages,
+      currPage: currPage,
+      showPrev: showPrev,
+      showNext: showNext
+    };
+  },
+
+  getCurrentTime: function getCurrentTime() {
+    return moment();
+  },
+
+  getFormattedDateFromString: function getFormattedDateFromString(dateAsIISDateFormat) {
+    return dateAsIISDateFormat == '18991231' ? null : moment(dateAsIISDateFormat, 'YYYYMMDD').format('DD/MM/YYYY');
+  },
+
+  getPathFromURL: function getPathFromURL(v) {
+    return url.parse(v).path;
+  },
+
+  acronymsToUpperCase: function acronymsToUpperCase(text) {
+    return acronyms.map(function (acronym) {
+      var pattern = '\\b(' + acronym + ')\\b';
+      var regex = new RegExp(pattern, 'gi');
+      text = text.replace(regex, Case.upper(acronym));
+      return text;
+    }).pop();
+  },
+
+  cleanAddressSearch: function cleanAddressSearch(input) {
+    var search = input.replace(/([.,])/g, ' ').replace(/(['])/g, '');
+
+    var searchTerms = search.split(' ').filter(function (term) {
+      return term.trim();
+    });
+
+    return searchTerms.join(', ');
+  }
 };
 
 /***/ }),
@@ -21362,53 +21362,53 @@ var production = process.env.NODE_ENV === 'production';
 var oneDay = 24 * 60 * 60;
 
 function get(name, fallback) {
-    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
-    if (process.env[name]) {
-        return process.env[name];
-    }
-    if (fallback !== undefined && (!production || !options.requireInProduction)) {
-        return fallback;
-    }
-    throw new Error('Missing env var ' + name);
+  if (process.env[name]) {
+    return process.env[name];
+  }
+  if (fallback !== undefined && (!production || !options.requireInProduction)) {
+    return fallback;
+  }
+  throw new Error('Missing env var ' + name);
 }
 
 module.exports = {
 
-    version: 0.1,
+  version: 0.1,
 
-    db: {
-        username: get('DB_USER', 'user'),
-        password: get('DB_PASS', 'pass'),
-        server: get('DB_SERVER', 'server'),
-        database: get('DB_NAME', 'iis-sandbox')
-    },
+  db: {
+    username: get('DB_USER', 'user'),
+    password: get('DB_PASS', 'pass'),
+    server: get('DB_SERVER', 'server'),
+    database: get('DB_NAME', 'iis-sandbox')
+  },
 
-    https: production,
-    staticResourceCacheDuration: 365 * oneDay,
-    healthcheckInterval: Number(get('HEALTHCHECK_INTERVAL', 0)),
+  https: production,
+  staticResourceCacheDuration: 365 * oneDay,
+  healthcheckInterval: Number(get('HEALTHCHECK_INTERVAL', 0)),
 
-    sessionSecret: get('SESSION_SECRET', 'iis-insecure-default-session', { requireInProduction: true }),
+  sessionSecret: get('SESSION_SECRET', 'iis-insecure-default-session', { requireInProduction: true }),
 
-    sso: {
-        CLIENT_ID: get('CLIENT_ID', '123'),
-        CLIENT_SECRET: get('CLIENT_SECRET', '123'),
-        TOKEN_HOST: get('TOKEN_HOST', 'http://localhost:3001'),
-        AUTHORIZE_PATH: get('AUTHORIZE_PATH', '/oauth/authorize'),
-        TOKEN_PATH: get('TOKEN_PATH', '/oauth/token'),
-        USER_DETAILS_PATH: get('USER_DETAILS_PATH', '/api/user_details')
-    },
+  sso: {
+    CLIENT_ID: get('CLIENT_ID', '123'),
+    CLIENT_SECRET: get('CLIENT_SECRET', '123'),
+    TOKEN_HOST: get('TOKEN_HOST', 'http://localhost:3001'),
+    AUTHORIZE_PATH: get('AUTHORIZE_PATH', '/oauth/authorize'),
+    TOKEN_PATH: get('TOKEN_PATH', '/oauth/token'),
+    USER_DETAILS_PATH: get('USER_DETAILS_PATH', '/api/user_details')
+  },
 
-    searchResultsPerPage: get('SEARCH_RESULTS_PER_PAGE', 10),
+  searchResultsPerPage: get('SEARCH_RESULTS_PER_PAGE', 10),
 
-    administrators: get('ADMINISTRATORS', 'joe@example.com').replace(/ /g, '').split(','),
+  administrators: get('ADMINISTRATORS', 'joe@example.com').replace(/ /g, '').split(','),
 
-    addressSearchDistance: 5,
+  addressSearchDistance: 5,
 
-    features: {
-        comparison: get('COMPARISON_ENABLED', true),
-        addressSearch: get('ADDRESS_SEARCH_ENABLED', true)
-    }
+  features: {
+    comparison: get('COMPARISON_ENABLED', true),
+    addressSearch: get('ADDRESS_SEARCH_ENABLED', true)
+  }
 };
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(149)))
 

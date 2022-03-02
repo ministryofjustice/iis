@@ -23,3 +23,12 @@ cp -R ./assets/images/*        ./public/images
 cp ./assets/javascripts/*.js   ./public/javascripts/
 
 cp ./govuk_modules/govuk_template/assets/stylesheets/govuk-template-ie8.css ./public/stylesheets
+
+# Build CSS
+sass    --no-source-map \
+        --load-path=govuk_modules/govuk_frontend_toolkit/stylesheets \
+        --load-path=govuk_modules/govuk_template/assets/stylesheets \
+        --load-path=govuk_modules/govuk-elements-sass/ \
+        ./assets/sass/application.scss:./public/stylesheets/application.css \
+        ./assets/sass/print.scss:./public/stylesheets/print.css \
+        ./assets/sass/application-ie8.sass:./public/stylesheets/application-oldie.css

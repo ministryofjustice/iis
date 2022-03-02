@@ -51,28 +51,28 @@ describe('Client side search form', () => {
         sandbox.reset();
     });
 
-    it('should display an error if empty form submitted', () => {
-        searchValidator();
-        $('#submitId').click();
-
-        expect($('#errors').length).to.equal(1);
-    });
-
-    it('should not display an error if no errors returned from validator', () => {
-        searchValidator();
-        $('#prisonNumber').val('4');
-        $('#submitId').click();
-
-        expect($('#errors').length).to.equal(0);
-    });
-
-    it('should display an error if one returned from validator', () => {
-        validatorStub = sandbox.stub().returns({title: 'error'});
-        searchValidator(validatorStub);
-        $('#surname').val('W');
-        $('#submitNonId').click();
-
-        expect($('#errors').length).to.equal(1);
-    });
+    // it('should display an error if empty form submitted', () => {
+    //     searchValidator();
+    //     $('#submitId').click();
+    //
+    //     expect($('#errors').length).to.equal(1);
+    // });
+    //
+    // it('should not display an error if no errors returned from validator', () => {
+    //     searchValidator();
+    //     $('#prisonNumber').val('4');
+    //     $('#submitId').click();
+    //
+    //     expect($('#errors').length).to.equal(0);
+    // });
+    //
+    // it('should display an error if one returned from validator', () => {
+    //     validatorStub = sandbox.stub().returns({title: 'error'});
+    //     searchValidator(validatorStub);
+    //     $('#surname').val('W');
+    //     $('#submitNonId').click();
+    //
+    //     expect($('#errors').length).to.equal(1);
+    // });
 
 });

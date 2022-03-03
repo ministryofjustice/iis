@@ -10,34 +10,50 @@
   ```
   $ npm install
   ```  
-2. Supply environment variables. The required environment variables are defined in server/config.js.
 
+2. Start the DB
 
-3. Start the server
+Start the sql server instance by running `docker-compose up`.
 
-  ```   
-  $ npm start
-  ```
+This will create 1 DB: `IIS`, and 3 schemas: `IIS`, `NON_IIS` and `HPA`.
 
-   Or, for development, run inspections, tests, watch for changes and start the server:
-   
-  ```   
-  $ gulp dev
-  ```
+3 users will be created:
+
+| Name         | Password
+| sa           | NotVerySecretPa55word_SA_01
+| iisuser      | NotVerySecretPa55word_IIS_01
+| schemaowner  | NotVerySecretPa55word_IIS_01
+
+It will then seed test data and finally run the DB migrations.
+
+3. Start the App
+
+```
+NODE_ENV=test                        \
+DB_SERVER=localhost                  \
+DB_USER=iisuser                      \
+DB_NAME=iis                          \
+DB_PASS=NotVerySecretPa55word_IIS_01 \
+ADMINISTRATORS=test@test.com         \
+npm run start:dev
+```
+
+(environmental variables are listed in server/config.js)
+
+This will disable auth.
+The test user will have admin privileges and so can access the admin pages on `/admin`
+
+Search uses data defined in the `[HPA].[PRISONERS]` table, e.g searching for `George` should return 3 results.
   
 4. Visit [localhost:3000](http://localhost:3000/)
 
 ## Developer Commands
 
- - `gulp lint` -> style checks using eslint
- - `gulp test` -> runs all unit tests
- (Note that tests run with authentication disabled and sending logs to file in iis-ui.log)
- - `gulp clean` -> cleans previously generated files
- - `gulp build` -> cleans and regenerates assets. This is also the default gulp task
- 
- Gulp tasks are defined in individual files under/gulp.
- Coordinating tasks such as `dev`, `test` etc are defined in `/gulp/tasks.js`
- 
+ - `npm run lint` -> style checks using eslint
+ - `npm test` -> runs all unit tests
+ (Note that tests run with authentication disabled and sending logs to file in tests.log)
+ - `npm run clean` -> cleans previously generated files
+ - `npm run build` -> cleans and regenerates assets
 
 # SSO
 
@@ -52,6 +68,7 @@ There are two options for authentication:
 
 The following environment variables are used and values should be supplied for correct operation but have defaults.
 
+* ADMINISTRATORS - a comma separted list containing the list of emails belonging to admins
 * DB_USER - username for DB access
 * DB_PASS - password for DB access
 * DB_SERVER - DB server host

@@ -81,7 +81,8 @@ workflows:
                 requires:
                     - build
             - deploy:
-                name: build_docker
+                requires:
+                    - unit_test
                 filters:
                     branches:
                         only:

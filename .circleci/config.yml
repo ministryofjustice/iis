@@ -60,6 +60,7 @@ jobs:
             - deploy:
                   name: Build Derived Git Commit
                   command: |
+                    npm run record-build-info
                     git add --force --verbose build-info.json
                     git config user.name "Circle CI"
                     git config user.email "circle@circleci.com"

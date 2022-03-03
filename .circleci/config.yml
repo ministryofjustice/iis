@@ -89,4 +89,4 @@ workflows:
                 filters:
                     branches:
                         only:
-                            - HAAR-177-circleci-dev
+                            - master

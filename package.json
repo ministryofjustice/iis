@@ -81,6 +81,7 @@
     "mocha": "^9.2.1",
     "mocha-junit-reporter": "^2.0.2",
     "nock": "^9.0.2",
+    "nodemon": "^2.0.15",
     "proxyquire": "^1.7.11",
     "sass": "^1.49.9",
     "sinon": "^1.17.7",
@@ -94,11 +95,17 @@
   "nodemonConfig": {
     "exec": "npm run start",
     "ignore": [
-      "public",
-      "test",
-      "govuk_modules"
+      ".circleci/*",
+      "migrations/*",
+      "node_modules/*",
+      "public/*",
+      "test/*",
+      "integration_tests/*",
+      "public/*",
+      "govuk_modules/*",
+      "assets/*"
     ],
-    "ext": "*",
+    "ext": "js,json,html,pug",
     "delay": 2500
   },
   "snyk": true

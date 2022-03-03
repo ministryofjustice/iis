@@ -1,0 +1,49 @@
+extends layout
+
+block content
+    div.grid-row
+        div.column-full
+
+            if err
+                div(id="errors" class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
+                    h1(class="heading-medium error-summary-heading", id="error-message")= err.title
+                    p= err.desc ? err.desc : ''
+
+                    if err.items && err.items.length > 0
+                        ul.error-summary-list
+                            each item in err.items
+                                li
+                                    each val, index in item
+                                        a(href="##{index}") #{val}
+
+    div.grid-row
+        div.column-one-half
+            h1.heading-xlarge= content.title
+
+    form(method="post")#loginForm
+        div.grid-row
+            div.column-full
+
+            input(type="hidden" name="_csrf" value=`${csrfToken}`)
+
+        div.grid-row
+            div.column-two-thirds
+                div.form-group
+                    p#disclaimerText
+                        | This information is Official Sensitive and should not be shared with anyone who
+                        | does not have a valid reason to use it. The Information in this application which was created
+                        | using the legacy application, LIDS, is accurate for that period of time entered and should be
+                        | used in conjunction with legislation and codes which applied at the time of entry. Information
+                        | in this application which was created using Prison NOMIS may not be accurate and should be
+                        | discounted. Any information which can be found on Prison NOMIS should be taken from Prison
+                        | NOMIS. Please note that MoJ/HMPPS will not accept any responsibility for errors on the system.
+
+
+                    div.multiple-choice
+                        input#disclaimer(type="checkbox", name="disclaimer", value="disclaimer")
+                        label(for="disclaimer")
+                            span#disclaimerConfirmation I confirm that I understand
+
+
+                div.form-group
+                    button.button#continue Continue

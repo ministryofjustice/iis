@@ -5,10 +5,10 @@ const express = require('express');
 let router = express.Router();
 
 router.use(function(req, res, next) {
-    if (typeof req.csrfToken === 'function') {
-        res.locals.csrfToken = req.csrfToken();
-    }
-    next();
+  if (typeof req.csrfToken === 'function') {
+    res.locals.csrfToken = req.csrfToken();
+  }
+  next();
 });
 
 router.get('/', (req, res) => res.redirect('/search'));

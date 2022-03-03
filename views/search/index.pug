@@ -1,0 +1,125 @@
+extends ../layout
+include ../includes/tabs
+mixin inmate(item)
+    div.inmateDetails(class=item.visited ? 'visited' : '')
+        a.inmateBlock(href=`/subject/${item.prisonNumber}/summary${queryStrings.thisPage}`)
+            span.inmateContainer
+                span(class=item.visited ? '' : 'bold-medium').capitalise-text #{setCase.capital(item.firstName +' '+ (item.middleName)) +' '+ item.lastName +' '}
+                if item.dob
+                    span(class=item.visited ? '' : 'bold-medium') &middot; #{moment(item.dob).format('DD/MM/YYYY')}
+                if item.isAlias
+                    span.block Matched on alias: #{setCase.capital(item.aliasFirst + ' ' + item.aliasLast)}
+                if item.prisonNumber
+                    span.prisonNumber.block.text-secondary
+                        | Prison no. #{item.prisonNumber}
+                        if item.receptionDate
+                            |  &bull; Reception #{moment(item.receptionDate).format('DD/MM/YYYY')}
+
+            form(method="post" action="/search/addToShortlist")
+                input(type="hidden" name="_csrf" value=`${csrfToken}`)
+                input(type="hidden" name="addToShortList" value=`${item.prisonNumber}`)
+                - var middleName = item.middleName ? item.middleName + ' ' : ''
+                - var fullName = setCase.capital(item.firstName + ' ' + middleName + item.lastName)
+                input(type="hidden" name="addToShortListName" value=`${!item.shortListed ? fullName+' added to' : fullName+' removed from'}`)
+
+                if comparisonEnabled && data.length >= 1
+                    if item.shortListed
+                        input(type="submit" value="Remove from shortlist" class="link" id="addToShortlist")
+                    else if !shortList || shortList.prisonNumbers.length < 3
+                        input(type="submit" value="Add to shortlist" class="link" id="addToShortlist")
+                    else
+                        input(type="submit" value=`Shortlist full - compare ${shortList.prisonNumbers.length} prisoners` class="link" id="addToShortlist" name="viewShortlist")
+
+        block
+
+block content
+    div.grid-row
+
+        if comparisonEnabled && shortList && shortList.prisonNumbers.length > 0
+            div.column-full
+                div#notice.c-align
+                    if shortList.latestName
+                        |#{shortList.latestName} the shortlist.&nbsp;
+                    else
+                        |Prisoner added to the shortlist.&nbsp;
+                    if shortList.prisonNumbers.length === 1
+                        |Add further prisoners to compare
+                    else
+                        a(href=`${shortList.href}${queryStrings.thisPage}`) Compare #{shortList.prisonNumbers.length} prisoners
+
+        if !usePlaceholder
+            div.column-full
+                +tabs('HPA',
+                    queryStrings.thisPage,
+                    shortList ? shortList.prisonNumbers.length : 0,
+                    shortList ? shortList.href : null
+                )
+
+        div.column-one-third
+            include ./searchForm
+
+        div#resultsBody.column-two-thirds
+            if err
+                include ./searchError
+            if !usePlaceholder
+
+                div.grid-row
+                    div.column-one-half
+                        h2.heading-large#contentTitle
+                            if rowCount === 1
+                                |#{rowCount} prisoner
+                            else
+                                |#{rowCount} prisoners
+
+                    div.column-one-half
+                        if filtersForView && (data.length > 1 || (filtersForView.Male || filtersForView.Female || filtersForView.HDC || filtersForView.Lifer))
+                            div#filters
+                                fieldset
+                                    div(role="list")
+                                        form(method="post" action='/search/results/filters')
+                                            input(type="hidden" name="_csrf" value=`${csrfToken}`)
+                                            input#male.filtering-option.font-xsmall(name="filter", type="submit", value="Male" class=filtersForView.Male ? "filtering-option-active" : "")
+                                            input#female.filtering-option.font-xsmall(name="filter", type="submit", value="Female" class=filtersForView.Female ? "filtering-option-active" : "")
+                                            input#hasDdc.filtering-option.font-xsmall(name="filter", type="submit", value="HDC" class=filtersForView.HDC ? "filtering-option-active" : "")
+                                            input#isLifer.filtering-option.font-xsmall(name="filter", type="submit", value="Lifer" class=filtersForView.Lifer ? "filtering-option-active" : "")
+
+                if data && data.length !== 0
+                    div#searchResults
+                        each prisoner in data
+                               +inmate(prisoner)
+
+                if pagination
+                    form(method="post")
+                        input(type="hidden" name="_csrf" value=`${csrfToken}`)
+                        div.form-group.c-align
+                            - var page = pagination.currPage;
+                                span#paginationPrev
+                                    if !pagination.showPrev
+                                        span.inactive Previous
+                                    else
+                                        a(href=`/search/results${queryStrings.prevPage}`) Previous
+                                    |  &nbsp;
+
+                            span
+                                input.form-control#paginationInput(type="number", name="pageNumber", min="0", max=pagination.totalPages, value=pagination.currPage)
+                            span
+                                | of #{pagination.totalPages}
+
+                            span#paginationNext
+                                if !pagination.showNext
+                                    span.inactive Next
+                                else
+                                    a(href=`/search/results${queryStrings.nextPage}`) Next
+
+                if suggestions
+                    |  &nbsp;
+                    div.help-container.form-hint
+                        span.hint Not found what you're looking for?
+                            =" "
+                            a#suggestions(href="/search/suggestions") Try these alternatives
+            else
+                p#noPrisoners
+                    |Can't see prisoners? Try using the search ;-)
+
+block append scripts
+    script(src="/public/javascripts/tabs.js?#{version}")

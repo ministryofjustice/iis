@@ -1,0 +1,82 @@
+extends ../subject
+
+block subject-details
+    div.column-two-thirds
+        if (subject.sentenceSummary && subject.sentenceSummary.category)
+            - var category = subject.sentenceSummary.category
+            div.grid-row.list-row
+                div.column-full
+                    div.left-border
+                        span.quiet Last recorded category
+                        div(id="category") #{setCase.capitalWithAcronyms(category.category)}
+                        div(id="categoryDate") #{moment(category.date).format('DD/MM/YYYY')}
+        p
+
+        if (subject.sentenceSummary && subject.sentenceSummary.establishment)
+            div.grid-row.list-row
+                div.column-full
+                    div.left-border
+                        span.quiet Last recorded establishment
+                        div(id="establishment")
+                            | #{setCase.capitalWithAcronyms(subject.sentenceSummary.establishment)}
+        p
+
+        if (subject.sentenceSummary && subject.sentenceSummary.courtHearing)
+            - var hearing = subject.sentenceSummary.courtHearing
+            div.grid-row.list-row
+                div.column-full
+                    div.left-border
+                        span.quiet Court hearing
+                        div(id="courtDate") #{moment(hearing.date).format('DD/MM/YYYY')}
+                        div(id="courtName") #{setCase.capital(hearing.court)}
+        else
+            div
+                span Prisoner has no court hearings
+
+        p
+
+        if (subject.sentenceSummary && subject.sentenceSummary.effectiveSentence)
+            - var sentence = subject.sentenceSummary.effectiveSentence
+            div.grid-row.list-row.listItem
+                div.column-full
+                    div.left-border
+                        span.quiet Effective sentence
+                        div(id="sentenceDate") #{moment(sentence.changeDate).format('DD/MM/YYYY')}
+                        div(id="sentenceLength") #{sentence.lengthDays} days
+                        span.quiet Date of first reception
+                        |  #{moment(subject.summary.receptionDate).format('DD/MM/YYYY')}
+                        if sentence.SED || sentence.LED || sentence.CRD || sentence.HDCED || sentence.PED || sentence.NPD || sentence.HDCAD
+                            ul
+                                if sentence.SED
+                                    li
+                                        span.quiet SED
+                                        |  #{moment(sentence.SED).format('DD/MM/YYYY')}
+                                if sentence.LED
+                                    li
+                                        span.quiet LED
+                                        |  #{moment(sentence.LED).format('DD/MM/YYYY')}
+                                if sentence.CRD
+                                    li
+                                        span.quiet CRD
+                                        |  #{moment(sentence.CRD).format('DD/MM/YYYY')}
+                                if sentence.PED
+                                    li
+                                        span.quiet PED
+                                        |  #{moment(sentence.PED).format('DD/MM/YYYY')}
+                                if sentence.NPD
+                                    li
+                                        span.quiet NPD
+                                        |  #{moment(sentence.NPD).format('DD/MM/YYYY')}
+                                if sentence.HDCED
+                                    li
+                                        span.quiet HDCED
+                                        |  #{moment(sentence.HDCED).format('DD/MM/YYYY')}
+                                if sentence.HDCAD
+                                    li
+                                        span.quiet HDCAD
+                                        |  #{moment(sentence.HDCAD).format('DD/MM/YYYY')}
+
+        else
+            div
+                span Prisoner has no sentence history
+

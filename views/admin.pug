@@ -1,0 +1,24 @@
+extends layout
+block content
+
+    if err
+        include ./search/searchError
+    div.padTop
+        span.column-two-thirds
+            input#filter(type="text", name="filter", placeholder="Filter table")
+        span.column-one-third.textRight
+            a(href="/admin/print") Download to PDF
+
+    table#filterTable.padTop
+        thead
+            tr
+                th User
+                th Date of last action
+        tbody
+            each item in latestAccess
+                tr.filterableRow(data-id=`${item.user}`)
+                    td #{item.user}
+                    td #{item.lastActionDate}
+
+block scripts
+    script(src="/public/javascripts/adminBundle.js?#{version}")

@@ -1,0 +1,16 @@
+block search-page
+    div.form-group
+        label(for="prisonNumber")
+            span.form-label Prison number
+        input.form-control.u-case.initialFocus#prisonNumber(type="text", name="prisonNumber", maxlength="8", value=formContents && formContents.prisonNumber ? formContents.prisonNumber : '')
+
+    div.form-group
+        label(for="pncNumber")
+            span.form-label PNC number
+            span.form-hint Previously known as CRN (Crime Reference Number)
+        input.form-control.u-case#pncNumber(type="text", name="pncNumber", maxlength="14", value=formContents && formContents.pncNumber ? formContents.pncNumber : '')
+
+    div.form-group
+        label(for="croNumber")
+            span.form-label CRO number
+        input.form-control.u-case#croNumber(type="text", name="croNumber", maxlength="14", value=formContents && formContents.croNumber ? formContents.croNumber : '')

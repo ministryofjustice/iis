@@ -1,3 +1,4 @@
+.eslintcache
 .sass-cache
 .DS_Store
 .start.pid
@@ -16,3 +17,6 @@ iis-ui.log
 iis-ui-audit.log
 tests.log
 build-info.json
+
+# Optional eslint cache
+.eslintcache

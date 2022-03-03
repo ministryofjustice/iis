@@ -1,4 +1,6 @@
 -------------------------------------------------------------------------------------------------------
+SET QUOTED_IDENTIFIER ON
+GO
 
 INSERT INTO HPA.PERSONAL_DETAILS
     SELECT

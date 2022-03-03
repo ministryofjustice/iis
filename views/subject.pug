@@ -1,0 +1,99 @@
+extends layout
+
+block content
+
+    div.back-link-container
+        if returnToShortlist
+            a.link-back(href=`${shortlistHref}${returnQuery}`) Back to shortlist
+        else
+            a.link-back(href=`/search/results${returnQuery}`) Back to prisoners
+
+    if err
+        div(class="error-summary", role="group", aria-labelledby="error-message", tabindex="-1")
+            h1(class="heading-medium error-summary-heading", id="error-message")= err.title
+
+    div#print-header(aria-hidden="true")
+        span GOV.UK - Inmate information system
+
+    div#print-disclaimer(aria-hidden="true")
+        p.title Disclaimer
+        p
+        | This information is Official Sensitive and should not be shared with anyone who
+        | does not have a valid reason to use it. The Information in this document which was created
+        | using the legacy application, LIDS, is accurate for that period of time entered and should be
+        | used in conjunction with legislation and codes which applied at the time of entry. Information
+        | in this document which was created using Prison NOMIS may not be accurate and should be
+        | discounted. Any information which can be found on Prison NOMIS should be taken from Prison
+        | NOMIS. Please note that MoJ/HMPPS will not accept any responsibility for errors on the system.
+
+    if !err
+        div.grid-row
+            div.column-two-thirds
+                h1.heading-xlarge#subjectName
+                    | #{setCase.capital(subject.summary.firstName)}
+                    | #{setCase.capital(subject.summary.middleName)}
+                    | #{subject.summary.lastName}
+                    if subject.summary.dob
+                        span.heading-secondary#ageDetails #{moment(subject.summary.dob).format('DD/MM/YYYY')} (#{moment().diff(subject.summary.dob, 'years')} years)
+
+
+                ul#prisonerInfoSummary.font-medium
+                    if subject.summary.sex && (subject.summary.sex ==='F' || subject.summary.sex === 'M')
+                        li #{subject.summary.sex === 'M' ? 'Male' : 'Female'}
+
+                    if subject.summary.ethnicity && subject.summary.ethnicity !== 'NOT STATED' && subject.summary.ethnicity !== 'OTHER' && subject.summary.ethnicity !== 'Other'
+                        li
+                            span.dot &middot;
+                            | #{setCase.capital(subject.summary.ethnicity)}
+
+                    if subject.summary.birthCountry && subject.summary.birthCountry !== 'OTHER' && subject.summary.birthCountry !== 'Other' && subject.summary.birthCountry !== 'UNKNOWN'
+                        li
+                            span.dot &middot;
+                            | Born in #{setCase.capital(subject.summary.birthCountry)}
+
+                    if subject.summary.maritalStatus && subject.summary.maritalStatus !== 'NOT REQUIRED' && subject.summary.maritalStatus !== 'Refused or Unacceptable Ans.'
+                        li.initiallyHidden
+                            span.dot &middot;
+                            | #{setCase.capital(subject.summary.maritalStatus)}
+
+                    if subject.summary.nationality && subject.summary.nationality !== 'UNAVAILABLE'
+                        li.initiallyHidden
+                            span.dot &middot;
+                            | National of #{setCase.capital(subject.summary.nationality)}
+
+                    if subject.summary.religion && subject.summary.religion !== 'NON PERMITTED RELIGIONS' && subject.summary.religion !== 'OTHER NON PERMITTED RELIGION'
+                        li.initiallyHidden
+                            span.dot &middot;
+                            | #{setCase.capital(subject.summary.religion)}
+
+
+                span#saveLink
+                    a(href=`/print/${subject.summary.prisonNumber}${returnQuery}`) Save as PDF
+            div.column-one-third
+                if subject.summary.prisonNumber || subject.summary.parole.paroleNumbers || subject.summary.pncNumber || subject.summary.croNumber
+                    ul.list.well.refs-box
+                        if subject.summary.prisonNumber
+                            li#subjectId= subject.summary.prisonNumber
+                                span.form-hint Prison number
+                        if subject.summary.paroleNumbers
+                            li#parole-refs= subject.summary.paroleNumbers
+                                span.form-hint Parole ref.
+                        if subject.summary.pncNumber
+                            li#pnc= subject.summary.pncNumber
+                                span.form-hint PNC
+                        if subject.summary.croNumber
+                            li#cro= subject.summary.croNumber
+                                span.form-hint CRO
+
+        section
+            div.grid-row
+                div.column-one-third
+                    include subject/nav.pug
+
+                block subject-details
+
+        div.form-group
+            a(href="/search") New search
+
+block append scripts
+    script(src="/public/javascripts/morelessBundle.js?#{version}")

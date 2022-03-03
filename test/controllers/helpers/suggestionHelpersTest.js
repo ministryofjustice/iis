@@ -121,7 +121,7 @@ describe('suggestionHelpers', () => {
 
         it('should suggest changing dob to age range', () => {
 
-            const userInput = {dobOrAge: 'dob', dobDay: '01', dobMonth: '08', dobYear: '1987'};
+            const userInput = {dobOrAge: 'dob', dobDay: '01', dobMonth: '08', dobYear: '1991'};
             const expected = {dob: [suggestConvertToAgeRange].concat(suggestClearDobFields)};
 
             expect(getSearchSuggestions(userInput)).to.eql(expected);

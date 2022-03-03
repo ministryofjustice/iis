@@ -1,8 +1,5 @@
 #/bin/bash
 
-# Clean
-rm -rf public govuk_modules .port.tmp *.log build uploads test-results.xml
-
 # Copy govuk library assets out of node_modules to top level 
 mkdir -p ./govuk_modules/govuk_frontend_toolkit
 mkdir -p ./govuk_modules/govuk_template/layouts

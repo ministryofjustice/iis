@@ -69,7 +69,7 @@ jobs:
                     CI_MESSAGE=$(git log --format=%B -n 1 $CIRCLE_SHA1)
                     git commit -m "Deployment of build $CIRCLE_BUILD_NUM" -m "$CI_MESSAGE" -m "From gitref $CIRCLE_SHA1"
             - deploy:
-                  name: Deploy to Dev Environment
+                  name: Deploy to Stage Environment
                   command: git push --force origin HEAD:azure
 
 workflows:
@@ -89,4 +89,4 @@ workflows:
                 filters:
                     branches:
                         only:
-                            - master
+                            - main

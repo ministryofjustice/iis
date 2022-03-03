@@ -60,9 +60,9 @@ jobs:
             - deploy:
                   name: Build Derived Git Commit
                   command: |
-                    BUILD_NUMBER: $CIRCLE_BUILD_NUM \
-                    GIT_REF: $CIRCLE_SHA1 \
-                    npm run record-build-info
+                    BUILD_NUMBER=$CIRCLE_BUILD_NUM \
+                    GIT_REF=$CIRCLE_SHA1 \
+                        npm run record-build-info
                     git add --force --verbose build-info.json
                     git config user.name "Circle CI"
                     git config user.email "circle@circleci.com"
@@ -89,4 +89,4 @@ workflows:
                 filters:
                     branches:
                         only:
-                            - master
+                            - HAAR-177-circleci-dev

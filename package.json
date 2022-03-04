@@ -16,7 +16,8 @@
     "snyk-protect": "snyk protect",
     "lint": "eslint . --cache --max-warnings 0",
     "record-build-info": "node ./bin/record-build-info",
-    "wait-for-deploy": "node ./bin/wait-for-deploy"
+    "wait-for-deploy": "node ./bin/wait-for-deploy",
+    "security_audit": "npx audit-ci --config audit-ci.json"
   },
   "repository": {
     "type": "git",

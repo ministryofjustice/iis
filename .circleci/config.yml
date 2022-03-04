@@ -2,11 +2,15 @@ version: 2.1
 
 orbs:
     hmpps: ministryofjustice/hmpps@3.13
+    slack: circleci/slack@4.4.2
 
 parameters:
     node-version:
         type: string
         default: 14.17-browsers
+    alerts-slack-channel:
+        type: string
+        default: dps_alerts_security
 
 jobs:
     build:
@@ -90,3 +94,17 @@ workflows:
                     branches:
                         only:
                             - main
+
+    security:
+        triggers:
+            - schedule:
+                  cron: "30 5 * * 1-5"
+                  filters:
+                      branches:
+                          only:
+                              - main
+        jobs:
+            - hmpps/npm_security_audit:
+                  slack_channel: << pipeline.parameters.alerts-slack-channel >>
+                  context:
+                      - hmpps-common-vars

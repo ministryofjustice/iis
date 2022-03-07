@@ -7,14 +7,16 @@ function get(name, fallback, options = {}) {
   if (process.env[name]) {
     return process.env[name];
   }
-  if (fallback !== undefined && (!production || !options.requireInProduction)) {
+  if (
+    fallback !== undefined &&
+        (!production || !options.requireInProduction)
+  ) {
     return fallback;
   }
   throw new Error('Missing env var ' + name);
 }
 
 module.exports = {
-
   version: 0.1,
 
   db: {
@@ -28,7 +30,9 @@ module.exports = {
   staticResourceCacheDuration: 365 * oneDay,
   healthcheckInterval: Number(get('HEALTHCHECK_INTERVAL', 0)),
 
-  sessionSecret: get('SESSION_SECRET', 'iis-insecure-default-session', {requireInProduction: true}),
+  sessionSecret: get('SESSION_SECRET', 'iis-insecure-default-session', {
+    requireInProduction: true
+  }),
 
   sso: {
     CLIENT_ID: get('CLIENT_ID', '123'),
@@ -36,12 +40,15 @@ module.exports = {
     TOKEN_HOST: get('TOKEN_HOST', 'http://localhost:3001'),
     AUTHORIZE_PATH: get('AUTHORIZE_PATH', '/oauth/authorize'),
     TOKEN_PATH: get('TOKEN_PATH', '/oauth/token'),
-    USER_DETAILS_PATH: get('USER_DETAILS_PATH', '/api/user_details')
+    USER_DETAILS_PATH: get('USER_DETAILS_PATH', '/api/user_details'),
+    SCOPES: get('CLENT_SCOPES', 'all').replace(/ /g, '').split(',')
   },
 
   searchResultsPerPage: get('SEARCH_RESULTS_PER_PAGE', 10),
 
-  administrators: get('ADMINISTRATORS', 'joe@example.com').replace(/ /g, '').split(','),
+  administrators: get('ADMINISTRATORS', 'joe@example.com')
+      .replace(/ /g, '')
+      .split(','),
 
   addressSearchDistance: 5,
 

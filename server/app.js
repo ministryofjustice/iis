@@ -250,6 +250,7 @@ function enableSSO() {
     tokenURL: ssoConfig.TOKEN_HOST + ssoConfig.TOKEN_PATH,
     clientID: ssoConfig.CLIENT_ID,
     clientSecret: ssoConfig.CLIENT_SECRET,
+    scope: ssoConfig.SCOPES,
     proxy: true // trust upstream proxy
   },
   function(accessToken, refreshToken, profile, cb) {

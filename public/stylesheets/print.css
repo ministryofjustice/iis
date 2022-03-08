@@ -1,0 +1,45 @@
+body {
+  font-family: Arial;
+}
+
+.header-proposition,
+.phase-banner,
+.back-link-container,
+#logo,
+#skiplink-container,
+#global-cookie-message,
+#global-header-bar,
+#footer,
+#inmate-nav,
+button {
+  display: none;
+}
+
+#print-disclaimer {
+  display: block;
+  border: 2px solid #000;
+  border-left: none;
+  border-right: none;
+}
+
+#print-disclaimer p.title {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.heading-secondary {
+  display: block;
+  font-size: 18px;
+  font-weight: normal;
+}
+
+#print-header {
+  font-size: 24px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.capitalise-text {
+  text-transform: capitalize;
+}

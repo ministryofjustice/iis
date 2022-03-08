@@ -8,7 +8,6 @@
     "npm": "^7"
   },
   "scripts": {
-    "postinstall": "./build.sh && webpack",
     "clean": "rm -rf public govuk_modules .port.tmp *.log build uploads test-results.xml",
     "build": "npm run clean && ./build.sh && webpack",
     "start": "npm run build && node .",

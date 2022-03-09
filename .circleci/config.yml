@@ -10,7 +10,7 @@ parameters:
         default: 14.17-browsers
     alerts-slack-channel:
         type: string
-        default: dps_alerts_security
+        default: hmpps_tech_alerts_security
 
 jobs:
     build:

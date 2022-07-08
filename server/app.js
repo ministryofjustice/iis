@@ -79,6 +79,8 @@ app.use(cookieSession({
   sameSite: 'lax'
 }));
 
+app.use(passport.initialize());
+
 if (testMode) {
   logger.info('Authentication disabled - using default test user profile');
   app.use(dummyUserProfile);
@@ -242,7 +244,6 @@ function dummyUserProfile(req, res, next) {
 function enableSSO() {
   const ssoConfig = config.sso;
 
-  app.use(passport.initialize());
   app.use(passport.session());
 
   passport.use(new OAuth2Strategy({

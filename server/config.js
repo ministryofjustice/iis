@@ -42,6 +42,7 @@ module.exports = {
     TOKEN_PATH: get('TOKEN_PATH', '/oauth/token'),
     CALLBACK_URL: get('CALLBACK_URL', 'http://localhost:3000/authentication'),
     USER_DETAILS_PATH: get('USER_DETAILS_PATH', '/api/user/me'),
+    USER_EMAIL_PATH: get('USER_EMAIL_PATH', '/api/me/email'),
     USER_PROFILE_PATH: get('USER_PROFILE_PATH', '/account-details'),
     SIGN_OUT_PATH: get('SIGN_OUT_PATH', '/sign-out'),
     SCOPES: get('CLIENT_SCOPES', 'read').replace(/ /g, '').split(',')

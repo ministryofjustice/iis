@@ -13,7 +13,6 @@ const path = require('path');
 
 const passport = require('passport');
 const Strategy = require('passport-oauth2').Strategy;
-const request = require('request');
 
 const helmet = require('helmet');
 const csurf = require('csurf');
@@ -32,11 +31,12 @@ const content = require('../data/content.js');
 const config = require('../server/config');
 const generateOauthClientToken = require('../server/clientCredentials');
 const healthcheck = require('../server/healthcheck');
+const getUserDetails = require('../data/auth/authClient');
 
 const version = moment.now().toString();
 const production = process.env.NODE_ENV === 'production';
 const testMode = process.env.NODE_ENV === 'test';
-
+const ssoConfig = config.sso;
 //  Express Configuration
 const app = express();
 app.set('json spaces', 2);
@@ -259,36 +259,18 @@ function enableSSO() {
   },
   (token, refreshToken, params, profile, done) => {
     logger.info('Passport authentication invoked');
-    const options = {
-      uri: ssoConfig.TOKEN_HOST + ssoConfig.USER_DETAILS_PATH,
-      qs: {access_token: token},
-      json: true
-    };
-
-    request(options, (error, response, userDetails) => {
-      if (!error && response.statusCode === 200) {
-        logger.info('User authentication success');
-        return done(null, userFor(userDetails));
-      } else {
-        logger.error('Authentication failure:' + error);
-        return done(error);
-      }
-    });
+    getUserDetails(token)
+        .then(function(userDetails) {
+          logger.info('User authentication success');
+          return done(null, userDetails);
+        })
+        .catch(function(err) {
+          logger.error('Authentication failure:' + err);
+          return done(err);
+        });
   });
 
   passport.use(strategy);
-
-  function userFor(userDetails) {
-    return {
-      id: userDetails.userId,
-      email: userDetails.id, // TODO get email address
-      firstName: userDetails.name.split(' ').slice(0, -1).join(' '),
-      lastName: userDetails.name.split(' ').slice(-1).join(' '),
-      profileLink: ssoConfig.TOKEN_HOST + ssoConfig.USER_PROFILE_PATH,
-      logoutLink: ssoConfig.TOKEN_HOST + ssoConfig.SIGN_OUT_PATH,
-      sessionTag: uuidV1()
-    };
-  }
 
   passport.serializeUser(function(user, done) {
     // Not used but required for Passport
@@ -299,7 +281,6 @@ function enableSSO() {
     // Not used but required for Passport
     done(null, user);
   });
-
 }
 
 module.exports = app;

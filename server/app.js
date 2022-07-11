@@ -3,7 +3,6 @@
 const logger = require('../log.js');
 const expressWinston = require('express-winston');
 const addRequestId = require('express-request-id')();
-const uuidV1 = require('uuid/v1');
 const moment = require('moment');
 
 const bodyParser = require('body-parser');
@@ -12,8 +11,7 @@ const express = require('express');
 const path = require('path');
 
 const passport = require('passport');
-const OAuth2Strategy = require('passport-oauth2').Strategy;
-const request = require('request');
+const Strategy = require('passport-oauth2').Strategy;
 
 const helmet = require('helmet');
 const csurf = require('csurf');
@@ -30,7 +28,9 @@ const comparison = require('../routes/comparison');
 
 const content = require('../data/content.js');
 const config = require('../server/config');
+const generateOauthClientToken = require('../server/clientCredentials');
 const healthcheck = require('../server/healthcheck');
+const getUserDetails = require('../data/auth/authClient');
 
 const version = moment.now().toString();
 const production = process.env.NODE_ENV === 'production';
@@ -78,6 +78,8 @@ app.use(cookieSession({
   overwrite: true,
   sameSite: 'lax'
 }));
+
+app.use(passport.initialize());
 
 if (testMode) {
   logger.info('Authentication disabled - using default test user profile');
@@ -242,49 +244,32 @@ function dummyUserProfile(req, res, next) {
 function enableSSO() {
   const ssoConfig = config.sso;
 
-  app.use(passport.initialize());
   app.use(passport.session());
 
-  passport.use(new OAuth2Strategy({
+  const strategy = new Strategy({
     authorizationURL: ssoConfig.TOKEN_HOST + ssoConfig.AUTHORIZE_PATH,
     tokenURL: ssoConfig.TOKEN_HOST + ssoConfig.TOKEN_PATH,
     clientID: ssoConfig.CLIENT_ID,
     clientSecret: ssoConfig.CLIENT_SECRET,
-    scope: ssoConfig.SCOPES,
-    proxy: true // trust upstream proxy
+    callbackURL: ssoConfig.CALLBACK_URL,
+    proxy: true, // trust upstream proxy
+    state: true,
+    customHeaders: {Authorization: generateOauthClientToken()}
   },
-  function(accessToken, refreshToken, profile, cb) {
+  (token, refreshToken, params, profile, done) => {
     logger.info('Passport authentication invoked');
+    getUserDetails(token)
+        .then(function(userDetails) {
+          logger.info('User authentication success');
+          return done(null, userDetails);
+        })
+        .catch(function(err) {
+          logger.error('Authentication failure:' + err);
+          return done(err);
+        });
+  });
 
-    const options = {
-      uri: ssoConfig.TOKEN_HOST + ssoConfig.USER_DETAILS_PATH,
-      qs: {access_token: accessToken},
-      json: true
-    };
-    request(options, function(error, response, userDetails) {
-      if (!error && response.statusCode === 200) {
-        logger.info('User authentication success');
-        return cb(null, userFor(userDetails));
-      } else {
-        logger.error('Authentication failure:' + error);
-        return cb(error);
-      }
-    });
-  })
-  );
-
-  function userFor(userDetails) {
-    return {
-      id: userDetails.id,
-      email: userDetails.email,
-      firstName: userDetails.first_name,
-      lastName: userDetails.last_name,
-      profileLink: userDetails.links.profile,
-      logoutLink: userDetails.links.logout,
-      sessionTag: uuidV1()
-    };
-  }
-
+  passport.use(strategy);
 
   passport.serializeUser(function(user, done) {
     // Not used but required for Passport
@@ -295,7 +280,6 @@ function enableSSO() {
     // Not used but required for Passport
     done(null, user);
   });
-
 }
 
 module.exports = app;

@@ -38,7 +38,7 @@ module.exports = {
       let paramValue = param.value;
 
       if (isNaN(paramValue)) {
-        paramValue = paramValue.toUpperCase();
+        paramValue = paramValue && paramValue.toUpperCase();
       }
 
       request.addParameter(

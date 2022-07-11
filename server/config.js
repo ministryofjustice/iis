@@ -35,13 +35,16 @@ module.exports = {
   }),
 
   sso: {
-    CLIENT_ID: get('CLIENT_ID', '123'),
-    CLIENT_SECRET: get('CLIENT_SECRET', '123'),
-    TOKEN_HOST: get('TOKEN_HOST', 'http://localhost:3001'),
+    CLIENT_ID: get('CLIENT_ID', 'hpa-client'),
+    CLIENT_SECRET: get('CLIENT_SECRET', 'clientsecret'),
+    TOKEN_HOST: get('TOKEN_HOST', 'http://localhost:8080/auth'),
     AUTHORIZE_PATH: get('AUTHORIZE_PATH', '/oauth/authorize'),
     TOKEN_PATH: get('TOKEN_PATH', '/oauth/token'),
-    USER_DETAILS_PATH: get('USER_DETAILS_PATH', '/api/user_details'),
-    SCOPES: get('CLENT_SCOPES', 'all').replace(/ /g, '').split(',')
+    CALLBACK_URL: get('CALLBACK_URL', 'http://localhost:3000/authentication'),
+    USER_DETAILS_PATH: get('USER_DETAILS_PATH', '/api/user/me'),
+    USER_PROFILE_PATH: get('USER_PROFILE_PATH', '/account-details'),
+    SIGN_OUT_PATH: get('SIGN_OUT_PATH', '/sign-out'),
+    SCOPES: get('CLIENT_SCOPES', 'read').replace(/ /g, '').split(',')
   },
 
   searchResultsPerPage: get('SEARCH_RESULTS_PER_PAGE', 10),

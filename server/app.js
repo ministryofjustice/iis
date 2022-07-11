@@ -12,7 +12,7 @@ const express = require('express');
 const path = require('path');
 
 const passport = require('passport');
-const OAuth2Strategy = require('passport-oauth2').Strategy;
+const Strategy = require('passport-oauth2').Strategy;
 const request = require('request');
 
 const helmet = require('helmet');
@@ -30,6 +30,7 @@ const comparison = require('../routes/comparison');
 
 const content = require('../data/content.js');
 const config = require('../server/config');
+const generateOauthClientToken = require('../server/clientCredentials');
 const healthcheck = require('../server/healthcheck');
 
 const version = moment.now().toString();
@@ -246,46 +247,48 @@ function enableSSO() {
 
   app.use(passport.session());
 
-  passport.use(new OAuth2Strategy({
+  const strategy = new Strategy({
     authorizationURL: ssoConfig.TOKEN_HOST + ssoConfig.AUTHORIZE_PATH,
     tokenURL: ssoConfig.TOKEN_HOST + ssoConfig.TOKEN_PATH,
     clientID: ssoConfig.CLIENT_ID,
     clientSecret: ssoConfig.CLIENT_SECRET,
-    scope: ssoConfig.SCOPES,
-    proxy: true // trust upstream proxy
+    callbackURL: ssoConfig.CALLBACK_URL,
+    proxy: true, // trust upstream proxy
+    state: true,
+    customHeaders: {Authorization: generateOauthClientToken()}
   },
-  function(accessToken, refreshToken, profile, cb) {
+  (token, refreshToken, params, profile, done) => {
     logger.info('Passport authentication invoked');
-
     const options = {
       uri: ssoConfig.TOKEN_HOST + ssoConfig.USER_DETAILS_PATH,
-      qs: {access_token: accessToken},
+      qs: {access_token: token},
       json: true
     };
-    request(options, function(error, response, userDetails) {
+
+    request(options, (error, response, userDetails) => {
       if (!error && response.statusCode === 200) {
         logger.info('User authentication success');
-        return cb(null, userFor(userDetails));
+        return done(null, userFor(userDetails));
       } else {
         logger.error('Authentication failure:' + error);
-        return cb(error);
+        return done(error);
       }
     });
-  })
-  );
+  });
+
+  passport.use(strategy);
 
   function userFor(userDetails) {
     return {
-      id: userDetails.id,
-      email: userDetails.email,
-      firstName: userDetails.first_name,
-      lastName: userDetails.last_name,
-      profileLink: userDetails.links.profile,
-      logoutLink: userDetails.links.logout,
+      id: userDetails.userId,
+      email: userDetails.id, // TODO get email address
+      firstName: userDetails.name.split(' ').slice(0, -1).join(' '),
+      lastName: userDetails.name.split(' ').slice(-1).join(' '),
+      profileLink: ssoConfig.TOKEN_HOST + ssoConfig.USER_PROFILE_PATH,
+      logoutLink: ssoConfig.TOKEN_HOST + ssoConfig.SIGN_OUT_PATH,
       sessionTag: uuidV1()
     };
   }
-
 
   passport.serializeUser(function(user, done) {
     // Not used but required for Passport

@@ -3,7 +3,6 @@
 const logger = require('../log.js');
 const expressWinston = require('express-winston');
 const addRequestId = require('express-request-id')();
-const uuidV1 = require('uuid/v1');
 const moment = require('moment');
 
 const bodyParser = require('body-parser');
@@ -36,7 +35,7 @@ const getUserDetails = require('../data/auth/authClient');
 const version = moment.now().toString();
 const production = process.env.NODE_ENV === 'production';
 const testMode = process.env.NODE_ENV === 'test';
-const ssoConfig = config.sso;
+
 //  Express Configuration
 const app = express();
 app.set('json spaces', 2);

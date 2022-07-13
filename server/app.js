@@ -5,6 +5,8 @@ const expressWinston = require('express-winston');
 const addRequestId = require('express-request-id')();
 const moment = require('moment');
 
+const authorisationMiddleware = require('../middleware/authorisationMiddleware');
+
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const express = require('express');
@@ -85,6 +87,8 @@ if (testMode) {
   logger.info('Authentication disabled - using default test user profile');
   app.use(dummyUserProfile);
 } else {
+  app.use(authorisationMiddleware(['ROLE_HPA_USER']));
+
   logger.info('Authentication enabled');
   enableSSO();
 }

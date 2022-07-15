@@ -87,7 +87,6 @@ if (testMode) {
   logger.info('Authentication disabled - using default test user profile');
   app.use(dummyUserProfile);
 } else {
-
   logger.info('Authentication enabled');
   enableSSO();
 }

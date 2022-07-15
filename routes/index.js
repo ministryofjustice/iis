@@ -3,8 +3,8 @@
 const passport = require('passport');
 const express = require('express');
 const logger = require('../log.js');
-const content = require('../data/content.js');
-
+const content = require('../data/content');
+const config = require('../server/config');
 
 // eslint-disable-next-line
 let router = express.Router();
@@ -19,6 +19,11 @@ const oauth = passport.authenticate('oauth2', {
   failureRedirect: '/unauthorised'
 });
 
+router.get('/autherror', function(req, res) {
+  res.status(401);
+  return res.render('autherror', {content: {title: 'Authorisation Error'}});
+});
+
 router.get('/login', oauth);
 
 router.get('/authentication', oauth,
@@ -28,15 +33,14 @@ router.get('/authentication', oauth,
     }
 );
 
+const authLogoutUrl = `${config.sso.TOKEN_HOST}${config.sso.SIGN_OUT_PATH}?client_id=${config.sso.CLIENT_ID}`;
+
 router.get('/logout', function(req, res) {
   if (req.user) {
     logger.info('Logging out', {user: req.user.email});
-    const logoutLink = req.user.logoutLink;
     req.logout();
-    res.redirect(logoutLink);
-  } else {
-    res.redirect('/login');
   }
+  res.redirect(authLogoutUrl);
 });
 
 router.get('/feedback', function(req, res, next) {

@@ -5,6 +5,8 @@ const expressWinston = require('express-winston');
 const addRequestId = require('express-request-id')();
 const moment = require('moment');
 
+const authorisationMiddleware = require('../middleware/authorisationMiddleware');
+
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const express = require('express');
@@ -174,6 +176,7 @@ app.use('/', index);
 app.use('/disclaimer/', disclaimer);
 if (!testMode) {
   app.use(authRequired);
+  app.use(authorisationMiddleware);
   app.use(addTemplateVariables);
 }
 app.use('/search/', search);
@@ -234,8 +237,7 @@ function dummyUserProfile(req, res, next) {
     email: 'test@test.com',
     firstName: 'Test',
     lastName: 'Tester',
-    profileLink: '/profile',
-    logoutLink: '/logout'
+    profileLink: '/profile'
   };
   res.locals.profile = req.user;
   next();

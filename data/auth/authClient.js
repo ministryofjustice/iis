@@ -33,7 +33,10 @@ module.exports = function(token) {
       .then(function(userDetails) {
         return request(userEmailOptions)
             .then(function(email) {
-              return Object.assign({email: email.email}, userDetails);
+              if (!email) {
+                throw new Error('User has no email address. This is required for audit continuity.');
+              }
+              return Object.assign({email: email.email, token}, userDetails);
             });
       });
 };

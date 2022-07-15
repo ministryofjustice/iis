@@ -48,6 +48,8 @@
     "govuk_template_jinja": "^0.26.0",
     "helmet": "^3.5.0",
     "jquery": "^3.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^3.1.2",
     "moment": "^2.29.4",
     "passport": "0.5.3",
     "passport-oauth2": "^1.4.0",
@@ -73,6 +75,7 @@
   "devDependencies": {
     "@babel/core": "^7.17.5",
     "@babel/preset-env": "^7.16.11",
+    "@types/jsonwebtoken": "^8.5.8",
     "babel-loader": "^8.2.3",
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",

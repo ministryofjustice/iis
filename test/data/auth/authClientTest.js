@@ -25,7 +25,7 @@ describe('getUserDetails', () => {
       fakeApi.get(config.sso.USER_DETAILS_PATH).reply(200, {userId: '123', name: 'Joe Bloggs'})
       fakeApi.get(config.sso.USER_EMAIL_PATH).reply(200, {email: "abc@def.com"})
 
-      await getUserDetails('')
+      await getUserDetails('token123')
           .then(function(details) {
               expect(details).to.eql({
                   id: '123',
@@ -34,7 +34,8 @@ describe('getUserDetails', () => {
                   lastName: 'Bloggs',
                   logoutLink: 'http://localhost:8080/auth/sign-out',
                   profileLink: 'http://localhost:8080/auth/account-details',
-                  sessionTag: '00000000-0000-0000-0000-000000000000'
+                  sessionTag: '00000000-0000-0000-0000-000000000000',
+                  token: 'token123'
               })
           })
   });

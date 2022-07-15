@@ -87,7 +87,6 @@ if (testMode) {
   logger.info('Authentication disabled - using default test user profile');
   app.use(dummyUserProfile);
 } else {
-  app.use(authorisationMiddleware(['ROLE_HPA_USER']));
 
   logger.info('Authentication enabled');
   enableSSO();
@@ -178,6 +177,7 @@ app.use('/', index);
 app.use('/disclaimer/', disclaimer);
 if (!testMode) {
   app.use(authRequired);
+  app.use(authorisationMiddleware);
   app.use(addTemplateVariables);
 }
 app.use('/search/', search);
@@ -238,8 +238,7 @@ function dummyUserProfile(req, res, next) {
     email: 'test@test.com',
     firstName: 'Test',
     lastName: 'Tester',
-    profileLink: '/profile',
-    logoutLink: '/logout'
+    profileLink: '/profile'
   };
   res.locals.profile = req.user;
   next();

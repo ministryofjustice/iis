@@ -1,21 +1,17 @@
 const jwtDecode = require('jwt-decode');
 const logger = require('../log');
-const asyncMiddleware = require('./asyncMiddleware');
 
-module.exports = function authorisationMiddleware(authorisedRoles) {
-  if (authorisedRoles === undefined) {
-    authorisedRoles = [];
-  }
-  return asyncMiddleware(function(req, res, next) {
-    if (res.locals && res.locals.user && res.locals.token) {
-      const {authorities: roles = []} = jwtDecode(res.locals.user.token);
-      if (authorisedRoles.length && !roles.some(role => authorisedRoles.includes(role))) {
-        logger.error('User is not authorised to access this');
-        return res.redirect('/authError');
-      }
-      return next();
+const HPA_ROLE = 'ROLE_HPA_USER';
+
+module.exports = function authorisationMiddleware(req, res, next) {
+  if (req.user && req.user.token) {
+    const {authorities: roles = []} = jwtDecode(req.user.token);
+    if (!roles.includes(HPA_ROLE)) {
+      logger.error('User is not authorised to access this');
+      return res.redirect('/authError');
     }
-    req.session.returnTo = req.originalUrl;
-    return res.redirect('/sign-in');
-  });
+    return next();
+  }
+  req.session.returnTo = req.originalUrl;
+  return res.redirect('/login');
 };

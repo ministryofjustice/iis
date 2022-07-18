@@ -29,6 +29,7 @@ module.exports = {
     error: {title: 'Error'},
     notfound: {title: 'Not found'},
 
+    splash: {title: 'Important'},
     disclaimer: {title: 'Usage'},
 
     feedback: {title: 'Feedback'},

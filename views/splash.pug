@@ -1,0 +1,19 @@
+extends layout
+
+block content
+
+    div.grid-row
+        div.column-one-half
+            h1.heading-xlarge= content.title
+
+    div.grid-row
+        div.column-two-thirds
+            div.form-group
+                p#splashText
+                    | To use the HPA system, you now need to log into DPS.
+                    | An admin user can set you up with the appropriate account to
+                    | ensure you can still access to the HPA system.
+
+
+    a.link(href=`/disclaimer`) Continue
+

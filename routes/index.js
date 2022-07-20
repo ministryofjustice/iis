@@ -29,7 +29,7 @@ router.get('/login', oauth);
 router.get('/authentication', oauth,
     function(req, res) {
       logger.info('Authentication callback', {user: req.user, authenticated: req.isAuthenticated()});
-      return res.redirect('/disclaimer');
+      return res.redirect('/splash');
     }
 );
 

@@ -1,0 +1,40 @@
+extends layout
+
+block content
+
+    div.grid-row
+        div.column
+            h1.heading-xlarge= content.title
+
+    div.grid-row
+        div.column
+            div.form-group
+                p.bold The way you access HPA will change on the 6th August
+                p
+                    | The Historial Prisoner Application (HPA) will move into HMPPS Digital Services on the 6th August.
+                    | Although your login has changed, the service will continue to work the same way.
+
+                p.bold How do I log in to HPA after the 6th of August?
+                p
+                    | Click on the Digital Prison Services (DPS) icon on your desktop or navigate directly to the
+                    | HMPPS Digital Services
+                    |
+                    a(href=`${authSignInUrl}`) sign in page
+                    |. Just enter your NOMIS, Delius or DPS username and password.
+                    | You should be able to see a HPA link once you have signed in.
+
+                p.bold I've never had a NOMIS, Delius or DPS account, how can I login?
+                p
+                    | We have identified that some HPA users don't have a NOMIS, Delius or DPS account.
+                    | These users will receive a separate email before the 6th August on how to complete their DPS
+                    | account registration.
+
+                p.bold Why are we doing this?
+                p
+                    | We are doing this to improve security as well as reducing the number of login details staff are
+                    | currently using to access prison services.  If you have any questions, comments or issues
+                    | accessing the HPA service after the 6th August, you can send any questions
+                    |
+                    a(href=`mailto:`+ `${emailLink}`) here
+
+    a.link(href=`/disclaimer`) Continue

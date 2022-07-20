@@ -8,6 +8,14 @@ let app = require("../server/app");
 
 describe('Test redirections when session set and not set', function() {
 
+    it('should successfully show splash screen', function() {
+        return request(app).get("/splash")
+            .expect(200)
+            .expect(function(res) {
+                expect(res.text).to.contain('Important')
+            });
+    });
+
     it('should return status code 302, when session NOT set', function() {
         request(app).get('/search')
             .expect(302)

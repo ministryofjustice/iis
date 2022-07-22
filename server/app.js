@@ -21,7 +21,6 @@ const compression = require('compression');
 
 const index = require('../routes/index');
 const disclaimer = require('../routes/disclaimer');
-const splash = require('../routes/splash');
 const admin = require('../routes/admin');
 
 const search = require('../routes/search');
@@ -175,7 +174,6 @@ app.get('/health', (req, res, next) => {
 
 app.use('/', index);
 app.use('/disclaimer/', disclaimer);
-app.use('/splash/', splash);
 
 if (!testMode) {
   app.use(authRequired);
@@ -222,9 +220,8 @@ function authRequired(req, res, next) {
     return res.redirect('/login');
   }
   if (!req.user.disclaimer) {
-    // Piggy-backing on disclaimer to show splash screen
-    logger.info('Disclaimer required - redirecting to splash screen first');
-    return res.redirect('/splash');
+    logger.info('Disclaimer required - redirecting to disclaimer');
+    return res.redirect('/disclaimer');
   }
   res.locals.nav = true;
   next();

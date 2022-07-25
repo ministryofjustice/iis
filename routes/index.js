@@ -5,14 +5,26 @@ const express = require('express');
 const logger = require('../log.js');
 const content = require('../data/content');
 const config = require('../server/config');
+const authSignInUrl = `${config.sso.TOKEN_HOST}/sign-in`;
+const emailLink = `hpa-private-beta-feedback@digital.justice.gov.uk`;
 
 // eslint-disable-next-line
 let router = express.Router();
 
 router.get('/', function(req, res) {
   logger.info('GET / - Authenticated: ' + req.isAuthenticated());
-  return res.redirect('/search');
+  if (req.user) {
+    return res.redirect('/search');
+  } else {
+    return res.render('splash',
+        {
+          content: content.view.splash,
+          authSignInUrl,
+          emailLink
+        });
+  }
 });
+
 
 const oauth = passport.authenticate('oauth2', {
   callbackURL: '/authentication',
@@ -29,7 +41,7 @@ router.get('/login', oauth);
 router.get('/authentication', oauth,
     function(req, res) {
       logger.info('Authentication callback', {user: req.user, authenticated: req.isAuthenticated()});
-      return res.redirect('/splash');
+      return res.redirect('/disclaimer');
     }
 );
 

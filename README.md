@@ -88,3 +88,21 @@ The following environment variables are used and values should be supplied for c
 The following environment variables are used and a value MUST be supplied in production.
 
 * SESSION_SECRET - Secure session configuration
+ 
+# Deploying the service
+
+The application is deployed using Azure Web App Service.
+
+The deployment part of the CI pipeline is meant to trigger upon merging to `main` however this is
+currently broken, despite significant effort to fix it. The CircleCI deployment job is meant to 
+add the build details to a build-info.json file and commit that to a new branch `azure`, on top of
+`main`.  As part of the Azure Web App setup, Azure registers a webhook with GitHub for the `azure`
+branch and **should** automatically deploy to the `iis-stage` environment, however this no longer
+works.
+
+The only way we now have of deploying the service is to find the `iis-stage` App Service in the 
+Azure portal, open the Deployment Center, 'disconnect' the code source and reconnect it. Deployment
+to the other environments also done in this way.
+
+This is terrible and we are hoping to migrate the app away from Azure and keep in line with other
+HMPPS services.

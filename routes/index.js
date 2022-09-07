@@ -5,7 +5,7 @@ const express = require('express');
 const logger = require('../log.js');
 const content = require('../data/content');
 const config = require('../server/config');
-const authSignInUrl = `${config.sso.TOKEN_HOST}/sign-in`;
+const authSignInUrl = config.sso.TOKEN_HOST;
 const emailLink = `hpa-private-beta-feedback@digital.justice.gov.uk`;
 
 // eslint-disable-next-line

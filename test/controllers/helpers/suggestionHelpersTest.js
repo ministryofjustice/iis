@@ -6,9 +6,8 @@ const {
     addShorterWildcard,
     useFirst,
     useLast,
-    ageToAgeRange,
-    dobToAgeRange
 } = require('../../../controllers/helpers/suggestionHelpers');
+const moment = require('moment');
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
@@ -53,10 +52,13 @@ describe('suggestionHelpers', () => {
         value: '28-32'
     };
 
+    const yearOfBirth = 1990
+    const currentAge = moment().year() - yearOfBirth
+
     const suggestConvertToAgeRange = {
         type: 'convertToAgeRange',
         term: 'age',
-        value: '28-32'
+        value: `${currentAge - 2}-${currentAge + 2}`
     };
 
     const suggestClearDobFields = [{
@@ -121,7 +123,7 @@ describe('suggestionHelpers', () => {
 
         it('should suggest changing dob to age range', () => {
 
-            const userInput = {dobOrAge: 'dob', dobDay: '01', dobMonth: '08', dobYear: '1991'};
+            const userInput = {dobOrAge: 'dob', dobDay: '01', dobMonth: '08', dobYear: yearOfBirth};
             const expected = {dob: [suggestConvertToAgeRange].concat(suggestClearDobFields)};
 
             expect(getSearchSuggestions(userInput)).to.eql(expected);

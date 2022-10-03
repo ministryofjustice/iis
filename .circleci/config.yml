@@ -57,6 +57,13 @@ jobs:
         executor:
             name: hmpps/node
             tag: << pipeline.parameters.node-version >>
+        parameters:
+            push-to-branch:
+                description: >
+                    Specify the branch that will be pushed to. Azure Web Apps webhook monitors this branch
+                    and will deploy from it when it is triggered.
+                default: "azure-stage"
+                type: string
         steps:
             - checkout
             - restore_cache:
@@ -74,7 +81,7 @@ jobs:
                     git commit -m "Deployment of build $CIRCLE_BUILD_NUM" -m "$CI_MESSAGE" -m "From gitref $CIRCLE_SHA1"
             - deploy:
                   name: Deploy to Stage Environment
-                  command: git push --force origin HEAD:azure
+                  command: git push --force origin "HEAD:<< parameters.push-to-branch >>"
 
 workflows:
     version: 2
@@ -88,12 +95,32 @@ workflows:
                 requires:
                     - build
             - deploy:
+                name: deploy_stage
+                push-to-branch: "azure-stage"
                 requires:
                     - unit_test
                 filters:
                     branches:
                         only:
                             - main
+            - request-preprod-approval:
+                type: approval
+                requires:
+                    - deploy_stage
+            - deploy:
+                  name: deploy_preprod
+                  push-to-branch: "azure-preprod"
+                  requires:
+                      - request-preprod-approval
+            - request-prod-approval:
+                type: approval
+                requires:
+                    - deploy_preprod
+            - deploy:
+                name: deploy_prod
+                push-to-branch: "azure-prod"
+                requires:
+                    - request-prod-approval
 
     security:
         triggers:

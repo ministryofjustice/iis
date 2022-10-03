@@ -91,6 +91,8 @@ workflows:
                 filters:
                     tags:
                         ignore: /.*/
+                    branches:
+                        ignore: /azure-.*/
             - unit_test:
                 requires:
                     - build

@@ -57,11 +57,21 @@ Search uses data defined in the `[HPA].[PRISONERS]` table, e.g searching for `Ge
 
 # SSO
 
-There are two options for authentication:
+Historical Prisoner Application now uses HMPPS Auth for Single Sign On (it used to use the legacy MoJ SSO application).
+A local instance of HMPPS Auth can be set up by cloning the project from GitHub: https://github.com/ministryofjustice/hmpps-auth
 
-* Run the IIS Mock SSO (available in GitHub) - user is automatically logged in via mock SSO
-
-* Set the environment variables listed below to direct SSO requests to an instance of MoJ SSO
+To run using HMPPS Auth:
+* Run HMPPS Auth: `./gradlew bootRun --args='--spring.profiles.active=dev'`
+* Then run the app with (**note: no `NODE_ENV=test` this time**):
+```
+DB_SERVER=localhost                  \
+DB_USER=iisuser                      \
+DB_NAME=iis                          \
+DB_PASS=NotVerySecretPa55word_IIS_01 \
+ADMINISTRATORS=test@test.com         \
+npm run start:dev
+```
+* A test user needs setting up with the `HPA_USER` role to be able to access the service.
 
 
 # Environment variables
@@ -76,9 +86,13 @@ The following environment variables are used and values should be supplied for c
 * CLIENT_ID - SSO Client ID
 * CLIENT_SECRET - SSO Client secret
 * TOKEN_HOST - SSO server host
+* CALLBACK_URL - SSO callback URL to complete the authorization code flow redirect
 * AUTHORIZE_PATH - SSO authorization endpoint, usually /oauth/authorize
 * TOKEN_PATH - SSO token endpoint, usually /oauth/token
-* USER_DETAILS_PATH - SSO user details endpoint, usually /api/user_details
+* USER_DETAILS_PATH - user details endpoint
+* USER_EMAIL_PATH - user email endpoint
+* USER_PROFILE_PATH - user profile endpoint
+* SIGN_OUT_PATH - SSO sign out endpoint
 * HEALTHCHECK_INTERVAL - how often to run the passive healthcheck and output to logs, in minutes
 * APPINSIGHTS_INSTRUMENTATIONKEY - Key for Azure application inisghts logger
 * APP_BASE_URL - Points to healthcheck endpoint?
@@ -93,16 +107,24 @@ The following environment variables are used and a value MUST be supplied in pro
 
 The application is deployed using Azure Web App Service.
 
-The deployment part of the CI pipeline is meant to trigger upon merging to `main` however this is
-currently broken, despite significant effort to fix it. The CircleCI deployment job is meant to 
-add the build details to a build-info.json file and commit that to a new branch `azure`, on top of
-`main`.  As part of the Azure Web App setup, Azure registers a webhook with GitHub for the `azure`
-branch and **should** automatically deploy to the `iis-stage` environment, however this no longer
-works.
+## Deployment configuration:
 
-The only way we now have of deploying the service is to find the `iis-stage` App Service in the 
-Azure portal, open the Deployment Center, 'disconnect' the code source and reconnect it. Deployment
-to the other environments also done in this way.
+To access the deployment configuration in the Azure UI, you need an account here:
+https://github.com/ministryofjustice/dso-infra-azure-ad with access to HPA. Then from the Azure
+homepage find 'App Services' and navigate to `iis-stage` for example. In the navigation bar to the 
+left, find 'Deployment Center'. The app is set up to deploy using the 'App Service Build Service'.
 
-This is terrible and we are hoping to migrate the app away from Azure and keep in line with other
-HMPPS services.
+It installs webhooks on the following branches:
+
+| Environment | Branch        |
+|-------------|---------------|
+| iis-stage   | azure-stage   |
+| iis-preprod | azure-preprod |
+| iis-prod    | azure-prod    |
+
+The CircleCI pipeline, as part of its 'deploy' jobs, creates a build-info.json file,
+commits it and pushes to the above branches. The webhook fires and triggers the Azure App Service 
+to deploy that branch.
+
+This is now fixed, after we had issues with allowing Azure access to GitHub, and whitelisting GitHub 
+webhook IPs in Azure.

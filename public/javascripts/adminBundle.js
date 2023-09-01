@@ -38,14 +38,14 @@ module.exports = jQuery;
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-var $ = __webpack_require__(1);
+const $ = __webpack_require__(1);
 
-(function () {
+(() => {
   $(':input[name=filter]').on('change', filterTable).on('keyup', filterTable);
 })();
 
 function filterTable(event) {
-  var input = $(this).val().toLowerCase();
+  const input = $(this).val().toLowerCase();
   $('#filterTable .filterableRow').filter(inputInItem(input)).show().end().filter(isVisible).filter(inputNotInItem(input)).hide();
 }
 

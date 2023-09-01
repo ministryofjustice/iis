@@ -12,28 +12,28 @@ module.exports = jQuery;
 /* 3 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-var $ = __webpack_require__(1);
+const $ = __webpack_require__(1);
 
-var tabs;
-var panels;
+let tabs;
+let panels;
 
 exports.init = function (container) {
   $('.initiallyHidden').removeClass('initiallyHidden').addClass('js-hidden').attr('aria-hidden', 'true');
   tabs = $(container).find('.searchTab');
   panels = $(container).find('.tabPanel');
-  $(tabs).each(function (index, value) {
+  $(tabs).each((index, value) => {
     $(value).on('click', selectTab);
   });
 };
 
 function selectTab(event) {
-  var tabSelected = $(event.target).data('tab');
+  const tabSelected = $(event.target).data('tab');
   updateTabSelected(tabSelected);
   updatePageVisible(tabSelected);
 }
 
 function updateTabSelected(tabSelected) {
-  $(tabs).each(function (index, value) {
+  $(tabs).each((index, value) => {
     if ($(value).data('tab') === tabSelected) {
       $(value).parent().addClass('active');
     } else {
@@ -43,7 +43,7 @@ function updateTabSelected(tabSelected) {
 }
 
 function updatePageVisible(tabSelected) {
-  $(panels).each(function (index, value) {
+  $(panels).each((index, value) => {
     if ($(value).data('panel') === tabSelected) {
       $(value).removeClass('js-hidden').attr('aria-hidden', 'false');
     } else {
@@ -83,10 +83,11 @@ function updatePageVisible(tabSelected) {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-var _require = __webpack_require__(3),
-    init = _require.init;
+const {
+  init
+} = __webpack_require__(3);
 
-var $ = __webpack_require__(1);
+const $ = __webpack_require__(1);
 
 init('#formHolder');
 })();

@@ -38,13 +38,13 @@ module.exports = jQuery;
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other entry modules.
 (() => {
-var $ = __webpack_require__(1);
+const $ = __webpack_require__(1);
 
-var NUMBER_EACH_END = 3;
-var listItems;
-var listLength;
+const NUMBER_EACH_END = 3;
+let listItems;
+let listLength;
 
-(function () {
+(() => {
   listItems = $('.listItem');
   listLength = listItems.length;
 
@@ -55,8 +55,8 @@ var listLength;
 })();
 
 function hideMiddleItems() {
-  var listLength = listItems.length;
-  $(listItems).each(function (index, item) {
+  const listLength = listItems.length;
+  $(listItems).each((index, item) => {
     if (index >= NUMBER_EACH_END && index < listLength - NUMBER_EACH_END) {
       $(item).addClass('js-hidden');
       $(item).attr('aria-hidden', 'true');
@@ -70,7 +70,7 @@ function addButton() {
 
 function showAllAndRemoveButton() {
   $(this).remove();
-  $(listItems).each(function (index, item) {
+  $(listItems).each((index, item) => {
     $(item).removeClass('js-hidden');
     $(item).attr('aria-hidden', 'false');
   });
@@ -79,13 +79,13 @@ function showAllAndRemoveButton() {
 
 // This entry need to be wrapped in an IIFE because it need to be isolated against other entry modules.
 (() => {
-var $ = __webpack_require__(1);
+const $ = __webpack_require__(1);
 
-var moreLessMarkup = '<li id="moreless" class="font-xsmall"><a>more</a></li>';
-var hideableItems = $('#prisonerInfoSummary').children().filter($('.initiallyHidden'));
-var moreless;
+const moreLessMarkup = '<li id="moreless" class="font-xsmall"><a>more</a></li>';
+const hideableItems = $('#prisonerInfoSummary').children().filter($('.initiallyHidden'));
+let moreless;
 
-(function () {
+(() => {
   $('.initiallyHidden').removeClass('initiallyHidden');
 
   if (hideableItems.length > 0) {
@@ -109,14 +109,14 @@ function morelessClickHandler() {
 }
 
 function hide() {
-  $(hideableItems).each(function (index, item) {
+  $(hideableItems).each((index, item) => {
     $(item).addClass('js-hidden');
     $(item).attr('aria-hidden', 'true');
   });
 }
 
 function reveal() {
-  $(hideableItems).each(function (index, item) {
+  $(hideableItems).each((index, item) => {
     $(item).removeClass('js-hidden');
     $(item).attr('aria-hidden', 'false');
   });

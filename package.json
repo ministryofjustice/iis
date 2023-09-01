@@ -52,7 +52,7 @@
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.4",
-    "passport": "0.5.3",
+    "passport": "^0.6.0",
     "passport-oauth2": "^1.4.0",
     "path": "^0.12.7",
     "pdfkit": "^0.8.1",
@@ -74,7 +74,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",
-    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-env": "^7.22.10",
     "@types/jsonwebtoken": "^8.5.8",
     "babel-loader": "^8.2.3",
     "chai": "^4.3.6",
@@ -93,7 +93,7 @@
     "sinon-chai": "^2.9.0",
     "sinon-stub-promise": "^4.0.0",
     "supertest": "^6.2.2",
-    "webpack": "^5.69.1",
+    "webpack": "^5.88.2",
     "webpack-cli": "^4.9.2"
   },
   "nodemonConfig": {

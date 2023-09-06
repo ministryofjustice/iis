@@ -5,24 +5,13 @@ const express = require('express');
 const logger = require('../log.js');
 const content = require('../data/content');
 const config = require('../server/config');
-const authSignInUrl = config.sso.TOKEN_HOST;
-const emailLink = `hpa-private-beta-feedback@digital.justice.gov.uk`;
 
 // eslint-disable-next-line
 let router = express.Router();
 
 router.get('/', function(req, res) {
   logger.info('GET / - Authenticated: ' + req.isAuthenticated());
-  if (req.user) {
-    return res.redirect('/search');
-  } else {
-    return res.render('splash',
-        {
-          content: content.view.splash,
-          authSignInUrl,
-          emailLink
-        });
-  }
+  return res.redirect('/search');
 });
 
 

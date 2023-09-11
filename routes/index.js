@@ -39,7 +39,8 @@ const authLogoutUrl = `${config.sso.TOKEN_HOST}${config.sso.SIGN_OUT_PATH}?clien
 router.get('/logout', function(req, res) {
   if (req.user) {
     logger.info('Logging out', {user: req.user.email});
-    req.logout();
+    req.logout(() => req.session = null);
+    res.redirect(authLogoutUrl);
   }
   res.redirect(authLogoutUrl);
 });

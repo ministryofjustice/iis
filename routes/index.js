@@ -27,12 +27,7 @@ router.get('/autherror', function(req, res) {
 
 router.get('/login', oauth);
 
-router.get('/authentication', oauth,
-    function(req, res) {
-      logger.info('Authentication callback', {user: req.user, authenticated: req.isAuthenticated()});
-      return res.redirect('/disclaimer');
-    }
-);
+router.get('/authentication', oauth, (req, res) => res.redirect('/disclaimer'));
 
 const authLogoutUrl = `${config.sso.TOKEN_HOST}${config.sso.SIGN_OUT_PATH}?client_id=${config.sso.CLIENT_ID}`;
 

@@ -16,7 +16,6 @@
     "snyk-protect": "snyk-protect",
     "lint": "eslint . --cache --max-warnings 0",
     "record-build-info": "node ./bin/record-build-info",
-    "wait-for-deploy": "node ./bin/wait-for-deploy",
     "security_audit": "npx audit-ci --config audit-ci.json"
   },
   "repository": {
@@ -31,7 +30,7 @@
   "homepage": "https://github.com/noms-digital-studio/iis#readme",
   "dependencies": {
     "@snyk/protect": "^1.1000.0",
-    "applicationinsights": "^2.2.1",
+    "applicationinsights": "^2.7.3",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.2",
     "case": "^1.6.3",
@@ -56,8 +55,7 @@
     "passport-oauth2": "^1.7.0",
     "path": "^0.12.7",
     "pdfkit": "^0.8.1",
-    "pdfmake": "^0.1.29",
-    "poll-endpoint-for": "0.0.7",
+    "pdfmake": "^0.2.7",
     "prompt": "^1.2.2",
     "pug": "3.0.2",
     "request": "^2.88.2",
@@ -73,15 +71,15 @@
     "winston-azure-application-insights": "^1.1.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.5",
+    "@babel/core": "^7.18.6",
     "@babel/preset-env": "^7.22.10",
     "@types/jsonwebtoken": "^8.5.8",
     "babel-loader": "^9.1.3",
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
     "istanbul": "^0.4.5",
-    "jsdom": "20.0.0",
-    "jsdom-global": "3.0.2",
+    "jsdom": "^21.1.2",
+    "jsdom-global": "^3.0.2",
     "mocha": "^10.2.0",
     "mocha-junit-reporter": "^2.0.2",
     "nock": "^13.3.3",
@@ -92,7 +90,7 @@
     "sinon-as-promised": "^4.0.3",
     "sinon-chai": "^2.9.0",
     "sinon-stub-promise": "^4.0.0",
-    "supertest": "^6.2.2",
+    "supertest": "^6.3.3",
     "webpack": "^5.88.2",
     "webpack-cli": "^4.9.2"
   },

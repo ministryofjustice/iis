@@ -35,17 +35,18 @@ module.exports = {
   }),
 
   sso: {
-    CLIENT_ID: get('CLIENT_ID', 'hpa-client'),
-    CLIENT_SECRET: get('CLIENT_SECRET', 'clientsecret'),
-    TOKEN_HOST: get('TOKEN_HOST', 'http://localhost:8080/auth'),
-    AUTHORIZE_PATH: get('AUTHORIZE_PATH', '/oauth/authorize'),
-    TOKEN_PATH: get('TOKEN_PATH', '/oauth/token'),
-    CALLBACK_URL: get('CALLBACK_URL', 'http://localhost:3000/authentication'),
-    USER_DETAILS_PATH: get('USER_DETAILS_PATH', '/api/user/me'),
-    USER_EMAIL_PATH: get('USER_EMAIL_PATH', '/api/me/email'),
-    USER_PROFILE_PATH: get('USER_PROFILE_PATH', '/account-details'),
-    SIGN_OUT_PATH: get('SIGN_OUT_PATH', '/sign-out'),
-    SCOPES: get('CLIENT_SCOPES', 'read').replace(/ /g, '').split(',')
+    url: get('TOKEN_HOST', 'http://localhost:8080/auth'),
+    clientId: get('CLIENT_ID', 'hpa-client'),
+    clientSecret: get('CLIENT_SECRET', 'clientsecret'),
+    authorizePath: get('AUTHORIZE_PATH', '/oauth/authorize'),
+    tokenPath: get('TOKEN_PATH', '/oauth/token'),
+    callbackUrl: get('CALLBACK_URL', 'http://localhost:3000/authentication'),
+    userDetailsPath: get('USER_DETAILS_PATH', '/api/user/me'),
+    userEmailPath: get('USER_EMAIL_PATH', '/api/me/email'),
+    userProfilePath: get('USER_PROFILE_PATH', '/account-details'),
+    timeout: Number(get('HMPPS_AUTH_TIMEOUT', 10000)),
+    signOutPath: get('SIGN_OUT_PATH', '/sign-out'),
+    scopes: get('CLIENT_SCOPES', 'read').replace(/ /g, '').split(',')
   },
 
   searchResultsPerPage: get('SEARCH_RESULTS_PER_PAGE', 10),

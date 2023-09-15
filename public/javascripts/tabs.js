@@ -13,10 +13,8 @@ module.exports = jQuery;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 const $ = __webpack_require__(1);
-
 let tabs;
 let panels;
-
 exports.init = function (container) {
   $('.initiallyHidden').removeClass('initiallyHidden').addClass('js-hidden').attr('aria-hidden', 'true');
   tabs = $(container).find('.searchTab');
@@ -25,13 +23,11 @@ exports.init = function (container) {
     $(value).on('click', selectTab);
   });
 };
-
 function selectTab(event) {
   const tabSelected = $(event.target).data('tab');
   updateTabSelected(tabSelected);
   updatePageVisible(tabSelected);
 }
-
 function updateTabSelected(tabSelected) {
   $(tabs).each((index, value) => {
     if ($(value).data('tab') === tabSelected) {
@@ -41,7 +37,6 @@ function updateTabSelected(tabSelected) {
     }
   });
 }
-
 function updatePageVisible(tabSelected) {
   $(panels).each((index, value) => {
     if ($(value).data('panel') === tabSelected) {
@@ -86,9 +81,7 @@ var __webpack_exports__ = {};
 const {
   init
 } = __webpack_require__(3);
-
 const $ = __webpack_require__(1);
-
 init('#formHolder');
 })();
 

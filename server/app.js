@@ -265,11 +265,11 @@ function enableSSO() {
   app.use(passport.session());
 
   const strategy = new Strategy({
-    authorizationURL: ssoConfig.TOKEN_HOST + ssoConfig.AUTHORIZE_PATH,
-    tokenURL: ssoConfig.TOKEN_HOST + ssoConfig.TOKEN_PATH,
-    clientID: ssoConfig.CLIENT_ID,
-    clientSecret: ssoConfig.CLIENT_SECRET,
-    callbackURL: ssoConfig.CALLBACK_URL,
+    authorizationURL: ssoConfig.url + ssoConfig.authorizePath,
+    tokenURL: ssoConfig.url + ssoConfig.tokenPath,
+    clientID: ssoConfig.clientId,
+    clientSecret: ssoConfig.clientSecret,
+    callbackURL: ssoConfig.callbackUrl,
     proxy: true, // trust upstream proxy
     state: true,
     customHeaders: {Authorization: generateOauthClientToken()}

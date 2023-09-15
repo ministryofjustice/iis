@@ -13,7 +13,7 @@ describe('getUserDetails', () => {
   let fakeApi
 
   before(() => {
-    fakeApi = nock(config.sso.TOKEN_HOST)
+    fakeApi = nock(config.sso.url)
     sinon.stub(uuid, 'v1', function () {return '00000000-0000-0000-0000-000000000000'})
   })
 
@@ -22,8 +22,8 @@ describe('getUserDetails', () => {
   })
 
   it('should return user details with email address', async () => {
-      fakeApi.get(config.sso.USER_DETAILS_PATH).reply(200, {userId: '123', name: 'Joe Bloggs'})
-      fakeApi.get(config.sso.USER_EMAIL_PATH).reply(200, {email: "abc@def.com"})
+      fakeApi.get(config.sso.userDetailsPath).reply(200, {userId: '123', name: 'Joe Bloggs'})
+      fakeApi.get(config.sso.userEmailPath).reply(200, {email: "abc@def.com"})
 
       await getUserDetails('token123')
           .then(function(details) {
@@ -41,16 +41,32 @@ describe('getUserDetails', () => {
   });
 
   it('should error if user details fails', async () => {
-      fakeApi.get(config.sso.USER_DETAILS_PATH).reply(500)
-      fakeApi.get(config.sso.USER_EMAIL_PATH).reply(200, {email: "abc@def.com"})
+      fakeApi.get(config.sso.userDetailsPath).times(3).reply(500)
+      fakeApi.get(config.sso.userEmailPath).reply(200, {email: "abc@def.com"})
 
-      await expect(getUserDetails('')).to.eventually.be.rejectedWith('500 - undefined')
+      await expect(getUserDetails('')).to.eventually.be.rejectedWith('Internal Server Error')
+  });
+
+  it('should recover from user details error using retry', async () => {
+      fakeApi.get(config.sso.userDetailsPath).times(1).reply(500)
+      fakeApi.get(config.sso.userDetailsPath).reply(200, {userId: '123', name: 'Joe Bloggs'})
+      fakeApi.get(config.sso.userEmailPath).reply(200, {email: "abc@def.com"})
+
+      await expect(getUserDetails('')).to.be.fulfilled;
   });
 
   it('should error if email address fails', async () => {
-      fakeApi.get(config.sso.USER_DETAILS_PATH).reply(200, {userId: '123', name: 'Joe Bloggs'})
-      fakeApi.get(config.sso.USER_EMAIL_PATH).reply(500)
+      fakeApi.get(config.sso.userDetailsPath).reply(200, {userId: '123', name: 'Joe Bloggs'})
+      fakeApi.get(config.sso.userEmailPath).times(3).reply(500)
 
-      await expect(getUserDetails('')).to.eventually.be.rejectedWith('500 - undefined')
+      await expect(getUserDetails('')).to.eventually.be.rejectedWith('Internal Server Error')
+  });
+
+  it('should recover from email address error using retry', async () => {
+      fakeApi.get(config.sso.userEmailPath).times(1).reply(500)
+      fakeApi.get(config.sso.userEmailPath).reply(200, {email: "abc@def.com"})
+      fakeApi.get(config.sso.userDetailsPath).reply(200, {userId: '123', name: 'Joe Bloggs'})
+
+      await expect(getUserDetails('')).to.be.fulfilled;
   });
 });

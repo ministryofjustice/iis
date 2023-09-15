@@ -29,7 +29,7 @@ router.get('/login', oauth);
 
 router.get('/authentication', oauth, (req, res) => res.redirect('/disclaimer'));
 
-const authLogoutUrl = `${config.sso.TOKEN_HOST}${config.sso.SIGN_OUT_PATH}?client_id=${config.sso.CLIENT_ID}`;
+const authLogoutUrl = `${config.sso.url}${config.sso.signOutPath}?client_id=${config.sso.clientId}`;
 
 router.get('/logout', function(req, res) {
   if (req.user) {

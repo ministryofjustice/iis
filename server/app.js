@@ -32,7 +32,7 @@ const content = require('../data/content.js');
 const config = require('../server/config');
 const generateOauthClientToken = require('../server/clientCredentials');
 const healthcheck = require('../server/healthcheck');
-const getUserDetails = require('../data/auth/authClient');
+const getUserDetails = require('../data/manage-users-api/manageUsersApiClient');
 
 const version = moment.now().toString();
 const production = process.env.NODE_ENV === 'production';

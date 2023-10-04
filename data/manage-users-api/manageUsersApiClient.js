@@ -17,10 +17,10 @@ function userFor(userDetails) {
 }
 
 module.exports = function(token) {
-  return get(ssoConfig.userDetailsPath, config.sso, token)
+  return get('/users/me', config.manageUsersApi, token)
       .then(userFor)
       .then(userDetails =>
-        get(ssoConfig.userEmailPath, config.sso, token)
+        get('/users/me/email', config.manageUsersApi, token)
             .then(email => {
               if (!email) {
                 throw new Error('User has no email address. This is required for audit continuity.');

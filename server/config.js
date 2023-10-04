@@ -41,12 +41,14 @@ module.exports = {
     authorizePath: get('AUTHORIZE_PATH', '/oauth/authorize'),
     tokenPath: get('TOKEN_PATH', '/oauth/token'),
     callbackUrl: get('CALLBACK_URL', 'http://localhost:3000/authentication'),
-    userDetailsPath: get('USER_DETAILS_PATH', '/api/user/me'),
-    userEmailPath: get('USER_EMAIL_PATH', '/api/me/email'),
     userProfilePath: get('USER_PROFILE_PATH', '/account-details'),
     timeout: Number(get('HMPPS_AUTH_TIMEOUT', 10000)),
     signOutPath: get('SIGN_OUT_PATH', '/sign-out'),
     scopes: get('CLIENT_SCOPES', 'read').replace(/ /g, '').split(',')
+  },
+
+  manageUsersApi: {
+    url: get('MANAGE_USERS_API_HOST', 'http://localhost:9091')
   },
 
   searchResultsPerPage: get('SEARCH_RESULTS_PER_PAGE', 10),
